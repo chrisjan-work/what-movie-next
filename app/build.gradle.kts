@@ -69,6 +69,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // mockk
+    testImplementation(libs.mockk)
+
     // coroutines
     implementation(libs.coroutines.android)
     implementation(libs.coroutines.core)

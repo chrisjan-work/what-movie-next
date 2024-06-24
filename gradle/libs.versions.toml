@@ -8,6 +8,7 @@ dagger-hilt = "2.51.1"
 hiltAndroidTesting = "2.45"
 ksp = "1.9.23-1.0.20"
 espressoCore = "3.5.1"
+mockk-version = "1.12.0"
 lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
@@ -39,6 +40,7 @@ moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "mosh
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk-version" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
