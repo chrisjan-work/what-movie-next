@@ -28,22 +28,46 @@ I came up with the idea of implementing the movie list as a standalone app.
 Languages and Frameworks
 ------------------------
 
+**Basics**
+
  * [Android SDK](https://developer.android.com/)
  * [Kotlin](https://kotlinlang.org/)
+
+**User Interface**
+
  * [Jetpack Compose](https://developer.android.com/develop/ui/compose) 
+
+**Dependency Injection**
+
  * [Dagger/Hilt](https://dagger.dev/hilt/) 
+
+**Testing**
+
  * [Espresso](https://developer.android.com/training/testing/espresso/)
  * [JUnit](https://junit.org/)
  * [Mockk](https://mockk.io/) 
+
+**RESTful APIs**
+
  * [Retrofit](https://square.github.io/retrofit/)
  * [OkHttp](https://square.github.io/okhttp/)
 
+**Logging**
+
+ * [Timber](https://github.com/JakeWharton/timber)
+
+**Linting**
+
+ * [Kotlinter](https://github.com/jeremymailen/kotlinter-gradle)
+ * [KtLint](https://pinterest.github.io/ktlint/latest/)
+ 
 Skipped languages / frameworks
 ------------------------------
 
-I do have several years of experience with all the technologies in the list below, but opted for the alternatives in the list abover.
+I do have several years of experience with all the technologies in the list below, but opted for the alternatives in the list above.
 
  * **Java**: traditionally Android apps were written in Java. Modern apps are written in **Kotlin**.
- * **EventBus**, **RxJava**, **LiveData**: used **Kotlin Coroutines** and **Flows** instead, as the more modern alternative for asynchronous data.
+ * **EventBus**, **RxJava**, **RxKotlin**, **LiveData**: used **Kotlin Coroutines** and **Flows** instead, as the more modern alternative for asynchronous data.
  * **Koin**: used **Hilt** on top of **Dagger**, as recommended by Google.
  * **Mockito**: used **Mockk** instead, but I don't have any special preference. 
+ * **Detekt**: relying on **Ktlint** for linting.
