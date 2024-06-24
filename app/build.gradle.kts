@@ -69,6 +69,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // coroutines
+    implementation(libs.coroutines.android)
+    implementation(libs.coroutines.core)
+    testImplementation(libs.kotlinx.coroutines.test)
+
     // hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
