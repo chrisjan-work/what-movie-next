@@ -72,6 +72,9 @@ dependencies {
     // mockk
     testImplementation(libs.mockk)
 
+    // timber
+    implementation(libs.timber)
+
     // coroutines
     implementation(libs.coroutines.android)
     implementation(libs.coroutines.core)
