@@ -1,5 +1,6 @@
 [versions]
 agp = "8.3.2"
+cucumberAndroid = "4.10.0"
 kotlin = "1.9.23"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -46,6 +47,8 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 mockk = { module = "io.mockk:mockk", version.ref = "mockk-version" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 rules-ktlint = { module = "io.nlopez.compose.rules:ktlint", version.ref = "ktlint-rules" }
+cucumber-android = { module = "io.cucumber:cucumber-android", version.ref = "cucumberAndroid" }
+cucumber-android-hilt = { module = "io.cucumber:cucumber-android-hilt", version.ref = "cucumberAndroid" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
