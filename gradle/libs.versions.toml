@@ -17,6 +17,7 @@ composeBom = "2024.06.00"
 coroutines = "1.8.0"
 retrofit = "2.11.0"
 moshi-kotlin = "1.15.1"
+room = "2.6.1"
 timber = "4.7.1"
 kotlinter = "4.4.0"
 
@@ -49,6 +50,10 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 rules-ktlint = { module = "io.nlopez.compose.rules:ktlint", version.ref = "ktlint-rules" }
 cucumber-android = { module = "io.cucumber:cucumber-android", version.ref = "cucumberAndroid" }
 cucumber-android-hilt = { module = "io.cucumber:cucumber-android-hilt", version.ref = "cucumberAndroid" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }

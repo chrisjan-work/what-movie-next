@@ -52,6 +52,10 @@ Languages and Frameworks
  * [Retrofit](https://square.github.io/retrofit/)
  * [OkHttp](https://square.github.io/okhttp/)
 
+**Database**
+
+ * [Room](https://developer.android.com/jetpack/androidx/releases/room)
+
 **Logging**
 
  * [Timber](https://github.com/JakeWharton/timber)
