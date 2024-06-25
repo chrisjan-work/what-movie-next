@@ -75,4 +75,9 @@ dependencies {
     androidTestImplementation(libs.hilt.android)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.android.compiler)
+
+    // retrofit
+    implementation(libs.retrofit)
+    implementation(libs.moshi.converter)
+    implementation(libs.moshi.kotlin)
 }
