@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinter)
 }
 
 android {
@@ -27,7 +28,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -91,4 +92,11 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.moshi.converter)
     implementation(libs.moshi.kotlin)
+}
+
+buildscript {
+    dependencies {
+        // kotlinter rules for compose
+        classpath(libs.rules.ktlint)
+    }
 }

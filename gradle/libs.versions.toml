@@ -8,6 +8,7 @@ dagger-hilt = "2.51.1"
 hiltAndroidTesting = "2.45"
 ksp = "1.9.23-1.0.20"
 espressoCore = "3.5.1"
+ktlint-rules = "0.4.4"
 mockk-version = "1.12.0"
 lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
@@ -16,6 +17,7 @@ coroutines = "1.8.0"
 retrofit = "2.11.0"
 moshi-kotlin = "1.15.1"
 timber = "4.7.1"
+kotlinter = "4.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,10 +45,11 @@ coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk-version" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+rules-ktlint = { module = "io.nlopez.compose.rules:ktlint", version.ref = "ktlint-rules" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
 org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-
+kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
