@@ -11,7 +11,7 @@ import javax.inject.Inject
 class MainViewModel
     @Inject
     constructor(
-        val repo: MovieRepository,
+        private val repo: MovieRepository,
     ) : ViewModel() {
         fun add(movieTitle: String) {
             repo.addMovie(movieTitle)

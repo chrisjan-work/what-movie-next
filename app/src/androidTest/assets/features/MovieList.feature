@@ -2,16 +2,13 @@ Feature: Movie list
   CRUD operations on the movie list
   mark films as pending/watched
 
-  Background:
-    Given the app starts
+# TODO: I am injecting the entry in the DB right now. I must implement the UI interaction
+  Scenario: Create entry
+    Given an empty list of films
+    When the user creates a new entry with the title "The Matrix"
+    Then the list should contain an entry with the title "The Matrix"
 
-  # TODO
-#  Scenario: Create entry
-#    Given an empty list of films
-#    When the user creates a new entry with the title "The Matrix"
-#    Then the list should contain an entry with the title "The Matrix"
-
-  # TODO
+# TODO
 #  Scenario: Show entry
 #    Given a list with an entry "A Beautiful Mind"
 #    When the user opens the entry "A Beautiful Mind"
