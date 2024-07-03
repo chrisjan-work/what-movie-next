@@ -17,7 +17,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "com.lairofpixies.whatmovienext.test.CucumberRunner"
+//        testInstrumentationRunner = "com.lairofpixies.whatmovienext.test.CucumberRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
