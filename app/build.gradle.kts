@@ -17,8 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-//        testInstrumentationRunner = "com.lairofpixies.whatmovienext.test.CucumberRunner"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.lairofpixies.whatmovienext.test.CucumberRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -31,6 +30,19 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+        }
+    }
+
+    flavorDimensions += "testRunner"
+
+    productFlavors {
+        create("junit") {
+            dimension = "testRunner"
+            testInstrumentationRunnerArguments["cucumberUseAndroidJUnitRunner"] = "true"
+        }
+        create("cucumber") {
+            dimension = "testRunner"
+            testInstrumentationRunnerArguments["cucumberUseAndroidJUnitRunner"] = "false"
         }
     }
     compileOptions {

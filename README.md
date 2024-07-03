@@ -75,3 +75,11 @@ I do have several years of experience with all the technologies in the list belo
  * **Koin**: used **Hilt** on top of **Dagger**, as recommended by Google.
  * **Mockito**: used **Mockk** instead, but I don't have any special preference. 
  * **Detekt**: relying on **Ktlint** for linting.
+
+
+Running tests
+-------------
+
+The way the Cucumber plugin works, the cucumber tests are exclusive with the junit instrumentation tests.
+As a work around, there are two flavors: Cucumber and Junit. The instrumentation tests need to run on
+a specific flavor depending on which set of tests to run.
