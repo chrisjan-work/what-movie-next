@@ -1,7 +1,6 @@
 package com.lairofpixies.whatmovienext.database
 
 import androidx.room.Room
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -9,9 +8,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
 class InternalDatabaseTest {
     private lateinit var db: InternalDatabase
     private lateinit var dao: MovieDao
@@ -35,7 +32,12 @@ class InternalDatabaseTest {
             assert(dao.getAllMovies().first().isEmpty())
 
             // When we insert a movie
-            val movie = Movie(id = 1, title = "Someone flew over the cuckoo's nest", watchState = WatchState.PENDING)
+            val movie =
+                Movie(
+                    id = 1,
+                    title = "Someone flew over the cuckoo's nest",
+                    watchState = WatchState.PENDING,
+                )
             dao.insertMovies(listOf(movie))
 
             // Then the movie is in the database
@@ -55,5 +57,27 @@ class InternalDatabaseTest {
 
             // Then the movie is in the database
             assertEquals(emptyList<Movie>(), dao.getAllMovies().first())
+        }
+
+    @Test
+    fun `set movie watch state`() =
+        runBlocking {
+            // Given a database with a single movie
+            assert(dao.getAllMovies().first().isEmpty())
+            val movie = Movie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+            dao.insertMovies(listOf(movie))
+
+            // When setting the movie to watched
+            dao.updateWatchState(movie.id, WatchState.WATCHED)
+
+            // Then the movie is watched
+            assertEquals(
+                WatchState.WATCHED,
+                dao
+                    .getAllMovies()
+                    .first()
+                    .first()
+                    .watchState,
+            )
         }
 }
