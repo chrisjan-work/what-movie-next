@@ -11,7 +11,11 @@ import javax.inject.Inject
 class MainViewModel
     @Inject
     constructor(
-        repo: MovieRepository,
+        val repo: MovieRepository,
     ) : ViewModel() {
+        fun add(movieTitle: String) {
+            repo.addMovie(movieTitle)
+        }
+
         val movieList: StateFlow<List<Movie>> = repo.movies
     }
