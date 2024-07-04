@@ -8,24 +8,16 @@ Feature: Movie list
     When the user creates a new entry with the title "The Matrix"
     Then the list should contain an entry with the title "The Matrix"
 
-# TODO
-#  Scenario: Show entry
-#    Given a list with an entry "A Beautiful Mind"
-#    When the user opens the entry "A Beautiful Mind"
-#    Then the card containing the information of "A Beautiful Mind" should be visible
+  Scenario: Show entry
+    Given a list with an entry "A Beautiful Mind"
+    When the user opens the entry "A Beautiful Mind"
+    Then the card containing the information of "A Beautiful Mind" should be visible
 
   # TODO
 #  Scenario: Delete entry
 #    Given a list with an entry "Gone with the Wind"
 #    When the user deletes the entry "Gone with the Wind"
 #    Then the list should not contain an entry with the title "Gone with the Wind"
-
-  # TODO
-#  Scenario: Edit entry
-#    Given a list with an entry "Beetlejuice"
-#    When the user edits the entry "Beetlejuice" and changes its title to "Goodfellas"
-#    Then the list should contain an entry with the title "Goodfellas"
-#    And the list should not contain an entry with the title "Beetlejuice"
 
   # TODO
 #  Scenario: New entries are marked as pending by default
