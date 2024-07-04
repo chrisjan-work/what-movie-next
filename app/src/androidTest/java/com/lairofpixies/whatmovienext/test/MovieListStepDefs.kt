@@ -33,9 +33,6 @@ class MovieListStepDefs(
     @Inject
     lateinit var movieRepository: MovieRepository
 
-    private val composeRule
-        get() = composeRuleHolder.composeRule
-
     @Before
     fun setUp() {
         scenarioHolder.launch()
@@ -53,13 +50,13 @@ class MovieListStepDefs(
                 .movieDao()
                 .insertMovies(listOf(Movie(title = movieTitle, watchState = WatchState.PENDING)))
         }
-        composeRule.waitForIdle()
+        composeRuleHolder.composeRule.waitForIdle()
     }
 
     @Given("an empty list of films")
     fun anEmptyListOfFilms() {
         appDatabase.clearAllTables()
-        composeRule.waitForIdle()
+        composeRuleHolder.composeRule.waitForIdle()
     }
 
     @When("the user creates a new entry with the title {string}")
@@ -69,63 +66,50 @@ class MovieListStepDefs(
     }
 
     @Then("the list should contain an entry with the title {string}")
-    fun theListShouldContainAnEntryWithTheTitle(movieTitle: String) {
-        composeRuleHolder.waitUntilPassing {
-            composeRule
-                .onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+    fun theListShouldContainAnEntryWithTheTitle(movieTitle: String) =
+        composeRuleHolder.composeStep {
+            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .onChildren()
                 .filterToOne(hasText(movieTitle))
                 .assertIsDisplayed()
         }
-    }
 
     @When("the user opens the entry {string}")
-    fun theUserOpensTheEntry(movieTitle: String) {
-        composeRuleHolder.waitUntilPassing {
-            composeRule
-                .onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+    fun theUserOpensTheEntry(movieTitle: String) =
+        composeRuleHolder.composeStep {
+            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .onChildren()
                 .filterToOne(hasText(movieTitle))
                 .assertIsDisplayed()
                 .performClick()
-            composeRule.waitForIdle()
         }
-    }
 
     @Then("the card containing the information of {string} should be visible")
-    fun theCardContainingTheInformationOfShouldBeVisible(movieTitle: String) {
-        composeRuleHolder.waitUntilPassing {
-            composeRule
-                .onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
+    fun theCardContainingTheInformationOfShouldBeVisible(movieTitle: String) =
+        composeRuleHolder.composeStep {
+            onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
                 .onChildren()
                 .filterToOne(hasText(movieTitle))
                 .assertIsDisplayed()
         }
-    }
 
     @When("the user archives the current entry")
-    fun theUserArchivesTheCurrentEntry() {
-        val archiveLabel =
-            composeRule.activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
-        composeRuleHolder.waitUntilPassing {
-            composeRule
-                .onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
+    fun theUserArchivesTheCurrentEntry() =
+        composeRuleHolder.composeStep {
+            val archiveLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
+            onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
                 .onChildren()
                 .filterToOne(hasText(archiveLabel))
                 .assertIsDisplayed()
                 .performClick()
         }
-        composeRule.waitForIdle()
-    }
 
     @Then("the list should not contain an entry with the title {string}")
-    fun theListShouldNotContainAnEntryWithTheTitle(movieTitle: String) {
-        composeRuleHolder.waitUntilPassing {
-            composeRule
-                .onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+    fun theListShouldNotContainAnEntryWithTheTitle(movieTitle: String) =
+        composeRuleHolder.composeStep {
+            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .onChildren()
                 .filterToOne(hasText(movieTitle))
                 .assertDoesNotExist()
         }
-    }
 }

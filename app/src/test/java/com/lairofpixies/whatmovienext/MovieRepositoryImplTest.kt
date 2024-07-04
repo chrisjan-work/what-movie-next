@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -67,6 +66,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun setWatchState() {
+        // Given
         coEvery { movieDao.updateWatchState(any(), any()) } just runs
 
         // When
@@ -78,22 +78,17 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    @Ignore("delete is now archive")
-    fun deleteMovie() {
-//        // Given
-//        val movieToDelete = Movie(1, "toDelete", WatchState.WATCHED)
-//        val requestedMovie = slot<Movie>()
-//        coEvery { movieDao.delete(capture(requestedMovie)) } just runs
-//
-//        // When
-//        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-//        sut.deleteMovie(movieToDelete)
-//
-//        // Then
-//        coVerify { movieDao.delete(any()) }
-//        assertEquals(
-//            movieToDelete,
-//            requestedMovie.captured,
-//        )
+    fun archiveMovie() {
+        // Given
+        val movieToArchive = Movie(1, "toArchive", WatchState.WATCHED, isArchived = false)
+        val requestedMovie = slot<Movie>()
+        coEvery { movieDao.delete(capture(requestedMovie)) } just runs
+
+        // When
+        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+        sut.archiveMovie(movieToArchive.id)
+
+        // Then
+        coVerify { movieDao.archive(movieToArchive.id) }
     }
 }

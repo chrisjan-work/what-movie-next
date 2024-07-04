@@ -12,6 +12,5 @@ interface MovieRepository {
         watchState: WatchState,
     )
 
-    // TODO test
     fun archiveMovie(movieId: Int)
 }
