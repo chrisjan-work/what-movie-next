@@ -80,4 +80,25 @@ class InternalDatabaseTest {
                     .watchState,
             )
         }
+
+    @Test
+    fun `archive movie`() =
+        runBlocking {
+            // Given a database with a single movie
+            assert(dao.getAllMovies().first().isEmpty())
+            val movie =
+                Movie(
+                    id = 1,
+                    title = "The Wizard of Oz",
+                    watchState = WatchState.PENDING,
+                    isArchived = false,
+                )
+            dao.insertMovies(listOf(movie))
+
+            // When setting the movie to archived
+            dao.archive(movie.id)
+
+            // Then the movie is removed from the view list
+            assert(dao.getAllMovies().first().isEmpty())
+        }
 }

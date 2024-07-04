@@ -23,7 +23,6 @@ interface MovieDao {
         watchState: WatchState,
     )
 
-    //  TODO test
     @Query("UPDATE movie SET isArchived = 1 WHERE id = :id")
     fun archive(id: Int)
 }
