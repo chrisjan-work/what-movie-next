@@ -36,9 +36,9 @@ class MovieRepositoryImpl(
         }
     }
 
-    override fun deleteMovie(movie: Movie) {
+    override fun archiveMovie(movieId: Int) {
         CoroutineScope(ioDispatcher).launch {
-            dao.delete(movie)
+            dao.archive(movieId)
         }
     }
 }

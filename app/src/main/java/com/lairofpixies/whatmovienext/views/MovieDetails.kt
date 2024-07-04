@@ -1,13 +1,17 @@
 package com.lairofpixies.whatmovienext.views
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Button
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.WatchState
 
@@ -19,14 +23,43 @@ object DetailScreenTags {
 fun MovieDetails(
     movie: Movie,
     onCloseAction: () -> Unit,
+    onUpdateAction: (Movie) -> Unit,
+    onArchiveAction: (Movie) -> Unit,
 ) {
     Column(
         modifier =
             Modifier
-                .testTag(DetailScreenTags.TAG_MOVIE_CARD)
-                .clickable { onCloseAction() },
+                .testTag(DetailScreenTags.TAG_MOVIE_CARD),
     ) {
         TitleField(movie.title)
+        WatchStateField(movie.watchState) { newWatchstate ->
+            onUpdateAction(movie.copy(watchState = newWatchstate))
+        }
+        Button(onClick = { onCloseAction() }) {
+            Text(stringResource(id = R.string.close))
+        }
+        Button(onClick = {
+            onArchiveAction(movie)
+            onCloseAction()
+        }) {
+            Text(stringResource(id = R.string.archive))
+        }
+    }
+}
+
+@Composable
+fun WatchStateField(
+    watchState: WatchState,
+    switchCallback: (WatchState) -> Unit,
+) {
+    Row {
+        Text(text = watchState.toString())
+        Switch(
+            checked = watchState == WatchState.WATCHED,
+            onCheckedChange = { watched ->
+                switchCallback(if (watched) WatchState.WATCHED else WatchState.PENDING)
+            },
+        )
     }
 }
 
@@ -34,7 +67,7 @@ fun MovieDetails(
 fun TitleField(title: String) {
     Text(
         text = title,
-        color = Color.Red,
+        fontWeight = FontWeight.Bold
     )
 }
 
@@ -47,5 +80,8 @@ fun DetailScreenPreview() {
             title = "Some like it hot",
             watchState = WatchState.PENDING,
         ),
-    ) {}
+        onCloseAction = {},
+        onUpdateAction = {},
+        onArchiveAction = {},
+    )
 }

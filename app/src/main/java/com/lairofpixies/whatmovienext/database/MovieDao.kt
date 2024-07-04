@@ -14,7 +14,7 @@ interface MovieDao {
     @Delete
     suspend fun delete(movie: Movie)
 
-    @Query("SELECT * FROM movie")
+    @Query("SELECT * FROM movie WHERE isArchived = 0")
     fun getAllMovies(): Flow<List<Movie>>
 
     @Query("UPDATE movie SET watchState = :watchState WHERE id = :id")
@@ -22,4 +22,8 @@ interface MovieDao {
         id: Int,
         watchState: WatchState,
     )
+
+    //  TODO test
+    @Query("UPDATE movie SET isArchived = 1 WHERE id = :id")
+    fun archive(id: Int)
 }

@@ -4,7 +4,6 @@ import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -21,8 +20,6 @@ import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -50,16 +47,19 @@ class MovieListStepDefs(
     }
 
     @Given("a list with an entry {string}")
-    fun aListWithAnEntry(movieTitle: String): Unit =
+    fun aListWithAnEntry(movieTitle: String) {
         runBlocking {
             appDatabase
                 .movieDao()
                 .insertMovies(listOf(Movie(title = movieTitle, watchState = WatchState.PENDING)))
         }
+        composeRule.waitForIdle()
+    }
 
     @Given("an empty list of films")
     fun anEmptyListOfFilms() {
         appDatabase.clearAllTables()
+        composeRule.waitForIdle()
     }
 
     @When("the user creates a new entry with the title {string}")
@@ -69,40 +69,63 @@ class MovieListStepDefs(
     }
 
     @Then("the list should contain an entry with the title {string}")
-    fun theListShouldContainAnEntryWithTheTitle(movieTitle: String) =
-        runTest {
-            withTimeout(TIMEOUT) {
-                composeRule
-                    .onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
-                    .onChildren()
-                    .filterToOne(hasText(movieTitle))
-                    .assertIsDisplayed()
-            }
+    fun theListShouldContainAnEntryWithTheTitle(movieTitle: String) {
+        composeRuleHolder.waitUntilPassing {
+            composeRule
+                .onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+                .onChildren()
+                .filterToOne(hasText(movieTitle))
+                .assertIsDisplayed()
         }
+    }
 
     @When("the user opens the entry {string}")
-    fun theUserOpensTheEntry(movieTitle: String) =
-        runTest {
-            withTimeout(TIMEOUT) {
-                composeRule
-                    .onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
-                    .onChildren()
-                    .filterToOne(hasText(movieTitle))
-                    .assertIsDisplayed()
-                    .performClick()
-            }
+    fun theUserOpensTheEntry(movieTitle: String) {
+        composeRuleHolder.waitUntilPassing {
+            composeRule
+                .onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+                .onChildren()
+                .filterToOne(hasText(movieTitle))
+                .assertIsDisplayed()
+                .performClick()
+            composeRule.waitForIdle()
         }
+    }
 
     @Then("the card containing the information of {string} should be visible")
     fun theCardContainingTheInformationOfShouldBeVisible(movieTitle: String) {
-        composeRule
-            .onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
-            .onChildren()
-            .filterToOne(hasText(movieTitle))
-            .isDisplayed()
+        composeRuleHolder.waitUntilPassing {
+            composeRule
+                .onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
+                .onChildren()
+                .filterToOne(hasText(movieTitle))
+                .assertIsDisplayed()
+        }
     }
 
-    companion object {
-        const val TIMEOUT = 1000L
+    @When("the user archives the current entry")
+    fun theUserArchivesTheCurrentEntry() {
+        val archiveLabel =
+            composeRule.activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
+        composeRuleHolder.waitUntilPassing {
+            composeRule
+                .onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
+                .onChildren()
+                .filterToOne(hasText(archiveLabel))
+                .assertIsDisplayed()
+                .performClick()
+        }
+        composeRule.waitForIdle()
+    }
+
+    @Then("the list should not contain an entry with the title {string}")
+    fun theListShouldNotContainAnEntryWithTheTitle(movieTitle: String) {
+        composeRuleHolder.waitUntilPassing {
+            composeRule
+                .onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+                .onChildren()
+                .filterToOne(hasText(movieTitle))
+                .assertDoesNotExist()
+        }
     }
 }

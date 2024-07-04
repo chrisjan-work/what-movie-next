@@ -20,7 +20,13 @@ fun MainScreen(viewModel: MainViewModel) {
         ) {
             when (uiState.expandedMovie) {
                 null -> MovieList(uiState.movieList) { viewModel.expandMovieAction(it) }
-                else -> MovieDetails(uiState.expandedMovie) { viewModel.closeMovieAction() }
+                else ->
+                    MovieDetails(
+                        movie = uiState.expandedMovie,
+                        onCloseAction = { viewModel.closeMovieAction() },
+                        onUpdateAction = { viewModel.updateMovieWatched(it.id, it.watchState) },
+                        onArchiveAction = { viewModel.archiveMovieAction(it.id) },
+                    )
             }
         }
     }

@@ -12,5 +12,6 @@ interface MovieRepository {
         watchState: WatchState,
     )
 
-    fun deleteMovie(movie: Movie)
+    // TODO test
+    fun archiveMovie(movieId: Int)
 }

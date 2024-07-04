@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">What Movie Next</string>
+    <string name="close">Close</string>
+    <string name="archive">Archive</string>
 </resources>

@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        viewModel.addMovie("Scaramouche")
+        viewModel.addMovie("Scaramouche")
 
         setContent {
             MainScreen(viewModel)

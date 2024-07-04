@@ -13,11 +13,12 @@ Feature: Movie list
     When the user opens the entry "A Beautiful Mind"
     Then the card containing the information of "A Beautiful Mind" should be visible
 
-  # TODO
-#  Scenario: Delete entry
-#    Given a list with an entry "Gone with the Wind"
-#    When the user deletes the entry "Gone with the Wind"
-#    Then the list should not contain an entry with the title "Gone with the Wind"
+  Scenario: Archive entry
+    entries are not directly deleted, only archived
+    Given a list with an entry "Gone with the Wind"
+    When the user opens the entry "Gone with the Wind"
+    When the user archives the current entry
+    Then the list should not contain an entry with the title "Gone with the Wind"
 
   # TODO
 #  Scenario: New entries are marked as pending by default
