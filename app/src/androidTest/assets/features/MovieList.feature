@@ -20,25 +20,25 @@ Feature: Movie list
     When the user archives the current entry
     Then the list should not contain an entry with the title "Gone with the Wind"
 
-  # TODO
-#  Scenario: New entries are marked as pending by default
-#    Given an empty list of films
-#    When the user creates a new entry with the title "Zoolander"
-#    Then the list should contain an entry with the title "Zoolander"
-#    And the entry "Zoolander" is marked as pending
-  
-  # TODO
-#  Scenario: Mark entry as watched and filter it out
-#    Given a list with an entry "Mary Poppins"
-#    And the entry "Mary Poppins" is not marked as watched
-#    When the user marks the entry "Mary Poppins" as watched
-#    And the user filters out watched entries
-#    Then the list should not contain an entry with the title "Mary Poppins"
+  Scenario: New entries are marked as pending by default
+    Given an empty list of films
+    And the list is in mode "ALL"
+    When the user creates a new entry with the title "Zoolander"
+    And the user opens the entry "Zoolander"
+    Then the entry in the details view is marked as pending
 
-  # TODO
-#  Scenario: Mark entry as pending and filter it out
-#    Given a list with an entry "Paprika"
-#    And the entry "Paprika" is marked as watched
-#    When the user marks the entry "Paprika" as pending
-#    And the user filters out pending entries
-#    Then the list should not contain an entry with the title "Paprika"
+  Scenario: Mark entry as watched and filter it out
+    Given a list with an entry "Mary Poppins"
+    And the list is in mode "PENDING"
+    When the user opens the entry "Mary Poppins"
+    And the user marks the entry as watched
+    And the user navigates back to the list
+    Then the list should not contain an entry with the title "Mary Poppins"
+
+  Scenario: Mark entry as pending and filter it out
+    Given a list with an entry "Paprika" that is marked as watched
+    And the list is in mode "WATCHED"
+    When the user opens the entry "Paprika"
+    When the user marks the entry as pending
+    And the user navigates back to the list
+    Then the list should not contain an entry with the title "Paprika"

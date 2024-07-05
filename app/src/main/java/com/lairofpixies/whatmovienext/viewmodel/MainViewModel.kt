@@ -67,4 +67,8 @@ class MainViewModel
         fun archiveMovieAction(movieId: Int) {
             repo.archiveMovie(movieId)
         }
+
+        fun setListMode(listMode: ListMode) {
+            _uiState.update { it.copy(listMode = listMode) }
+        }
     }

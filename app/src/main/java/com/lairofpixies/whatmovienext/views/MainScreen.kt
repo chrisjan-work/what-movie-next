@@ -19,7 +19,14 @@ fun MainScreen(viewModel: MainViewModel) {
             color = MaterialTheme.colorScheme.background,
         ) {
             when (uiState.expandedMovie) {
-                null -> MovieList(uiState.movieList) { viewModel.expandMovieAction(it) }
+                null ->
+                    MovieList(
+                        uiState.listMode,
+                        uiState.movieList,
+                        onListModeChanged = { viewModel.setListMode(it) },
+                        onMovieClicked = { viewModel.expandMovieAction(it) },
+                    )
+
                 else ->
                     MovieDetails(
                         movie = uiState.expandedMovie,

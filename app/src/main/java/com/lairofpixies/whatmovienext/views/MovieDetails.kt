@@ -17,6 +17,7 @@ import com.lairofpixies.whatmovienext.database.WatchState
 
 object DetailScreenTags {
     const val TAG_MOVIE_CARD = "MovieCard"
+    const val TAG_WATCH_STATE_SWITCH = "WatchStateSwitch"
 }
 
 @Composable
@@ -55,6 +56,7 @@ fun WatchStateField(
     Row {
         Text(text = watchState.toString())
         Switch(
+            modifier = Modifier.testTag(DetailScreenTags.TAG_WATCH_STATE_SWITCH),
             checked = watchState == WatchState.WATCHED,
             onCheckedChange = { watched ->
                 switchCallback(if (watched) WatchState.WATCHED else WatchState.PENDING)
@@ -67,7 +69,7 @@ fun WatchStateField(
 fun TitleField(title: String) {
     Text(
         text = title,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
     )
 }
 
