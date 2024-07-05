@@ -4,6 +4,7 @@ import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.MovieDao
 import com.lairofpixies.whatmovienext.database.MovieRepository
 import com.lairofpixies.whatmovienext.database.MovieRepositoryImpl
+import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.database.WatchState
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -12,6 +13,7 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.Assert.assertEquals
@@ -44,6 +46,46 @@ class MovieRepositoryImplTest {
 
         // Then
         assertEquals(movies, result)
+    }
+
+    @Test
+    fun getMovie() {
+        // Given
+        val movie = Movie(1, "first", WatchState.WATCHED)
+        coEvery { movieDao.getMovie(1) } returns flowOf(movie)
+
+        // When
+        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+        val result = sut.getMovie(1).value
+
+        // Then
+        assertEquals(PartialMovie.Completed(movie), result)
+    }
+
+    @Test
+    fun `getMovie loading`() {
+        // Given
+        coEvery { movieDao.getMovie(1) } returns emptyFlow()
+
+        // When
+        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+        val result = sut.getMovie(1).value
+
+        // Then
+        assertEquals(PartialMovie.Loading, result)
+    }
+
+    @Test
+    fun `getMovie not found`() {
+        // Given
+        coEvery { movieDao.getMovie(1) } returns flowOf(null)
+
+        // When
+        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+        val result = sut.getMovie(1).value
+
+        // Then
+        assertEquals(PartialMovie.NotFound, result)
     }
 
     @Test

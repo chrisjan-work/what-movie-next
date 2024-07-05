@@ -16,8 +16,8 @@ import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.MovieRepository
 import com.lairofpixies.whatmovienext.database.WatchState
 import com.lairofpixies.whatmovienext.viewmodel.ListMode
-import com.lairofpixies.whatmovienext.views.DetailScreenTags
-import com.lairofpixies.whatmovienext.views.MovieListTags
+import com.lairofpixies.whatmovienext.views.screens.DetailScreenTags
+import com.lairofpixies.whatmovienext.views.screens.MovieListTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.After
 import io.cucumber.java.Before

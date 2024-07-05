@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.MovieRepository
+import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.database.WatchState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// TODO: tests
 @HiltViewModel
 class MainViewModel
     @Inject
@@ -30,43 +32,24 @@ class MainViewModel
             }
         }
 
-        // TODO: tests
         private fun refreshMovieList(movies: List<Movie>) {
-            val expandedMovieUpdate =
-                _uiState.value.expandedMovie?.id?.let { expandedMovieId ->
-                    movies.firstOrNull { movie -> movie.id == expandedMovieId }
-                }
-
             _uiState.update { currentState ->
                 currentState.copy(
                     movieList = movies,
-                    expandedMovie = expandedMovieUpdate,
                 )
             }
         }
 
-        fun addMovie(title: String) {
-            repo.addMovie(title)
-        }
+        fun getMovie(movieId: Int): StateFlow<PartialMovie> = repo.getMovie(movieId)
 
-        fun expandMovieAction(movie: Movie) {
-            _uiState.update { it.copy(expandedMovie = movie) }
-        }
-
-        fun closeMovieAction() {
-            _uiState.update { it.copy(expandedMovie = null) }
-        }
+        fun addMovie(title: String) = repo.addMovie(title)
 
         fun updateMovieWatched(
             movieId: Int,
             watchState: WatchState,
-        ) {
-            repo.setWatchState(movieId, watchState)
-        }
+        ) = repo.setWatchState(movieId, watchState)
 
-        fun archiveMovieAction(movieId: Int) {
-            repo.archiveMovie(movieId)
-        }
+        fun archiveMovieAction(movieId: Int) = repo.archiveMovie(movieId)
 
         fun setListMode(listMode: ListMode) {
             _uiState.update { it.copy(listMode = listMode) }

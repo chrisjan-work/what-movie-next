@@ -1,19 +1,27 @@
-package com.lairofpixies.whatmovienext.views
+package com.lairofpixies.whatmovienext.views.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Button
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.database.Movie
+import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.database.WatchState
+import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 object DetailScreenTags {
     const val TAG_MOVIE_CARD = "MovieCard"
@@ -21,7 +29,38 @@ object DetailScreenTags {
 }
 
 @Composable
-fun MovieDetails(
+fun MovieDetailsScreen(
+    movieId: Int?,
+    onCloseAction: () -> Unit,
+    viewModel: MainViewModel,
+    navController: NavController,
+) {
+    val context = LocalContext.current
+    val partialMovie = movieId?.let { viewModel.getMovie(it).collectAsState().value }
+
+    LaunchedEffect(partialMovie) {
+        if (movieId == null || partialMovie is PartialMovie.NotFound) {
+            Toast.makeText(context, "Movie not found", Toast.LENGTH_SHORT).show()
+            navController.navigate(Routes.HOME.route) {
+                popUpTo(Routes.HOME.route) {
+                    inclusive = true
+                }
+            }
+        }
+    }
+
+    if (partialMovie is PartialMovie.Completed) {
+        MovieCard(
+            movie = partialMovie.movie,
+            onCloseAction = onCloseAction,
+            onUpdateAction = { viewModel.updateMovieWatched(it.id, it.watchState) },
+            onArchiveAction = { viewModel.archiveMovieAction(it.id) },
+        )
+    }
+}
+
+@Composable
+fun MovieCard(
     movie: Movie,
     onCloseAction: () -> Unit,
     onUpdateAction: (Movie) -> Unit,
@@ -33,8 +72,8 @@ fun MovieDetails(
                 .testTag(DetailScreenTags.TAG_MOVIE_CARD),
     ) {
         TitleField(movie.title)
-        WatchStateField(movie.watchState) { newWatchstate ->
-            onUpdateAction(movie.copy(watchState = newWatchstate))
+        WatchStateField(movie.watchState) { watchState ->
+            onUpdateAction(movie.copy(watchState = watchState))
         }
         Button(onClick = { onCloseAction() }) {
             Text(stringResource(id = R.string.close))
@@ -76,7 +115,7 @@ fun TitleField(title: String) {
 @Preview
 @Composable
 fun DetailScreenPreview() {
-    MovieDetails(
+    MovieCard(
         Movie(
             id = 1,
             title = "Some like it hot",

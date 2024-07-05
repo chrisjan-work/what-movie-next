@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -18,7 +19,17 @@ class MovieRepositoryImpl(
             .stateIn(
                 CoroutineScope(ioDispatcher),
                 SharingStarted.Eagerly,
-                emptyList(),
+                initialValue = emptyList(),
+            )
+
+    override fun getMovie(movieId: Int): StateFlow<PartialMovie> =
+        dao
+            .getMovie(movieId)
+            .map { it?.let { PartialMovie.Completed(it) } ?: PartialMovie.NotFound }
+            .stateIn(
+                CoroutineScope(ioDispatcher),
+                SharingStarted.Eagerly,
+                initialValue = PartialMovie.Loading,
             )
 
     override fun addMovie(title: String) {

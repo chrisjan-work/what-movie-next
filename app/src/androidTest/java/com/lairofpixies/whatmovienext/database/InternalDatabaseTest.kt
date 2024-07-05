@@ -74,10 +74,9 @@ class InternalDatabaseTest {
             assertEquals(
                 WatchState.WATCHED,
                 dao
-                    .getAllMovies()
+                    .getMovie(1)
                     .first()
-                    .first()
-                    .watchState,
+                    ?.watchState,
             )
         }
 

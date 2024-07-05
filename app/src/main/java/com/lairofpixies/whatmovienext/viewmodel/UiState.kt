@@ -13,6 +13,5 @@ enum class ListMode {
 
 data class UiState(
     val movieList: List<Movie> = emptyList(),
-    val expandedMovie: Movie? = null,
     val listMode: ListMode = ListMode.ALL,
 )

@@ -5,8 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
-import com.lairofpixies.whatmovienext.views.MainScreen
+import com.lairofpixies.whatmovienext.views.screens.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.UUID
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -15,7 +16,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-//        viewModel.addMovie("Scaramouche")
+        viewModel.addMovie("Scaramouche " + UUID.randomUUID().toString().substring(0, 8))
 
         setContent {
             MainScreen(viewModel)

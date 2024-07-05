@@ -36,6 +36,7 @@ Languages and Frameworks
 **User Interface**
 
  * [Jetpack Compose](https://developer.android.com/develop/ui/compose) 
+ * [Jetpack Navigation](https://developer.android.com/jetpack/androidx/releases/navigation)
 
 **Dependency Injection**
 

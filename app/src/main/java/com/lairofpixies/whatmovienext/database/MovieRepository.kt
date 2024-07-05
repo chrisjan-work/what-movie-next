@@ -5,6 +5,8 @@ import kotlinx.coroutines.flow.StateFlow
 interface MovieRepository {
     val movies: StateFlow<List<Movie>>
 
+    fun getMovie(movieId: Int): StateFlow<PartialMovie>
+
     fun addMovie(title: String)
 
     fun setWatchState(

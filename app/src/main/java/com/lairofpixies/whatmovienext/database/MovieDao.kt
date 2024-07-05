@@ -17,6 +17,9 @@ interface MovieDao {
     @Query("SELECT * FROM movie WHERE isArchived = 0")
     fun getAllMovies(): Flow<List<Movie>>
 
+    @Query("SELECT * FROM movie WHERE id = :id")
+    fun getMovie(id: Int): Flow<Movie?>
+
     @Query("UPDATE movie SET watchState = :watchState WHERE id = :id")
     fun updateWatchState(
         id: Int,

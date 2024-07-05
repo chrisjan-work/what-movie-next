@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class Movie(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
-    val watchState: WatchState,
+    val watchState: WatchState = WatchState.PENDING,
     val isArchived: Boolean = false,
 )
