@@ -43,7 +43,7 @@ Languages and Frameworks
 
 **Testing**
 
- * [Espresso](https://developer.android.com/training/testing/espresso/)
+ * [Jetpack Compose UI Testing framework](https://developer.android.com/develop/ui/compose/testing)
  * [JUnit](https://junit.org/)
  * [Mockk](https://mockk.io/) 
 
@@ -71,6 +71,7 @@ Skipped languages / frameworks
 I do have several years of experience with all the technologies in the list below, but opted for the alternatives in the list above.
 
  * **Java**: traditionally Android apps were written in Java. Modern apps are written in **Kotlin**.
+ * **Espresso**: this UI testing framework is for UIs based on Android Layouts. Since here the UI is written in Jetpack Compose, I am using its equivalent.
  * **EventBus**, **RxJava**, **RxKotlin**, **LiveData**: used **Kotlin Coroutines** and **Flows** instead, as the more modern alternative for asynchronous data.
  * **Koin**: used **Hilt** on top of **Dagger**, as recommended by Google.
  * **Mockito**: used **Mockk** instead, but I don't have any special preference. 
