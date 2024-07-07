@@ -3,6 +3,11 @@ What Movie Next
 
 An Android app to keep track of movie recommendations.
 
+CI status
+---------
+
+[![Tests](https://github.com/ChrisJan00/what-movie-next/actions/workflows/android.yml/badge.svg)](https://github.com/ChrisJan00/what-movie-next/actions/workflows/android.yml)
+
 Use case
 --------
 
@@ -47,6 +52,15 @@ Languages and Frameworks
  * [Jetpack Compose UI Testing framework](https://developer.android.com/develop/ui/compose/testing)
  * [JUnit](https://junit.org/)
  * [Mockk](https://mockk.io/) 
+
+**BDD / Behavior Driven Development**
+  
+  * [Cucumber] (https://cucumber.io/)
+  * **Gherkin**
+
+**CI / Continuous Integration**
+
+  * [Github Actions] (https://docs.github.com/en/actions)
 
 **RESTful APIs**
 
