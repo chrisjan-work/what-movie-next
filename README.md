@@ -55,12 +55,11 @@ Languages and Frameworks
 
 **BDD / Behavior Driven Development**
   
-  * [Cucumber] (https://cucumber.io/)
-  * **Gherkin**
-
+ * [Cucumber](https://cucumber.io/)
+  
 **CI / Continuous Integration**
 
-  * [Github Actions] (https://docs.github.com/en/actions)
+ * [Github Actions](https://docs.github.com/en/actions)
 
 **RESTful APIs**
 
@@ -83,8 +82,6 @@ Languages and Frameworks
 Skipped languages / frameworks
 ------------------------------
 
-I do have several years of experience with all the technologies in the list below, but opted for the alternatives in the list above.
-
  * **Java**: traditionally Android apps were written in Java. Modern apps are written in **Kotlin**.
  * **Espresso**: this UI testing framework is for UIs based on Android Layouts. Since here the UI is written in Jetpack Compose, I am using its equivalent.
  * **EventBus**, **RxJava**, **RxKotlin**, **LiveData**: used **Kotlin Coroutines** and **Flows** instead, as the more modern alternative for asynchronous data.
@@ -96,6 +93,4 @@ I do have several years of experience with all the technologies in the list belo
 Running tests
 -------------
 
-The way the Cucumber plugin works, the cucumber tests are exclusive with the junit instrumentation tests.
-As a work around, there are two flavors: Cucumber and Junit. The instrumentation tests need to run on
-a specific flavor depending on which set of tests to run.
+The Cucumber plugin cannot run the Cucumber tests alongside the JUnit instrumentation tests. As a workaround, there are two distinct flavors: Cucumber and JUnit. The instrumentation tests must be executed on a particular flavor based on the set of tests you intend to run.

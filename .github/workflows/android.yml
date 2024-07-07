@@ -14,37 +14,23 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: make gradlew executable
-        run: chmod +x gradlew
+      - name: setup jvm
+        uses: ./.github/actions/jvm_setup
 
       - name: run lint
         run: ./gradlew lintJunitDebugUnitTest
 
-  ktLint:
-    name: Ktlint
+  ktlint:
+    name: ktlint
     runs-on: ubuntu-latest
     steps:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'temurin'
-          cache: gradle
+      - name: setup jvm
+        uses: ./.github/actions/jvm_setup
 
-      - name: make gradlew executable
-        run: chmod +x gradlew
-
-      - name: run ktlint
+      - name: run lint
         run: ./gradlew lintKotlin
 
   unit_tests:
@@ -54,15 +40,8 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: make gradlew executable
-        run: chmod +x gradlew
+      - name: setup jvm
+        uses: ./.github/actions/jvm_setup
 
       - name: run unit tests
         run: ./gradlew testJunitDebugUnitTest
@@ -74,23 +53,11 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: make gradlew executable
-        run: chmod +x gradlew
-
-      - name: run instrumentation tests
-        uses: ReactiveCircus/android-emulator-runner@v2
+      - name: run emulator
+        uses: ./.github/actions/emulator_run
         with:
           api-level: 30
-          target: google_apis
-          arch: x86_64
-          script: ./gradlew connectedJunitDebugAndroidTest
+          script: ./gradlew connectedJunitDebugAndroidTest --info
 
   feature_tests:
     name: Cucumber Feature Tests
@@ -99,20 +66,8 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: 17
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: make gradlew executable
-        run: chmod +x gradlew
-
-      - name: run instrumentation tests
-        uses: ReactiveCircus/android-emulator-runner@v2
+      - name: run emulator
+        uses: ./.github/actions/emulator_run
         with:
           api-level: 30
-          target: google_apis
-          arch: x86_64
-          script: ./gradlew connectedCucumberDebugAndroidTest
+          script: ./gradlew connectedCucumberDebugAndroidTest --info

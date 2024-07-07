@@ -9,6 +9,7 @@ import io.cucumber.junit.CucumberOptions
 @CucumberOptions(
     glue = ["com.lairofpixies.whatmovienext.test"],
     features = ["features"],
+    plugin = ["pretty"],
 )
 class CucumberRunner : CucumberAndroidJUnitRunner() {
     override fun newApplication(
