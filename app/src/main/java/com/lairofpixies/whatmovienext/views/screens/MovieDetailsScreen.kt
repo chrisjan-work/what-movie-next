@@ -54,7 +54,7 @@ fun MovieDetailsScreen(
             movie = partialMovie.movie,
             onCloseAction = onCloseAction,
             onUpdateAction = { viewModel.updateMovieWatched(it.id, it.watchState) },
-            onArchiveAction = { viewModel.archiveMovieAction(it.id) },
+            onArchiveAction = { viewModel.archiveMovie(it.id) },
         )
     }
 }

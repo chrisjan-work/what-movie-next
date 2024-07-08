@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// TODO: tests
 @HiltViewModel
 class MainViewModel
     @Inject
@@ -49,7 +48,7 @@ class MainViewModel
             watchState: WatchState,
         ) = repo.setWatchState(movieId, watchState)
 
-        fun archiveMovieAction(movieId: Int) = repo.archiveMovie(movieId)
+        fun archiveMovie(movieId: Int) = repo.archiveMovie(movieId)
 
         fun setListMode(listMode: ListMode) {
             _uiState.update { it.copy(listMode = listMode) }
