@@ -2,6 +2,7 @@ package com.lairofpixies.whatmovienext.test
 
 import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
@@ -11,6 +12,7 @@ import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import com.lairofpixies.whatmovienext.database.InternalDatabase
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.MovieRepository
@@ -182,5 +184,50 @@ class MovieListStepDefs(
             } catch (_: Throwable) {
                 // it was already off
             }
+        }
+
+    @Given("a list with {int} entries, titled {string} where {string} is the index")
+    fun aListWithEntriesTitledWhereIsTheIndex(
+        amount: Int,
+        titlePattern: String,
+        indexPattern: String,
+    ) {
+        val movieList =
+            (1..amount)
+                .map { index ->
+                    titlePattern.replace(indexPattern, index.toString())
+                }.map {
+                    Movie(title = it)
+                }
+
+        runBlocking {
+            appDatabase.movieDao().insertMovies(movieList)
+        }
+        composeRuleHolder.composeRule.waitForIdle()
+    }
+
+    @Then("the entry {string} is not visible")
+    fun theEntryIsNotVisible(title: String) =
+        composeRuleHolder.composeStep {
+            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+                .onChildren()
+                .filterToOne(hasText(title))
+                .assertIsNotDisplayed()
+        }
+
+    @When("the user scrolls down to {string}")
+    fun theUserScrollsDownTo(title: String) =
+        composeRuleHolder.composeStep {
+            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+                .performScrollToNode(hasText(title))
+        }
+
+    @Then("the entry {string} is visible")
+    fun theEntryIsVisible(title: String) =
+        composeRuleHolder.composeStep {
+            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+                .onChildren()
+                .filterToOne(hasText(title))
+                .assertIsDisplayed()
         }
 }

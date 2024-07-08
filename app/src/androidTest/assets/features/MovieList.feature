@@ -2,7 +2,6 @@ Feature: Movie list
   CRUD operations on the movie list
   mark films as pending/watched
 
-# TODO: I am injecting the entry in the DB right now. I must implement the UI interaction
   Scenario: Create entry
     Given an empty list of films
     When the user creates a new entry with the title "The Matrix"
@@ -42,3 +41,9 @@ Feature: Movie list
     When the user marks the entry as pending
     And the user navigates back to the list
     Then the list should not contain an entry with the title "Paprika"
+
+  Scenario: The Movie list is scrollable
+    Given a list with 100 entries, titled "movieN" where "N" is the index
+    Then the entry "movie100" is not visible
+    When the user scrolls down to "movie100"
+    Then the entry "movie100" is visible
