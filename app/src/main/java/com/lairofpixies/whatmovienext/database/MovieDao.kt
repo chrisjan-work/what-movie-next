@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MovieDao {
     @Insert
+    suspend fun insertMovie(movie: Movie): Long
+
+    @Insert
     suspend fun insertMovies(movies: List<Movie>)
 
     @Delete
@@ -18,14 +21,14 @@ interface MovieDao {
     fun getAllMovies(): Flow<List<Movie>>
 
     @Query("SELECT * FROM movie WHERE id = :id")
-    fun getMovie(id: Int): Flow<Movie?>
+    fun getMovie(id: Long): Flow<Movie?>
 
     @Query("UPDATE movie SET watchState = :watchState WHERE id = :id")
     fun updateWatchState(
-        id: Int,
+        id: Long,
         watchState: WatchState,
     )
 
     @Query("UPDATE movie SET isArchived = 1 WHERE id = :id")
-    fun archive(id: Int)
+    fun archive(id: Long)
 }

@@ -38,7 +38,7 @@ class InternalDatabaseTest {
                     title = "Someone flew over the cuckoo's nest",
                     watchState = WatchState.PENDING,
                 )
-            dao.insertMovies(listOf(movie))
+            dao.insertMovie(movie)
 
             // Then the movie is in the database
             assertEquals(listOf(movie), dao.getAllMovies().first())
@@ -50,7 +50,7 @@ class InternalDatabaseTest {
             // Given a database with a single movie
             assert(dao.getAllMovies().first().isEmpty())
             val movie = Movie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
-            dao.insertMovies(listOf(movie))
+            dao.insertMovie(movie)
 
             // When we remove it
             dao.delete(movie)
@@ -65,7 +65,7 @@ class InternalDatabaseTest {
             // Given a database with a single movie
             assert(dao.getAllMovies().first().isEmpty())
             val movie = Movie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
-            dao.insertMovies(listOf(movie))
+            dao.insertMovie(movie)
 
             // When setting the movie to watched
             dao.updateWatchState(movie.id, WatchState.WATCHED)
@@ -92,7 +92,7 @@ class InternalDatabaseTest {
                     watchState = WatchState.PENDING,
                     isArchived = false,
                 )
-            dao.insertMovies(listOf(movie))
+            dao.insertMovie(movie)
 
             // When setting the movie to archived
             dao.archive(movie.id)

@@ -11,7 +11,7 @@ enum class Routes(
     val route
         get() = path + (argument?.let { "/{$it}" } ?: "")
 
-    fun route(param: Int) = path + (argument?.let { "/$param" } ?: "")
+    fun route(param: Long) = path + (argument?.let { "/$param" } ?: "")
 
     val argumentOrEmpty = argument ?: ""
 

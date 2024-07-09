@@ -39,24 +39,24 @@ class MainViewModel
             }
         }
 
-        fun getMovie(movieId: Int): StateFlow<PartialMovie> = repo.getMovie(movieId)
+        fun getMovie(movieId: Long): StateFlow<PartialMovie> = repo.getMovie(movieId)
+
+        fun createMovie(andThen: (Long) -> Unit) =
+            viewModelScope.launch {
+                val newId = repo.createMovie()
+                andThen(newId)
+            }
 
         fun addMovie(title: String) = viewModelScope.launch { repo.addMovie(title) }
 
         fun updateMovieWatched(
-            movieId: Int,
+            movieId: Long,
             watchState: WatchState,
         ) = viewModelScope.launch { repo.setWatchState(movieId, watchState) }
 
-        fun archiveMovie(movieId: Int) = viewModelScope.launch { repo.archiveMovie(movieId) }
+        fun archiveMovie(movieId: Long) = viewModelScope.launch { repo.archiveMovie(movieId) }
 
         fun setListMode(listMode: ListMode) {
             _uiState.update { it.copy(listMode = listMode) }
         }
-
-        fun generateNewMoviePlaceholder(andThen: (Int) -> Unit) =
-            viewModelScope.launch {
-                val newId = repo.generateNewMoviePlaceholder()
-                andThen(newId)
-            }
     }

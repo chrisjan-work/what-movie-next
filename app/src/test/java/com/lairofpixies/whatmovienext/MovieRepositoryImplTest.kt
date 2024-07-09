@@ -95,18 +95,18 @@ class MovieRepositoryImplTest {
     fun addMovie() =
         runTest {
             // Given
-            val movieList = slot<List<Movie>>()
-            coEvery { movieDao.insertMovies(capture(movieList)) } just runs
+            val movie = slot<Movie>()
+            coEvery { movieDao.insertMovie(capture(movie)) } returns 1L
 
             // When
             sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
             sut.addMovie("first")
 
             // Then
-            coVerify { movieDao.insertMovies(any()) }
+            coVerify { movieDao.insertMovie(any()) }
             assertEquals(
                 "first",
-                movieList.captured.firstOrNull()?.title,
+                movie.captured.title,
             )
         }
 

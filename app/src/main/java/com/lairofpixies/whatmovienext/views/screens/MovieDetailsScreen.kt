@@ -30,7 +30,7 @@ object DetailScreenTags {
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int?,
+    movieId: Long?,
     onCloseAction: () -> Unit,
     viewModel: MainViewModel,
     navController: NavController,

@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,7 @@ class MovieRepositoryImpl(
 
     override val movies: Flow<List<Movie>> = dao.getAllMovies().flowOn(ioDispatcher)
 
-    override fun getMovie(movieId: Int): StateFlow<PartialMovie> =
+    override fun getMovie(movieId: Long): StateFlow<PartialMovie> =
         dao
             .getMovie(movieId)
             .map { it?.let { PartialMovie.Completed(it) } ?: PartialMovie.NotFound }
@@ -30,24 +31,21 @@ class MovieRepositoryImpl(
                 initialValue = PartialMovie.Loading,
             )
 
-    override suspend fun generateNewMoviePlaceholder(): Int {
-        val newMovie = Movie(title = "", watchState = WatchState.PENDING)
+    override suspend fun createMovie(): Long =
         repositoryScope
-            .launch {
-                dao.insertMovies(listOf(newMovie))
-            }.join()
-        return newMovie.id
-    }
+            .async {
+                dao.insertMovie(Movie(title = "", watchState = WatchState.PENDING))
+            }.await()
 
     override suspend fun addMovie(title: String) {
         repositoryScope
             .launch {
-                dao.insertMovies(listOf(Movie(title = title, watchState = WatchState.PENDING)))
+                dao.insertMovie(Movie(title = title, watchState = WatchState.PENDING))
             }.join()
     }
 
     override suspend fun setWatchState(
-        movieId: Int,
+        movieId: Long,
         watchState: WatchState,
     ) {
         repositoryScope
@@ -56,7 +54,7 @@ class MovieRepositoryImpl(
             }.join()
     }
 
-    override suspend fun archiveMovie(movieId: Int) {
+    override suspend fun archiveMovie(movieId: Long) {
         repositoryScope
             .launch {
                 dao.archive(movieId)

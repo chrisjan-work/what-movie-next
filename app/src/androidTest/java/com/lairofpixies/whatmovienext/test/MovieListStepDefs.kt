@@ -62,7 +62,7 @@ class MovieListStepDefs(
         runBlocking {
             appDatabase
                 .movieDao()
-                .insertMovies(listOf(Movie(title = movieTitle, watchState = WatchState.PENDING)))
+                .insertMovie(Movie(title = movieTitle, watchState = WatchState.PENDING))
         }
         composeRuleHolder.composeRule.waitForIdle()
     }
@@ -72,7 +72,7 @@ class MovieListStepDefs(
         runBlocking {
             appDatabase
                 .movieDao()
-                .insertMovies(listOf(Movie(title = movieTitle, watchState = WatchState.WATCHED)))
+                .insertMovie(Movie(title = movieTitle, watchState = WatchState.WATCHED))
         }
         composeRuleHolder.composeRule.waitForIdle()
     }

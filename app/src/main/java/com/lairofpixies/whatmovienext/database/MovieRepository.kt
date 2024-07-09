@@ -6,16 +6,16 @@ import kotlinx.coroutines.flow.StateFlow
 interface MovieRepository {
     val movies: Flow<List<Movie>>
 
-    fun getMovie(movieId: Int): StateFlow<PartialMovie>
+    fun getMovie(movieId: Long): StateFlow<PartialMovie>
 
     suspend fun addMovie(title: String)
 
+    suspend fun createMovie(): Long
+
     suspend fun setWatchState(
-        movieId: Int,
+        movieId: Long,
         watchState: WatchState,
     )
 
-    suspend fun archiveMovie(movieId: Int)
-
-    suspend fun generateNewMoviePlaceholder(): Int
+    suspend fun archiveMovie(movieId: Long)
 }

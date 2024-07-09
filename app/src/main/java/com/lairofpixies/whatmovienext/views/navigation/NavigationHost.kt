@@ -25,7 +25,13 @@ fun NavigationHost(
                 uiState.listMode,
                 uiState.movieList,
                 onListModeChanged = { viewModel.setListMode(it) },
-                onMovieClicked = { movie -> navController.navigate(Routes.SingleMovieView.route(movie.id)) },
+                onMovieClicked = { movie ->
+                    navController.navigate(
+                        Routes.SingleMovieView.route(
+                            movie.id,
+                        ),
+                    )
+                },
             )
         }
         composable(
@@ -33,12 +39,12 @@ fun NavigationHost(
             arguments =
                 listOf(
                     navArgument(Routes.SingleMovieView.argumentOrEmpty) {
-                        type = NavType.IntType
+                        type = NavType.LongType
                     },
                 ),
         ) { entry ->
             MovieDetailsScreen(
-                movieId = entry.arguments?.getInt(Routes.SingleMovieView.argumentOrEmpty),
+                movieId = entry.arguments?.getLong(Routes.SingleMovieView.argumentOrEmpty),
                 onCloseAction = { navController.popBackStack() },
                 navController = navController,
                 viewModel = viewModel,
