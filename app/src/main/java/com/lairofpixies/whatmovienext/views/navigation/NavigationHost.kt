@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
 import com.lairofpixies.whatmovienext.viewmodel.UiState
+import com.lairofpixies.whatmovienext.views.screens.EditableMovieDetailsScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieDetailsScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieList
 
@@ -48,6 +49,14 @@ fun NavigationHost(
                 onCloseAction = { navController.popBackStack() },
                 navController = navController,
                 viewModel = viewModel,
+            )
+        }
+        composable(Routes.CreateMovieView.route) {
+            EditableMovieDetailsScreen(
+                movieId = null,
+                onCloseAction = { navController.popBackStack() },
+                viewModel = viewModel,
+                navController = navController,
             )
         }
     }

@@ -1,0 +1,45 @@
+package com.lairofpixies.whatmovienext.stepdefs
+
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.test.CucumberTestContext
+import com.lairofpixies.whatmovienext.test.composeStep
+import com.lairofpixies.whatmovienext.views.screens.EditableDetailScreenTags
+import dagger.hilt.android.testing.HiltAndroidTest
+import io.cucumber.java.en.And
+import io.cucumber.java.en.Then
+import io.cucumber.java.en.When
+
+@HiltAndroidTest
+class MovieCardStepDefs(
+    private val testContext: CucumberTestContext,
+) {
+    private val composeRule
+        get() = testContext.composeRuleHolder.composeRule
+
+    @When("the user initiates a new entry")
+    fun theUserInitiatesANewEntry() =
+        composeRule.composeStep {
+            onNodeWithContentDescription(activity.getString(R.string.add_new_movie))
+                .performClick()
+        }
+
+    @Then("An editable movie details view is open")
+    fun anEditableMovieDetailsViewIsOpen() =
+        composeRule.composeStep {
+            onNodeWithTag(EditableDetailScreenTags.TAG_EDITABLE_MOVIE_CARD)
+                .isDisplayed()
+        }
+
+    @And("the title input is focused")
+    fun theTitleInputIsFocused() =
+        composeRule.composeStep {
+            onNodeWithText(activity.getString(R.string.title))
+                .assertIsFocused()
+        }
+}

@@ -2,4 +2,8 @@
     <string name="app_name">What Movie Next</string>
     <string name="close">Close</string>
     <string name="archive">Archive</string>
+    <string name="add_new_movie">Add new movie</string>
+    <string name="done">Done</string>
+    <string name="edit">Edit</string>
+    <string name="title">Title</string>
 </resources>
