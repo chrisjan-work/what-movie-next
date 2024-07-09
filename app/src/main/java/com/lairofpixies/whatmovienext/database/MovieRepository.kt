@@ -1,18 +1,21 @@
 package com.lairofpixies.whatmovienext.database
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface MovieRepository {
-    val movies: StateFlow<List<Movie>>
+    val movies: Flow<List<Movie>>
 
     fun getMovie(movieId: Int): StateFlow<PartialMovie>
 
-    fun addMovie(title: String)
+    suspend fun addMovie(title: String)
 
-    fun setWatchState(
+    suspend fun setWatchState(
         movieId: Int,
         watchState: WatchState,
     )
 
-    fun archiveMovie(movieId: Int)
+    suspend fun archiveMovie(movieId: Int)
+
+    suspend fun generateNewMoviePlaceholder(): Int
 }

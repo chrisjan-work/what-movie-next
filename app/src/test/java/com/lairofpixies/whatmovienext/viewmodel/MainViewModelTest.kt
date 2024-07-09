@@ -4,9 +4,9 @@ import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.MovieRepository
 import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.database.WatchState
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,7 +77,7 @@ class MainViewModelTest {
         mainViewModel.addMovie("adding movie")
 
         // Then
-        verify { repo.addMovie("adding movie") }
+        coVerify { repo.addMovie("adding movie") }
     }
 
     @Test
@@ -86,7 +86,7 @@ class MainViewModelTest {
         mainViewModel.updateMovieWatched(1, WatchState.WATCHED)
 
         // Then
-        verify { repo.setWatchState(1, WatchState.WATCHED) }
+        coVerify { repo.setWatchState(1, WatchState.WATCHED) }
     }
 
     @Test
@@ -95,7 +95,7 @@ class MainViewModelTest {
         mainViewModel.archiveMovie(2)
 
         // Then
-        verify { repo.archiveMovie(2) }
+        coVerify { repo.archiveMovie(2) }
     }
 
     @Test

@@ -6,9 +6,11 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -80,7 +82,9 @@ class MovieListStepDefs(
     @When("the user creates a new entry with the title {string}")
     fun theUserCreatesANewEntryWithTheTitle(movieTitle: String) {
         // TODO: add the proper ui interaction
-        movieRepository.addMovie(movieTitle)
+        runBlocking {
+            movieRepository.addMovie(movieTitle)
+        }
     }
 
     @Then("the list should contain an entry with the title {string}")
@@ -88,7 +92,8 @@ class MovieListStepDefs(
         composeRuleHolder.composeStep {
             onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .onChildren()
-                .filterToOne(hasText(movieTitle))
+                .filter(hasText(movieTitle))
+                .onFirst()
                 .assertIsDisplayed()
         }
 
@@ -97,7 +102,8 @@ class MovieListStepDefs(
         composeRuleHolder.composeStep {
             onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .onChildren()
-                .filterToOne(hasText(movieTitle))
+                .filter(hasText(movieTitle))
+                .onFirst()
                 .assertIsDisplayed()
                 .performClick()
         }
@@ -107,7 +113,8 @@ class MovieListStepDefs(
         composeRuleHolder.composeStep {
             onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
                 .onChildren()
-                .filterToOne(hasText(movieTitle))
+                .filter(hasText(movieTitle))
+                .onFirst()
                 .assertIsDisplayed()
         }
 
@@ -117,7 +124,8 @@ class MovieListStepDefs(
             val archiveLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
             onNodeWithTag(DetailScreenTags.TAG_MOVIE_CARD)
                 .onChildren()
-                .filterToOne(hasText(archiveLabel))
+                .filter(hasText(archiveLabel))
+                .onFirst()
                 .assertIsDisplayed()
                 .performClick()
         }
@@ -207,27 +215,29 @@ class MovieListStepDefs(
     }
 
     @Then("the entry {string} is not visible")
-    fun theEntryIsNotVisible(title: String) =
+    fun theEntryIsNotVisible(movieTitle: String) =
         composeRuleHolder.composeStep {
             onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .onChildren()
-                .filterToOne(hasText(title))
+                .filter(hasText(movieTitle))
+                .onFirst()
                 .assertIsNotDisplayed()
         }
 
     @When("the user scrolls down to {string}")
-    fun theUserScrollsDownTo(title: String) =
+    fun theUserScrollsDownTo(movieTitle: String) =
         composeRuleHolder.composeStep {
             onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
-                .performScrollToNode(hasText(title))
+                .performScrollToNode(hasText(movieTitle))
         }
 
     @Then("the entry {string} is visible")
-    fun theEntryIsVisible(title: String) =
+    fun theEntryIsVisible(movieTitle: String) =
         composeRuleHolder.composeStep {
             onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .onChildren()
-                .filterToOne(hasText(title))
+                .filter(hasText(movieTitle))
+                .onFirst()
                 .assertIsDisplayed()
         }
 }

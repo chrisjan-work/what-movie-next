@@ -14,8 +14,10 @@ import io.mockk.runs
 import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -31,22 +33,23 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun getMovies() {
-        // Given
-        val movies =
-            listOf(
-                Movie(1, "first", WatchState.WATCHED),
-                Movie(2, "second", WatchState.WATCHED),
-            )
-        coEvery { movieDao.getAllMovies() } returns flowOf(movies)
+    fun getMovies() =
+        runTest {
+            // Given
+            val movies =
+                listOf(
+                    Movie(1, "first", WatchState.WATCHED),
+                    Movie(2, "second", WatchState.WATCHED),
+                )
+            coEvery { movieDao.getAllMovies() } returns flowOf(movies)
 
-        // When
-        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-        val result = sut.movies.value
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            val result = sut.movies.first()
 
-        // Then
-        assertEquals(movies, result)
-    }
+            // Then
+            assertEquals(movies, result)
+        }
 
     @Test
     fun getMovie() {
@@ -89,48 +92,51 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun addMovie() {
-        // Given
-        val movieList = slot<List<Movie>>()
-        coEvery { movieDao.insertMovies(capture(movieList)) } just runs
+    fun addMovie() =
+        runTest {
+            // Given
+            val movieList = slot<List<Movie>>()
+            coEvery { movieDao.insertMovies(capture(movieList)) } just runs
 
-        // When
-        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-        sut.addMovie("first")
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            sut.addMovie("first")
 
-        // Then
-        coVerify { movieDao.insertMovies(any()) }
-        assertEquals(
-            "first",
-            movieList.captured.firstOrNull()?.title,
-        )
-    }
-
-    @Test
-    fun setWatchState() {
-        // Given
-        coEvery { movieDao.updateWatchState(any(), any()) } just runs
-
-        // When
-        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-        sut.setWatchState(11, WatchState.WATCHED)
-
-        // Then
-        coVerify { movieDao.updateWatchState(11, WatchState.WATCHED) }
-    }
+            // Then
+            coVerify { movieDao.insertMovies(any()) }
+            assertEquals(
+                "first",
+                movieList.captured.firstOrNull()?.title,
+            )
+        }
 
     @Test
-    fun archiveMovie() {
-        // Given
-        val movieToArchive = Movie(1, "toArchive", WatchState.WATCHED, isArchived = false)
-        val requestedMovie = slot<Movie>()
-        coEvery { movieDao.delete(capture(requestedMovie)) } just runs
+    fun setWatchState() =
+        runTest {
+            // Given
+            coEvery { movieDao.updateWatchState(any(), any()) } just runs
 
-        // When
-        sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-        sut.archiveMovie(movieToArchive.id)
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            sut.setWatchState(11, WatchState.WATCHED)
 
-        // Then
-        coVerify { movieDao.archive(movieToArchive.id) }
-    }
+            // Then
+            coVerify { movieDao.updateWatchState(11, WatchState.WATCHED) }
+        }
+
+    @Test
+    fun archiveMovie() =
+        runTest {
+            // Given
+            val movieToArchive = Movie(1, "toArchive", WatchState.WATCHED, isArchived = false)
+            val requestedMovie = slot<Movie>()
+            coEvery { movieDao.delete(capture(requestedMovie)) } just runs
+
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            sut.archiveMovie(movieToArchive.id)
+
+            // Then
+            coVerify { movieDao.archive(movieToArchive.id) }
+        }
 }
