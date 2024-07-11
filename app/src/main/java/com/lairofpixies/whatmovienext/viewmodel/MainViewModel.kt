@@ -49,6 +49,10 @@ class MainViewModel
 
         fun addMovie(title: String) = viewModelScope.launch { repo.addMovie(title) }
 
+        fun addNewMovie(movie: Movie) {
+            addMovie(movie.title)
+        }
+
         fun updateMovieWatched(
             movieId: Long,
             watchState: WatchState,

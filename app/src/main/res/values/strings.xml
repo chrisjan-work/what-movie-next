@@ -6,4 +6,5 @@
     <string name="done">Done</string>
     <string name="edit">Edit</string>
     <string name="title">Title</string>
+    <string name="save_and_close">Save and Close</string>
 </resources>

@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
@@ -41,5 +42,19 @@ class MovieCardStepDefs(
         composeRule.composeStep {
             onNodeWithText(activity.getString(R.string.title))
                 .assertIsFocused()
+        }
+
+    @When("the user enters the title {string}")
+    fun theUserEntersTheTitle(movieTitle: String) =
+        composeRule.composeStep {
+            onNodeWithText(activity.getString(R.string.title))
+                .performTextInput(movieTitle)
+        }
+
+    @And("the user saves the entry")
+    fun theUserSavesTheEntry() =
+        composeRule.composeStep {
+            onNodeWithText(activity.getString(R.string.save_and_close))
+                .performClick()
         }
 }
