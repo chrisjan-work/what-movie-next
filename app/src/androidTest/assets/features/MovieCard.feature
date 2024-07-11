@@ -61,13 +61,13 @@ Feature: Movie card
     Then the edit view is visible
     And an alert messages giving the user the option to save or discard the changes is gone
 
-    # TODO: for some reason the step "the edited title is empty" is not closing the keyboard
-#  Scenario: Attempt to leave empty card view without saving
-#    Given the user initiates a new entry
-#    And the edited title is empty
-#    When the user navigates back
-#    Then the list view is visible
-#    And an alert messages giving the user the option to save or discard the changes is gone
+  Scenario: Attempt to leave empty card view without saving
+    Given a list with an entry "The One"
+    And the user initiates a new entry
+    And the edited title is empty
+    When the user navigates back
+    Then an alert messages giving the user the option to save or discard the changes is gone
+    And the list view is visible
 
 # TODO
 #  Scenario: Edit existing card

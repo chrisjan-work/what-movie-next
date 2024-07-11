@@ -7,6 +7,8 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
@@ -63,8 +65,10 @@ class MovieCardStepDefs(
     @And("the edited title is empty")
     fun theEditedTitleIsEmpty() =
         composeRule.composeStep {
-            onNodeWithText(activity.getString(R.string.title))
-                .performTextInput("")
+            onNodeWithText(activity.getString(R.string.title)).apply {
+                performTextClearance()
+                performImeAction()
+            }
         }
 
     @Then("an error message is displayed indicating that the title is required")

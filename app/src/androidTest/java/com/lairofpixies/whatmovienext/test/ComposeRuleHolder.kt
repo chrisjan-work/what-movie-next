@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.lairofpixies.whatmovienext.MainActivity
 import io.cucumber.junit.WithJunitRule
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withTimeout
 import org.junit.Rule
@@ -22,6 +23,7 @@ class ComposeRuleHolder {
     val composeRule: ComposeRule = createAndroidComposeRule<MainActivity>()
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 fun ComposeRule.composeStep(
     timeoutMillis: Long = 5000,
     intervalMillis: Long = 1000,

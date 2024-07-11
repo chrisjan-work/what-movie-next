@@ -12,6 +12,9 @@ import com.lairofpixies.whatmovienext.viewmodel.UiState
 import com.lairofpixies.whatmovienext.views.screens.EditableMovieDetailsScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieDetailsScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun NavigationHost(
@@ -54,7 +57,7 @@ fun NavigationHost(
         composable(Routes.CreateMovieView.route) {
             EditableMovieDetailsScreen(
                 movieId = null,
-                onCloseAction = { navController.popBackStack() },
+                onCloseAction = { CoroutineScope(Dispatchers.Main).launch { navController.popBackStack() } },
                 viewModel = viewModel,
                 navController = navController,
             )

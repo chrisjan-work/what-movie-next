@@ -15,6 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -110,6 +112,8 @@ fun EditableTitleField(
     focusRequester: FocusRequester,
     onTitleChanged: (String) -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
     TextField(
         value = title,
         onValueChange = onTitleChanged,
@@ -121,7 +125,11 @@ fun EditableTitleField(
             ),
         keyboardActions =
             KeyboardActions(
-                onDone = { focusRequester.freeFocus() },
+                onDone = {
+                    keyboardController?.hide()
+                    focusRequester.freeFocus()
+                    focusManager.clearFocus()
+                },
             ),
     )
 }
