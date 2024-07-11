@@ -1,120 +1,93 @@
-package com.lairofpixies.whatmovienext.test
+package com.lairofpixies.whatmovienext.stepdefs
 
-import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.filterToOne
-import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import com.lairofpixies.whatmovienext.database.InternalDatabase
 import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.database.MovieRepository
 import com.lairofpixies.whatmovienext.database.WatchState
+import com.lairofpixies.whatmovienext.test.CucumberTestContext
+import com.lairofpixies.whatmovienext.test.composeStep
+import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
 import com.lairofpixies.whatmovienext.viewmodel.ListMode
 import com.lairofpixies.whatmovienext.views.screens.DetailScreenTags
 import com.lairofpixies.whatmovienext.views.screens.MovieListTags
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.cucumber.java.After
-import io.cucumber.java.Before
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
 @HiltAndroidTest
 class MovieListStepDefs(
-    private val composeRuleHolder: ComposeRuleHolder,
-    private val scenarioHolder: ActivityScenarioHolder,
-) : SemanticsNodeInteractionsProvider by composeRuleHolder.composeRule {
-    fun ComposeRule.onNodeWithTextUnderTag(
-        text: String,
-        tag: String,
-    ) = onAllNodesWithText(text)
-        .filterToOne(hasAnyAncestor(hasTestTag(tag)))
-
-    @Inject
-    lateinit var appDatabase: InternalDatabase
-
-    @Inject
-    lateinit var movieRepository: MovieRepository
-
-    @Before
-    fun setUp() {
-        scenarioHolder.launch()
-    }
-
-    @After
-    fun tearDown() {
-        appDatabase.close()
-    }
+    private val testContext: CucumberTestContext,
+) {
+    private val composeRule
+        get() = testContext.composeRuleHolder.composeRule
 
     @Given("a list with an entry {string}")
     fun aListWithAnEntry(movieTitle: String) {
         runBlocking {
-            appDatabase
+            testContext.appDatabase
                 .movieDao()
                 .insertMovie(Movie(title = movieTitle, watchState = WatchState.PENDING))
         }
-        composeRuleHolder.composeRule.waitForIdle()
+        composeRule.waitForIdle()
     }
 
     @Given("a list with an entry {string} that is marked as watched")
     fun aListWithAnEntryThatIsMarkedAsWatched(movieTitle: String) {
         runBlocking {
-            appDatabase
+            testContext.appDatabase
                 .movieDao()
                 .insertMovie(Movie(title = movieTitle, watchState = WatchState.WATCHED))
         }
-        composeRuleHolder.composeRule.waitForIdle()
+        composeRule.waitForIdle()
     }
 
     @Given("an empty list of films")
     fun anEmptyListOfFilms() {
-        appDatabase.clearAllTables()
-        composeRuleHolder.composeRule.waitForIdle()
+        testContext.appDatabase.clearAllTables()
+        composeRule.waitForIdle()
     }
 
     @When("the user creates a new entry with the title {string}")
     fun theUserCreatesANewEntryWithTheTitle(movieTitle: String) {
         // TODO: add the proper ui interaction
         runBlocking {
-            movieRepository.addMovie(movieTitle)
+            testContext.appDatabase.movieDao().insertMovie(Movie(title = movieTitle))
         }
     }
 
     @Then("the entry {string} is visible")
     fun theEntryIsVisible(movieTitle: String) =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             onNodeWithTextUnderTag(movieTitle, MovieListTags.TAG_MOVIE_LIST)
                 .assertIsDisplayed()
         }
 
     @When("the user opens the entry {string}")
     fun theUserOpensTheEntry(movieTitle: String) =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             onNodeWithTextUnderTag(movieTitle, MovieListTags.TAG_MOVIE_LIST)
                 .performClick()
         }
 
     @Then("the card containing the information of {string} should be visible")
     fun theCardContainingTheInformationOfShouldBeVisible(movieTitle: String) =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             onNodeWithTextUnderTag(movieTitle, DetailScreenTags.TAG_MOVIE_CARD)
                 .assertIsDisplayed()
         }
 
     @When("the user archives the current entry")
     fun theUserArchivesTheCurrentEntry() =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             val archiveLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
             onNodeWithTextUnderTag(archiveLabel, DetailScreenTags.TAG_MOVIE_CARD)
                 .performClick()
@@ -122,21 +95,21 @@ class MovieListStepDefs(
 
     @Then("the entry {string} is not available")
     fun theEntryIsNotVisible(movieTitle: String) =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             onNodeWithTextUnderTag(movieTitle, MovieListTags.TAG_MOVIE_LIST)
                 .assertDoesNotExist()
         }
 
     @Then("the entry in the details view is marked as pending")
     fun theEntryInTheDetailsViewIsMarkedAsPending() =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             onNodeWithTag(DetailScreenTags.TAG_WATCH_STATE_SWITCH)
                 .assertIsOff()
         }
 
     @And("the list is in mode {string}")
     fun theListIsInMode(expectedMode: String) =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             var attempts = ListMode.entries.size
 
             // click the button until it displays the desired mode
@@ -157,7 +130,7 @@ class MovieListStepDefs(
 
     @And("the user marks the entry as watched")
     fun theUserMarksTheEntryAsWatched() =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             try {
                 onNodeWithTag(DetailScreenTags.TAG_WATCH_STATE_SWITCH).assertIsOff().performClick()
             } catch (_: Throwable) {
@@ -167,7 +140,7 @@ class MovieListStepDefs(
 
     @And("the user navigates back to the list")
     fun theUserNavigatesBackToTheList() =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             val closeLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.close)
             onNodeWithTextUnderTag(closeLabel, DetailScreenTags.TAG_MOVIE_CARD)
                 .performClick()
@@ -175,7 +148,7 @@ class MovieListStepDefs(
 
     @When("the user marks the entry as pending")
     fun theUserMarksTheEntryAsPending() =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             try {
                 onNodeWithTag(DetailScreenTags.TAG_WATCH_STATE_SWITCH)
                     .assertIsOn()
@@ -200,14 +173,14 @@ class MovieListStepDefs(
                 }
 
         runBlocking {
-            appDatabase.movieDao().insertMovies(movieList)
+            testContext.appDatabase.movieDao().insertMovies(movieList)
         }
-        composeRuleHolder.composeRule.waitForIdle()
+        composeRule.waitForIdle()
     }
 
     @When("the user scrolls down to {string}")
     fun theUserScrollsDownTo(movieTitle: String) =
-        composeRuleHolder.composeStep {
+        composeRule.composeStep {
             onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .performScrollToNode(hasText(movieTitle))
         }

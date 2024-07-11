@@ -9,15 +9,18 @@ class ActivityScenarioHolder {
     private var scenario: ActivityScenario<*>? = null
 
     fun launch(intent: Intent) {
+        assert(scenario == null)
         scenario = ActivityScenario.launch<MainActivity>(intent)
     }
 
     fun launch() {
+        assert(scenario == null)
         scenario = ActivityScenario.launch(MainActivity::class.java)
     }
 
     @After
     fun close() {
         scenario?.close()
+        scenario = null
     }
 }

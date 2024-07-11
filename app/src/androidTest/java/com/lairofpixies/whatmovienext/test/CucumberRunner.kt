@@ -7,7 +7,7 @@ import io.cucumber.android.runner.CucumberAndroidJUnitRunner
 import io.cucumber.junit.CucumberOptions
 
 @CucumberOptions(
-    glue = ["com.lairofpixies.whatmovienext.test"],
+    glue = ["com.lairofpixies.whatmovienext.test", "com.lairofpixies.whatmovienext.stepdefs"],
     features = ["features"],
     plugin = ["pretty"],
 )
