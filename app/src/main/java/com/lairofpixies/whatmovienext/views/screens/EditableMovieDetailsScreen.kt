@@ -1,5 +1,6 @@
 package com.lairofpixies.whatmovienext.views.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.database.Movie
+import com.lairofpixies.whatmovienext.viewmodel.ErrorState
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
 
 object EditableDetailScreenTags {
@@ -35,27 +37,48 @@ fun EditableMovieDetailsScreen(
 ) {
     val editableMovie =
         remember {
+            val movie = Movie(title = "")
             mutableStateOf(
-                Movie(title = ""),
+                movie,
             )
         }
 
+    // run only once when starting the screen
     val focusRequester = remember { FocusRequester() }
-
     LaunchedEffect(Unit) {
+        viewModel.beginEditing()
         focusRequester.requestFocus()
+    }
+
+    val onSaveAction = {
+        viewModel.saveMovie(
+            editableMovie.value,
+            onSuccess = onCloseAction,
+            onFailure = { viewModel.showError(it) },
+        )
+    }
+
+    BackHandler(true) {
+        when {
+            viewModel.hasSaveableChanges(editableMovie.value) ->
+                viewModel.showError(
+                    ErrorState.UnsavedChanges(
+                        onSave = onSaveAction,
+                        onDiscard = onCloseAction,
+                    ),
+                )
+
+            viewModel.hasQuietSaveableChanges(editableMovie.value) ->
+                onSaveAction()
+
+            else -> onCloseAction()
+        }
     }
 
     EditableMovieCard(
         movieState = editableMovie,
         focusRequester = focusRequester,
-        onSaveAction = {
-            viewModel.saveMovie(
-                editableMovie.value,
-                onSuccess = onCloseAction,
-                onFailure = { viewModel.showError(it) },
-            )
-        },
+        onSaveAction = onSaveAction,
     )
 }
 
@@ -68,7 +91,7 @@ fun EditableMovieCard(
     Column(
         modifier =
             Modifier
-                .testTag(DetailScreenTags.TAG_MOVIE_CARD),
+                .testTag(EditableDetailScreenTags.TAG_EDITABLE_MOVIE_CARD),
     ) {
         EditableTitleField(movieState.value.title, focusRequester) {
             movieState.value = movieState.value.copy(title = it)

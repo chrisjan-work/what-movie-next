@@ -6,6 +6,8 @@ import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.MovieRepository
 import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.database.WatchState
+import com.lairofpixies.whatmovienext.database.hasQuietSaveableChanges
+import com.lairofpixies.whatmovienext.database.hasSaveableChanges
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +24,8 @@ class MainViewModel
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(UiState())
         val uiState: StateFlow<UiState> = _uiState.asStateFlow()
+
+        private var currentlyEditing: Movie? = null
 
         init {
             viewModelScope.launch {
@@ -49,6 +53,10 @@ class MainViewModel
 
         fun addMovie(title: String) = viewModelScope.launch { repo.addMovie(title) }
 
+        fun beginEditing() {
+            currentlyEditing = null
+        }
+
         fun saveMovie(
             movie: Movie,
             onSuccess: () -> Unit,
@@ -58,6 +66,8 @@ class MainViewModel
                 onFailure(ErrorState.SavingWithEmptyTitle)
                 return
             }
+
+            currentlyEditing = movie.copy()
             addMovie(movie.title)
             onSuccess()
         }
@@ -80,4 +90,8 @@ class MainViewModel
         fun clearError() {
             _uiState.update { it.copy(errorState = ErrorState.None) }
         }
+
+        fun hasSaveableChanges(potentialMovie: Movie) = potentialMovie.hasSaveableChanges(currentlyEditing)
+
+        fun hasQuietSaveableChanges(potentialMovie: Movie) = potentialMovie.hasQuietSaveableChanges(currentlyEditing)
     }

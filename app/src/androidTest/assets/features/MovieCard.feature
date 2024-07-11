@@ -13,7 +13,7 @@ Feature: Movie card
     And the user saves the entry
     Then the entry "Airplane" is visible
 
-  # TODO
+  # TODO: rethink this scenario
 #  Scenario: Attempt to add duplicate card
 #    Given a list with an entry "Raiders of the lost ark"
 #    And the user initiates a new entry
@@ -27,37 +27,47 @@ Feature: Movie card
     When the user saves the entry
     Then an error message is displayed indicating that the title is required
 
-    # TODO
-#  Scenario: Attempt to leave filled card view without saving
-#    Given the user initiates a new entry
-#    When the user enters the title "Airplane"
-#    When the user leaves the view
-#    Then an alert message gives the user the option to save or discard the changes
+  Scenario: Attempt to leave filled card view without saving
+    Given the user initiates a new entry
+    When the user enters the title "Airplane"
+    And the user navigates back
+    Then an alert message gives the user the option to save or discard the changes
 
-      # TODO
-#  Scenario: Saving card through alert
-#    Given the user initiates a new entry
-#    When the user enters the title "Airplane"
-#    When the user leaves the view
-#    Then an alert message gives the user the option to save or discard the changes
-#    When the user selects "Save"
-#    Then the list should contain an entry with the title "Airplane"
+  Scenario: Saving card through alert
+    Given an empty list of films
+    And the user initiates a new entry
+    When the user enters the title "Airplane"
+    And the user navigates back
+    Then an alert message gives the user the option to save or discard the changes
+    When the user selects the option "Save"
+    Then the entry "Airplane" is visible
 
-  # TODO
-#  Scenario: Discarding card through alert
-#    Given the user initiates a new entry
-#    When the user enters the title "Airplane"
-#    When the user leaves the view
-#    Then an alert message gives the user the option to save or discard the changes
-#    When the user selects "Discard"
-#    Then the list should not contain an entry with the title "Airplane"
+  Scenario: Discarding card through alert
+    Given an empty list of films
+    And the user initiates a new entry
+    When the user enters the title "Airplane"
+    And the user navigates back
+    Then an alert message gives the user the option to save or discard the changes
+    When the user selects the option "Discard"
+    Then the entry "Airplane" is not available
 
-    # TODO
+  Scenario: Dismissing dialog and continue editing
+    Given an empty list of films
+    And the user initiates a new entry
+    When the user enters the title "Robin Hood Prince of Thieves"
+    And the user navigates back
+    Then an alert message gives the user the option to save or discard the changes
+    When the user selects the option "Continue Editing"
+    Then the edit view is visible
+    And an alert messages giving the user the option to save or discard the changes is gone
+
+    # TODO: for some reason the step "the edited title is empty" is not closing the keyboard
 #  Scenario: Attempt to leave empty card view without saving
 #    Given the user initiates a new entry
 #    And the edited title is empty
-#    When the user leaves the view
+#    When the user navigates back
 #    Then the list view is visible
+#    And an alert messages giving the user the option to save or discard the changes is gone
 
 # TODO
 #  Scenario: Edit existing card

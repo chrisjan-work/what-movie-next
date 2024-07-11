@@ -176,4 +176,11 @@ class MovieListStepDefs(
             onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .performScrollToNode(hasText(movieTitle))
         }
+
+    @Then("the list view is visible")
+    fun theListViewIsVisible() =
+        composeRule.composeStep {
+            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+                .assertIsDisplayed()
+        }
 }

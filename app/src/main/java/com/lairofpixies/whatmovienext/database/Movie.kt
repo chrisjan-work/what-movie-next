@@ -10,3 +10,17 @@ data class Movie(
     val watchState: WatchState = WatchState.PENDING,
     val isArchived: Boolean = false,
 )
+
+fun Movie.hasSaveableChanges(lastSavedMovie: Movie?): Boolean =
+    when {
+        title.isBlank() -> false
+        lastSavedMovie == null -> true
+        else -> title != lastSavedMovie.title
+    }
+
+fun Movie.hasQuietSaveableChanges(lastSavedMovie: Movie?): Boolean =
+    when {
+        title.isBlank() -> false
+        lastSavedMovie == null -> true
+        else -> watchState != lastSavedMovie.watchState
+    }
