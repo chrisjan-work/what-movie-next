@@ -14,4 +14,5 @@ enum class ListMode {
 data class UiState(
     val movieList: List<Movie> = emptyList(),
     val listMode: ListMode = ListMode.ALL,
+    val errorState: ErrorState = ErrorState.None,
 )

@@ -21,12 +21,11 @@ Feature: Movie card
 #    Then an error message is displayed indicating that the entry already exists
 #    And the save function is disabled
 
-  # TODO
-#  Scenario: Attempt to create card with empty title
-#    Given the user initiates a new entry
-#    And the edited title is empty
-#    When the user saves the entry
-#    Then an error message is displayed indicating that the title is required
+  Scenario: Attempt to create card with empty title
+    Given the user initiates a new entry
+    And the edited title is empty
+    When the user saves the entry
+    Then an error message is displayed indicating that the title is required
 
     # TODO
 #  Scenario: Attempt to leave filled card view without saving

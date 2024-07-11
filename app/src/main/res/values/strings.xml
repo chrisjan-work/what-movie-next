@@ -7,4 +7,6 @@
     <string name="edit">Edit</string>
     <string name="title">Title</string>
     <string name="save_and_close">Save and Close</string>
+    <string name="error_title_is_required">Title is missing. Please provide one.</string>
+    <string name="error_title">Problem</string>
 </resources>

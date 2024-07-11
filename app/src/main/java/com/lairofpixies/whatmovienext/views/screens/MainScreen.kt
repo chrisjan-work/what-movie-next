@@ -12,11 +12,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.ui.theme.WhatMovieNextTheme
+import com.lairofpixies.whatmovienext.viewmodel.ErrorState
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
 import com.lairofpixies.whatmovienext.views.navigation.NavigationHost
 import com.lairofpixies.whatmovienext.views.navigation.Routes
@@ -46,6 +48,13 @@ fun MainScreen(viewModel: MainViewModel) {
                     uiState = uiState,
                     viewModel = viewModel,
                 )
+
+                if (uiState.errorState != ErrorState.None) {
+                    val message = LocalContext.current.getString(uiState.errorState.messageResource)
+                    PopupDialog(errorMessage = message) {
+                        viewModel.clearError()
+                    }
+                }
             }
         }
     }

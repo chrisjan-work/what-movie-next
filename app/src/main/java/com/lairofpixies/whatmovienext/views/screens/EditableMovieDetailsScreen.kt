@@ -50,10 +50,12 @@ fun EditableMovieDetailsScreen(
         movieState = editableMovie,
         focusRequester = focusRequester,
         onSaveAction = {
-            viewModel.addNewMovie(editableMovie.value)
-            true
+            viewModel.saveMovie(
+                editableMovie.value,
+                onSuccess = onCloseAction,
+                onFailure = { viewModel.showError(it) },
+            )
         },
-        onCloseAction = onCloseAction,
     )
 }
 
@@ -61,8 +63,7 @@ fun EditableMovieDetailsScreen(
 fun EditableMovieCard(
     movieState: MutableState<Movie>,
     focusRequester: FocusRequester,
-    onSaveAction: () -> Boolean,
-    onCloseAction: () -> Unit,
+    onSaveAction: () -> Unit,
 ) {
     Column(
         modifier =
@@ -73,11 +74,7 @@ fun EditableMovieCard(
             movieState.value = movieState.value.copy(title = it)
         }
         Button(
-            onClick = {
-                if (onSaveAction()) {
-                    onCloseAction()
-                }
-            },
+            onClick = { onSaveAction() },
         ) {
             Text(stringResource(id = R.string.save_and_close))
         }

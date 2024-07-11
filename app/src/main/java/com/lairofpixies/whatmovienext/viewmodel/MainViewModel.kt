@@ -49,8 +49,17 @@ class MainViewModel
 
         fun addMovie(title: String) = viewModelScope.launch { repo.addMovie(title) }
 
-        fun addNewMovie(movie: Movie) {
+        fun saveMovie(
+            movie: Movie,
+            onSuccess: () -> Unit,
+            onFailure: (errorState: ErrorState) -> Unit,
+        ) {
+            if (movie.title.isBlank()) {
+                onFailure(ErrorState.SavingWithEmptyTitle)
+                return
+            }
             addMovie(movie.title)
+            onSuccess()
         }
 
         fun updateMovieWatched(
@@ -62,5 +71,13 @@ class MainViewModel
 
         fun setListMode(listMode: ListMode) {
             _uiState.update { it.copy(listMode = listMode) }
+        }
+
+        fun showError(errorState: ErrorState) {
+            _uiState.update { it.copy(errorState = errorState) }
+        }
+
+        fun clearError() {
+            _uiState.update { it.copy(errorState = ErrorState.None) }
         }
     }
