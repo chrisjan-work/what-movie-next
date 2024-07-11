@@ -73,4 +73,11 @@ class MovieCardStepDefs(
             onNodeWithText(activity.getString(R.string.error_title_is_required))
                 .assertIsDisplayed()
         }
+
+    @When("the user creates a new entry with the title {string}")
+    fun theUserCreatesANewEntryWithTheTitle(movieTitle: String) {
+        theUserInitiatesANewEntry()
+        theUserEntersTheTitle(movieTitle)
+        theUserSavesTheEntry()
+    }
 }

@@ -56,14 +56,6 @@ class MovieListStepDefs(
         composeRule.waitForIdle()
     }
 
-    @When("the user creates a new entry with the title {string}")
-    fun theUserCreatesANewEntryWithTheTitle(movieTitle: String) {
-        // TODO: add the proper ui interaction
-        runBlocking {
-            testContext.appDatabase.movieDao().insertMovie(Movie(title = movieTitle))
-        }
-    }
-
     @Then("the entry {string} is visible")
     fun theEntryIsVisible(movieTitle: String) =
         composeRule.composeStep {
