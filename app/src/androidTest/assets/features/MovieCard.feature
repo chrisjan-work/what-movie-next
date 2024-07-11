@@ -78,7 +78,7 @@ Feature: Movie card
 #    Then the list should contain an entry with the title "The Big Lebowski"
 #    And the list should not contain an entry with the title "Young Frankenstein"
 #
-  # TODO
+  # TODO: rethink this scenario
 #  Scenario: Edit existing card with duplicate title
 #    Given a list with an entry "Young Frankenstein"
 #    And a list with an entry "The Big Lebowski"

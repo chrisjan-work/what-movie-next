@@ -45,13 +45,18 @@ class MainViewModel
 
         fun getMovie(movieId: Long): StateFlow<PartialMovie> = repo.getMovie(movieId)
 
-        fun createMovie(andThen: (Long) -> Unit) =
-            viewModelScope.launch {
-                val newId = repo.createMovie()
-                andThen(newId)
-            }
-
         fun addMovie(title: String) = viewModelScope.launch { repo.addMovie(title) }
+
+        fun updateMovieWatched(
+            movieId: Long,
+            watchState: WatchState,
+        ) = viewModelScope.launch { repo.setWatchState(movieId, watchState) }
+
+        fun archiveMovie(movieId: Long) = viewModelScope.launch { repo.archiveMovie(movieId) }
+
+        fun setListMode(listMode: ListMode) {
+            _uiState.update { it.copy(listMode = listMode) }
+        }
 
         fun beginEditing() {
             currentlyEditing = null
@@ -70,17 +75,6 @@ class MainViewModel
             currentlyEditing = movie.copy()
             addMovie(movie.title)
             onSuccess()
-        }
-
-        fun updateMovieWatched(
-            movieId: Long,
-            watchState: WatchState,
-        ) = viewModelScope.launch { repo.setWatchState(movieId, watchState) }
-
-        fun archiveMovie(movieId: Long) = viewModelScope.launch { repo.archiveMovie(movieId) }
-
-        fun setListMode(listMode: ListMode) {
-            _uiState.update { it.copy(listMode = listMode) }
         }
 
         fun showError(errorState: ErrorState) {

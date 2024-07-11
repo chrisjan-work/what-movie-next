@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -30,12 +29,6 @@ class MovieRepositoryImpl(
                 SharingStarted.Eagerly,
                 initialValue = PartialMovie.Loading,
             )
-
-    override suspend fun createMovie(): Long =
-        repositoryScope
-            .async {
-                dao.insertMovie(Movie(title = "", watchState = WatchState.PENDING))
-            }.await()
 
     override suspend fun addMovie(title: String) {
         repositoryScope

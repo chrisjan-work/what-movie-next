@@ -10,8 +10,6 @@ interface MovieRepository {
 
     suspend fun addMovie(title: String)
 
-    suspend fun createMovie(): Long
-
     suspend fun setWatchState(
         movieId: Long,
         watchState: WatchState,
