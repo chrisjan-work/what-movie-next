@@ -4,10 +4,23 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
+    @Query("SELECT * FROM movie WHERE isArchived = 0")
+    fun getAllMovies(): Flow<List<Movie>>
+
+    @Query("SELECT * FROM movie WHERE id = :id")
+    fun getMovie(id: Long): Flow<Movie?>
+
+    @Query("SELECT * FROM movie WHERE id = :id")
+    suspend fun fetchMovieById(id: Long): Movie?
+
+    @Query("SELECT * FROM movie WHERE UPPER(title) = UPPER(:title)")
+    suspend fun fetchMoviesByTitle(title: String): List<Movie>
+
     @Insert
     suspend fun insertMovie(movie: Movie): Long
 
@@ -17,18 +30,15 @@ interface MovieDao {
     @Delete
     suspend fun delete(movie: Movie)
 
-    @Query("SELECT * FROM movie WHERE isArchived = 0")
-    fun getAllMovies(): Flow<List<Movie>>
-
-    @Query("SELECT * FROM movie WHERE id = :id")
-    fun getMovie(id: Long): Flow<Movie?>
+    @Update
+    suspend fun updateMovieDetails(movie: Movie)
 
     @Query("UPDATE movie SET watchState = :watchState WHERE id = :id")
-    fun updateWatchState(
+    suspend fun updateWatchState(
         id: Long,
         watchState: WatchState,
     )
 
     @Query("UPDATE movie SET isArchived = 1 WHERE id = :id")
-    fun archive(id: Long)
+    suspend fun archive(id: Long)
 }

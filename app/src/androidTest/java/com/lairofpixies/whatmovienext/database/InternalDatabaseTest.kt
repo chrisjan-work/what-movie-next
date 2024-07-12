@@ -3,7 +3,7 @@ package com.lairofpixies.whatmovienext.database
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -27,26 +27,58 @@ class InternalDatabaseTest {
 
     @Test
     fun `create and read entry`() =
-        runBlocking {
+        runTest {
             // Given an empty database
             assert(dao.getAllMovies().first().isEmpty())
 
             // When we insert a movie
             val movie =
                 Movie(
-                    id = 1,
-                    title = "Someone flew over the cuckoo's nest",
+                    id = 10,
+                    title = "Casino",
                     watchState = WatchState.PENDING,
                 )
             dao.insertMovie(movie)
 
             // Then the movie is in the database
-            assertEquals(listOf(movie), dao.getAllMovies().first())
+            assertEquals(movie, dao.getMovie(10).first())
+        }
+
+    @Test
+    fun `create and read several entries at a time`() =
+        runTest {
+            // Given an empty database
+            assert(dao.getAllMovies().first().isEmpty())
+
+            // When we insert some movies
+            val movies =
+                listOf(
+                    Movie(
+                        id = 1,
+                        title = "Someone flew over the cuckoo's nest",
+                        watchState = WatchState.PENDING,
+                    ),
+                    Movie(
+                        id = 2,
+                        title = "Watchmen",
+                        watchState = WatchState.PENDING,
+                    ),
+                    Movie(
+                        id = 3,
+                        title = "A Beautiful Mind",
+                        watchState = WatchState.PENDING,
+                    ),
+                )
+
+            dao.insertMovies(movies)
+
+            // Then the movie is in the database
+            assertEquals(movies, dao.getAllMovies().first())
         }
 
     @Test
     fun `create and delete entry`() =
-        runBlocking {
+        runTest {
             // Given a database with a single movie
             assert(dao.getAllMovies().first().isEmpty())
             val movie = Movie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
@@ -60,8 +92,28 @@ class InternalDatabaseTest {
         }
 
     @Test
+    fun `update movie details`() =
+        runTest {
+            // Given a database with a single movie
+            val movie = Movie(id = 9, title = "Stargate", watchState = WatchState.PENDING)
+            dao.insertMovie(movie)
+
+            // When updating the movie details
+            dao.updateMovieDetails(movie.copy(title = "Stargate: Atlantis"))
+
+            // Then the movie details are updated
+            assertEquals(
+                "Stargate: Atlantis",
+                dao
+                    .getMovie(9)
+                    .first()
+                    ?.title,
+            )
+        }
+
+    @Test
     fun `set movie watch state`() =
-        runBlocking {
+        runTest {
             // Given a database with a single movie
             assert(dao.getAllMovies().first().isEmpty())
             val movie = Movie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
@@ -82,7 +134,7 @@ class InternalDatabaseTest {
 
     @Test
     fun `archive movie`() =
-        runBlocking {
+        runTest {
             // Given a database with a single movie
             assert(dao.getAllMovies().first().isEmpty())
             val movie =
@@ -99,5 +151,62 @@ class InternalDatabaseTest {
 
             // Then the movie is removed from the view list
             assert(dao.getAllMovies().first().isEmpty())
+        }
+
+    @Test
+    fun `fetch single movie by id`() =
+        runTest {
+            // Given a database with a single movie
+            val movie = Movie(id = 11, title = "The Searchers")
+            dao.insertMovie(movie)
+
+            // When fetching the movie by id
+            val shouldBeMovie = dao.fetchMovieById(11)
+            val shouldBeNull = dao.fetchMovieById(12)
+
+            // Then the movie is returned or not
+            assertEquals(movie, shouldBeMovie)
+            assertEquals(null, shouldBeNull)
+        }
+
+    @Test
+    fun `fetch movies by title`() =
+        runTest {
+            // Given a database with three movies, but one has a duplicated title
+            val movies =
+                listOf(
+                    Movie(id = 1, title = "The Godfather"),
+                    Movie(id = 2, title = "The Godfather II"),
+                    Movie(id = 3, title = "The Godfather II"),
+                )
+            dao.insertMovies(movies)
+
+            // When fetching the movies by title
+            val duplicated = dao.fetchMoviesByTitle("The Godfather II")
+            val single = dao.fetchMoviesByTitle("The Godfather")
+            val none = dao.fetchMoviesByTitle("The Godfather III")
+
+            // Then the movies are returned
+            assertEquals(2, duplicated.size)
+            assertEquals(1, single.size)
+            assertEquals(0, none.size)
+        }
+
+    @Test
+    fun `fetch movies by title is case insensitive`() =
+        runTest {
+            // Given a database with a single movie
+            val movie = Movie(id = 1, title = "AbCd")
+            dao.insertMovie(movie)
+
+            // When fetching the movies by title with different case
+            val lowerCase = dao.fetchMoviesByTitle("abcd")
+            val upperCase = dao.fetchMoviesByTitle("ABCD")
+            val none = dao.fetchMoviesByTitle("abcd123")
+
+            // Then the movies are returned
+            assertEquals(movie, lowerCase.first())
+            assertEquals(movie, upperCase.first())
+            assertEquals(emptyList<Movie>(), none)
         }
 }
