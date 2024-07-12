@@ -13,14 +13,6 @@ Feature: Movie card
     And the user saves the entry
     Then the entry "Airplane" is visible
 
-  # TODO: rethink this scenario
-#  Scenario: Attempt to add duplicate card
-#    Given a list with an entry "Raiders of the lost ark"
-#    And the user initiates a new entry
-#    When the user enters the title "Raiders of the Lost Ark"
-#    Then an error message is displayed indicating that the entry already exists
-#    And the save function is disabled
-
   Scenario: Attempt to create card with empty title
     Given the user initiates a new entry
     And the edited title is empty
@@ -69,11 +61,8 @@ Feature: Movie card
     Then an alert messages giving the user the option to save or discard the changes is gone
     And the list view is visible
 
-  @Journey
   Scenario: Edit existing card
-    Given a list with an entry "Young Frankenstein"
-    When the user opens the entry "Young Frankenstein"
-    Then the card containing the information of "Young Frankenstein" should be visible
+    Given a card opened with the entry "Young Frankenstein"
     When the user starts editing the entry
     And the user enters the title "The Big Lebowski"
     And the user saves the entry
@@ -81,6 +70,47 @@ Feature: Movie card
     When the user navigates back
     Then the entry "The Big Lebowski" is visible
     And the entry "Young Frankenstein" is not available
+
+  Scenario: leave edited card with changes but without saving
+    Given a card opened with the entry "Rocketman"
+    When the user starts editing the entry
+    And the user enters the title "Ratatouille"
+    And the user navigates back
+    Then an alert message gives the user the option to save or discard the changes
+
+  Scenario: leave edited card without changes or saving
+    Given a card opened with the entry "Ratatouille"
+    When the user starts editing the entry
+    And the user navigates back
+    Then an alert messages giving the user the option to save or discard the changes is gone
+    And the card containing the information of "Ratatouille" should be visible
+
+  Scenario: Edit existing card, try to leave without saving, accept saving in alert
+    Given a card opened with the entry "Dracula"
+    When the user starts editing the entry
+    And the user enters the title "The Lord of the Rings"
+    And the user navigates back
+    Then an alert message gives the user the option to save or discard the changes
+    When the user selects the option "Save"
+    Then the card containing the information of "The Lord of the Rings" should be visible
+
+  Scenario: Edit existing card, try to leave without saving, reject saving in alert
+    Given a card opened with the entry "Dracula"
+    When the user starts editing the entry
+    And the user enters the title "The Lord of the Rings"
+    And the user navigates back
+    Then an alert message gives the user the option to save or discard the changes
+    When the user selects the option "Discard"
+    Then the card containing the information of "Dracula" should be visible
+
+
+  # TODO: rethink this scenario
+#  Scenario: Attempt to add duplicate card
+#    Given a list with an entry "Raiders of the lost ark"
+#    And the user initiates a new entry
+#    When the user enters the title "Raiders of the Lost Ark"
+#    Then an error message is displayed indicating that the entry already exists
+#    And the save function is disabled
 
   # TODO: rethink this scenario
 #  Scenario: Edit existing card with duplicate title

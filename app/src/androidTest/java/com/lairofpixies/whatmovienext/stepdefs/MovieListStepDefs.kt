@@ -191,4 +191,11 @@ class MovieListStepDefs(
             onNodeWithTextUnderTag(editLabel, DetailScreenTags.TAG_MOVIE_CARD)
                 .performClick()
         }
+
+    @Given("a card opened with the entry {string}")
+    fun aCardOpenedWithTheEntry(movieTitle: String) {
+        aListWithAnEntry(movieTitle)
+        theUserOpensTheEntry(movieTitle)
+        theCardContainingTheInformationOfShouldBeVisible(movieTitle)
+    }
 }
