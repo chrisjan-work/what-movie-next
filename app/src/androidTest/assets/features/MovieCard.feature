@@ -71,14 +71,14 @@ Feature: Movie card
     Then the entry "The Big Lebowski" is visible
     And the entry "Young Frankenstein" is not available
 
-  Scenario: leave edited card with changes but without saving
+  Scenario: Leave edited card with changes but without saving
     Given a card opened with the entry "Rocketman"
     When the user starts editing the entry
     And the user enters the title "Ratatouille"
     And the user navigates back
     Then an alert message gives the user the option to save or discard the changes
 
-  Scenario: leave edited card without changes or saving
+  Scenario: Leave edited card without changes or saving
     Given a card opened with the entry "Ratatouille"
     When the user starts editing the entry
     And the user navigates back
@@ -103,8 +103,12 @@ Feature: Movie card
     When the user selects the option "Discard"
     Then the card containing the information of "Dracula" should be visible
 
+  Scenario: Trim whitespace from title
+    Given the user initiates a new entry
+    When the user enters the title "  Airplane  "
+    And the user saves the entry
+    Then the entry "Airplane" is visible
 
-  # TODO: rethink this scenario
 #  Scenario: Attempt to add duplicate card
 #    Given a list with an entry "Raiders of the lost ark"
 #    And the user initiates a new entry

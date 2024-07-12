@@ -62,6 +62,7 @@ fun EditableMovieDetailsScreen(
     }
 
     val onSaveAction = {
+        editableMovie.value = editableMovie.value.copy(title = editableMovie.value.title.trim())
         viewModel.saveMovie(
             editableMovie.value,
             onSuccess = { savedId ->
