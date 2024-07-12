@@ -77,18 +77,20 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `add movie`() {
-        // Given
-        val movie = slot<Movie>()
-        coEvery { repo.addMovie(capture(movie)) } returns 10
+    fun `add movie`() =
+        runTest {
+            // Given
+            val movie = slot<Movie>()
+            coEvery { repo.addMovie(capture(movie)) } returns 10
 
-        // When
-        mainViewModel.addMovie("adding movie")
+            // When
+            val returnedId = mainViewModel.addMovie(Movie(title = "adding movie"))
 
-        // Then
-        coVerify { repo.addMovie(any()) }
-        assertEquals("adding movie", movie.captured.title)
-    }
+            // Then
+            coVerify { repo.addMovie(any()) }
+            assertEquals("adding movie", movie.captured.title)
+            assertEquals(10, returnedId)
+        }
 
     @Test
     fun `update watch state of movie`() {
@@ -168,13 +170,13 @@ class MainViewModelTest {
     fun `accept to save movie with title`() {
         // Given
         val movie = Movie(id = 1, title = "successful movie")
-        val successCallback = spyk<() -> Unit>()
+        val successCallback = spyk<(Long) -> Unit>()
 
         // When
         mainViewModel.saveMovie(movie, successCallback) {}
 
         // Then
-        verify { successCallback() }
+        verify { successCallback(any()) }
     }
 
     @Test

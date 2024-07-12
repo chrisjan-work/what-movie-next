@@ -41,6 +41,7 @@ fun MovieDetailsScreen(
     LaunchedEffect(partialMovie) {
         if (movieId == null || partialMovie is PartialMovie.NotFound) {
             Toast.makeText(context, "Movie not found", Toast.LENGTH_SHORT).show()
+            // TODO: call onCloseAction instead
             navController.navigate(Routes.HOME.route) {
                 popUpTo(Routes.HOME.route) {
                     inclusive = true
@@ -53,6 +54,7 @@ fun MovieDetailsScreen(
         MovieCard(
             movie = partialMovie.movie,
             onCloseAction = onCloseAction,
+            onEditAction = { navController.navigate(Routes.EditMovieView.route(it.id)) },
             onUpdateAction = { viewModel.updateMovieWatched(it.id, it.watchState) },
             onArchiveAction = { viewModel.archiveMovie(it.id) },
         )
@@ -63,6 +65,7 @@ fun MovieDetailsScreen(
 fun MovieCard(
     movie: Movie,
     onCloseAction: () -> Unit,
+    onEditAction: (Movie) -> Unit,
     onUpdateAction: (Movie) -> Unit,
     onArchiveAction: (Movie) -> Unit,
 ) {
@@ -74,6 +77,9 @@ fun MovieCard(
         TitleField(movie.title)
         WatchStateField(movie.watchState) { watchState ->
             onUpdateAction(movie.copy(watchState = watchState))
+        }
+        Button(onClick = { onEditAction(movie) }) {
+            Text(stringResource(id = R.string.edit))
         }
         Button(onClick = { onCloseAction() }) {
             Text(stringResource(id = R.string.close))
@@ -122,6 +128,7 @@ fun DetailScreenPreview() {
             watchState = WatchState.PENDING,
         ),
         onCloseAction = {},
+        onEditAction = {},
         onUpdateAction = {},
         onArchiveAction = {},
     )

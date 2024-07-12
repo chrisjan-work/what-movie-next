@@ -1,5 +1,6 @@
 package com.lairofpixies.whatmovienext.viewmodel
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.database.Movie
@@ -9,6 +10,7 @@ import com.lairofpixies.whatmovienext.database.WatchState
 import com.lairofpixies.whatmovienext.database.hasQuietSaveableChanges
 import com.lairofpixies.whatmovienext.database.hasSaveableChanges
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -45,7 +47,11 @@ class MainViewModel
 
         fun getMovie(movieId: Long): StateFlow<PartialMovie> = repo.getMovie(movieId)
 
-        fun addMovie(title: String) = viewModelScope.launch { repo.addMovie(Movie(title = title)) }
+        @VisibleForTesting
+        suspend fun addMovie(movie: Movie): Long = viewModelScope.async { repo.addMovie(movie) }.await()
+
+        @VisibleForTesting
+        suspend fun updateMovie(movie: Movie) = viewModelScope.async { repo.updateMovie(movie) }.await()
 
         fun updateMovieWatched(
             movieId: Long,
@@ -58,24 +64,42 @@ class MainViewModel
             _uiState.update { it.copy(listMode = listMode) }
         }
 
-        fun beginEditing() {
-            currentlyEditing = null
+        fun beginEditing(currentMovie: Movie? = null) {
+            currentlyEditing = currentMovie
         }
 
         fun saveMovie(
             movie: Movie,
-            onSuccess: () -> Unit,
+            onSuccess: (id: Long) -> Unit,
             onFailure: (errorState: ErrorState) -> Unit,
         ) {
-            if (movie.title.isBlank()) {
-                onFailure(ErrorState.SavingWithEmptyTitle)
-                return
-            }
+            viewModelScope.launch {
+                if (movie.title.isBlank()) {
+                    onFailure(ErrorState.SavingWithEmptyTitle)
+                    return@launch
+                }
 
-            currentlyEditing = movie.copy()
-            addMovie(movie.title)
-            onSuccess()
+                val expectedId = findExistingMovieId(movie)
+                val newId =
+                    if (expectedId == 0L) {
+                        addMovie(movie)
+                    } else {
+                        updateMovie(movie.copy(id = expectedId))
+                    }
+
+                currentlyEditing = movie.copy(id = newId)
+                onSuccess(newId)
+            }
         }
+
+        @VisibleForTesting
+        suspend fun findExistingMovieId(movie: Movie): Long =
+            viewModelScope
+                .async {
+                    val foundMovie =
+                        repo.fetchMovieById(movie.id)
+                    return@async foundMovie?.id ?: 0L
+                }.await()
 
         fun showError(errorState: ErrorState) {
             _uiState.update { it.copy(errorState = errorState) }

@@ -90,7 +90,14 @@ Skipped languages / frameworks
  * **Detekt**: relying on **Ktlint** for linting.
 
 
-Running tests
+Feature tests
 -------------
 
-The Cucumber plugin cannot run the Cucumber tests alongside the JUnit instrumentation tests. As a workaround, there are two distinct flavors: Cucumber and JUnit. The instrumentation tests must be executed on a particular flavor based on the set of tests you intend to run.
+The project is developed using a BDD approach (Behavior Driven Development) with the **Cucumber** framework. 
+
+ 1. A new **Feature** file is added to *app/src/androidTest/assets/features*.
+ 2. Different scenarios related to the feature are added in the **Gherkin** language.
+ 3. **Step** definitions are added or adjusted as needed, and then the code that passes the test.
+ 4. In this project these Gherkin Scenarios are called "Feature tests", to distinguish them from the regular connected tests.
+ 5. The feature tests are run via the **Gradle Cucumber Runner Plugin** (also automatically on CI). 
+ 6. However, the plugin cannot run alongside the regular JUnit-based connected tests, it's either-or. As a workaround, there are two flavors defined for the project, the **"Cucumber"** flavor and the **"Junit"** flavor. The production code is the same, the only difference is, when running the connected tests, which runner and therefore which set of tests will be run: the feature tests or the connected tests.

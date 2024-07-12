@@ -10,6 +10,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.database.Movie
+import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.viewmodel.ErrorState
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
 
@@ -37,14 +39,6 @@ fun EditableMovieDetailsScreen(
     viewModel: MainViewModel,
     navController: NavController,
 ) {
-    val editableMovie =
-        remember {
-            val movie = Movie(title = "")
-            mutableStateOf(
-                movie,
-            )
-        }
-
     // run only once when starting the screen
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
@@ -52,10 +46,28 @@ fun EditableMovieDetailsScreen(
         focusRequester.requestFocus()
     }
 
+    val partialMovie = movieId?.let { viewModel.getMovie(it).collectAsState().value }
+    val editableMovie =
+        remember {
+            mutableStateOf(
+                Movie(title = ""),
+            )
+        }
+
+    LaunchedEffect(partialMovie) {
+        if (partialMovie is PartialMovie.Completed) {
+            editableMovie.value = partialMovie.movie
+            viewModel.beginEditing(partialMovie.movie)
+        }
+    }
+
     val onSaveAction = {
         viewModel.saveMovie(
             editableMovie.value,
-            onSuccess = onCloseAction,
+            onSuccess = { savedId ->
+                editableMovie.value = editableMovie.value.copy(id = savedId)
+                onCloseAction()
+            },
             onFailure = { viewModel.showError(it) },
         )
     }

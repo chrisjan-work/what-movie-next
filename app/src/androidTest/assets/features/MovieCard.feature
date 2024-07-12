@@ -69,15 +69,19 @@ Feature: Movie card
     Then an alert messages giving the user the option to save or discard the changes is gone
     And the list view is visible
 
-# TODO
-#  Scenario: Edit existing card
-#    Given a list with an entry "Young Frankenstein"
-#    When the user opens the entry "Young Frankenstein"
-#    And the user starts editing the entry
-#    And the user enters the title "The Big Lebowski"
-#    Then the list should contain an entry with the title "The Big Lebowski"
-#    And the list should not contain an entry with the title "Young Frankenstein"
-#
+  @Journey
+  Scenario: Edit existing card
+    Given a list with an entry "Young Frankenstein"
+    When the user opens the entry "Young Frankenstein"
+    Then the card containing the information of "Young Frankenstein" should be visible
+    When the user starts editing the entry
+    And the user enters the title "The Big Lebowski"
+    And the user saves the entry
+    Then the card containing the information of "The Big Lebowski" should be visible
+    When the user navigates back
+    Then the entry "The Big Lebowski" is visible
+    And the entry "Young Frankenstein" is not available
+
   # TODO: rethink this scenario
 #  Scenario: Edit existing card with duplicate title
 #    Given a list with an entry "Young Frankenstein"

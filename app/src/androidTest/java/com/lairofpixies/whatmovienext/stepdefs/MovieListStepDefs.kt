@@ -183,4 +183,12 @@ class MovieListStepDefs(
             onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
                 .assertIsDisplayed()
         }
+
+    @When("the user starts editing the entry")
+    fun theUserStartsEditingTheEntry() =
+        composeRule.composeStep {
+            val editLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.edit)
+            onNodeWithTextUnderTag(editLabel, DetailScreenTags.TAG_MOVIE_CARD)
+                .performClick()
+        }
 }

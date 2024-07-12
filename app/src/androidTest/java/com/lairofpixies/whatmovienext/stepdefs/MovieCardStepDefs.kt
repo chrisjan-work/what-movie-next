@@ -52,6 +52,9 @@ class MovieCardStepDefs(
     fun theUserEntersTheTitle(movieTitle: String) =
         composeRule.composeStep {
             onNodeWithText(activity.getString(R.string.title))
+                .performTextClearance()
+
+            onNodeWithText(activity.getString(R.string.title))
                 .performTextInput(movieTitle)
         }
 
@@ -95,7 +98,9 @@ class MovieCardStepDefs(
     @And("the user navigates back")
     fun theUserNavigatesBack() =
         composeRule.composeStep {
-            activity.onBackPressedDispatcher.onBackPressed()
+            activity.runOnUiThread {
+                activity.onBackPressedDispatcher.onBackPressed()
+            }
         }
 
     @When("the user selects the option {string}")
