@@ -31,7 +31,7 @@ Feature: Movie card
     When the user enters the title "Airplane"
     And the user navigates back
     Then an alert message gives the user the option to save or discard the changes
-    When the user selects the option "Save"
+    When the user selects the save option "Save"
     Then the card "Airplane" is visible and the list contains this entry
 
   Scenario: Discarding card through alert
@@ -40,7 +40,7 @@ Feature: Movie card
     When the user enters the title "Airplane"
     And the user navigates back
     Then an alert message gives the user the option to save or discard the changes
-    When the user selects the option "Discard"
+    When the user selects the save option "Discard"
     Then the entry "Airplane" is not available
 
   Scenario: Dismissing dialog and continue editing
@@ -49,7 +49,7 @@ Feature: Movie card
     When the user enters the title "Robin Hood Prince of Thieves"
     And the user navigates back
     Then an alert message gives the user the option to save or discard the changes
-    When the user selects the option "Continue Editing"
+    When the user selects the save option "Continue Editing"
     Then the edit view is visible
     And an alert messages giving the user the option to save or discard the changes is gone
 
@@ -91,7 +91,7 @@ Feature: Movie card
     And the user enters the title "The Lord of the Rings"
     And the user navigates back
     Then an alert message gives the user the option to save or discard the changes
-    When the user selects the option "Save"
+    When the user selects the save option "Save"
     Then the card containing the information of "The Lord of the Rings" should be visible
 
   Scenario: Edit existing card, try to leave without saving, reject saving in alert
@@ -100,7 +100,7 @@ Feature: Movie card
     And the user enters the title "The Lord of the Rings"
     And the user navigates back
     Then an alert message gives the user the option to save or discard the changes
-    When the user selects the option "Discard"
+    When the user selects the save option "Discard"
     Then the card containing the information of "Dracula" should be visible
 
   Scenario: Trim whitespace from title
@@ -124,7 +124,6 @@ Feature: Movie card
     And the user enters the title "The Big Lebowski"
     And the user saves the entry
     Then an error message is displayed indicating that the entry already exists
-
 
 # TODO
 #  Scenario: Search movie
