@@ -35,7 +35,7 @@ object EditableDetailScreenTags {
 @Composable
 fun EditableMovieDetailsScreen(
     movieId: Long?,
-    onCloseAction: () -> Unit,
+    onCloseWithIdAction: (Long) -> Unit,
     viewModel: MainViewModel,
     navController: NavController,
 ) {
@@ -67,7 +67,7 @@ fun EditableMovieDetailsScreen(
             editableMovie.value,
             onSuccess = { savedId ->
                 editableMovie.value = editableMovie.value.copy(id = savedId)
-                onCloseAction()
+                onCloseWithIdAction(savedId)
             },
             onFailure = { viewModel.showError(it) },
         )
@@ -79,14 +79,16 @@ fun EditableMovieDetailsScreen(
                 viewModel.showError(
                     ErrorState.UnsavedChanges(
                         onSave = onSaveAction,
-                        onDiscard = onCloseAction,
+                        onDiscard = { onCloseWithIdAction(editableMovie.value.id) },
                     ),
                 )
 
             viewModel.hasQuietSaveableChanges(editableMovie.value) ->
                 onSaveAction()
 
-            else -> onCloseAction()
+            else -> {
+                onCloseWithIdAction(editableMovie.value.id)
+            }
         }
     }
 

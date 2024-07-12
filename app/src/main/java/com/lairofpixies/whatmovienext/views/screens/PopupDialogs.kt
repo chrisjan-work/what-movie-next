@@ -17,24 +17,42 @@ import com.lairofpixies.whatmovienext.viewmodel.ErrorState
 fun PopupDialogs(
     errorState: ErrorState,
     onDismiss: () -> Unit,
-) = when (errorState) {
-    ErrorState.None -> {}
-    ErrorState.SavingWithEmptyTitle ->
-        PopupDialog(
-            R.string.error_title_is_required,
-            onDismiss = onDismiss,
-        )
+) {
+    val context = LocalContext.current
+    when (errorState) {
+        ErrorState.None -> {}
+        ErrorState.SavingWithEmptyTitle ->
+            SingleButtonDialog(
+                R.string.error_title_is_required,
+                onDismiss = onDismiss,
+            )
 
-    is ErrorState.UnsavedChanges ->
-        SaveOnExitDialog(
-            onSave = errorState.onSave,
-            onDiscard = errorState.onDiscard,
-            onDismiss = onDismiss,
-        )
+        is ErrorState.UnsavedChanges ->
+            ThreeButtonDialog(
+                errorMessage = context.getString(R.string.warning_changes_not_saved),
+                saveLabel = context.getString(R.string.save),
+                onSave = errorState.onSave,
+                discardLabel = context.getString(R.string.discard),
+                onDiscard = errorState.onDiscard,
+                dismissLabel = context.getString(R.string.continue_editing),
+                onDismiss = onDismiss,
+            )
+
+        is ErrorState.DuplicatedTitle ->
+            ThreeButtonDialog(
+                errorMessage = context.getString(R.string.error_title_already_exists),
+                context.getString(R.string.overwrite),
+                onSave = errorState.onSave,
+                context.getString(R.string.discard_changes),
+                onDiscard = errorState.onDiscard,
+                dismissLabel = context.getString(R.string.continue_editing),
+                onDismiss = onDismiss,
+            )
+    }
 }
 
 @Composable
-fun PopupDialog(
+fun SingleButtonDialog(
     errorMessageResource: Int,
     onDismiss: () -> Unit,
 ) {
@@ -53,33 +71,36 @@ fun PopupDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SaveOnExitDialog(
+fun ThreeButtonDialog(
+    errorMessage: String,
+    saveLabel: String,
     onSave: () -> Unit,
+    discardLabel: String,
     onDiscard: () -> Unit,
+    dismissLabel: String,
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
     BasicAlertDialog(
         onDismissRequest = onDismiss,
     ) {
         Box {
             Column {
-                Text(text = context.getString(R.string.warning_changes_not_saved))
+                Text(text = errorMessage)
                 Row {
                     Button(onClick = {
                         onSave()
                         onDismiss()
                     }) {
-                        Text(context.getString(R.string.save))
+                        Text(saveLabel)
                     }
                     Button(onClick = {
                         onDiscard()
                         onDismiss()
                     }) {
-                        Text(context.getString(R.string.discard))
+                        Text(discardLabel)
                     }
                     Button(onClick = onDismiss) {
-                        Text(context.getString(R.string.continue_editing))
+                        Text(dismissLabel)
                     }
                 }
             }

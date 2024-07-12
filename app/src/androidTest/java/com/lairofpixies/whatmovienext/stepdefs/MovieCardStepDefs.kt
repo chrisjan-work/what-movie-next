@@ -86,6 +86,7 @@ class MovieCardStepDefs(
         theUserInitiatesANewEntry()
         theUserEntersTheTitle(movieTitle)
         theUserSavesTheEntry()
+        theUserNavigatesBack()
     }
 
     @Then("an alert message gives the user the option to save or discard the changes")
@@ -128,6 +129,13 @@ class MovieCardStepDefs(
     fun theEditViewIsVisible() =
         composeRule.composeStep {
             onNodeWithTag(EditableDetailScreenTags.TAG_EDITABLE_MOVIE_CARD)
+                .assertIsDisplayed()
+        }
+
+    @Then("an error message is displayed indicating that the entry already exists")
+    fun anErrorMessageIsDisplayedIndicatingThatTheEntryAlreadyExists() =
+        composeRule.composeStep {
+            onNodeWithText(activity.getString(R.string.error_title_already_exists))
                 .assertIsDisplayed()
         }
 }

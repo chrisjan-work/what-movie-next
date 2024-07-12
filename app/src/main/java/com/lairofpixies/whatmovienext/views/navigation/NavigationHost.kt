@@ -23,7 +23,20 @@ fun NavigationHost(
     uiState: UiState,
     viewModel: MainViewModel,
 ) {
-    val onCloseAction: () -> Unit = { CoroutineScope(Dispatchers.Main).launch { navController.popBackStack() } }
+    val onCloseAction: () -> Unit =
+        { CoroutineScope(Dispatchers.Main).launch { navController.popBackStack() } }
+
+    val onCloseWithIdAction: (Long) -> Unit = { id ->
+        CoroutineScope(Dispatchers.Main).launch {
+            if (id == 0L) {
+                navController.popBackStack()
+            } else {
+                navController.navigate(Routes.SingleMovieView.route(id)) {
+                    popUpTo(Routes.AllMoviesView.route) { inclusive = false }
+                }
+            }
+        }
+    }
 
     NavHost(navController = navController, startDestination = Routes.HOME.route) {
         composable(Routes.AllMoviesView.route) {
@@ -59,7 +72,7 @@ fun NavigationHost(
         composable(Routes.CreateMovieView.route) {
             EditableMovieDetailsScreen(
                 movieId = null,
-                onCloseAction = onCloseAction,
+                onCloseWithIdAction = onCloseWithIdAction,
                 viewModel = viewModel,
                 navController = navController,
             )
@@ -75,7 +88,7 @@ fun NavigationHost(
         ) { entry ->
             EditableMovieDetailsScreen(
                 movieId = entry.arguments?.getLong(Routes.EditMovieView.argumentOrEmpty),
-                onCloseAction = onCloseAction,
+                onCloseWithIdAction = onCloseWithIdAction,
                 viewModel = viewModel,
                 navController = navController,
             )

@@ -101,6 +101,20 @@ class MovieRepositoryImplTest {
         }
 
     @Test
+    fun `fetch movie by id always returns null for 0`() =
+        runTest {
+            // Given
+            coEvery { movieDao.fetchMovieById(0) } returns mockk()
+
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            val result = sut.fetchMovieById(0)
+
+            // Then
+            assertEquals(null, result)
+        }
+
+    @Test
     fun fetchMoviesByTitle() =
         runTest {
             // Given

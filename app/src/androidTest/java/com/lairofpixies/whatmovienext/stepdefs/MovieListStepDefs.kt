@@ -198,4 +198,11 @@ class MovieListStepDefs(
         theUserOpensTheEntry(movieTitle)
         theCardContainingTheInformationOfShouldBeVisible(movieTitle)
     }
+
+    @Then("the card {string} is visible and the list contains this entry")
+    fun theCardIsVisibleAndTheListContainsThisEntry(movieTitle: String) {
+        theCardContainingTheInformationOfShouldBeVisible(movieTitle)
+        theUserNavigatesBackToTheList()
+        theEntryIsVisible(movieTitle)
+    }
 }

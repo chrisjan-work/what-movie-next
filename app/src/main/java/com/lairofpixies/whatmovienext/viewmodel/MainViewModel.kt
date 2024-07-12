@@ -48,10 +48,23 @@ class MainViewModel
         fun getMovie(movieId: Long): StateFlow<PartialMovie> = repo.getMovie(movieId)
 
         @VisibleForTesting
-        suspend fun addMovie(movie: Movie): Long = viewModelScope.async { repo.addMovie(movie) }.await()
+        suspend fun addMovie(movie: Movie): Long =
+            viewModelScope
+                .async {
+                    repo.addMovie(movie).also { newId ->
+                        // TODO: verify in test
+                        currentlyEditing = movie.copy(id = newId)
+                    }
+                }.await()
 
         @VisibleForTesting
-        suspend fun updateMovie(movie: Movie) = viewModelScope.async { repo.updateMovie(movie) }.await()
+        suspend fun updateMovie(movie: Movie) =
+            viewModelScope
+                .async {
+                    repo.updateMovie(movie).also {
+                        currentlyEditing = movie
+                    }
+                }.await()
 
         fun updateMovieWatched(
             movieId: Long,
@@ -79,27 +92,38 @@ class MainViewModel
                     return@launch
                 }
 
-                val expectedId = findExistingMovieId(movie)
-                val newId =
-                    if (expectedId == 0L) {
-                        addMovie(movie)
-                    } else {
-                        updateMovie(movie.copy(id = expectedId))
-                    }
+                val isMovieAlreadyInDb = repo.fetchMovieById(movie.id) != null
+                val duplicateMovie =
+                    repo.fetchMoviesByTitle(movie.title).firstOrNull { it.id != movie.id }
 
-                currentlyEditing = movie.copy(id = newId)
-                onSuccess(newId)
+                if (duplicateMovie != null) {
+                    val error =
+                        ErrorState.DuplicatedTitle(
+                            onSave = {
+                                viewModelScope.launch {
+                                    val movieToUpdate = movie.copy(id = duplicateMovie.id)
+                                    if (isMovieAlreadyInDb) {
+                                        repo.deleteMovie(movie)
+                                    }
+                                    onSuccess(updateMovie(movieToUpdate))
+                                }
+                            },
+                            onDiscard = {
+                                // nothing to do: changes are discarded
+                                onSuccess(movie.id)
+                            },
+                        )
+                    onFailure(error)
+                    return@launch
+                }
+
+                if (isMovieAlreadyInDb) {
+                    onSuccess(updateMovie(movie))
+                } else {
+                    onSuccess(addMovie(movie))
+                }
             }
         }
-
-        @VisibleForTesting
-        suspend fun findExistingMovieId(movie: Movie): Long =
-            viewModelScope
-                .async {
-                    val foundMovie =
-                        repo.fetchMovieById(movie.id)
-                    return@async foundMovie?.id ?: 0L
-                }.await()
 
         fun showError(errorState: ErrorState) {
             _uiState.update { it.copy(errorState = errorState) }

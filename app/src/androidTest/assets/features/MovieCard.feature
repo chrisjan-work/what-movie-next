@@ -11,7 +11,7 @@ Feature: Movie card
     And the user initiates a new entry
     When the user enters the title "Airplane"
     And the user saves the entry
-    Then the entry "Airplane" is visible
+    Then the card "Airplane" is visible and the list contains this entry
 
   Scenario: Attempt to create card with empty title
     Given the user initiates a new entry
@@ -32,7 +32,7 @@ Feature: Movie card
     And the user navigates back
     Then an alert message gives the user the option to save or discard the changes
     When the user selects the option "Save"
-    Then the entry "Airplane" is visible
+    Then the card "Airplane" is visible and the list contains this entry
 
   Scenario: Discarding card through alert
     Given an empty list of films
@@ -107,24 +107,24 @@ Feature: Movie card
     Given the user initiates a new entry
     When the user enters the title "  Airplane  "
     And the user saves the entry
-    Then the entry "Airplane" is visible
+    Then the card "Airplane" is visible and the list contains this entry
 
-#  Scenario: Attempt to add duplicate card
-#    Given a list with an entry "Raiders of the lost ark"
-#    And the user initiates a new entry
-#    When the user enters the title "Raiders of the Lost Ark"
-#    Then an error message is displayed indicating that the entry already exists
-#    And the save function is disabled
+  Scenario: Attempt to add duplicate card
+    Given a list with an entry "Raiders of the lost ark"
+    And the user initiates a new entry
+    When the user enters the title "Raiders of the Lost Ark"
+    And the user saves the entry
+    Then an error message is displayed indicating that the entry already exists
 
-  # TODO: rethink this scenario
-#  Scenario: Edit existing card with duplicate title
-#    Given a list with an entry "Young Frankenstein"
-#    And a list with an entry "The Big Lebowski"
-#    When the user opens the entry "Young Frankenstein"
-#    And the user starts editing the entry
-#    And the user enters the title "The Big Lebowski"
-#    Then an error message is displayed indicating that the entry already exists
-#    And the save function is disabled
+  Scenario: Edit existing card with duplicate title
+    Given a list with an entry "Young Frankenstein"
+    And a list with an entry "The Big Lebowski"
+    When the user opens the entry "Young Frankenstein"
+    And the user starts editing the entry
+    And the user enters the title "The Big Lebowski"
+    And the user saves the entry
+    Then an error message is displayed indicating that the entry already exists
+
 
 # TODO
 #  Scenario: Search movie

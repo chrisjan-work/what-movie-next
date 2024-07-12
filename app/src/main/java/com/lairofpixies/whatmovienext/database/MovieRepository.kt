@@ -25,4 +25,6 @@ interface MovieRepository {
 
     // delete
     suspend fun archiveMovie(movieId: Long)
+
+    suspend fun deleteMovie(movie: Movie)
 }

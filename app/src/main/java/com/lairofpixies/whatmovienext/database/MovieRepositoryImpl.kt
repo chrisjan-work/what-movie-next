@@ -34,7 +34,11 @@ class MovieRepositoryImpl(
     override suspend fun fetchMovieById(movieId: Long): Movie? =
         repositoryScope
             .async {
-                dao.fetchMovieById(movieId)
+                if (movieId != 0L) {
+                    dao.fetchMovieById(movieId)
+                } else {
+                    null
+                }
             }.await()
 
     override suspend fun fetchMoviesByTitle(movieTitle: String): List<Movie> =
@@ -71,6 +75,13 @@ class MovieRepositoryImpl(
         repositoryScope
             .launch {
                 dao.archive(movieId)
+            }
+    }
+
+    override suspend fun deleteMovie(movie: Movie) {
+        repositoryScope
+            .launch {
+                dao.delete(movie)
             }
     }
 }

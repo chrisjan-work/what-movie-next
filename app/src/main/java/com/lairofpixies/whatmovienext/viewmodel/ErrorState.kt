@@ -9,4 +9,9 @@ sealed class ErrorState {
         val onSave: () -> Unit,
         val onDiscard: () -> Unit,
     ) : ErrorState()
+
+    data class DuplicatedTitle(
+        val onSave: () -> Unit,
+        val onDiscard: () -> Unit,
+    ) : ErrorState()
 }
