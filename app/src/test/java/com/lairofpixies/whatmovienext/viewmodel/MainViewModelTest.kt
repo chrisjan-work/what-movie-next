@@ -4,9 +4,11 @@ import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.MovieRepository
 import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.database.WatchState
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -76,11 +78,16 @@ class MainViewModelTest {
 
     @Test
     fun `add movie`() {
+        // Given
+        val movie = slot<Movie>()
+        coEvery { repo.addMovie(capture(movie)) } returns 10
+
         // When
         mainViewModel.addMovie("adding movie")
 
         // Then
-        coVerify { repo.addMovie("adding movie") }
+        coVerify { repo.addMovie(any()) }
+        assertEquals("adding movie", movie.captured.title)
     }
 
     @Test

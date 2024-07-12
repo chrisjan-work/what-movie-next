@@ -1,11 +1,5 @@
-package com.lairofpixies.whatmovienext
+package com.lairofpixies.whatmovienext.database
 
-import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.database.MovieDao
-import com.lairofpixies.whatmovienext.database.MovieRepository
-import com.lairofpixies.whatmovienext.database.MovieRepositoryImpl
-import com.lairofpixies.whatmovienext.database.PartialMovie
-import com.lairofpixies.whatmovienext.database.WatchState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
@@ -92,6 +86,36 @@ class MovieRepositoryImplTest {
     }
 
     @Test
+    fun fetchMovieById() =
+        runTest {
+            // Given
+            val movie = Movie(7, "gotById", WatchState.WATCHED)
+            coEvery { movieDao.fetchMovieById(7) } returns movie
+
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            val result = sut.fetchMovieById(7)
+
+            // Then
+            assertEquals(movie, result)
+        }
+
+    @Test
+    fun fetchMoviesByTitle() =
+        runTest {
+            // Given
+            val movie = Movie(12, "gotByTitle", WatchState.WATCHED)
+            coEvery { movieDao.fetchMoviesByTitle("gotByTitle") } returns listOf(movie)
+
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            val result = sut.fetchMoviesByTitle("gotByTitle")
+
+            // Then
+            assertEquals(listOf(movie), result)
+        }
+
+    @Test
     fun addMovie() =
         runTest {
             // Given
@@ -100,7 +124,7 @@ class MovieRepositoryImplTest {
 
             // When
             sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-            sut.addMovie("first")
+            sut.addMovie(Movie(title = "first"))
 
             // Then
             coVerify { movieDao.insertMovie(any()) }
@@ -108,6 +132,26 @@ class MovieRepositoryImplTest {
                 "first",
                 movie.captured.title,
             )
+        }
+
+    @Test
+    fun updateMovie() =
+        runTest {
+            // Given
+            val movie = slot<Movie>()
+            coEvery { movieDao.updateMovieDetails(capture(movie)) } just runs
+
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            val updatedId = sut.updateMovie(Movie(id = 11, title = "first"))
+
+            // Then
+            coVerify { movieDao.updateMovieDetails(any()) }
+            assertEquals(
+                "first",
+                movie.captured.title,
+            )
+            assertEquals(11, updatedId)
         }
 
     @Test

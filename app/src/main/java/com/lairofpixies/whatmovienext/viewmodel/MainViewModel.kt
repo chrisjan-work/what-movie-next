@@ -45,7 +45,7 @@ class MainViewModel
 
         fun getMovie(movieId: Long): StateFlow<PartialMovie> = repo.getMovie(movieId)
 
-        fun addMovie(title: String) = viewModelScope.launch { repo.addMovie(title) }
+        fun addMovie(title: String) = viewModelScope.launch { repo.addMovie(Movie(title = title)) }
 
         fun updateMovieWatched(
             movieId: Long,

@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class MovieRepositoryImpl(
     private val dao: MovieDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : MovieRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
@@ -30,11 +31,30 @@ class MovieRepositoryImpl(
                 initialValue = PartialMovie.Loading,
             )
 
-    override suspend fun addMovie(title: String) {
+    override suspend fun fetchMovieById(movieId: Long): Movie? =
+        repositoryScope
+            .async {
+                dao.fetchMovieById(movieId)
+            }.await()
+
+    override suspend fun fetchMoviesByTitle(movieTitle: String): List<Movie> =
+        repositoryScope
+            .async {
+                dao.fetchMoviesByTitle(movieTitle)
+            }.await()
+
+    override suspend fun addMovie(movie: Movie): Long =
+        repositoryScope
+            .async {
+                dao.insertMovie(movie)
+            }.await()
+
+    override suspend fun updateMovie(movie: Movie): Long {
         repositoryScope
             .launch {
-                dao.insertMovie(Movie(title = title, watchState = WatchState.PENDING))
+                dao.updateMovieDetails(movie)
             }.join()
+        return movie.id
     }
 
     override suspend fun setWatchState(
@@ -44,13 +64,13 @@ class MovieRepositoryImpl(
         repositoryScope
             .launch {
                 dao.updateWatchState(movieId, watchState)
-            }.join()
+            }
     }
 
     override suspend fun archiveMovie(movieId: Long) {
         repositoryScope
             .launch {
                 dao.archive(movieId)
-            }.join()
+            }
     }
 }
