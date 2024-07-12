@@ -11,6 +11,18 @@ Feature: Save Options
     Then the card view shows "<newCard>"
     And the list contains the entries "<titleList>"
 
+    # legend:
+    # "cr" or "create" = create a new movie with the add button
+    # "up" or "update" = edit an existing movie
+    # "exp" or "explicit" = save with explicit save button in edit view
+    # "acc" or "accept" = leave edit view, press "save" in reminder pop-up
+    # "decline" = leave edit view, press "discard" in reminder pop-up
+    # "dismiss" = press "continue editing" in reminder pop-up to stay in edit view
+    # "dup" or "duplicate" = the new title is duplicate of the existing movie
+    # "ovr" or "overwrite" = overwrite the existing movie with the new data
+    # "del" or "discard" = discard the new data, leaving it unsaved
+    # "ign" or "ignore" = close the overwrite dialog, staying in the edit view
+
     Examples:
       | case            | title  | other  | toedit | newtitle | saveMethod  | overwriteMethod | newCard | titleList |
 
