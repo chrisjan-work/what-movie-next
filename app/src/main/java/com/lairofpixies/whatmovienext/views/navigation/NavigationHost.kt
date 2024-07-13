@@ -10,8 +10,8 @@ import androidx.navigation.navArgument
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
 import com.lairofpixies.whatmovienext.viewmodel.UiState
-import com.lairofpixies.whatmovienext.views.screens.EditableMovieDetailsScreen
-import com.lairofpixies.whatmovienext.views.screens.MovieDetailsScreen
+import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
+import com.lairofpixies.whatmovienext.views.screens.MovieCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -72,7 +72,7 @@ fun NavigationHost(
                     },
                 ),
         ) { entry ->
-            MovieDetailsScreen(
+            MovieCardScreen(
                 movieId = entry.arguments?.getLong(Routes.SingleMovieView.argumentOrEmpty),
                 onCancelAction = onCancelAction,
                 navController = navController,
@@ -80,7 +80,7 @@ fun NavigationHost(
             )
         }
         composable(Routes.CreateMovieView.route) {
-            EditableMovieDetailsScreen(
+            EditCardScreen(
                 movieId = null,
                 onCloseWithIdAction = onCloseWithIdAction,
                 onCancelAction = onCancelAction,
@@ -97,7 +97,7 @@ fun NavigationHost(
                     },
                 ),
         ) { entry ->
-            EditableMovieDetailsScreen(
+            EditCardScreen(
                 movieId = entry.arguments?.getLong(Routes.EditMovieView.argumentOrEmpty),
                 onCloseWithIdAction = onCloseWithIdAction,
                 onCancelAction = onCancelAction,

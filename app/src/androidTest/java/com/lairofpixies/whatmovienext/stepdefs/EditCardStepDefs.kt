@@ -14,8 +14,8 @@ import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
-import com.lairofpixies.whatmovienext.views.screens.DetailScreenTags
-import com.lairofpixies.whatmovienext.views.screens.EditableDetailScreenTags
+import com.lairofpixies.whatmovienext.views.screens.EditCardScreenTags
+import com.lairofpixies.whatmovienext.views.screens.MovieCardScreenTags
 import com.lairofpixies.whatmovienext.views.screens.PopupDialogTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -24,7 +24,7 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
 @HiltAndroidTest
-class MovieCardStepDefs(
+class EditCardStepDefs(
     private val testContext: CucumberTestContext,
 ) {
     private val composeRule
@@ -37,10 +37,10 @@ class MovieCardStepDefs(
                 .performClick()
         }
 
-    @Then("An editable movie details view is open")
-    fun anEditableMovieDetailsViewIsOpen() =
+    @Then("An editable card view is open")
+    fun anEditCardViewIsOpen() =
         composeRule.composeStep {
-            onNodeWithTag(EditableDetailScreenTags.TAG_EDITABLE_MOVIE_CARD)
+            onNodeWithTag(EditCardScreenTags.TAG_EDITABLE_MOVIE_CARD)
                 .isDisplayed()
         }
 
@@ -148,7 +148,7 @@ class MovieCardStepDefs(
     @Then("the edit view is visible")
     fun theEditViewIsVisible() =
         composeRule.composeStep {
-            onNodeWithTag(EditableDetailScreenTags.TAG_EDITABLE_MOVIE_CARD)
+            onNodeWithTag(EditCardScreenTags.TAG_EDITABLE_MOVIE_CARD)
                 .assertIsDisplayed()
         }
 
@@ -233,7 +233,7 @@ class MovieCardStepDefs(
         // for "-" no card view expected
         if (movieTitle != "-") {
             composeRule.composeStep {
-                onNodeWithTextUnderTag(movieTitle, DetailScreenTags.TAG_MOVIE_CARD)
+                onNodeWithTextUnderTag(movieTitle, MovieCardScreenTags.TAG_MOVIE_CARD)
                     .assertIsDisplayed()
             }
             theUserNavigatesBack()

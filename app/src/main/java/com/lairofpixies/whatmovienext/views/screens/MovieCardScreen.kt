@@ -25,13 +25,13 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
 import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 
-object DetailScreenTags {
+object MovieCardScreenTags {
     const val TAG_MOVIE_CARD = "MovieCard"
     const val TAG_WATCH_STATE_SWITCH = "WatchStateSwitch"
 }
 
 @Composable
-fun MovieDetailsScreen(
+fun MovieCardScreen(
     movieId: Long?,
     onCancelAction: () -> Unit,
     viewModel: MainViewModel,
@@ -65,7 +65,7 @@ fun MovieCard(
     onUpdateAction: (Movie) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier.testTag(DetailScreenTags.TAG_MOVIE_CARD),
+        modifier = Modifier.testTag(MovieCardScreenTags.TAG_MOVIE_CARD),
         bottomBar = {
             CustomNavigationBar(
                 navController = navController,
@@ -99,7 +99,7 @@ fun WatchStateField(
     Row {
         Text(text = watchState.toString())
         Switch(
-            modifier = Modifier.testTag(DetailScreenTags.TAG_WATCH_STATE_SWITCH),
+            modifier = Modifier.testTag(MovieCardScreenTags.TAG_WATCH_STATE_SWITCH),
             checked = watchState == WatchState.WATCHED,
             onCheckedChange = { watched ->
                 switchCallback(if (watched) WatchState.WATCHED else WatchState.PENDING)

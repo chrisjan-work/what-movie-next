@@ -31,7 +31,7 @@ interface MovieDao {
     suspend fun delete(movie: Movie)
 
     @Update
-    suspend fun updateMovieDetails(movie: Movie)
+    suspend fun updateMovie(movie: Movie)
 
     @Query("UPDATE movie SET watchState = :watchState WHERE id = :id")
     suspend fun updateWatchState(

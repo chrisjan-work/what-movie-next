@@ -99,7 +99,7 @@ class InternalDatabaseTest {
             dao.insertMovie(movie)
 
             // When updating the movie details
-            dao.updateMovieDetails(movie.copy(title = "Stargate: Atlantis"))
+            dao.updateMovie(movie.copy(title = "Stargate: Atlantis"))
 
             // Then the movie details are updated
             assertEquals(

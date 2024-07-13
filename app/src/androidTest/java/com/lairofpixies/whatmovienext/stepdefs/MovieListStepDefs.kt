@@ -16,7 +16,7 @@ import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
 import com.lairofpixies.whatmovienext.viewmodel.ListMode
-import com.lairofpixies.whatmovienext.views.screens.DetailScreenTags
+import com.lairofpixies.whatmovienext.views.screens.MovieCardScreenTags
 import com.lairofpixies.whatmovienext.views.screens.MovieListTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
@@ -75,7 +75,7 @@ class MovieListStepDefs(
     @Then("the card containing the information of {string} should be visible")
     fun theCardContainingTheInformationOfShouldBeVisible(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(movieTitle, DetailScreenTags.TAG_MOVIE_CARD)
+            onNodeWithTextUnderTag(movieTitle, MovieCardScreenTags.TAG_MOVIE_CARD)
                 .assertIsDisplayed()
         }
 
@@ -86,10 +86,10 @@ class MovieListStepDefs(
                 .assertDoesNotExist()
         }
 
-    @Then("the entry in the details view is marked as pending")
-    fun theEntryInTheDetailsViewIsMarkedAsPending() =
+    @Then("the entry in the card view is marked as pending")
+    fun theEntryInTheCardViewIsMarkedAsPending() =
         composeRule.composeStep {
-            onNodeWithTag(DetailScreenTags.TAG_WATCH_STATE_SWITCH)
+            onNodeWithTag(MovieCardScreenTags.TAG_WATCH_STATE_SWITCH)
                 .assertIsOff()
         }
 
@@ -118,7 +118,7 @@ class MovieListStepDefs(
     fun theUserMarksTheEntryAsWatched() =
         composeRule.composeStep {
             try {
-                onNodeWithTag(DetailScreenTags.TAG_WATCH_STATE_SWITCH).assertIsOff().performClick()
+                onNodeWithTag(MovieCardScreenTags.TAG_WATCH_STATE_SWITCH).assertIsOff().performClick()
             } catch (_: Throwable) {
                 // it was already on
             }
@@ -136,7 +136,7 @@ class MovieListStepDefs(
     fun theUserMarksTheEntryAsPending() =
         composeRule.composeStep {
             try {
-                onNodeWithTag(DetailScreenTags.TAG_WATCH_STATE_SWITCH)
+                onNodeWithTag(MovieCardScreenTags.TAG_WATCH_STATE_SWITCH)
                     .assertIsOn()
                     .performClick()
             } catch (_: Throwable) {
@@ -182,7 +182,7 @@ class MovieListStepDefs(
     fun theUserStartsEditingTheEntry() =
         composeRule.composeStep {
             val editLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.edit)
-            onNodeWithTextUnderTag(editLabel, DetailScreenTags.TAG_MOVIE_CARD)
+            onNodeWithTextUnderTag(editLabel, MovieCardScreenTags.TAG_MOVIE_CARD)
                 .performClick()
         }
 

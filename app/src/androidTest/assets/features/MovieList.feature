@@ -17,7 +17,7 @@ Feature: Movie list
     And the list is in mode "ALL"
     When the user creates a new entry with the title "Zoolander"
     And the user opens the entry "Zoolander"
-    Then the entry in the details view is marked as pending
+    Then the entry in the card view is marked as pending
 
   Scenario: Mark entry as watched and filter it out
     Given a list with an entry "Mary Poppins"

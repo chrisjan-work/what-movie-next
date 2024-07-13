@@ -34,12 +34,12 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
 import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
 
-object EditableDetailScreenTags {
-    const val TAG_EDITABLE_MOVIE_CARD = "EditableMovieCard"
+object EditCardScreenTags {
+    const val TAG_EDITABLE_MOVIE_CARD = "EditCard"
 }
 
 @Composable
-fun EditableMovieDetailsScreen(
+fun EditCardScreen(
     movieId: Long?,
     onCloseWithIdAction: (Long) -> Unit,
     onCancelAction: () -> Unit,
@@ -104,7 +104,7 @@ fun EditableMovieDetailsScreen(
         }
     }
 
-    EditableMovieCard(
+    EditCard(
         movieState = editableMovie,
         focusRequester = focusRequester,
         navController = navController,
@@ -115,7 +115,7 @@ fun EditableMovieDetailsScreen(
 }
 
 @Composable
-fun EditableMovieCard(
+fun EditCard(
     movieState: MutableState<Movie>,
     focusRequester: FocusRequester,
     navController: NavController,
@@ -125,7 +125,7 @@ fun EditableMovieCard(
 ) {
     val creating = movieState.value.isNew()
     Scaffold(
-        modifier = Modifier.testTag(EditableDetailScreenTags.TAG_EDITABLE_MOVIE_CARD),
+        modifier = Modifier.testTag(EditCardScreenTags.TAG_EDITABLE_MOVIE_CARD),
         bottomBar = {
             CustomNavigationBar(
                 navController = navController,

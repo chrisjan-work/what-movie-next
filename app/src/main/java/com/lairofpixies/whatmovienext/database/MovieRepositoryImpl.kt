@@ -56,7 +56,7 @@ class MovieRepositoryImpl(
     override suspend fun updateMovie(movie: Movie): Long {
         repositoryScope
             .launch {
-                dao.updateMovieDetails(movie)
+                dao.updateMovie(movie)
             }.join()
         return movie.id
     }

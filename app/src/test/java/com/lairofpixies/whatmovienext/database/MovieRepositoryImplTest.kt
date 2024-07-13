@@ -153,14 +153,14 @@ class MovieRepositoryImplTest {
         runTest {
             // Given
             val movie = slot<Movie>()
-            coEvery { movieDao.updateMovieDetails(capture(movie)) } just runs
+            coEvery { movieDao.updateMovie(capture(movie)) } just runs
 
             // When
             sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
             val updatedId = sut.updateMovie(Movie(id = 11, title = "first"))
 
             // Then
-            coVerify { movieDao.updateMovieDetails(any()) }
+            coVerify { movieDao.updateMovie(any()) }
             assertEquals(
                 "first",
                 movie.captured.title,
