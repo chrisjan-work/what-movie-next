@@ -11,19 +11,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.WatchState
-import com.lairofpixies.whatmovienext.ui.theme.WhatMovieNextTheme
 import com.lairofpixies.whatmovienext.viewmodel.ListMode
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
@@ -99,15 +95,6 @@ fun ListModeButton(
     }
 }
 
-@Preview
-@Composable
-fun ListModeButtonPreview() {
-    val listMode = remember { mutableStateOf(ListMode.ALL) }
-    WhatMovieNextTheme {
-        ListModeButton(listMode = listMode.value) { listMode.value = it }
-    }
-}
-
 @Composable
 fun MovieListItem(
     movie: Movie,
@@ -132,18 +119,4 @@ fun MovieListItem(
                 .clickable { onItemClicked() },
         color = foregroundColor,
     )
-}
-
-@Preview
-@Composable
-fun MovieListItemPreview() {
-    WhatMovieNextTheme {
-        MovieListItem(
-            Movie(
-                id = 1,
-                title = "The Silence of the Lambs",
-                watchState = WatchState.PENDING,
-            ),
-        )
-    }
 }
