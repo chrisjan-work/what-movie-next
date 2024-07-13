@@ -21,13 +21,13 @@ Use case
  Once you've watched it, you can mark it as "watched" in the app.  
 
 
-History
--------
+Motivation
+----------
 
 Some years ago I started writing down a list of movies I want to watch some day. Classics, new ones, etc.  
 At first, it was a plain text document in my laptop.  
 Later, I started using a Google Docs spreadsheet, where I entered more details beyond title.  
-Recently, I was trying to think of a simple app concept that I could implement in a few days, for the purpose of showcasing my skills as Android developer.  
+Recently, I was trying to think of a simple app concept that I could implement in my free time, for the purpose of showcasing my skills as Android developer. As a professional with more than a decade of experience, all my code from these years is property of my clients, and I have nothing to show.
 I came up with the idea of implementing the movie list as a standalone app.  
 
 Languages and Frameworks
@@ -42,6 +42,7 @@ Languages and Frameworks
 
  * [Jetpack Compose](https://developer.android.com/develop/ui/compose) 
  * [Jetpack Navigation](https://developer.android.com/jetpack/androidx/releases/navigation)
+ * [Material Design Icons](https://fonts.google.com/icons)
 
 **Dependency Injection**
 
