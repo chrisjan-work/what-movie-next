@@ -16,4 +16,5 @@
     <string name="error_title_already_exists">A movie with this title already exists</string>
     <string name="overwrite">Overwrite</string>
     <string name="discard_changes">Discard changes</string>
+    <string name="movies">Movies</string>
 </resources>

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -19,10 +20,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.WatchState
 import com.lairofpixies.whatmovienext.ui.theme.WhatMovieNextTheme
 import com.lairofpixies.whatmovienext.viewmodel.ListMode
+import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
+import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
+import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
 
 object MovieListTags {
     const val TAG_MODE_BUTTON = "ListModeButton"
@@ -35,6 +40,7 @@ fun MovieList(
     movies: List<Movie>,
     onListModeChanged: (ListMode) -> Unit,
     onMovieClicked: (Movie) -> Unit,
+    navController: NavController,
 ) {
     val filteredMovies =
         when (listMode) {
@@ -43,23 +49,35 @@ fun MovieList(
             ListMode.PENDING -> movies.filter { it.watchState == WatchState.PENDING }
         }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        ListModeButton(
+    Scaffold(
+        bottomBar = {
+            CustomNavigationBar(
+                navController = navController,
+                items = listOf(CustomBarItem(NavigationItem.CreateMovie)),
+            )
+        },
+    ) { innerPadding ->
+        Box(
             modifier =
                 Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 16.dp, end = 16.dp)
-                    .zIndex(1f),
-            listMode,
-            onListModeChanged,
-        )
-        LazyColumn(
-            modifier = Modifier.testTag(MovieListTags.TAG_MOVIE_LIST),
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
-            items(filteredMovies) { movie ->
-                MovieListItem(movie) { onMovieClicked(movie) }
+            ListModeButton(
+                modifier =
+                    Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 16.dp, end = 16.dp)
+                        .zIndex(1f),
+                listMode,
+                onListModeChanged,
+            )
+            LazyColumn(
+                modifier = Modifier.testTag(MovieListTags.TAG_MOVIE_LIST),
+            ) {
+                items(filteredMovies) { movie ->
+                    MovieListItem(movie) { onMovieClicked(movie) }
+                }
             }
         }
     }

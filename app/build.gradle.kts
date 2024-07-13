@@ -82,6 +82,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // material icons
+    implementation(libs.androidx.material.icons.extended)
+
     // mockk
     testImplementation(libs.mockk)
 

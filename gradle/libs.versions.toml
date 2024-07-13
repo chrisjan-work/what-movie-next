@@ -9,6 +9,7 @@ dagger-hilt = "2.51.1"
 hiltAndroidTesting = "2.45"
 ksp = "1.9.23-1.0.20"
 ktlint-rules = "0.4.4"
+materialIconsExtended = "1.4.3"
 mockk-version = "1.12.0"
 lifecycleRuntimeKtx = "2.8.3"
 activityCompose = "1.9.0"
@@ -23,6 +24,7 @@ kotlinter = "4.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

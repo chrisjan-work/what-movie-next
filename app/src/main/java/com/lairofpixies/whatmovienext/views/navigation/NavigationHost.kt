@@ -51,6 +51,7 @@ fun NavigationHost(
                         ),
                     )
                 },
+                navController = navController,
             )
         }
         composable(
