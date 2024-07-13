@@ -6,6 +6,7 @@ import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.lairofpixies.whatmovienext.R
@@ -40,5 +41,10 @@ sealed class NavigationItem(
     data object Archive : NavigationItem(
         label = R.string.archive,
         icon = Icons.Outlined.Delete,
+    )
+
+    data object Edit : NavigationItem(
+        label = R.string.edit,
+        icon = Icons.Outlined.Edit,
     )
 }

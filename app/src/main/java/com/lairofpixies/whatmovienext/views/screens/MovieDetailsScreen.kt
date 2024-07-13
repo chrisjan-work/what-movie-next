@@ -3,7 +3,9 @@ package com.lairofpixies.whatmovienext.views.screens
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Button
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,15 +14,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
-import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.database.WatchState
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
+import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
+import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
+import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 object DetailScreenTags {
@@ -31,7 +33,6 @@ object DetailScreenTags {
 @Composable
 fun MovieDetailsScreen(
     movieId: Long?,
-    onCloseAction: () -> Unit,
     onCancelAction: () -> Unit,
     viewModel: MainViewModel,
     navController: NavController,
@@ -49,7 +50,7 @@ fun MovieDetailsScreen(
     if (partialMovie is PartialMovie.Completed) {
         MovieCard(
             movie = partialMovie.movie,
-            onCloseAction = onCloseAction,
+            navController = navController,
             onEditAction = { navController.navigate(Routes.EditMovieView.route(it.id)) },
             onUpdateAction = { viewModel.updateMovieWatched(it.id, it.watchState) },
         )
@@ -59,24 +60,33 @@ fun MovieDetailsScreen(
 @Composable
 fun MovieCard(
     movie: Movie,
-    onCloseAction: () -> Unit,
+    navController: NavController,
     onEditAction: (Movie) -> Unit,
     onUpdateAction: (Movie) -> Unit,
 ) {
-    Column(
-        modifier =
-            Modifier
-                .testTag(DetailScreenTags.TAG_MOVIE_CARD),
-    ) {
-        TitleField(movie.title)
-        WatchStateField(movie.watchState) { watchState ->
-            onUpdateAction(movie.copy(watchState = watchState))
-        }
-        Button(onClick = { onEditAction(movie) }) {
-            Text(stringResource(id = R.string.edit))
-        }
-        Button(onClick = { onCloseAction() }) {
-            Text(stringResource(id = R.string.close))
+    Scaffold(
+        modifier = Modifier.testTag(DetailScreenTags.TAG_MOVIE_CARD),
+        bottomBar = {
+            CustomNavigationBar(
+                navController = navController,
+                items =
+                    listOf(
+                        CustomBarItem(NavigationItem.AllMovies),
+                        CustomBarItem(NavigationItem.Edit) { onEditAction(movie) },
+                    ),
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+        ) {
+            TitleField(movie.title)
+            WatchStateField(movie.watchState) { watchState ->
+                onUpdateAction(movie.copy(watchState = watchState))
+            }
         }
     }
 }
@@ -103,20 +113,5 @@ fun TitleField(title: String) {
     Text(
         text = title,
         fontWeight = FontWeight.Bold,
-    )
-}
-
-@Preview
-@Composable
-fun DetailScreenPreview() {
-    MovieCard(
-        Movie(
-            id = 1,
-            title = "Some like it hot",
-            watchState = WatchState.PENDING,
-        ),
-        onCloseAction = {},
-        onEditAction = {},
-        onUpdateAction = {},
     )
 }

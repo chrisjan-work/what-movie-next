@@ -6,8 +6,10 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.WatchState
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
@@ -122,11 +124,11 @@ class MovieListStepDefs(
             }
         }
 
-    @And("the user navigates back to the list")
-    fun theUserNavigatesBackToTheList() =
+    @And("the user navigates to the list")
+    fun theUserNavigatesToTheList() =
         composeRule.composeStep {
-            val closeLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.close)
-            onNodeWithTextUnderTag(closeLabel, DetailScreenTags.TAG_MOVIE_CARD)
+            val home = activity.getString(R.string.movies)
+            onNodeWithText(home)
                 .performClick()
         }
 
@@ -194,7 +196,7 @@ class MovieListStepDefs(
     @Then("the card {string} is visible and the list contains this entry")
     fun theCardIsVisibleAndTheListContainsThisEntry(movieTitle: String) {
         theCardContainingTheInformationOfShouldBeVisible(movieTitle)
-        theUserNavigatesBackToTheList()
+        theUserNavigatesToTheList()
         theEntryIsVisible(movieTitle)
     }
 }

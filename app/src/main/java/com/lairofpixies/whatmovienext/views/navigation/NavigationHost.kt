@@ -74,7 +74,6 @@ fun NavigationHost(
         ) { entry ->
             MovieDetailsScreen(
                 movieId = entry.arguments?.getLong(Routes.SingleMovieView.argumentOrEmpty),
-                onCloseAction = onCloseAction,
                 onCancelAction = onCancelAction,
                 navController = navController,
                 viewModel = viewModel,
