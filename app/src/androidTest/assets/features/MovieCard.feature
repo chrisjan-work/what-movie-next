@@ -43,7 +43,7 @@ Feature: Movie card
     When the user selects the save option "Discard"
     Then the entry "Airplane" is not available
 
-  Scenario: Dismissing dialog and continue editing
+  Scenario: Dismissing alert and continue editing
     Given an empty list of films
     And the user initiates a new entry
     When the user enters the title "Robin Hood Prince of Thieves"

@@ -2,9 +2,11 @@ package com.lairofpixies.whatmovienext.views.screens
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -28,7 +30,9 @@ import com.lairofpixies.whatmovienext.database.PartialMovie
 import com.lairofpixies.whatmovienext.database.isNew
 import com.lairofpixies.whatmovienext.viewmodel.ErrorState
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
-import com.lairofpixies.whatmovienext.views.navigation.Routes
+import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
+import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
+import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
 
 object EditableDetailScreenTags {
     const val TAG_EDITABLE_MOVIE_CARD = "EditableMovieCard"
@@ -38,6 +42,7 @@ object EditableDetailScreenTags {
 fun EditableMovieDetailsScreen(
     movieId: Long?,
     onCloseWithIdAction: (Long) -> Unit,
+    onCancelAction: () -> Unit,
     viewModel: MainViewModel,
     navController: NavController,
 ) {
@@ -76,14 +81,8 @@ fun EditableMovieDetailsScreen(
     }
 
     val onArchiveAction = {
-        if (!editableMovie.value.isNew()) {
-            viewModel.archiveMovie(editableMovie.value.id)
-        }
-        navController.navigate(Routes.HOME.route) {
-            popUpTo(Routes.HOME.route) {
-                inclusive = true
-            }
-        }
+        viewModel.archiveMovie(editableMovie.value.id)
+        onCancelAction()
     }
 
     BackHandler(true) {
@@ -108,6 +107,8 @@ fun EditableMovieDetailsScreen(
     EditableMovieCard(
         movieState = editableMovie,
         focusRequester = focusRequester,
+        navController = navController,
+        onCancelAction = onCancelAction,
         onSaveAction = onSaveAction,
         onArchiveAction = onArchiveAction,
     )
@@ -117,32 +118,38 @@ fun EditableMovieDetailsScreen(
 fun EditableMovieCard(
     movieState: MutableState<Movie>,
     focusRequester: FocusRequester,
+    navController: NavController,
+    onCancelAction: () -> Unit,
     onSaveAction: () -> Unit,
     onArchiveAction: () -> Unit,
 ) {
-    Column(
-        modifier =
-            Modifier
-                .testTag(EditableDetailScreenTags.TAG_EDITABLE_MOVIE_CARD),
-    ) {
-        EditableTitleField(movieState.value.title, focusRequester) {
-            movieState.value = movieState.value.copy(title = it)
-        }
-        Button(
-            onClick = { onSaveAction() },
+    val creating = movieState.value.isNew()
+    Scaffold(
+        modifier = Modifier.testTag(EditableDetailScreenTags.TAG_EDITABLE_MOVIE_CARD),
+        bottomBar = {
+            CustomNavigationBar(
+                navController = navController,
+                items =
+                    listOf(
+                        if (creating) {
+                            CustomBarItem(NavigationItem.Cancel, onCancelAction)
+                        } else {
+                            CustomBarItem(NavigationItem.Archive, onArchiveAction)
+                        },
+                        CustomBarItem(NavigationItem.SaveChanges, onSaveAction),
+                    ),
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
-            Text(stringResource(id = R.string.save_and_close))
-        }
-        Button(onClick = {
-            onArchiveAction()
-        }) {
-            val label =
-                if (movieState.value.isNew()) {
-                    stringResource(id = R.string.cancel)
-                } else {
-                    stringResource(id = R.string.archive)
-                }
-            Text(label)
+            EditableTitleField(movieState.value.title, focusRequester) {
+                movieState.value = movieState.value.copy(title = it)
+            }
         }
     }
 }

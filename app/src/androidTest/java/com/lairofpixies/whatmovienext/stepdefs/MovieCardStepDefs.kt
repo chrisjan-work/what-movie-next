@@ -16,6 +16,7 @@ import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
 import com.lairofpixies.whatmovienext.views.screens.DetailScreenTags
 import com.lairofpixies.whatmovienext.views.screens.EditableDetailScreenTags
+import com.lairofpixies.whatmovienext.views.screens.PopupDialogTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
@@ -63,7 +64,7 @@ class MovieCardStepDefs(
     @And("the user saves the entry")
     fun theUserSavesTheEntry() =
         composeRule.composeStep {
-            onNodeWithText(activity.getString(R.string.save_and_close))
+            onNodeWithText(activity.getString(R.string.save))
                 .performClick()
         }
 
@@ -117,7 +118,8 @@ class MovieCardStepDefs(
                     else -> throw PendingException("Unknown option: $saveOption")
                 }
 
-            onNodeWithText(label).performClick()
+            onNodeWithTextUnderTag(label, PopupDialogTags.UnsavedChanges.name)
+                .performClick()
         }
 
     @And("the user selects the overwrite option {string}")
@@ -131,7 +133,8 @@ class MovieCardStepDefs(
                     else -> throw PendingException("Unknown option: $overwriteOption")
                 }
 
-            onNodeWithText(label).performClick()
+            onNodeWithTextUnderTag(label, PopupDialogTags.DuplicatedTitle.name)
+                .performClick()
         }
     }
 

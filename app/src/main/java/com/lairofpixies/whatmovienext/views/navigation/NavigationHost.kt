@@ -27,6 +27,14 @@ fun NavigationHost(
     val onCloseAction: () -> Unit =
         { CoroutineScope(Dispatchers.Main).launch { navController.popBackStack() } }
 
+    val onCancelAction: () -> Unit = {
+        navController.navigate(Routes.HOME.route) {
+            popUpTo(Routes.HOME.route) {
+                inclusive = true
+            }
+        }
+    }
+
     val onCloseWithIdAction: (Long) -> Unit = { id ->
         CoroutineScope(Dispatchers.Main).launch {
             if (id == Movie.NEW_ID) {
@@ -67,6 +75,7 @@ fun NavigationHost(
             MovieDetailsScreen(
                 movieId = entry.arguments?.getLong(Routes.SingleMovieView.argumentOrEmpty),
                 onCloseAction = onCloseAction,
+                onCancelAction = onCancelAction,
                 navController = navController,
                 viewModel = viewModel,
             )
@@ -75,6 +84,7 @@ fun NavigationHost(
             EditableMovieDetailsScreen(
                 movieId = null,
                 onCloseWithIdAction = onCloseWithIdAction,
+                onCancelAction = onCancelAction,
                 viewModel = viewModel,
                 navController = navController,
             )
@@ -91,6 +101,7 @@ fun NavigationHost(
             EditableMovieDetailsScreen(
                 movieId = entry.arguments?.getLong(Routes.EditMovieView.argumentOrEmpty),
                 onCloseWithIdAction = onCloseWithIdAction,
+                onCancelAction = onCancelAction,
                 viewModel = viewModel,
                 navController = navController,
             )

@@ -35,7 +35,9 @@ fun CustomNavigationBar(
                 icon = { CustomBarIcon(customBarItem.navigationItem) },
                 onClick = {
                     customBarItem.onClick?.invoke()
-                        ?: navController.navigate(customBarItem.navigationItem.route)
+                        ?: customBarItem.navigationItem.route?.let {
+                            navController.navigate(it)
+                        } ?: throw IllegalArgumentException("No route for navigation item ${customBarItem.navigationItem.label}")
                 },
             )
         }

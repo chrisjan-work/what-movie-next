@@ -32,6 +32,7 @@ object DetailScreenTags {
 fun MovieDetailsScreen(
     movieId: Long?,
     onCloseAction: () -> Unit,
+    onCancelAction: () -> Unit,
     viewModel: MainViewModel,
     navController: NavController,
 ) {
@@ -41,11 +42,7 @@ fun MovieDetailsScreen(
     LaunchedEffect(partialMovie) {
         if (movieId == null || partialMovie is PartialMovie.NotFound) {
             Toast.makeText(context, "Movie not found", Toast.LENGTH_SHORT).show()
-            navController.navigate(Routes.HOME.route) {
-                popUpTo(Routes.HOME.route) {
-                    inclusive = true
-                }
-            }
+            onCancelAction()
         }
     }
 
