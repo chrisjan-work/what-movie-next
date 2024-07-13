@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
 import com.lairofpixies.whatmovienext.viewmodel.UiState
 import com.lairofpixies.whatmovienext.views.screens.EditableMovieDetailsScreen
@@ -28,7 +29,7 @@ fun NavigationHost(
 
     val onCloseWithIdAction: (Long) -> Unit = { id ->
         CoroutineScope(Dispatchers.Main).launch {
-            if (id == 0L) {
+            if (id == Movie.NEW_ID) {
                 navController.popBackStack()
             } else {
                 navController.navigate(Routes.SingleMovieView.route(id)) {

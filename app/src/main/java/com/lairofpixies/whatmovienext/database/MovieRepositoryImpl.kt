@@ -34,7 +34,7 @@ class MovieRepositoryImpl(
     override suspend fun fetchMovieById(movieId: Long): Movie? =
         repositoryScope
             .async {
-                if (movieId != 0L) {
+                if (movieId != Movie.NEW_ID) {
                     dao.fetchMovieById(movieId)
                 } else {
                     null
