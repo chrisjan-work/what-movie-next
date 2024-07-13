@@ -248,4 +248,12 @@ class MovieCardStepDefs(
             }
         }
     }
+
+    @When("the user archives the current entry")
+    fun theUserArchivesTheCurrentEntry() =
+        composeRule.composeStep {
+            val archiveLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
+            onNodeWithText(archiveLabel)
+                .performClick()
+        }
 }

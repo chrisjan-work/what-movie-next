@@ -25,8 +25,10 @@ import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.PartialMovie
+import com.lairofpixies.whatmovienext.database.isNew
 import com.lairofpixies.whatmovienext.viewmodel.ErrorState
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 object EditableDetailScreenTags {
     const val TAG_EDITABLE_MOVIE_CARD = "EditableMovieCard"
@@ -73,6 +75,17 @@ fun EditableMovieDetailsScreen(
         )
     }
 
+    val onArchiveAction = {
+        if (!editableMovie.value.isNew()) {
+            viewModel.archiveMovie(editableMovie.value.id)
+        }
+        navController.navigate(Routes.HOME.route) {
+            popUpTo(Routes.HOME.route) {
+                inclusive = true
+            }
+        }
+    }
+
     BackHandler(true) {
         when {
             viewModel.hasSaveableChanges(editableMovie.value) ->
@@ -96,6 +109,7 @@ fun EditableMovieDetailsScreen(
         movieState = editableMovie,
         focusRequester = focusRequester,
         onSaveAction = onSaveAction,
+        onArchiveAction = onArchiveAction,
     )
 }
 
@@ -104,6 +118,7 @@ fun EditableMovieCard(
     movieState: MutableState<Movie>,
     focusRequester: FocusRequester,
     onSaveAction: () -> Unit,
+    onArchiveAction: () -> Unit,
 ) {
     Column(
         modifier =
@@ -117,6 +132,17 @@ fun EditableMovieCard(
             onClick = { onSaveAction() },
         ) {
             Text(stringResource(id = R.string.save_and_close))
+        }
+        Button(onClick = {
+            onArchiveAction()
+        }) {
+            val label =
+                if (movieState.value.isNew()) {
+                    stringResource(id = R.string.cancel)
+                } else {
+                    stringResource(id = R.string.archive)
+                }
+            Text(label)
         }
     }
 }

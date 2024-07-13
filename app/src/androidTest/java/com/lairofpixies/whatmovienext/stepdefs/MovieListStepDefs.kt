@@ -77,14 +77,6 @@ class MovieListStepDefs(
                 .assertIsDisplayed()
         }
 
-    @When("the user archives the current entry")
-    fun theUserArchivesTheCurrentEntry() =
-        composeRule.composeStep {
-            val archiveLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
-            onNodeWithTextUnderTag(archiveLabel, DetailScreenTags.TAG_MOVIE_CARD)
-                .performClick()
-        }
-
     @Then("the entry {string} is not available")
     fun theEntryIsNotVisible(movieTitle: String) =
         composeRule.composeStep {

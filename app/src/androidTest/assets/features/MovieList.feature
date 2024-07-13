@@ -12,12 +12,6 @@ Feature: Movie list
     When the user opens the entry "A Beautiful Mind"
     Then the card containing the information of "A Beautiful Mind" should be visible
 
-  Scenario: Archive entry
-    Given a list with an entry "Gone with the Wind"
-    When the user opens the entry "Gone with the Wind"
-    When the user archives the current entry
-    Then the entry "Gone with the Wind" is not available
-
   Scenario: New entries are marked as pending by default
     Given an empty list of films
     And the list is in mode "ALL"

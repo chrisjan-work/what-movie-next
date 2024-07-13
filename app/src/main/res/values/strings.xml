@@ -17,4 +17,5 @@
     <string name="overwrite">Overwrite</string>
     <string name="discard_changes">Discard changes</string>
     <string name="movies">Movies</string>
+    <string name="cancel">Cancel</string>
 </resources>
