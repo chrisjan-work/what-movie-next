@@ -24,9 +24,6 @@ fun NavigationHost(
     uiState: UiState,
     viewModel: MainViewModel,
 ) {
-    val onCloseAction: () -> Unit =
-        { CoroutineScope(Dispatchers.Main).launch { navController.popBackStack() } }
-
     val onCancelAction: () -> Unit = {
         navController.navigate(Routes.HOME.route) {
             popUpTo(Routes.HOME.route) {
