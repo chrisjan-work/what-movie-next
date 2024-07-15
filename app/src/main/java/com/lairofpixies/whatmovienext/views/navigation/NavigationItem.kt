@@ -8,6 +8,8 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.RemoveRedEye
+import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.lairofpixies.whatmovienext.R
 
@@ -46,5 +48,15 @@ sealed class NavigationItem(
     data object Edit : NavigationItem(
         label = R.string.edit,
         icon = Icons.Outlined.Edit,
+    )
+
+    data object MarkAsWatched : NavigationItem(
+        label = R.string.to_watch,
+        icon = Icons.Outlined.WatchLater,
+    )
+
+    data object MarkAsPending : NavigationItem(
+        label = R.string.seen,
+        icon = Icons.Outlined.RemoveRedEye,
     )
 }

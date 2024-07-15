@@ -1,17 +1,17 @@
 package com.lairofpixies.whatmovienext.views.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
@@ -27,7 +27,6 @@ import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 object MovieCardScreenTags {
     const val TAG_MOVIE_CARD = "MovieCard"
-    const val TAG_WATCH_STATE_SWITCH = "WatchStateSwitch"
 }
 
 @Composable
@@ -70,9 +69,10 @@ fun MovieCard(
             CustomNavigationBar(
                 navController = navController,
                 items =
-                    listOf(
-                        CustomBarItem(NavigationItem.AllMovies),
-                        CustomBarItem(NavigationItem.Edit) { onEditAction(movie) },
+                    movieCardActionItems(
+                        movie,
+                        onEditAction = onEditAction,
+                        onUpdateAction = onUpdateAction,
                     ),
             )
         },
@@ -81,32 +81,48 @@ fun MovieCard(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(innerPadding),
+                    .padding(innerPadding)
+                    .background(
+                        // Todo: use colors from theme
+                        color =
+                            if (movie.watchState == WatchState.PENDING) {
+                                Color.White
+                            } else {
+                                Color.LightGray
+                            },
+                    ),
         ) {
             TitleField(movie.title)
-            WatchStateField(movie.watchState) { watchState ->
-                onUpdateAction(movie.copy(watchState = watchState))
-            }
         }
     }
 }
 
-@Composable
-fun WatchStateField(
-    watchState: WatchState,
-    switchCallback: (WatchState) -> Unit,
-) {
-    Row {
-        Text(text = watchState.toString())
-        Switch(
-            modifier = Modifier.testTag(MovieCardScreenTags.TAG_WATCH_STATE_SWITCH),
-            checked = watchState == WatchState.WATCHED,
-            onCheckedChange = { watched ->
-                switchCallback(if (watched) WatchState.WATCHED else WatchState.PENDING)
-            },
-        )
-    }
-}
+fun movieCardActionItems(
+    movie: Movie,
+    onEditAction: (Movie) -> Unit,
+    onUpdateAction: (Movie) -> Unit,
+): List<CustomBarItem> =
+    listOf(
+        CustomBarItem(NavigationItem.AllMovies),
+        if (movie.watchState == WatchState.PENDING) {
+            CustomBarItem(NavigationItem.MarkAsWatched) {
+                onUpdateAction(
+                    movie.copy(
+                        watchState = WatchState.WATCHED,
+                    ),
+                )
+            }
+        } else {
+            CustomBarItem(NavigationItem.MarkAsPending) {
+                onUpdateAction(
+                    movie.copy(
+                        watchState = WatchState.PENDING,
+                    ),
+                )
+            }
+        },
+        CustomBarItem(NavigationItem.Edit) { onEditAction(movie) },
+    )
 
 @Composable
 fun TitleField(title: String) {

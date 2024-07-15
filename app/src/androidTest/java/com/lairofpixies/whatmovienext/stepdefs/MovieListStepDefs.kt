@@ -1,8 +1,6 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
@@ -89,8 +87,8 @@ class MovieListStepDefs(
     @Then("the entry in the card view is marked as pending")
     fun theEntryInTheCardViewIsMarkedAsPending() =
         composeRule.composeStep {
-            onNodeWithTag(MovieCardScreenTags.TAG_WATCH_STATE_SWITCH)
-                .assertIsOff()
+            val label = activity.getString(R.string.to_watch)
+            onNodeWithText(label).assertIsDisplayed()
         }
 
     @And("the list is in mode {string}")
@@ -118,7 +116,8 @@ class MovieListStepDefs(
     fun theUserMarksTheEntryAsWatched() =
         composeRule.composeStep {
             try {
-                onNodeWithTag(MovieCardScreenTags.TAG_WATCH_STATE_SWITCH).assertIsOff().performClick()
+                val label = activity.getString(R.string.to_watch)
+                onNodeWithText(label).performClick()
             } catch (_: Throwable) {
                 // it was already on
             }
@@ -136,9 +135,8 @@ class MovieListStepDefs(
     fun theUserMarksTheEntryAsPending() =
         composeRule.composeStep {
             try {
-                onNodeWithTag(MovieCardScreenTags.TAG_WATCH_STATE_SWITCH)
-                    .assertIsOn()
-                    .performClick()
+                val label = activity.getString(R.string.seen)
+                onNodeWithText(label).performClick()
             } catch (_: Throwable) {
                 // it was already off
             }
