@@ -103,9 +103,9 @@ fun movieCardActionItems(
     onUpdateAction: (Movie) -> Unit,
 ): List<CustomBarItem> =
     listOf(
-        CustomBarItem(NavigationItem.AllMovies),
+        CustomBarItem(NavigationItem.MoviesShortcut),
         if (movie.watchState == WatchState.PENDING) {
-            CustomBarItem(NavigationItem.MarkAsWatched) {
+            CustomBarItem(NavigationItem.WatchStatePending) {
                 onUpdateAction(
                     movie.copy(
                         watchState = WatchState.WATCHED,
@@ -113,7 +113,7 @@ fun movieCardActionItems(
                 )
             }
         } else {
-            CustomBarItem(NavigationItem.MarkAsPending) {
+            CustomBarItem(NavigationItem.WatchStateWatched) {
                 onUpdateAction(
                     movie.copy(
                         watchState = WatchState.PENDING,

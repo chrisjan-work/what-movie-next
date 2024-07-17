@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -32,12 +33,17 @@ fun CustomNavigationBar(
         items.forEach { customBarItem ->
             NavigationBarItem(
                 selected = currentRoute == customBarItem.navigationItem.route,
+                modifier =
+                    customBarItem.navigationItem.tag?.let { tag ->
+                        Modifier.testTag(tag)
+                    } ?: Modifier,
                 icon = { CustomBarIcon(customBarItem.navigationItem) },
                 onClick = {
                     customBarItem.onClick?.invoke()
                         ?: customBarItem.navigationItem.route?.let {
                             navController.navigate(it)
-                        } ?: throw IllegalArgumentException("No route for navigation item ${customBarItem.navigationItem.label}")
+                        }
+                        ?: throw IllegalArgumentException("No route for navigation item ${customBarItem.navigationItem.label}")
                 },
             )
         }

@@ -7,16 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.database.WatchState
@@ -49,7 +45,11 @@ fun MovieList(
         bottomBar = {
             CustomNavigationBar(
                 navController = navController,
-                items = listOf(CustomBarItem(NavigationItem.CreateMovie)),
+                items =
+                    listOf(
+                        filterListItem(listMode, onListModeChanged),
+                        CustomBarItem(NavigationItem.CreateMovieShortcut),
+                    ),
             )
         },
     ) { innerPadding ->
@@ -59,15 +59,6 @@ fun MovieList(
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            ListModeButton(
-                modifier =
-                    Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(top = 16.dp, end = 16.dp)
-                        .zIndex(1f),
-                listMode,
-                onListModeChanged,
-            )
             LazyColumn(
                 modifier = Modifier.testTag(MovieListTags.TAG_MOVIE_LIST),
             ) {
@@ -76,22 +67,6 @@ fun MovieList(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun ListModeButton(
-    modifier: Modifier = Modifier,
-    listMode: ListMode,
-    onListModeChanged: (ListMode) -> Unit,
-) {
-    Button(
-        modifier = modifier.testTag(MovieListTags.TAG_MODE_BUTTON),
-        onClick = {
-            onListModeChanged(listMode.next())
-        },
-    ) {
-        Text(text = listMode.name)
     }
 }
 
@@ -119,4 +94,19 @@ fun MovieListItem(
                 .clickable { onItemClicked() },
         color = foregroundColor,
     )
+}
+
+fun filterListItem(
+    listMode: ListMode,
+    onListModeChanged: (ListMode) -> Unit,
+): CustomBarItem {
+    val navigationItem =
+        when (listMode) {
+            ListMode.ALL -> NavigationItem.AllMoviesFilter
+            ListMode.PENDING -> NavigationItem.PendingFilter
+            ListMode.WATCHED -> NavigationItem.WatchedFilter
+        }
+    return CustomBarItem(navigationItem) {
+        onListModeChanged(listMode.next())
+    }
 }

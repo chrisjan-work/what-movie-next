@@ -14,14 +14,14 @@ Feature: Movie list
 
   Scenario: New entries are marked as pending by default
     Given an empty list of films
-    And the list is in mode "ALL"
+    And the list is in mode "All movies"
     When the user creates a new entry with the title "Zoolander"
     And the user opens the entry "Zoolander"
     Then the entry in the card view is marked as pending
 
   Scenario: Mark entry as watched and filter it out
     Given a list with an entry "Mary Poppins"
-    And the list is in mode "PENDING"
+    And the list is in mode "To watch"
     When the user opens the entry "Mary Poppins"
     And the user marks the entry as watched
     And the user navigates to the list
@@ -29,7 +29,7 @@ Feature: Movie list
 
   Scenario: Mark entry as pending and filter it out
     Given a list with an entry "Paprika" that is marked as watched
-    And the list is in mode "WATCHED"
+    And the list is in mode "Seen"
     When the user opens the entry "Paprika"
     When the user marks the entry as pending
     And the user navigates to the list
