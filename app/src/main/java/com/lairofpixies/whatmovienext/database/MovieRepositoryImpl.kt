@@ -80,6 +80,13 @@ class MovieRepositoryImpl(
             }
     }
 
+    override suspend fun restoreMovie(movieId: Long) {
+        repositoryScope
+            .launch {
+                dao.restore(movieId)
+            }
+    }
+
     override suspend fun deleteMovie(movie: Movie) {
         repositoryScope
             .launch {

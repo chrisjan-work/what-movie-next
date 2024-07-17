@@ -44,4 +44,7 @@ interface MovieDao {
 
     @Query("UPDATE movie SET isArchived = 1 WHERE id = :id")
     suspend fun archive(id: Long)
+
+    @Query("UPDATE movie SET isArchived = 0 WHERE id = :id")
+    suspend fun restore(id: Long)
 }

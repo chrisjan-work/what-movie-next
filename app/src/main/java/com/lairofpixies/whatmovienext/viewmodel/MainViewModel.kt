@@ -84,7 +84,22 @@ class MainViewModel
             watchState: WatchState,
         ) = viewModelScope.launch { repo.setWatchState(movieId, watchState) }
 
+        // Archive
         fun archiveMovie(movieId: Long) = viewModelScope.launch { repo.archiveMovie(movieId) }
+
+        fun restoreMovies(moviesToRestore: List<Movie>) =
+            viewModelScope.launch {
+                moviesToRestore.forEach {
+                    repo.restoreMovie(it.id)
+                }
+            }
+
+        fun deleteMovies(moviesToDelete: List<Movie>) =
+            viewModelScope.launch {
+                moviesToDelete.forEach {
+                    repo.deleteMovie(it)
+                }
+            }
 
         fun setListMode(listMode: ListMode) {
             _uiState.update { it.copy(listMode = listMode) }

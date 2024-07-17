@@ -10,24 +10,23 @@ Feature: Archive
     And the user navigates to the archive
     Then the entry "Gone with the Wind" is visible in the archive
 
-  # TODO
-#  Scenario: Delete entry forever
-#    Given a list with an entry "The Room"
-#    When the user archives the entry "The Room"
-#    And the user selects the entry "The Room" in the archive
-#    And the user clicks on "Delete forever"
-#    Then a pop-up asks for confirmation for deleting the entry
-#    When the user confirms the deletion
-#    Then the entry "The Room" is not available in the archive
-#    When the user navigates back to the list
-#    Then the entry "The Room" is not available in the list
-#
-  # TODO
-#  Scenario: Restore entry from archive
-#    Given a list with an entry "Hellraiser"
-#    When the user archives the entry "Hellraiser"
-#    And the user selects the entry "Hellraiser" in the archive
-#    And the user clicks on "Restore"
-#    Then the entry "Hellraiser" is not available in the archive
-#    When the user navigates back to the list
-#    Then the entry "Hellraiser" is visible in the list
+  Scenario: Delete entry forever
+    Given a list with an entry "The Room"
+    When the user archives the entry "The Room"
+    And the user selects the entry "The Room" in the archive
+    And the user clicks on the archive action "Delete forever"
+#    # TODO
+##    Then a pop-up asks for confirmation for deleting the entry
+##    When the user confirms the deletion
+    Then the entry "The Room" is not available in the archive
+    When the user navigates back
+    Then the entry "The Room" is not available
+
+  Scenario: Restore entry from archive
+    Given a list with an entry "Hellraiser"
+    When the user archives the entry "Hellraiser"
+    And the user selects the entry "Hellraiser" in the archive
+    And the user clicks on the archive action "Restore"
+    Then the entry "Hellraiser" is not available in the archive
+    When the user navigates back
+    Then the entry "Hellraiser" is visible

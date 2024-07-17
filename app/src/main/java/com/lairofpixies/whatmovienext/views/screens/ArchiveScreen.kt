@@ -1,5 +1,6 @@
 package com.lairofpixies.whatmovienext.views.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.database.Movie
@@ -36,14 +38,19 @@ fun ArchiveScreen(
         listOf(CustomBarItem(NavigationItem.MoviesShortcut)) +
             if (selection.value.isNotEmpty()) {
                 listOf(
-                    CustomBarItem(NavigationItem.RestoreAction) { TODO() },
-                    CustomBarItem(NavigationItem.DeleteAction) { TODO() },
+                    CustomBarItem(NavigationItem.RestoreAction) {
+                        viewModel.restoreMovies(selection.value.toList())
+                    },
+                    CustomBarItem(NavigationItem.DeleteAction) {
+                        viewModel.deleteMovies(selection.value.toList())
+                    },
                 )
             } else {
                 emptyList()
             }
 
     Scaffold(
+        modifier = Modifier.testTag(ArchiveTags.TAG_ARCHIVE_LIST),
         bottomBar = {
             CustomNavigationBar(
                 navController = navController,
@@ -57,9 +64,7 @@ fun ArchiveScreen(
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
-            LazyColumn(
-                modifier = Modifier.testTag(ArchiveTags.TAG_ARCHIVE_LIST),
-            ) {
+            LazyColumn {
                 items(archivedMovies) { movie ->
                     ArchivedMovieListItem(
                         movie = movie,
@@ -83,11 +88,28 @@ fun ArchivedMovieListItem(
     isSelected: Boolean,
     onSelectionChanged: (Boolean) -> Unit,
 ) {
+    val selectedColor =
+        if (isSelected) {
+            Color.DarkGray
+        } else {
+            Color.Black
+        }
+
+    val negativeSelectedColor =
+        if (isSelected) {
+            Color.Gray
+        } else {
+            Color.White
+        }
+
     Text(
         modifier =
-            Modifier.clickable {
-                onSelectionChanged(!isSelected)
-            },
+            Modifier
+                .background(negativeSelectedColor)
+                .clickable {
+                    onSelectionChanged(!isSelected)
+                },
+        color = selectedColor,
         text = movie.title,
     )
 }
