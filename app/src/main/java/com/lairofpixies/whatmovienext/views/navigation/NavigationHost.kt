@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.lairofpixies.whatmovienext.database.Movie
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
 import com.lairofpixies.whatmovienext.viewmodel.UiState
+import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
 import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieList
@@ -98,6 +99,13 @@ fun NavigationHost(
                 movieId = entry.arguments?.getLong(Routes.EditMovieView.argumentOrEmpty),
                 onCloseWithIdAction = onCloseWithIdAction,
                 onCancelAction = onCancelAction,
+                viewModel = viewModel,
+                navController = navController,
+            )
+        }
+        composable(Routes.ArchiveView.route) {
+            ArchiveScreen(
+                archivedMovies = uiState.archiveList,
                 viewModel = viewModel,
                 navController = navController,
             )

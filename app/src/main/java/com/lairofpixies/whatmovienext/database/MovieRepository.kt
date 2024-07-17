@@ -7,6 +7,8 @@ interface MovieRepository {
     // read
     val movies: Flow<List<Movie>>
 
+    val archivedMovies: Flow<List<Movie>>
+
     fun getMovie(movieId: Long): StateFlow<PartialMovie>
 
     suspend fun fetchMovieById(movieId: Long): Movie?

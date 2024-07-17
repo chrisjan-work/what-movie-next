@@ -134,7 +134,7 @@ fun EditCard(
                         if (creating) {
                             CustomBarItem(NavigationItem.Cancel, onCancelAction)
                         } else {
-                            CustomBarItem(NavigationItem.Archive, onArchiveAction)
+                            CustomBarItem(NavigationItem.ArchiveAction, onArchiveAction)
                         },
                         CustomBarItem(NavigationItem.SaveChanges, onSaveAction),
                     ),

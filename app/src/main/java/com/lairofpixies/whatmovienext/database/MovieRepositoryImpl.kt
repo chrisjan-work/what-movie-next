@@ -21,6 +21,8 @@ class MovieRepositoryImpl(
 
     override val movies: Flow<List<Movie>> = dao.getAllMovies().flowOn(ioDispatcher)
 
+    override val archivedMovies: Flow<List<Movie>> = dao.getArchivedMovies().flowOn(ioDispatcher)
+
     override fun getMovie(movieId: Long): StateFlow<PartialMovie> =
         dao
             .getMovie(movieId)

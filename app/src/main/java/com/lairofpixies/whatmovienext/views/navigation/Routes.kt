@@ -8,6 +8,7 @@ enum class Routes(
     SingleMovieView(path = "movie_details", argument = "movieId"),
     CreateMovieView(path = "movie_create"),
     EditMovieView(path = "movie_edit", argument = "movieId"),
+    ArchiveView(path = "archive"),
     ;
 
     val route

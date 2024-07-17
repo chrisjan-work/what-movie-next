@@ -21,4 +21,6 @@
     <string name="to_watch">To watch</string>
     <string name="seen">Seen</string>
     <string name="all_movies">All movies</string>
+    <string name="restore">Restore Selected</string>
+    <string name="delete_forever">Delete forever</string>
 </resources>

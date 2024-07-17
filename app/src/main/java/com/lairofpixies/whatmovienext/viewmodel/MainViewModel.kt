@@ -35,12 +35,25 @@ class MainViewModel
                     refreshMovieList(movies)
                 }
             }
+            viewModelScope.launch {
+                repo.archivedMovies.collect { movies ->
+                    refreshArchive(movies)
+                }
+            }
         }
 
         private fun refreshMovieList(movies: List<Movie>) {
             _uiState.update { currentState ->
                 currentState.copy(
                     movieList = movies,
+                )
+            }
+        }
+
+        private fun refreshArchive(movies: List<Movie>) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    archiveList = movies,
                 )
             }
         }

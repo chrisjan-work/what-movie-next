@@ -21,6 +21,9 @@ interface MovieDao {
     @Query("SELECT * FROM movie WHERE UPPER(title) = UPPER(:title)")
     suspend fun fetchMoviesByTitle(title: String): List<Movie>
 
+    @Query("SELECT * FROM movie WHERE isArchived = 1")
+    fun getArchivedMovies(): Flow<List<Movie>>
+
     @Insert
     suspend fun insertMovie(movie: Movie): Long
 

@@ -197,4 +197,12 @@ class MovieListStepDefs(
         theUserNavigatesToTheList()
         theEntryIsVisible(movieTitle)
     }
+
+    @And("the user navigates to the archive")
+    fun theUserNavigatesToTheArchive() =
+        composeRule.composeStep {
+            val archiveLabel = activity.getString(R.string.archive)
+            onNodeWithText(archiveLabel)
+                .performClick()
+        }
 }

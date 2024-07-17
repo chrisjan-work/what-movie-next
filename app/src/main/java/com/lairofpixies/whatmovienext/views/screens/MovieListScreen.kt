@@ -49,6 +49,7 @@ fun MovieList(
                     listOf(
                         filterListItem(listMode, onListModeChanged),
                         CustomBarItem(NavigationItem.CreateMovieShortcut),
+                        CustomBarItem(NavigationItem.ArchiveScreen),
                     ),
             )
         },

@@ -125,13 +125,6 @@ Feature: Edit card
     And the user saves the entry
     Then an error message is displayed indicating that the entry already exists
 
-  Scenario: Archive entry
-    Given a list with an entry "Gone with the Wind"
-    When the user opens the entry "Gone with the Wind"
-    And the user starts editing the entry
-    And the user archives the current entry
-    Then the entry "Gone with the Wind" is not available
-
 # TODO
 #  Scenario: Search movie
 #    Given the user initiates a new entry
