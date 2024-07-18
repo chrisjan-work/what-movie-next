@@ -48,8 +48,9 @@ fun NavigationHost(
     NavHost(navController = navController, startDestination = Routes.HOME.route) {
         composable(Routes.AllMoviesView.route) {
             MovieList(
-                uiState.listMode,
-                uiState.movieList,
+                listMode = uiState.listMode,
+                movies = uiState.movieList,
+                isArchiveVisitable = uiState.archiveList.isNotEmpty(),
                 onListModeChanged = { viewModel.setListMode(it) },
                 onMovieClicked = { movie ->
                     navController.navigate(
@@ -106,6 +107,7 @@ fun NavigationHost(
         composable(Routes.ArchiveView.route) {
             ArchiveScreen(
                 archivedMovies = uiState.archiveList,
+                onCancelAction = onCancelAction,
                 viewModel = viewModel,
                 navController = navController,
             )

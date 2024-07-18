@@ -30,6 +30,7 @@ object MovieListTags {
 fun MovieList(
     listMode: ListMode,
     movies: List<Movie>,
+    isArchiveVisitable: Boolean,
     onListModeChanged: (ListMode) -> Unit,
     onMovieClicked: (Movie) -> Unit,
     navController: NavController,
@@ -41,16 +42,22 @@ fun MovieList(
             ListMode.PENDING -> movies.filter { it.watchState == WatchState.PENDING }
         }
 
+    val movieListBottomBarItems =
+        listOfNotNull(
+            filterListItem(listMode, onListModeChanged),
+            CustomBarItem(NavigationItem.CreateMovieShortcut),
+            if (isArchiveVisitable) {
+                CustomBarItem(NavigationItem.ArchiveScreen)
+            } else {
+                null
+            },
+        )
+
     Scaffold(
         bottomBar = {
             CustomNavigationBar(
                 navController = navController,
-                items =
-                    listOf(
-                        filterListItem(listMode, onListModeChanged),
-                        CustomBarItem(NavigationItem.CreateMovieShortcut),
-                        CustomBarItem(NavigationItem.ArchiveScreen),
-                    ),
+                items = movieListBottomBarItems,
             )
         },
     ) { innerPadding ->

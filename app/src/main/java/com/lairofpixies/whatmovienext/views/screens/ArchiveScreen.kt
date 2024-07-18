@@ -30,10 +30,15 @@ object ArchiveTags {
 @Composable
 fun ArchiveScreen(
     archivedMovies: List<Movie>,
+    onCancelAction: () -> Unit,
     viewModel: MainViewModel,
     navController: NavHostController,
 ) {
     val selection = remember { mutableStateOf(setOf<Movie>()) }
+
+    if (archivedMovies.isEmpty()) {
+        onCancelAction()
+    }
 
     val bottomBarItems =
         listOf(CustomBarItem(NavigationItem.MoviesShortcut)) +

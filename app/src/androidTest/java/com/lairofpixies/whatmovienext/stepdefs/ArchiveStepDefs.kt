@@ -2,6 +2,7 @@ package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
@@ -39,7 +40,6 @@ class ArchiveStepDefs(
             theUserStartsEditingTheEntry()
             editCardStepDefs.theUserArchivesTheCurrentEntry()
             theEntryIsNotVisible(movieTitle)
-            theUserNavigatesToTheArchive()
         }
     }
 
@@ -92,4 +92,11 @@ class ArchiveStepDefs(
                 .performClick()
         }
     }
+
+    @Then("the archive shortcut is not available")
+    fun theArchiveShortcutIsNotAvailable() =
+        composeRule.composeStep {
+            onNodeWithText(activity.getString(R.string.archive))
+                .assertDoesNotExist()
+        }
 }
