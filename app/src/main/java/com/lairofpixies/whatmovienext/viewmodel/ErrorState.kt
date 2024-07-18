@@ -14,4 +14,8 @@ sealed class ErrorState {
         val onSave: () -> Unit,
         val onDiscard: () -> Unit,
     ) : ErrorState()
+
+    data class ConfirmDeletion(
+        val onConfirm: () -> Unit,
+    ) : ErrorState()
 }

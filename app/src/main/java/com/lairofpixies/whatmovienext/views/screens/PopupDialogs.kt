@@ -19,6 +19,7 @@ enum class PopupDialogTags {
     SavingWithEmptyTitle,
     UnsavedChanges,
     DuplicatedTitle,
+    ConfirmDeletion,
 }
 
 @Composable
@@ -60,6 +61,17 @@ fun PopupDialogs(
                 dismissLabel = context.getString(R.string.continue_editing),
                 onDismiss = onDismiss,
             )
+
+        is ErrorState.ConfirmDeletion ->
+            TwoButtonDialog(
+                modifier = modifier.testTag(PopupDialogTags.ConfirmDeletion.name),
+                titleStringResource = R.string.delete_forever,
+                contentStringResource = R.string.please_confirm_deletion,
+                confirmStringResource = R.string.confirm_deletion,
+                dismissStringResource = R.string.cancel,
+                onConfirm = errorState.onConfirm,
+                onDismiss = onDismiss,
+            )
     }
 }
 
@@ -78,6 +90,38 @@ fun SingleButtonDialog(
         confirmButton = {
             Button(onClick = onDismiss) {
                 Text(context.getString(R.string.close))
+            }
+        },
+    )
+}
+
+@Composable
+fun TwoButtonDialog(
+    modifier: Modifier = Modifier,
+    titleStringResource: Int,
+    contentStringResource: Int,
+    confirmStringResource: Int,
+    dismissStringResource: Int,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val context = LocalContext.current
+    AlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismiss,
+        title = { Text(context.getString(titleStringResource)) },
+        text = { Text(context.getString(contentStringResource)) },
+        confirmButton = {
+            Button(onClick = {
+                onConfirm()
+                onDismiss()
+            }) {
+                Text(context.getString(confirmStringResource))
+            }
+        },
+        dismissButton = {
+            Button(onClick = onDismiss) {
+                Text(context.getString(dismissStringResource))
             }
         },
     )

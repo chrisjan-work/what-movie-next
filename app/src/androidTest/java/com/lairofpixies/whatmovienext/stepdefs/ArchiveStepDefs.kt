@@ -1,12 +1,14 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
 import com.lairofpixies.whatmovienext.views.screens.ArchiveTags
+import com.lairofpixies.whatmovienext.views.screens.PopupDialogTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
@@ -68,4 +70,26 @@ class ArchiveStepDefs(
             onNodeWithTextUnderTag(movieTitle, ArchiveTags.TAG_ARCHIVE_LIST)
                 .assertDoesNotExist()
         }
+
+    @Then("a pop-up asks for confirmation for deleting the entry")
+    fun aPopUpAsksForConfirmationForDeletingTheEntry() =
+        composeRule.composeStep {
+            onNodeWithTag(PopupDialogTags.ConfirmDeletion.name)
+                .performClick()
+        }
+
+    @When("the user selects {string} in the deletion pop-up")
+    fun theUserSelectsInTheDeletionPopUp(deletionConfirmation: String) {
+        composeRule.composeStep {
+            val label =
+                when (deletionConfirmation) {
+                    "Confirm" -> activity.getString(R.string.confirm_deletion)
+                    "Cancel" -> activity.getString(R.string.cancel)
+                    else -> throw PendingException("Unknown option: $deletionConfirmation")
+                }
+
+            onNodeWithTextUnderTag(label, PopupDialogTags.ConfirmDeletion.name)
+                .performClick()
+        }
+    }
 }

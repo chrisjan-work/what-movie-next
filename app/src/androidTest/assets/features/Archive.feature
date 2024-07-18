@@ -15,12 +15,20 @@ Feature: Archive
     When the user archives the entry "The Room"
     And the user selects the entry "The Room" in the archive
     And the user clicks on the archive action "Delete forever"
-#    # TODO
-##    Then a pop-up asks for confirmation for deleting the entry
-##    When the user confirms the deletion
+    Then a pop-up asks for confirmation for deleting the entry
+    When the user selects "Confirm" in the deletion pop-up
     Then the entry "The Room" is not available in the archive
     When the user navigates back
     Then the entry "The Room" is not available
+
+  Scenario: Attempt to delete entry but cancel
+    Given a list with an entry "The Room"
+    When the user archives the entry "The Room"
+    And the user selects the entry "The Room" in the archive
+    And the user clicks on the archive action "Delete forever"
+    Then a pop-up asks for confirmation for deleting the entry
+    When the user selects "Cancel" in the deletion pop-up
+    Then the entry "The Room" is visible in the archive
 
   Scenario: Restore entry from archive
     Given a list with an entry "Hellraiser"

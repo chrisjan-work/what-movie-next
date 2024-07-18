@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.database.Movie
+import com.lairofpixies.whatmovienext.viewmodel.ErrorState
 import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
@@ -42,7 +43,12 @@ fun ArchiveScreen(
                         viewModel.restoreMovies(selection.value.toList())
                     },
                     CustomBarItem(NavigationItem.DeleteAction) {
-                        viewModel.deleteMovies(selection.value.toList())
+                        viewModel.showError(
+                            ErrorState.ConfirmDeletion {
+                                viewModel.deleteMovies(selection.value.toList())
+                                selection.value = emptySet()
+                            },
+                        )
                     },
                 )
             } else {
