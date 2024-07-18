@@ -1,3 +1,4 @@
+@MovieListFeature
 Feature: Movie list
   CRUD operations on the movie list
   mark films as pending/watched

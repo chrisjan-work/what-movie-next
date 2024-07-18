@@ -1,3 +1,4 @@
+@EditCardFeature
 Feature: Edit card
   Editing and saving movies
 

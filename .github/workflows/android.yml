@@ -59,8 +59,8 @@ jobs:
           api-level: 30
           script: ./gradlew connectedJunitDebugAndroidTest --info
 
-  feature_tests:
-    name: Cucumber Feature Tests
+  feature_tests_movielist:
+    name: Cucumber Feature Tests - MovieList
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -70,4 +70,43 @@ jobs:
         uses: ./.github/actions/emulator_run
         with:
           api-level: 30
-          script: ./gradlew connectedCucumberDebugAndroidTest --info
+          script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="MovieListFeature"
+
+  feature_tests_editcard:
+    name: Cucumber Feature Tests - EditCard
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: run emulator
+        uses: ./.github/actions/emulator_run
+        with:
+          api-level: 30
+          script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="EditCardFeature"
+
+  feature_tests_saveoptions:
+    name: Cucumber Feature Tests - SaveOptions
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: run emulator
+        uses: ./.github/actions/emulator_run
+        with:
+          api-level: 30
+          script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="SaveOptionsFeature"
+
+  feature_tests_archive:
+    name: Cucumber Feature Tests - Archive
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: run emulator
+        uses: ./.github/actions/emulator_run
+        with:
+          api-level: 30
+          script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="ArchiveFeature"

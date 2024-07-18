@@ -21,6 +21,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField("String", "CUCUMBER_TAG_EXPRESSION", extractCucumberTags())
     }
 
     buildTypes {
@@ -54,6 +56,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.13"
@@ -128,4 +131,15 @@ buildscript {
         // kotlinter rules for compose
         classpath(libs.rules.ktlint)
     }
+}
+
+fun extractCucumberTags(): String {
+    // example:
+    // ./gradlew connectedCucumberAndroidTest -Pcucumber.tags="MovieListFeature,ArchiveFeature"
+
+    // Split comma-separated list, add @ to each element, convert to expression
+    val tagsProperty = (project.findProperty("cucumber.tags") as? String?) ?: return "\"\""
+    val tagsList = tagsProperty.split(",").map { "@${it.trim()}" }.filter { it.isNotEmpty() }
+    val asExpression = tagsList.joinToString(separator = " or ")
+    return "\"$asExpression\""
 }

@@ -1,3 +1,4 @@
+@ArchiveFeature
 Feature: Archive
   Archive and delete or restore entries
 

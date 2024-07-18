@@ -1,3 +1,4 @@
+@SaveOptionsFeature
 Feature: Save Options
   Test matrix for the saving paths after editing a card
 

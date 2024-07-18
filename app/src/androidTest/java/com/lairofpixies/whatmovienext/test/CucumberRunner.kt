@@ -10,6 +10,7 @@ import io.cucumber.junit.CucumberOptions
     glue = ["com.lairofpixies.whatmovienext.test", "com.lairofpixies.whatmovienext.stepdefs"],
     features = ["features"],
     plugin = ["pretty"],
+    tags = [BuildConfig.CUCUMBER_TAG_EXPRESSION],
 )
 class CucumberRunner : CucumberAndroidJUnitRunner() {
     override fun newApplication(
