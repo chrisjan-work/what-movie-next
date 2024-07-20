@@ -125,16 +125,3 @@ Feature: Edit card
     And the user enters the title "The Big Lebowski"
     And the user saves the entry
     Then an error message is displayed indicating that the entry already exists
-
-# TODO
-#  Scenario: Search movie
-#    Given the user initiates a new entry
-#    When the user searches for the title "Spaceballs"
-#    Then the search results view should contain an entry with the title "Spaceballs"
-#
-# TODO
-#  Scenario: Choose search results
-#    Given the user initiates a new entry
-#    When the user searches for the title "Spaceballs"
-#    When the user selects the search result "Spaceballs"
-#    Then the card is filled with the information of "Spaceballs"

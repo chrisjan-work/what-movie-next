@@ -110,3 +110,16 @@ jobs:
         with:
           api-level: 30
           script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="ArchiveFeature"
+
+  feature_tests_search:
+    name: Cucumber Feature Tests - Search
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: run emulator
+        uses: ./.github/actions/emulator_run
+        with:
+          api-level: 30
+          script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="SearchFeature"

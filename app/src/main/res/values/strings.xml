@@ -25,4 +25,5 @@
     <string name="delete_forever">Delete forever</string>
     <string name="please_confirm_deletion">Do you want to delete the selected movies forever?</string>
     <string name="confirm_deletion">Yes, delete</string>
+    <string name="find_online">Find online</string>
 </resources>

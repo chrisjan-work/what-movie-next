@@ -259,4 +259,11 @@ class EditCardStepDefs(
             onNodeWithText(archiveLabel)
                 .performClick()
         }
+
+    @When("the user clicks on the find button")
+    fun theUserClicksOnTheFindButton() =
+        composeRule.composeStep {
+            onNodeWithText(activity.getString(R.string.find_online))
+                .performClick()
+        }
 }
