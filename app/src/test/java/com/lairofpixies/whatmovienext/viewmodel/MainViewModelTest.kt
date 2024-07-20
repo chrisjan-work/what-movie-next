@@ -22,6 +22,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 
@@ -56,6 +57,21 @@ class MainViewModelTest {
 
         // Then
         val forwardedMovies = mainViewModel.uiState.value.movieList
+        assertEquals(listOf(movie), forwardedMovies)
+    }
+
+    @Test
+    fun `forward archive`() {
+        // Given
+        val movie = Movie(title = "example movie", isArchived = true)
+        every { repo.archivedMovies } returns
+            MutableStateFlow(listOf(movie)).asStateFlow()
+
+        // When
+        mainViewModel = MainViewModel(repo)
+
+        // Then
+        val forwardedMovies = mainViewModel.uiState.value.archiveList
         assertEquals(listOf(movie), forwardedMovies)
     }
 
@@ -167,30 +183,181 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `accept to save movie with title`() {
-        // Given
-        val movie = Movie(id = 1, title = "successful movie")
-        val successCallback = spyk<(Long) -> Unit>()
+    fun `accept to save new movie with title`() =
+        runTest {
+            // Given
+            val movie = Movie(id = 1, title = "successful movie")
+            val successCallback = spyk<(Long) -> Unit>()
+            coEvery { repo.fetchMovieById(any()) } returns null
+            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf()
 
-        // When
-        mainViewModel.saveMovie(movie, successCallback) {}
+            // When
+            mainViewModel.saveMovie(movie, successCallback) {}
 
-        // Then
-        verify { successCallback(any()) }
-    }
+            // Then
+            coVerify { repo.addMovie(movie) }
+            coVerify(exactly = 0) { repo.updateMovie(any()) }
+            verify { successCallback(any()) }
+        }
 
     @Test
-    fun `refuse to save movie without title`() {
-        // Given
-        val movie = Movie(id = 1, title = "  ")
-        val failureCallback = spyk<(ErrorState) -> Unit>()
+    fun `accept to update existing movie with title`() =
+        runTest {
+            // Given
+            val movie = Movie(id = 1, title = "successful movie")
+            val successCallback = spyk<(Long) -> Unit>()
+            coEvery { repo.fetchMovieById(any()) } returns movie
+            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf()
 
-        // When
-        mainViewModel.saveMovie(movie, {}, failureCallback)
+            // When
+            mainViewModel.saveMovie(movie, successCallback) {}
 
-        // Then
-        verify { failureCallback(ErrorState.SavingWithEmptyTitle) }
-    }
+            // Then
+            coVerify { repo.updateMovie(movie) }
+            coVerify(exactly = 0) { repo.addMovie(any()) }
+            verify { successCallback(any()) }
+        }
+
+    @Test
+    fun `refuse to save movie without title`() =
+        runTest {
+            // Given
+            val movie = Movie(id = 1, title = "  ")
+            val failureCallback = spyk<(ErrorState) -> Unit>()
+
+            // When
+            mainViewModel.saveMovie(movie, {}, failureCallback)
+
+            // Then
+            verify { failureCallback(ErrorState.SavingWithEmptyTitle) }
+        }
+
+    @Test
+    fun `refuse to save movie with duplicate title`() =
+        runTest {
+            // Given
+            val movieToSave = Movie(id = 1, title = "duplicate movie")
+            val duplicatedMovie = Movie(id = 2, title = "duplicate movie")
+            var capturedError: ErrorState? = null
+            coEvery { repo.fetchMovieById(any()) } returns null
+            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
+
+            // When
+            mainViewModel.saveMovie(movieToSave, {}, onFailure = { capturedError = it })
+
+            // Then
+            assertNotNull(capturedError)
+            assertEquals(ErrorState.DuplicatedTitle::class.java, capturedError!!::class.java)
+        }
+
+    @Test
+    fun `user discards movie with duplicate title`() =
+        runTest {
+            // Given
+            val movieToSave = Movie(id = 1, title = "duplicate movie")
+            val duplicatedMovie = Movie(id = 2, title = "duplicate movie")
+            val successCallback = spyk<(Long) -> Unit>()
+            var capturedError: ErrorState? = null
+            coEvery { repo.fetchMovieById(any()) } returns null
+            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
+
+            // When
+            mainViewModel.saveMovie(
+                movieToSave,
+                onSuccess = successCallback,
+                onFailure = { capturedError = it },
+            )
+            (capturedError as? ErrorState.DuplicatedTitle)?.onDiscard?.invoke()
+
+            // Then
+            verify { successCallback(movieToSave.id) }
+            coVerify(exactly = 0) { repo.addMovie(any()) }
+            coVerify(exactly = 0) { repo.updateMovie(any()) }
+        }
+
+    @Test
+    fun `user overwrites duplicate movie with new entry`() =
+        runTest {
+            // Given
+            val movieToSave =
+                Movie(
+                    id = 1,
+                    title = "duplicate movie",
+                    watchState = WatchState.PENDING,
+                )
+            val duplicatedMovie =
+                Movie(
+                    id = 2,
+                    title = "duplicate movie",
+                    watchState = WatchState.WATCHED,
+                )
+            val successCallback = spyk<(Long) -> Unit>()
+            var capturedError: ErrorState? = null
+            coEvery { repo.fetchMovieById(any()) } returns null
+            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
+
+            // When
+            mainViewModel.saveMovie(
+                movieToSave,
+                onSuccess = successCallback,
+                onFailure = { capturedError = it },
+            )
+            (capturedError as? ErrorState.DuplicatedTitle)?.onSave?.invoke()
+
+            // Then
+            verify { successCallback(any()) }
+            val expectedMovie =
+                Movie(
+                    id = 2,
+                    title = "duplicate movie",
+                    watchState = WatchState.PENDING,
+                )
+            coVerify { repo.updateMovie(expectedMovie) }
+            coVerify(exactly = 0) { repo.addMovie(any()) }
+            coVerify(exactly = 0) { repo.deleteMovie(movieToSave) }
+        }
+
+    @Test
+    fun `user overwrites duplicate movie with edited existing entry`() =
+        runTest {
+            // Given
+            val movieToSave =
+                Movie(
+                    id = 1,
+                    title = "duplicate movie",
+                    watchState = WatchState.PENDING,
+                )
+            val duplicatedMovie =
+                Movie(
+                    id = 2,
+                    title = "duplicate movie",
+                    watchState = WatchState.WATCHED,
+                )
+            val successCallback = spyk<(Long) -> Unit>()
+            var capturedError: ErrorState? = null
+            coEvery { repo.fetchMovieById(any()) } returns movieToSave
+            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
+
+            // When
+            mainViewModel.saveMovie(
+                movieToSave,
+                onSuccess = successCallback,
+                onFailure = { capturedError = it },
+            )
+            (capturedError as? ErrorState.DuplicatedTitle)?.onSave?.invoke()
+
+            // Then
+            verify { successCallback(any()) }
+            val expectedMovie =
+                Movie(
+                    id = 2,
+                    title = "duplicate movie",
+                    watchState = WatchState.PENDING,
+                )
+            coVerify { repo.updateMovie(expectedMovie) }
+            coVerify { repo.deleteMovie(movieToSave) }
+            coVerify(exactly = 0) { repo.addMovie(any()) }
+        }
 
     @Test
     fun `pass error state and clear`() =
@@ -212,5 +379,45 @@ class MainViewModelTest {
                 listOf(ErrorState.None, ErrorState.SavingWithEmptyTitle, ErrorState.None),
                 resultList.toList(),
             )
+        }
+
+    @Test
+    fun `restore movies from archive`() =
+        runTest {
+            // Given
+            val moviesToRestore =
+                listOf(
+                    Movie(id = 71, title = "archived movie"),
+                    Movie(id = 77, title = "another archived movie"),
+                )
+
+            // When
+            mainViewModel.restoreMovies(moviesToRestore)
+
+            // Then
+            coVerify {
+                repo.restoreMovie(71)
+                repo.restoreMovie(77)
+            }
+        }
+
+    @Test
+    fun `delete movies from archive`() =
+        runTest {
+            // Given
+            val moviesToDelete =
+                listOf(
+                    Movie(id = 91, title = "archived movie"),
+                    Movie(id = 97, title = "another archived movie"),
+                )
+
+            // When
+            mainViewModel.deleteMovies(moviesToDelete)
+
+            // Then
+            coVerify {
+                repo.deleteMovie(moviesToDelete[0])
+                repo.deleteMovie(moviesToDelete[1])
+            }
         }
 }

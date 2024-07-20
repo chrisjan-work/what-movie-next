@@ -197,4 +197,36 @@ class MovieRepositoryImplTest {
             // Then
             coVerify { movieDao.archive(movieToArchive.id) }
         }
+
+    @Test
+    fun restoreMovie() =
+        runTest {
+            // Given
+            val movieToRestore = Movie(1, "isArchived", WatchState.WATCHED, isArchived = true)
+            val requestedMovieId = slot<Long>()
+            coEvery { movieDao.restore(capture(requestedMovieId)) } just runs
+
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            sut.restoreMovie(movieToRestore.id)
+
+            // Then
+            coVerify { movieDao.restore(movieToRestore.id) }
+        }
+
+    @Test
+    fun deleteMovie() =
+        runTest {
+            // Given
+            val movieToDelete = Movie(1, "isArchived", WatchState.WATCHED, isArchived = true)
+            val archivedMovie = slot<Movie>()
+            coEvery { movieDao.delete(capture(archivedMovie)) } just runs
+
+            // When
+            sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
+            sut.deleteMovie(movieToDelete)
+
+            // Then
+            coVerify { movieDao.delete(movieToDelete) }
+        }
 }

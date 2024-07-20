@@ -149,8 +149,12 @@ class InternalDatabaseTest {
             // When setting the movie to archived
             dao.archive(movie.id)
 
-            // Then the movie is removed from the view list
+            // Then the movie is removed from the view list and moved to the archive
             assert(dao.getAllMovies().first().isEmpty())
+            assertEquals(
+                listOf(movie.copy(isArchived = true)),
+                dao.getArchivedMovies().first(),
+            )
         }
 
     @Test
@@ -208,5 +212,37 @@ class InternalDatabaseTest {
             assertEquals(movie, lowerCase.first())
             assertEquals(movie, upperCase.first())
             assertEquals(emptyList<Movie>(), none)
+        }
+
+    @Test
+    fun `restore archived movies`() =
+        runTest {
+            // Given a database with an archived movie
+            val movie = Movie(id = 1, title = "The Rum Diary")
+            dao.insertMovie(movie)
+            dao.archive(movie.id)
+
+            // When restored
+            dao.restore(movie.id)
+
+            // Then
+            assertEquals(emptyList<Movie>(), dao.getArchivedMovies().first())
+            assertEquals(listOf(movie), dao.getAllMovies().first())
+        }
+
+    @Test
+    fun `delete archived movies`() =
+        runTest {
+            // Given a database with an archived movie
+            val movie = Movie(id = 1, title = "The Rum Diary")
+            dao.insertMovie(movie)
+            dao.archive(movie.id)
+
+            // When restored
+            dao.delete(movie.copy(isArchived = true))
+
+            // Then
+            assertEquals(emptyList<Movie>(), dao.getArchivedMovies().first())
+            assertEquals(emptyList<Movie>(), dao.getAllMovies().first())
         }
 }
