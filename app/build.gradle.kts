@@ -23,6 +23,8 @@ android {
         }
 
         buildConfigField("String", "CUCUMBER_TAG_EXPRESSION", extractCucumberTags())
+        // TODO: proper url
+        buildConfigField("String", "BASE_URL", "\"localhost:8080\"")
     }
 
     buildTypes {
@@ -110,6 +112,10 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.moshi.converter)
     implementation(libs.moshi.kotlin)
+    implementation(platform(libs.okhttp.bom))
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.tls)
+    androidTestImplementation(libs.mockwebserver)
 
     // cucumber
     androidTestImplementation(libs.cucumber.android)
