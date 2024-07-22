@@ -25,14 +25,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.database.PartialMovie
-import com.lairofpixies.whatmovienext.database.isNew
-import com.lairofpixies.whatmovienext.viewmodel.ErrorState
-import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.PartialMovie
+import com.lairofpixies.whatmovienext.models.data.isNew
+import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
 import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
+import com.lairofpixies.whatmovienext.views.state.ErrorState
 
 object EditCardScreenTags {
     const val TAG_EDITABLE_MOVIE_CARD = "EditCard"

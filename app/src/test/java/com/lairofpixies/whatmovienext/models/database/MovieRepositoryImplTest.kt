@@ -1,5 +1,8 @@
-package com.lairofpixies.whatmovienext.database
+package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.PartialMovie
+import com.lairofpixies.whatmovienext.models.data.WatchState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just

@@ -1,10 +1,12 @@
-package com.lairofpixies.whatmovienext.database
+package com.lairofpixies.whatmovienext.models.database
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.WatchState
 import kotlinx.coroutines.flow.Flow
 
 @Dao

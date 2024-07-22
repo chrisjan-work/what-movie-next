@@ -1,6 +1,6 @@
-package com.lairofpixies.whatmovienext.viewmodel
+package com.lairofpixies.whatmovienext.views.state
 
-import com.lairofpixies.whatmovienext.database.Movie
+import com.lairofpixies.whatmovienext.models.data.Movie
 
 enum class ListMode {
     ALL,

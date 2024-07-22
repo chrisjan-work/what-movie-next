@@ -1,4 +1,4 @@
-package com.lairofpixies.whatmovienext.database
+package com.lairofpixies.whatmovienext.models.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

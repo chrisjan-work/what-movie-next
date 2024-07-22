@@ -1,6 +1,6 @@
 package com.lairofpixies.whatmovienext.test
 
-import com.lairofpixies.whatmovienext.database.InternalDatabase
+import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,5 +14,5 @@ class CucumberTestContext
         val scenarioHolder: ActivityScenarioHolder,
     ) {
         @Inject
-        lateinit var appDatabase: InternalDatabase
+        lateinit var appDatabase: MovieDatabase
     }

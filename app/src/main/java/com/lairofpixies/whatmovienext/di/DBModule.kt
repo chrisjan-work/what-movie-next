@@ -2,10 +2,10 @@ package com.lairofpixies.whatmovienext.di
 
 import android.content.Context
 import androidx.room.Room
-import com.lairofpixies.whatmovienext.database.InternalDatabase
-import com.lairofpixies.whatmovienext.database.MovieDao
-import com.lairofpixies.whatmovienext.database.MovieRepository
-import com.lairofpixies.whatmovienext.database.MovieRepositoryImpl
+import com.lairofpixies.whatmovienext.models.database.MovieDao
+import com.lairofpixies.whatmovienext.models.database.MovieDatabase
+import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.models.database.MovieRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,11 +26,11 @@ object DBModule {
     ) = Room
         .databaseBuilder(
             app,
-            InternalDatabase::class.java,
+            MovieDatabase::class.java,
             "what_movie_next_database",
         ).build()
 
     @Singleton
     @Provides
-    fun provideMovieDao(db: InternalDatabase) = db.movieDao()
+    fun provideMovieDao(db: MovieDatabase) = db.movieDao()
 }

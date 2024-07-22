@@ -1,4 +1,4 @@
-package com.lairofpixies.whatmovienext.viewmodel
+package com.lairofpixies.whatmovienext.views.state
 
 sealed class ErrorState {
     data object None : ErrorState()

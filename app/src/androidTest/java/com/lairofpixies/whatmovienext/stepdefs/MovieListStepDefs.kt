@@ -8,14 +8,14 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.database.WatchState
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
-import com.lairofpixies.whatmovienext.viewmodel.ListMode
 import com.lairofpixies.whatmovienext.views.screens.MovieCardScreenTags
 import com.lairofpixies.whatmovienext.views.screens.MovieListTags
+import com.lairofpixies.whatmovienext.views.state.ListMode
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Given

@@ -1,9 +1,11 @@
-package com.lairofpixies.whatmovienext.viewmodel
+package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.database.MovieRepository
-import com.lairofpixies.whatmovienext.database.PartialMovie
-import com.lairofpixies.whatmovienext.database.WatchState
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.PartialMovie
+import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.views.state.ErrorState
+import com.lairofpixies.whatmovienext.views.state.ListMode
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

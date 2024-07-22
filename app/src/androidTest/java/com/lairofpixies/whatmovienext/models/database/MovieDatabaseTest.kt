@@ -1,7 +1,9 @@
-package com.lairofpixies.whatmovienext.database
+package com.lairofpixies.whatmovienext.models.database
 
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.WatchState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -9,14 +11,14 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class InternalDatabaseTest {
-    private lateinit var db: InternalDatabase
+class MovieDatabaseTest {
+    private lateinit var db: MovieDatabase
     private lateinit var dao: MovieDao
 
     @Before
     fun setUp() {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        db = Room.inMemoryDatabaseBuilder(appContext, InternalDatabase::class.java).build()
+        db = Room.inMemoryDatabaseBuilder(appContext, MovieDatabase::class.java).build()
         dao = db.movieDao()
     }
 

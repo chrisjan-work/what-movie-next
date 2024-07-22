@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.viewmodel.ErrorState
+import com.lairofpixies.whatmovienext.views.state.ErrorState
 
 enum class PopupDialogTags {
     SavingWithEmptyTitle,

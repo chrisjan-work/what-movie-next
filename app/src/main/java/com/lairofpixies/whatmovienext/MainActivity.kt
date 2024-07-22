@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
+import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.screens.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.lairofpixies.whatmovienext.ui.theme.WhatMovieNextTheme
-import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
+import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.navigation.NavigationHost
 
 @Composable

@@ -1,14 +1,17 @@
-package com.lairofpixies.whatmovienext.viewmodel
+package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.database.MovieRepository
-import com.lairofpixies.whatmovienext.database.PartialMovie
-import com.lairofpixies.whatmovienext.database.WatchState
-import com.lairofpixies.whatmovienext.database.hasQuietSaveableChanges
-import com.lairofpixies.whatmovienext.database.hasSaveableChanges
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.PartialMovie
+import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.data.hasQuietSaveableChanges
+import com.lairofpixies.whatmovienext.models.data.hasSaveableChanges
+import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.views.state.ErrorState
+import com.lairofpixies.whatmovienext.views.state.ListMode
+import com.lairofpixies.whatmovienext.views.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow

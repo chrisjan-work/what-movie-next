@@ -7,13 +7,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
-import com.lairofpixies.whatmovienext.viewmodel.UiState
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
 import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieList
+import com.lairofpixies.whatmovienext.views.state.UiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

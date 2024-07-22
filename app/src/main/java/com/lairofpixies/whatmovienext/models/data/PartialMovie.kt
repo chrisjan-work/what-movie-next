@@ -1,4 +1,4 @@
-package com.lairofpixies.whatmovienext.database
+package com.lairofpixies.whatmovienext.models.data
 
 sealed class PartialMovie {
     data object Loading : PartialMovie()

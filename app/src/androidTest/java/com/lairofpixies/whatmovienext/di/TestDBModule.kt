@@ -2,10 +2,10 @@ package com.lairofpixies.whatmovienext.di
 
 import android.content.Context
 import androidx.room.Room
-import com.lairofpixies.whatmovienext.database.InternalDatabase
-import com.lairofpixies.whatmovienext.database.MovieDao
-import com.lairofpixies.whatmovienext.database.MovieRepository
-import com.lairofpixies.whatmovienext.database.MovieRepositoryImpl
+import com.lairofpixies.whatmovienext.models.database.MovieDao
+import com.lairofpixies.whatmovienext.models.database.MovieDatabase
+import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.models.database.MovieRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -26,9 +26,9 @@ object TestDBModule {
     @Singleton
     fun provideAppDatabase(
         @ApplicationContext context: Context,
-    ): InternalDatabase = Room.inMemoryDatabaseBuilder(context, InternalDatabase::class.java).build()
+    ): MovieDatabase = Room.inMemoryDatabaseBuilder(context, MovieDatabase::class.java).build()
 
     @Singleton
     @Provides
-    fun provideMovieDao(db: InternalDatabase): MovieDao = db.movieDao()
+    fun provideMovieDao(db: MovieDatabase): MovieDao = db.movieDao()
 }

@@ -1,5 +1,8 @@
-package com.lairofpixies.whatmovienext.database
+package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.PartialMovie
+import com.lairofpixies.whatmovienext.models.data.WatchState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

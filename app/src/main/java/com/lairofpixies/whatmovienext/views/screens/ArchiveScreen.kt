@@ -16,12 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavHostController
-import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.viewmodel.ErrorState
-import com.lairofpixies.whatmovienext.viewmodel.MainViewModel
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
 import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
+import com.lairofpixies.whatmovienext.views.state.ErrorState
 
 object ArchiveTags {
     const val TAG_ARCHIVE_LIST = "ArchiveList"

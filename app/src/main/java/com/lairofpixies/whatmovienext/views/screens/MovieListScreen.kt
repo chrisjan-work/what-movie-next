@@ -14,12 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavController
-import com.lairofpixies.whatmovienext.database.Movie
-import com.lairofpixies.whatmovienext.database.WatchState
-import com.lairofpixies.whatmovienext.viewmodel.ListMode
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
 import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
+import com.lairofpixies.whatmovienext.views.state.ListMode
 
 object MovieListTags {
     const val TAG_MODE_BUTTON = "ListModeButton"
