@@ -12,7 +12,7 @@ import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
 import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieCardScreen
-import com.lairofpixies.whatmovienext.views.screens.MovieList
+import com.lairofpixies.whatmovienext.views.screens.MovieListScreen
 import com.lairofpixies.whatmovienext.views.state.UiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +47,7 @@ fun NavigationHost(
 
     NavHost(navController = navController, startDestination = Routes.HOME.route) {
         composable(Routes.AllMoviesView.route) {
-            MovieList(
+            MovieListScreen(
                 listMode = uiState.listMode,
                 movies = uiState.movieList,
                 isArchiveVisitable = uiState.archiveList.isNotEmpty(),

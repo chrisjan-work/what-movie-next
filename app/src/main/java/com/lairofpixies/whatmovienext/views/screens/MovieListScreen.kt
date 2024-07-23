@@ -23,7 +23,7 @@ import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.ListMode
 
 @Composable
-fun MovieList(
+fun MovieListScreen(
     listMode: ListMode,
     movies: List<Movie>,
     isArchiveVisitable: Boolean,
@@ -38,40 +38,44 @@ fun MovieList(
             ListMode.PENDING -> movies.filter { it.watchState == WatchState.PENDING }
         }
 
-    val movieListBottomBarItems =
-        listOfNotNull(
-            filterListItem(listMode, onListModeChanged),
-            CustomBarItem(ButtonSpec.CreateMovieShortcut) {
-                navController.navigate(Routes.CreateMovieView.route)
-            },
-            if (isArchiveVisitable) {
-                CustomBarItem(ButtonSpec.ArchiveShortcut) {
-                    navController.navigate(Routes.ArchiveView.route)
-                }
-            } else {
-                null
-            },
-        )
-
     Scaffold(
         bottomBar = {
             CustomBottomBar(
-                items = movieListBottomBarItems,
+                items =
+                    bottomItemsForMovieList(
+                        listMode,
+                        onListModeChanged,
+                        isArchiveVisitable,
+                        navController,
+                    ),
             )
         },
     ) { innerPadding ->
-        Box(
+        MovieList(
+            filteredMovies = filteredMovies,
+            onMovieClicked = onMovieClicked,
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
+        )
+    }
+}
+
+@Composable
+fun MovieList(
+    filteredMovies: List<Movie>,
+    onMovieClicked: (Movie) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+    ) {
+        LazyColumn(
+            modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
         ) {
-            LazyColumn(
-                modifier = Modifier.testTag(UiTags.Screens.MOVIE_LIST),
-            ) {
-                items(filteredMovies) { movie ->
-                    MovieListItem(movie) { onMovieClicked(movie) }
-                }
+            items(filteredMovies) { movie ->
+                MovieListItem(movie) { onMovieClicked(movie) }
             }
         }
     }
@@ -103,17 +107,41 @@ fun MovieListItem(
     )
 }
 
-fun filterListItem(
+fun bottomItemsForMovieList(
     listMode: ListMode,
     onListModeChanged: (ListMode) -> Unit,
-): CustomBarItem {
-    val buttonSpec =
-        when (listMode) {
-            ListMode.ALL -> ButtonSpec.AllMoviesFilter
-            ListMode.PENDING -> ButtonSpec.PendingFilter
-            ListMode.WATCHED -> ButtonSpec.WatchedFilter
+    isArchiveVisitable: Boolean,
+    navController: NavController,
+): List<CustomBarItem> {
+    val filterItem =
+        CustomBarItem(
+            when (listMode) {
+                ListMode.ALL -> ButtonSpec.AllMoviesFilter
+                ListMode.PENDING -> ButtonSpec.PendingFilter
+                ListMode.WATCHED -> ButtonSpec.WatchedFilter
+            },
+            tag = UiTags.Buttons.LIST_MODE,
+        ) {
+            onListModeChanged(listMode.next())
         }
-    return CustomBarItem(buttonSpec, tag = UiTags.Buttons.LIST_MODE) {
-        onListModeChanged(listMode.next())
-    }
+
+    val createItem =
+        CustomBarItem(ButtonSpec.CreateMovieShortcut) {
+            navController.navigate(Routes.CreateMovieView.route)
+        }
+
+    val archiveItem =
+        if (isArchiveVisitable) {
+            CustomBarItem(ButtonSpec.ArchiveShortcut) {
+                navController.navigate(Routes.ArchiveView.route)
+            }
+        } else {
+            null
+        }
+
+    return listOfNotNull(
+        filterItem,
+        createItem,
+        archiveItem,
+    )
 }

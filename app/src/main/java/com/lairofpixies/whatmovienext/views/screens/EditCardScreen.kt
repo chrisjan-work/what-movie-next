@@ -107,7 +107,6 @@ fun EditCardScreen(
     EditCard(
         movieState = editableMovie,
         focusRequester = focusRequester,
-        navController = navController,
         onCancelAction = onCancelAction,
         onSaveAction = onSaveAction,
         onArchiveAction = onArchiveAction,
@@ -119,7 +118,6 @@ fun EditCardScreen(
 fun EditCard(
     movieState: MutableState<Movie>,
     focusRequester: FocusRequester,
-    navController: NavController,
     onCancelAction: () -> Unit,
     onSaveAction: () -> Unit,
     onArchiveAction: () -> Unit,

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,51 +38,49 @@ fun ArchiveScreen(
         onCancelAction()
     }
 
-    val bottomBarItems =
-        listOf(
-            CustomBarItem(ButtonSpec.MoviesShortcut) {
-                navController.navigate(Routes.AllMoviesView.route)
-            },
-        ) +
-            if (selection.value.isNotEmpty()) {
-                listOf(
-                    CustomBarItem(ButtonSpec.RestoreAction) {
-                        viewModel.restoreMovies(selection.value.toList())
-                    },
-                    CustomBarItem(ButtonSpec.DeleteAction) {
-                        viewModel.showError(
-                            ErrorState.ConfirmDeletion {
-                                viewModel.deleteMovies(selection.value.toList())
-                                selection.value = emptySet()
-                            },
-                        )
-                    },
-                )
-            } else {
-                emptyList()
-            }
-
     Scaffold(
         modifier = Modifier.testTag(UiTags.Screens.ARCHIVE),
-        bottomBar = { CustomBottomBar(items = bottomBarItems) },
+        bottomBar = {
+            CustomBottomBar(
+                items =
+                    bottomItemsForArchive(
+                        selection,
+                        viewModel,
+                        navController,
+                    ),
+            )
+        },
     ) { innerPadding ->
-        Box(
+        Archive(
+            archivedMovies = archivedMovies,
+            selection = selection,
             modifier =
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-        ) {
-            LazyColumn {
-                items(archivedMovies) { movie ->
-                    ArchivedMovieListItem(
-                        movie = movie,
-                        isSelected = movie in selection.value,
-                    ) { isSelected ->
-                        if (isSelected) {
-                            selection.value += movie
-                        } else {
-                            selection.value -= movie
-                        }
+        )
+    }
+}
+
+@Composable
+fun Archive(
+    archivedMovies: List<Movie>,
+    selection: MutableState<Set<Movie>>,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier,
+    ) {
+        LazyColumn {
+            items(archivedMovies) { movie ->
+                ArchivedMovieListItem(
+                    movie = movie,
+                    isSelected = movie in selection.value,
+                ) { isSelected ->
+                    if (isSelected) {
+                        selection.value += movie
+                    } else {
+                        selection.value -= movie
                     }
                 }
             }
@@ -119,4 +118,37 @@ fun ArchivedMovieListItem(
         color = selectedColor,
         text = movie.title,
     )
+}
+
+fun bottomItemsForArchive(
+    selection: MutableState<Set<Movie>>,
+    viewModel: MainViewModel,
+    navController: NavHostController,
+): List<CustomBarItem> {
+    val actionList =
+        mutableListOf(
+            CustomBarItem(ButtonSpec.MoviesShortcut) {
+                navController.navigate(Routes.AllMoviesView.route)
+            },
+        )
+
+    if (selection.value.isNotEmpty()) {
+        actionList.add(
+            CustomBarItem(ButtonSpec.RestoreAction) {
+                viewModel.restoreMovies(selection.value.toList())
+            },
+        )
+        actionList.add(
+            CustomBarItem(ButtonSpec.DeleteAction) {
+                viewModel.showError(
+                    ErrorState.ConfirmDeletion {
+                        viewModel.deleteMovies(selection.value.toList())
+                        selection.value = emptySet()
+                    },
+                )
+            },
+        )
+    }
+
+    return actionList
 }

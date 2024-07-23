@@ -64,7 +64,7 @@ fun MovieCard(
         bottomBar = {
             CustomBottomBar(
                 items =
-                    movieCardActionItems(
+                    bottomItemsForMovieCard(
                         movie,
                         onHomeAction = { navController.navigate(Routes.AllMoviesView.route) },
                         onEditAction = onEditAction,
@@ -93,7 +93,7 @@ fun MovieCard(
     }
 }
 
-fun movieCardActionItems(
+fun bottomItemsForMovieCard(
     movie: Movie,
     onHomeAction: () -> Unit,
     onEditAction: (Movie) -> Unit,
