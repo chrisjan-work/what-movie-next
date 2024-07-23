@@ -85,6 +85,10 @@ fun EditCardScreen(
         onCancelAction()
     }
 
+    val onSearchAction = {
+        TODO()
+    }
+
     BackHandler(true) {
         when {
             viewModel.hasSaveableChanges(editableMovie.value) ->
@@ -111,6 +115,7 @@ fun EditCardScreen(
         onCancelAction = onCancelAction,
         onSaveAction = onSaveAction,
         onArchiveAction = onArchiveAction,
+        onSearchAction = onSearchAction,
     )
 }
 
@@ -122,6 +127,7 @@ fun EditCard(
     onCancelAction: () -> Unit,
     onSaveAction: () -> Unit,
     onArchiveAction: () -> Unit,
+    onSearchAction: () -> Unit,
 ) {
     val creating = movieState.value.isNew()
     Scaffold(
@@ -130,13 +136,13 @@ fun EditCard(
             CustomNavigationBar(
                 navController = navController,
                 items =
-                    listOf(
-                        if (creating) {
-                            CustomBarItem(NavigationItem.Cancel, onCancelAction)
-                        } else {
-                            CustomBarItem(NavigationItem.ArchiveAction, onArchiveAction)
-                        },
-                        CustomBarItem(NavigationItem.SaveChanges, onSaveAction),
+                    bottomItemsForEditCard(
+                        creating,
+                        searchEnabled = movieState.value.title.isNotBlank(),
+                        onCancelAction = onCancelAction,
+                        onSaveAction = onSaveAction,
+                        onArchiveAction = onArchiveAction,
+                        onSearchAction = onSearchAction,
                     ),
             )
         },
@@ -181,3 +187,21 @@ fun EditableTitleField(
             ),
     )
 }
+
+fun bottomItemsForEditCard(
+    creating: Boolean,
+    searchEnabled: Boolean,
+    onCancelAction: () -> Unit,
+    onArchiveAction: () -> Unit,
+    onSaveAction: () -> Unit,
+    onSearchAction: () -> Unit,
+): List<CustomBarItem> =
+    listOf(
+        if (creating) {
+            CustomBarItem(NavigationItem.Cancel, onCancelAction)
+        } else {
+            CustomBarItem(NavigationItem.ArchiveAction, onArchiveAction)
+        },
+        CustomBarItem(NavigationItem.SearchAction, searchEnabled, onSearchAction),
+        CustomBarItem(NavigationItem.SaveChanges, onSaveAction),
+    )

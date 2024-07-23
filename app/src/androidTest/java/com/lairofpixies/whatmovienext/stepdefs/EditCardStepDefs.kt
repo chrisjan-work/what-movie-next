@@ -263,7 +263,7 @@ class EditCardStepDefs(
     @When("the user clicks on the find button")
     fun theUserClicksOnTheFindButton() =
         composeRule.composeStep {
-            onNodeWithText(activity.getString(R.string.find_online))
+            onNodeWithText(activity.getString(R.string.lookup))
                 .performClick()
         }
 }

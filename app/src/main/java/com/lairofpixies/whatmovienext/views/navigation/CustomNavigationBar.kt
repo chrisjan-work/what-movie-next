@@ -16,11 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
-data class CustomBarItem(
-    val navigationItem: NavigationItem,
-    val onClick: (() -> Unit)? = null,
-)
-
 @Composable
 fun CustomNavigationBar(
     items: List<CustomBarItem>,
@@ -38,6 +33,7 @@ fun CustomNavigationBar(
                         Modifier.testTag(tag)
                     } ?: Modifier,
                 icon = { CustomBarIcon(customBarItem.navigationItem) },
+                enabled = customBarItem.enabled,
                 onClick = {
                     customBarItem.onClick?.invoke()
                         ?: customBarItem.navigationItem.route?.let {

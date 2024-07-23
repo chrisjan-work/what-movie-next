@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.FolderDelete
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.RestoreFromTrash
+import androidx.compose.material.icons.outlined.TravelExplore
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.lairofpixies.whatmovienext.R
@@ -47,6 +48,11 @@ sealed class NavigationItem(
     data object ArchiveAction : NavigationItem(
         label = R.string.archive,
         icon = Icons.Outlined.Delete,
+    )
+
+    data object SearchAction : NavigationItem(
+        label = R.string.lookup,
+        icon = Icons.Outlined.TravelExplore,
     )
 
     data object Edit : NavigationItem(
