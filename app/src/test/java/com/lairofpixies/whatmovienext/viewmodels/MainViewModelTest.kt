@@ -1,7 +1,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.ErrorState
@@ -81,7 +81,7 @@ class MainViewModelTest {
     fun `get single movie`() {
         // Given
         val partialMovie =
-            PartialMovie.Completed(
+            AsyncMovieInfo.Single(
                 Movie(id = 10, title = "single movie"),
             )
         every { repo.getMovie(10) } returns

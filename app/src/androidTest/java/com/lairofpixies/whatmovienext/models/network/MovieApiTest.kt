@@ -1,6 +1,6 @@
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.BackendMovie
+import com.lairofpixies.whatmovienext.models.data.RemoteMovie
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
@@ -50,8 +50,8 @@ class MovieApiTest {
             // Then
             val expectedMovies =
                 listOf(
-                    BackendMovie("example title"),
-                    BackendMovie("example title"),
+                    RemoteMovie("example title"),
+                    RemoteMovie("example title"),
                 )
             assertEquals(expectedMovies, result)
         }

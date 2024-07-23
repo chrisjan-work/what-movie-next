@@ -1,7 +1,7 @@
 package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +12,7 @@ interface MovieRepository {
 
     val archivedMovies: Flow<List<Movie>>
 
-    fun getMovie(movieId: Long): StateFlow<PartialMovie>
+    fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo>
 
     suspend fun fetchMovieById(movieId: Long): Movie?
 

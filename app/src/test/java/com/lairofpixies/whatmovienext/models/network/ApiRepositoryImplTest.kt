@@ -1,8 +1,8 @@
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.BackendMovie
-import com.lairofpixies.whatmovienext.models.data.DownloadMovieInfo
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.RemoteMovie
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -40,7 +40,7 @@ class ApiRepositoryImplTest {
             val result = sut.findMoviesByTitle("test").first()
 
             // Then
-            assertEquals(DownloadMovieInfo.Loading, result)
+            assertEquals(AsyncMovieInfo.Loading, result)
         }
 
     @Test
@@ -53,7 +53,7 @@ class ApiRepositoryImplTest {
             val result = sut.findMoviesByTitle("test").first()
 
             // Then
-            assertEquals(DownloadMovieInfo.Empty, result)
+            assertEquals(AsyncMovieInfo.Empty, result)
         }
 
     @Test
@@ -62,14 +62,14 @@ class ApiRepositoryImplTest {
             // Given
             coEvery { movieApi.findMoviesByTitle(any()) } returns
                 listOf(
-                    BackendMovie(title = "test"),
+                    RemoteMovie(title = "test"),
                 )
 
             // When
             val result = sut.findMoviesByTitle("test").first()
 
             // Then
-            assertEquals(DownloadMovieInfo.Single(Movie(title = "test")), result)
+            assertEquals(AsyncMovieInfo.Single(Movie(title = "test")), result)
         }
 
     @Test
@@ -78,9 +78,9 @@ class ApiRepositoryImplTest {
             // Given
             val receivedMovies =
                 listOf(
-                    BackendMovie(title = "movie1"),
-                    BackendMovie(title = "movie2"),
-                    BackendMovie(title = "movie3"),
+                    RemoteMovie(title = "movie1"),
+                    RemoteMovie(title = "movie2"),
+                    RemoteMovie(title = "movie3"),
                 )
             coEvery { movieApi.findMoviesByTitle(any()) } returns receivedMovies
 
@@ -94,7 +94,7 @@ class ApiRepositoryImplTest {
                     Movie(title = "movie2"),
                     Movie(title = "movie3"),
                 )
-            assertEquals(DownloadMovieInfo.Multiple(expectedMovies), result)
+            assertEquals(AsyncMovieInfo.Multiple(expectedMovies), result)
         }
 
     @Test
@@ -114,6 +114,6 @@ class ApiRepositoryImplTest {
             val result = sut.findMoviesByTitle("test").first()
 
             // Then
-            assertEquals(DownloadMovieInfo.Failed(http404), result)
+            assertEquals(AsyncMovieInfo.Failed(http404), result)
         }
 }

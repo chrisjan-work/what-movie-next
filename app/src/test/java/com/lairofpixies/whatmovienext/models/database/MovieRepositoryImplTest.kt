@@ -1,7 +1,7 @@
 package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -59,7 +59,7 @@ class MovieRepositoryImplTest {
         val result = sut.getMovie(1).value
 
         // Then
-        assertEquals(PartialMovie.Completed(movie), result)
+        assertEquals(AsyncMovieInfo.Single(movie), result)
     }
 
     @Test
@@ -72,7 +72,7 @@ class MovieRepositoryImplTest {
         val result = sut.getMovie(1).value
 
         // Then
-        assertEquals(PartialMovie.Loading, result)
+        assertEquals(AsyncMovieInfo.Loading, result)
     }
 
     @Test
@@ -85,7 +85,7 @@ class MovieRepositoryImplTest {
         val result = sut.getMovie(1).value
 
         // Then
-        assertEquals(PartialMovie.NotFound, result)
+        assertEquals(AsyncMovieInfo.Empty, result)
     }
 
     @Test

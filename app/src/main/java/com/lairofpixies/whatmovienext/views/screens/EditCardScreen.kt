@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.isNew
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
@@ -58,7 +58,7 @@ fun EditCardScreen(
         }
 
     LaunchedEffect(partialMovie) {
-        if (partialMovie is PartialMovie.Completed) {
+        if (partialMovie is AsyncMovieInfo.Single) {
             editableMovie.value = partialMovie.movie
             viewModel.beginEditing(partialMovie.movie)
         }

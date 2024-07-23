@@ -16,9 +16,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
@@ -36,13 +38,13 @@ fun MovieCardScreen(
     val partialMovie = movieId?.let { viewModel.getMovie(it).collectAsState().value }
 
     LaunchedEffect(partialMovie) {
-        if (movieId == null || partialMovie is PartialMovie.NotFound) {
-            Toast.makeText(context, "Movie not found", Toast.LENGTH_SHORT).show()
+        if (movieId == null || partialMovie.isMissing()) {
+            Toast.makeText(context, context.getString(R.string.movie_not_found), Toast.LENGTH_SHORT).show()
             onCancelAction()
         }
     }
 
-    if (partialMovie is PartialMovie.Completed) {
+    if (partialMovie is AsyncMovieInfo.Single) {
         MovieCard(
             movie = partialMovie.movie,
             navController = navController,

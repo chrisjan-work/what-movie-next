@@ -1,7 +1,7 @@
 package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -26,14 +26,14 @@ class MovieRepositoryImpl(
 
     override val archivedMovies: Flow<List<Movie>> = dao.getArchivedMovies().flowOn(ioDispatcher)
 
-    override fun getMovie(movieId: Long): StateFlow<PartialMovie> =
+    override fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo> =
         dao
             .getMovie(movieId)
-            .map { it?.let { PartialMovie.Completed(it) } ?: PartialMovie.NotFound }
+            .map { it?.let { AsyncMovieInfo.Single(it) } ?: AsyncMovieInfo.Empty }
             .stateIn(
                 repositoryScope,
                 SharingStarted.Eagerly,
-                initialValue = PartialMovie.Loading,
+                initialValue = AsyncMovieInfo.Loading,
             )
 
     override suspend fun fetchMovieById(movieId: Long): Movie? =

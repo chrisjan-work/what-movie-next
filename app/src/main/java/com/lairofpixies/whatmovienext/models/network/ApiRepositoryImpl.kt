@@ -1,6 +1,6 @@
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.DownloadMovieInfo
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.mappers.MovieMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -19,40 +19,30 @@ class ApiRepositoryImpl(
 ) : ApiRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    override fun findMoviesByTitle(title: String): StateFlow<DownloadMovieInfo> =
+    override fun findMoviesByTitle(title: String): StateFlow<AsyncMovieInfo> =
         flow {
             try {
-                val movies =
+                val remoteMovies =
                     repositoryScope
                         .async {
                             movieApi.findMoviesByTitle(title)
                         }.await()
 
-                val downloadMovieInfo =
-                    when (movies.size) {
-                        0 -> DownloadMovieInfo.Empty
-                        1 ->
-                            DownloadMovieInfo.Single(
-                                MovieMapper.mapNetToApp(movies.first()),
-                            )
-
-                        else ->
-                            DownloadMovieInfo.Multiple(
-                                movies.map { backendMovie ->
-                                    MovieMapper.mapNetToApp(backendMovie)
-                                },
-                            )
-                    }
-
-                emit(downloadMovieInfo)
+                val asyncMovieInfo =
+                    AsyncMovieInfo.fromList(
+                        remoteMovies.map { remoteMovie ->
+                            MovieMapper.mapNetToApp(remoteMovie)
+                        },
+                    )
+                emit(asyncMovieInfo)
             } catch (httpException: HttpException) {
-                emit(DownloadMovieInfo.Failed(httpException))
+                emit(AsyncMovieInfo.Failed(httpException))
             } catch (exception: Exception) {
-                emit(DownloadMovieInfo.Failed(exception))
+                emit(AsyncMovieInfo.Failed(exception))
             }
         }.stateIn(
             repositoryScope,
             SharingStarted.Eagerly,
-            initialValue = DownloadMovieInfo.Loading,
+            initialValue = AsyncMovieInfo.Loading,
         )
 }

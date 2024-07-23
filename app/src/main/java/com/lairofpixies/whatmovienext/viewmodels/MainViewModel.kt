@@ -3,8 +3,8 @@ package com.lairofpixies.whatmovienext.viewmodels
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.hasQuietSaveableChanges
 import com.lairofpixies.whatmovienext.models.data.hasSaveableChanges
@@ -61,7 +61,7 @@ class MainViewModel
             }
         }
 
-        fun getMovie(movieId: Long): StateFlow<PartialMovie> = repo.getMovie(movieId)
+        fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo> = repo.getMovie(movieId)
 
         @VisibleForTesting
         suspend fun addMovie(movie: Movie): Long =
