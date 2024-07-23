@@ -21,37 +21,36 @@ fun PopupDialogs(
     errorState: ErrorState,
     onDismiss: () -> Unit,
 ) {
-    val context = LocalContext.current
     when (errorState) {
         ErrorState.None -> {}
         ErrorState.SavingWithEmptyTitle ->
             SingleButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.SAVING_WITH_EMPTY_TITLE),
-                R.string.error_title_is_required,
+                errorMessageResource = R.string.error_title_is_required,
                 onDismiss = onDismiss,
             )
 
         is ErrorState.UnsavedChanges ->
             ThreeButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.UNSAVED_CHANGES),
-                errorMessage = context.getString(R.string.warning_changes_not_saved),
-                saveLabel = context.getString(R.string.save),
+                errorMessageResource = R.string.warning_changes_not_saved,
+                saveLabelResource = R.string.save,
                 onSave = errorState.onSave,
-                discardLabel = context.getString(R.string.discard),
+                discardLabelResource = R.string.discard,
                 onDiscard = errorState.onDiscard,
-                dismissLabel = context.getString(R.string.continue_editing),
+                dismissLabelResource = R.string.continue_editing,
                 onDismiss = onDismiss,
             )
 
         is ErrorState.DuplicatedTitle ->
             ThreeButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.DUPLICATED_TITLE),
-                errorMessage = context.getString(R.string.error_title_already_exists),
-                context.getString(R.string.overwrite),
+                errorMessageResource = R.string.error_title_already_exists,
+                saveLabelResource = R.string.overwrite,
                 onSave = errorState.onSave,
-                context.getString(R.string.discard_changes),
+                discardLabelResource = R.string.discard_changes,
                 onDiscard = errorState.onDiscard,
-                dismissLabel = context.getString(R.string.continue_editing),
+                dismissLabelResource = R.string.continue_editing,
                 onDismiss = onDismiss,
             )
 
@@ -70,9 +69,9 @@ fun PopupDialogs(
 
 @Composable
 fun SingleButtonDialog(
-    modifier: Modifier = Modifier,
     errorMessageResource: Int,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     AlertDialog(
@@ -90,13 +89,13 @@ fun SingleButtonDialog(
 
 @Composable
 fun TwoButtonDialog(
-    modifier: Modifier = Modifier,
     titleStringResource: Int,
     contentStringResource: Int,
     confirmStringResource: Int,
     dismissStringResource: Int,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     AlertDialog(
@@ -123,37 +122,38 @@ fun TwoButtonDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThreeButtonDialog(
-    modifier: Modifier = Modifier,
-    errorMessage: String,
-    saveLabel: String,
+    errorMessageResource: Int,
+    saveLabelResource: Int,
     onSave: () -> Unit,
-    discardLabel: String,
+    discardLabelResource: Int,
     onDiscard: () -> Unit,
-    dismissLabel: String,
+    dismissLabelResource: Int,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     BasicAlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
     ) {
         Box {
             Column {
-                Text(text = errorMessage)
+                Text(context.getString(errorMessageResource))
                 Row {
                     Button(onClick = {
                         onSave()
                         onDismiss()
                     }) {
-                        Text(saveLabel)
+                        Text(context.getString(saveLabelResource))
                     }
                     Button(onClick = {
                         onDiscard()
                         onDismiss()
                     }) {
-                        Text(discardLabel)
+                        Text(context.getString(discardLabelResource))
                     }
                     Button(onClick = onDismiss) {
-                        Text(dismissLabel)
+                        Text(context.getString(dismissLabelResource))
                     }
                 }
             }
