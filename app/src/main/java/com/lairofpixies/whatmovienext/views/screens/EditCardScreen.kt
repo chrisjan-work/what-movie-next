@@ -29,9 +29,9 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.isNew
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
+import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
-import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
-import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
+import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 import com.lairofpixies.whatmovienext.views.state.ErrorState
 
 object EditCardScreenTags {
@@ -133,8 +133,7 @@ fun EditCard(
     Scaffold(
         modifier = Modifier.testTag(EditCardScreenTags.TAG_EDITABLE_MOVIE_CARD),
         bottomBar = {
-            CustomNavigationBar(
-                navController = navController,
+            CustomBottomBar(
                 items =
                     bottomItemsForEditCard(
                         creating,
@@ -198,10 +197,10 @@ fun bottomItemsForEditCard(
 ): List<CustomBarItem> =
     listOf(
         if (creating) {
-            CustomBarItem(NavigationItem.Cancel, onCancelAction)
+            CustomBarItem(ButtonSpec.CancelAction, onCancelAction)
         } else {
-            CustomBarItem(NavigationItem.ArchiveAction, onArchiveAction)
+            CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction)
         },
-        CustomBarItem(NavigationItem.SearchAction, searchEnabled, onSearchAction),
-        CustomBarItem(NavigationItem.SaveChanges, onSaveAction),
+        CustomBarItem(ButtonSpec.SearchAction, searchEnabled, onSearchAction),
+        CustomBarItem(ButtonSpec.SaveAction, onSaveAction),
     )

@@ -1,12 +1,12 @@
 package com.lairofpixies.whatmovienext.views.navigation
 
 data class CustomBarItem(
-    val navigationItem: NavigationItem,
+    val buttonSpec: ButtonSpec,
     val enabled: Boolean = true,
     val onClick: (() -> Unit)? = null,
 ) {
     constructor(
-        navigationItem: NavigationItem,
+        buttonSpec: ButtonSpec,
         onClick: (() -> Unit)?,
-    ) : this(navigationItem, true, onClick)
+    ) : this(buttonSpec, true, onClick)
 }

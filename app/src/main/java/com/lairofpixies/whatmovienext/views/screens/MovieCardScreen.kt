@@ -20,9 +20,9 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.PartialMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
+import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
-import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
-import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
+import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 object MovieCardScreenTags {
@@ -66,11 +66,11 @@ fun MovieCard(
     Scaffold(
         modifier = Modifier.testTag(MovieCardScreenTags.TAG_MOVIE_CARD),
         bottomBar = {
-            CustomNavigationBar(
-                navController = navController,
+            CustomBottomBar(
                 items =
                     movieCardActionItems(
                         movie,
+                        onHomeAction = { navController.navigate(Routes.AllMoviesView.route) },
                         onEditAction = onEditAction,
                         onUpdateAction = onUpdateAction,
                     ),
@@ -99,13 +99,14 @@ fun MovieCard(
 
 fun movieCardActionItems(
     movie: Movie,
+    onHomeAction: () -> Unit,
     onEditAction: (Movie) -> Unit,
     onUpdateAction: (Movie) -> Unit,
 ): List<CustomBarItem> =
     listOf(
-        CustomBarItem(NavigationItem.MoviesShortcut),
+        CustomBarItem(ButtonSpec.MoviesShortcut, onHomeAction),
         if (movie.watchState == WatchState.PENDING) {
-            CustomBarItem(NavigationItem.WatchStatePending) {
+            CustomBarItem(ButtonSpec.PendingMovieState) {
                 onUpdateAction(
                     movie.copy(
                         watchState = WatchState.WATCHED,
@@ -113,7 +114,7 @@ fun movieCardActionItems(
                 )
             }
         } else {
-            CustomBarItem(NavigationItem.WatchStateWatched) {
+            CustomBarItem(ButtonSpec.WatchedMovieState) {
                 onUpdateAction(
                     movie.copy(
                         watchState = WatchState.PENDING,
@@ -121,7 +122,7 @@ fun movieCardActionItems(
                 )
             }
         },
-        CustomBarItem(NavigationItem.Edit) { onEditAction(movie) },
+        CustomBarItem(ButtonSpec.EditShortcut) { onEditAction(movie) },
     )
 
 @Composable

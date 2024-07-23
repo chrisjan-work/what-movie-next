@@ -18,9 +18,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
+import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
-import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
-import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
+import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.ErrorState
 
 object ArchiveTags {
@@ -41,13 +42,17 @@ fun ArchiveScreen(
     }
 
     val bottomBarItems =
-        listOf(CustomBarItem(NavigationItem.MoviesShortcut)) +
+        listOf(
+            CustomBarItem(ButtonSpec.MoviesShortcut) {
+                navController.navigate(Routes.AllMoviesView.route)
+            },
+        ) +
             if (selection.value.isNotEmpty()) {
                 listOf(
-                    CustomBarItem(NavigationItem.RestoreAction) {
+                    CustomBarItem(ButtonSpec.RestoreAction) {
                         viewModel.restoreMovies(selection.value.toList())
                     },
-                    CustomBarItem(NavigationItem.DeleteAction) {
+                    CustomBarItem(ButtonSpec.DeleteAction) {
                         viewModel.showError(
                             ErrorState.ConfirmDeletion {
                                 viewModel.deleteMovies(selection.value.toList())
@@ -62,12 +67,7 @@ fun ArchiveScreen(
 
     Scaffold(
         modifier = Modifier.testTag(ArchiveTags.TAG_ARCHIVE_LIST),
-        bottomBar = {
-            CustomNavigationBar(
-                navController = navController,
-                items = bottomBarItems,
-            )
-        },
+        bottomBar = { CustomBottomBar(items = bottomBarItems) },
     ) { innerPadding ->
         Box(
             modifier =

@@ -16,9 +16,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
-import com.lairofpixies.whatmovienext.views.navigation.CustomNavigationBar
-import com.lairofpixies.whatmovienext.views.navigation.NavigationItem
+import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.ListMode
 
 object MovieListTags {
@@ -45,9 +46,13 @@ fun MovieList(
     val movieListBottomBarItems =
         listOfNotNull(
             filterListItem(listMode, onListModeChanged),
-            CustomBarItem(NavigationItem.CreateMovieShortcut),
+            CustomBarItem(ButtonSpec.CreateMovieShortcut) {
+                navController.navigate(Routes.CreateMovieView.route)
+            },
             if (isArchiveVisitable) {
-                CustomBarItem(NavigationItem.ArchiveScreen)
+                CustomBarItem(ButtonSpec.ArchiveShortcut) {
+                    navController.navigate(Routes.ArchiveView.route)
+                }
             } else {
                 null
             },
@@ -55,8 +60,7 @@ fun MovieList(
 
     Scaffold(
         bottomBar = {
-            CustomNavigationBar(
-                navController = navController,
+            CustomBottomBar(
                 items = movieListBottomBarItems,
             )
         },
@@ -108,13 +112,13 @@ fun filterListItem(
     listMode: ListMode,
     onListModeChanged: (ListMode) -> Unit,
 ): CustomBarItem {
-    val navigationItem =
+    val buttonSpec =
         when (listMode) {
-            ListMode.ALL -> NavigationItem.AllMoviesFilter
-            ListMode.PENDING -> NavigationItem.PendingFilter
-            ListMode.WATCHED -> NavigationItem.WatchedFilter
+            ListMode.ALL -> ButtonSpec.AllMoviesFilter
+            ListMode.PENDING -> ButtonSpec.PendingFilter
+            ListMode.WATCHED -> ButtonSpec.WatchedFilter
         }
-    return CustomBarItem(navigationItem) {
+    return CustomBarItem(buttonSpec) {
         onListModeChanged(listMode.next())
     }
 }
