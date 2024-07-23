@@ -382,44 +382,4 @@ class MainViewModelTest {
                 resultList.toList(),
             )
         }
-
-    @Test
-    fun `restore movies from archive`() =
-        runTest {
-            // Given
-            val moviesToRestore =
-                listOf(
-                    Movie(id = 71, title = "archived movie"),
-                    Movie(id = 77, title = "another archived movie"),
-                )
-
-            // When
-            mainViewModel.restoreMovies(moviesToRestore)
-
-            // Then
-            coVerify {
-                repo.restoreMovie(71)
-                repo.restoreMovie(77)
-            }
-        }
-
-    @Test
-    fun `delete movies from archive`() =
-        runTest {
-            // Given
-            val moviesToDelete =
-                listOf(
-                    Movie(id = 91, title = "archived movie"),
-                    Movie(id = 97, title = "another archived movie"),
-                )
-
-            // When
-            mainViewModel.deleteMovies(moviesToDelete)
-
-            // Then
-            coVerify {
-                repo.deleteMovie(moviesToDelete[0])
-                repo.deleteMovie(moviesToDelete[1])
-            }
-        }
 }

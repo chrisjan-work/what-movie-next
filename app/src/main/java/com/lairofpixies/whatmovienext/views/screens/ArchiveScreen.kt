@@ -10,32 +10,26 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.navigation.NavHostController
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
+import com.lairofpixies.whatmovienext.models.data.isMissing
+import com.lairofpixies.whatmovienext.models.data.toList
+import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
-import com.lairofpixies.whatmovienext.views.navigation.Routes
-import com.lairofpixies.whatmovienext.views.state.ErrorState
 
 @Composable
-fun ArchiveScreen(
-    archivedMovies: List<Movie>,
-    onCancelAction: () -> Unit,
-    viewModel: MainViewModel,
-    navController: NavHostController,
-) {
-    val selection = remember { mutableStateOf(setOf<Movie>()) }
+fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
+    val archivedMovies: AsyncMovieInfo = archiveViewModel.archivedMovies.collectAsState().value
+    val selection = archiveViewModel.selection.collectAsState().value
 
-    if (archivedMovies.isEmpty()) {
-        onCancelAction()
+    if (archivedMovies.isMissing()) {
+        archiveViewModel.onCancelAction()
     }
 
     Scaffold(
@@ -44,16 +38,19 @@ fun ArchiveScreen(
             CustomBottomBar(
                 items =
                     bottomItemsForArchive(
-                        selection,
-                        viewModel,
-                        navController,
+                        selection = selection,
+                        onNavigateToMovieList = { archiveViewModel.onNavigateToMovieList() },
+                        onRestoreSelectedMovies = { archiveViewModel.restoreSelectedMovies() },
+                        onDeleteSelectedMovies = { archiveViewModel.deleteSelectedMovies() },
                     ),
             )
         },
     ) { innerPadding ->
         Archive(
-            archivedMovies = archivedMovies,
+            archivedMovies = archivedMovies.toList(),
             selection = selection,
+            append = { archiveViewModel.select(it) },
+            remove = { archiveViewModel.deselect(it) },
             modifier =
                 Modifier
                     .fillMaxSize()
@@ -65,7 +62,9 @@ fun ArchiveScreen(
 @Composable
 fun Archive(
     archivedMovies: List<Movie>,
-    selection: MutableState<Set<Movie>>,
+    selection: Set<Movie>,
+    append: (Movie) -> Unit,
+    remove: (Movie) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -75,12 +74,12 @@ fun Archive(
             items(archivedMovies) { movie ->
                 ArchivedMovieListItem(
                     movie = movie,
-                    isSelected = movie in selection.value,
+                    isSelected = movie in selection,
                 ) { isSelected ->
                     if (isSelected) {
-                        selection.value += movie
+                        append(movie)
                     } else {
-                        selection.value -= movie
+                        remove(movie)
                     }
                 }
             }
@@ -121,34 +120,22 @@ fun ArchivedMovieListItem(
 }
 
 fun bottomItemsForArchive(
-    selection: MutableState<Set<Movie>>,
-    viewModel: MainViewModel,
-    navController: NavHostController,
+    selection: Set<Movie>,
+    onNavigateToMovieList: () -> Unit,
+    onRestoreSelectedMovies: () -> Unit,
+    onDeleteSelectedMovies: () -> Unit,
 ): List<CustomBarItem> {
     val actionList =
         mutableListOf(
-            CustomBarItem(ButtonSpec.MoviesShortcut) {
-                navController.navigate(Routes.AllMoviesView.route)
-            },
+            CustomBarItem(ButtonSpec.MoviesShortcut, onNavigateToMovieList),
         )
-
-    if (selection.value.isNotEmpty()) {
-        actionList.add(
-            CustomBarItem(ButtonSpec.RestoreAction) {
-                viewModel.restoreMovies(selection.value.toList())
-            },
-        )
-        actionList.add(
-            CustomBarItem(ButtonSpec.DeleteAction) {
-                viewModel.showError(
-                    ErrorState.ConfirmDeletion {
-                        viewModel.deleteMovies(selection.value.toList())
-                        selection.value = emptySet()
-                    },
-                )
-            },
+    if (selection.isNotEmpty()) {
+        actionList.addAll(
+            listOf(
+                CustomBarItem(ButtonSpec.RestoreAction, onRestoreSelectedMovies),
+                CustomBarItem(ButtonSpec.DeleteAction, onDeleteSelectedMovies),
+            ),
         )
     }
-
     return actionList
 }

@@ -107,6 +107,7 @@ dependencies {
     androidTestImplementation(libs.hilt.android)
     androidTestImplementation(libs.hilt.android.testing)
     kspAndroidTest(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // retrofit
     implementation(libs.retrofit)

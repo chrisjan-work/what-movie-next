@@ -2,12 +2,14 @@ package com.lairofpixies.whatmovienext.views.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
 import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
@@ -23,7 +25,7 @@ fun NavigationHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     uiState: UiState,
-    viewModel: MainViewModel,
+    mainViewModel: MainViewModel,
 ) {
     val onCancelAction: () -> Unit = {
         navController.navigate(Routes.HOME.route) {
@@ -51,7 +53,7 @@ fun NavigationHost(
                 listMode = uiState.listMode,
                 movies = uiState.movieList,
                 isArchiveVisitable = uiState.archiveList.isNotEmpty(),
-                onListModeChanged = { viewModel.setListMode(it) },
+                onListModeChanged = { mainViewModel.setListMode(it) },
                 onMovieClicked = { movie ->
                     navController.navigate(
                         Routes.SingleMovieView.route(
@@ -76,7 +78,7 @@ fun NavigationHost(
                 movieId = entry.arguments?.getLong(Routes.SingleMovieView.argumentOrEmpty),
                 onCancelAction = onCancelAction,
                 navController = navController,
-                viewModel = viewModel,
+                viewModel = mainViewModel,
             )
         }
         composable(Routes.CreateMovieView.route) {
@@ -84,7 +86,7 @@ fun NavigationHost(
                 movieId = null,
                 onCloseWithIdAction = onCloseWithIdAction,
                 onCancelAction = onCancelAction,
-                viewModel = viewModel,
+                viewModel = mainViewModel,
                 navController = navController,
             )
         }
@@ -101,16 +103,19 @@ fun NavigationHost(
                 movieId = entry.arguments?.getLong(Routes.EditMovieView.argumentOrEmpty),
                 onCloseWithIdAction = onCloseWithIdAction,
                 onCancelAction = onCancelAction,
-                viewModel = viewModel,
+                viewModel = mainViewModel,
                 navController = navController,
             )
         }
         composable(Routes.ArchiveView.route) {
+            val archiveViewModel: ArchiveViewModel =
+                hiltViewModel<ArchiveViewModel>().apply {
+                    attachNavController(navController)
+                    attachMainViewModel(mainViewModel)
+                }
+
             ArchiveScreen(
-                archivedMovies = uiState.archiveList,
-                onCancelAction = onCancelAction,
-                viewModel = viewModel,
-                navController = navController,
+                archiveViewModel = archiveViewModel,
             )
         }
     }

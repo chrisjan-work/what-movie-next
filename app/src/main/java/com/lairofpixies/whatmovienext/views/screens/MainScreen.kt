@@ -24,7 +24,7 @@ fun MainScreen(viewModel: MainViewModel) {
             NavigationHost(
                 navController = navController,
                 uiState = uiState,
-                viewModel = viewModel,
+                mainViewModel = viewModel,
             )
 
             PopupDialogs(
