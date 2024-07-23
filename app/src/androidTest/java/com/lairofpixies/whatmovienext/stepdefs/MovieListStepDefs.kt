@@ -13,8 +13,7 @@ import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
-import com.lairofpixies.whatmovienext.views.screens.MovieCardScreenTags
-import com.lairofpixies.whatmovienext.views.screens.MovieListTags
+import com.lairofpixies.whatmovienext.views.screens.UiTags
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
@@ -59,28 +58,28 @@ class MovieListStepDefs(
     @Then("the entry {string} is visible")
     fun theEntryIsVisible(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(movieTitle, MovieListTags.TAG_MOVIE_LIST)
+            onNodeWithTextUnderTag(movieTitle, UiTags.Screens.MOVIE_LIST)
                 .assertIsDisplayed()
         }
 
     @When("the user opens the entry {string}")
     fun theUserOpensTheEntry(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(movieTitle, MovieListTags.TAG_MOVIE_LIST)
+            onNodeWithTextUnderTag(movieTitle, UiTags.Screens.MOVIE_LIST)
                 .performClick()
         }
 
     @Then("the card containing the information of {string} should be visible")
     fun theCardContainingTheInformationOfShouldBeVisible(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(movieTitle, MovieCardScreenTags.TAG_MOVIE_CARD)
+            onNodeWithTextUnderTag(movieTitle, UiTags.Screens.MOVIE_CARD)
                 .assertIsDisplayed()
         }
 
     @Then("the entry {string} is not available")
     fun theEntryIsNotVisible(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(movieTitle, MovieListTags.TAG_MOVIE_LIST)
+            onNodeWithTextUnderTag(movieTitle, UiTags.Screens.MOVIE_LIST)
                 .assertDoesNotExist()
         }
 
@@ -97,7 +96,7 @@ class MovieListStepDefs(
             var attempts = ListMode.entries.size
 
             // click the button until it displays the desired mode
-            val buttonNode = onNodeWithTag(MovieListTags.TAG_MODE_BUTTON)
+            val buttonNode = onNodeWithTag(UiTags.Buttons.LIST_MODE)
             while (attempts > 0) {
                 attempts--
                 try {
@@ -165,14 +164,14 @@ class MovieListStepDefs(
     @When("the user scrolls down to {string}")
     fun theUserScrollsDownTo(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+            onNodeWithTag(UiTags.Screens.MOVIE_LIST)
                 .performScrollToNode(hasText(movieTitle))
         }
 
     @Then("the list view is visible")
     fun theListViewIsVisible() =
         composeRule.composeStep {
-            onNodeWithTag(MovieListTags.TAG_MOVIE_LIST)
+            onNodeWithTag(UiTags.Screens.MOVIE_LIST)
                 .assertIsDisplayed()
         }
 
@@ -180,7 +179,7 @@ class MovieListStepDefs(
     fun theUserStartsEditingTheEntry() =
         composeRule.composeStep {
             val editLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.edit)
-            onNodeWithTextUnderTag(editLabel, MovieCardScreenTags.TAG_MOVIE_CARD)
+            onNodeWithTextUnderTag(editLabel, UiTags.Screens.MOVIE_CARD)
                 .performClick()
         }
 

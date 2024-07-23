@@ -62,6 +62,7 @@ fun NavigationHost(
                 navController = navController,
             )
         }
+
         composable(
             route = Routes.SingleMovieView.route,
             arguments =

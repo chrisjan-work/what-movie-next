@@ -16,7 +16,7 @@ fun CustomBottomBar(
             NavigationBarItem(
                 selected = false,
                 modifier =
-                    customBarItem.buttonSpec.tag?.let { tag ->
+                    customBarItem.tag?.let { tag ->
                         modifier.testTag(tag)
                     } ?: modifier,
                 icon = {

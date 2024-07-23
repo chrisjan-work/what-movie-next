@@ -34,10 +34,6 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 import com.lairofpixies.whatmovienext.views.state.ErrorState
 
-object EditCardScreenTags {
-    const val TAG_EDITABLE_MOVIE_CARD = "EditCard"
-}
-
 @Composable
 fun EditCardScreen(
     movieId: Long?,
@@ -131,7 +127,7 @@ fun EditCard(
 ) {
     val creating = movieState.value.isNew()
     Scaffold(
-        modifier = Modifier.testTag(EditCardScreenTags.TAG_EDITABLE_MOVIE_CARD),
+        modifier = Modifier.testTag(UiTags.Screens.EDIT_CARD),
         bottomBar = {
             CustomBottomBar(
                 items =
@@ -201,6 +197,6 @@ fun bottomItemsForEditCard(
         } else {
             CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction)
         },
-        CustomBarItem(ButtonSpec.SearchAction, searchEnabled, onSearchAction),
+        CustomBarItem(ButtonSpec.SearchAction, searchEnabled, onClick = onSearchAction),
         CustomBarItem(ButtonSpec.SaveAction, onSaveAction),
     )

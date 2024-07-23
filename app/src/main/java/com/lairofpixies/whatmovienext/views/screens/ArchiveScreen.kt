@@ -24,10 +24,6 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.ErrorState
 
-object ArchiveTags {
-    const val TAG_ARCHIVE_LIST = "ArchiveList"
-}
-
 @Composable
 fun ArchiveScreen(
     archivedMovies: List<Movie>,
@@ -66,7 +62,7 @@ fun ArchiveScreen(
             }
 
     Scaffold(
-        modifier = Modifier.testTag(ArchiveTags.TAG_ARCHIVE_LIST),
+        modifier = Modifier.testTag(UiTags.Screens.ARCHIVE),
         bottomBar = { CustomBottomBar(items = bottomBarItems) },
     ) { innerPadding ->
         Box(

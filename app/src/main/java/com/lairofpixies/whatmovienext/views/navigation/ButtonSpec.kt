@@ -15,12 +15,10 @@ import androidx.compose.material.icons.outlined.TravelExplore
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.views.screens.MovieListTags
 
 sealed class ButtonSpec(
     @StringRes val labelRes: Int,
     val icon: ImageVector,
-    val tag: String? = null,
 ) {
     // Shortcuts to other views
     data object MoviesShortcut : ButtonSpec(
@@ -90,18 +88,15 @@ sealed class ButtonSpec(
     data object AllMoviesFilter : ButtonSpec(
         labelRes = R.string.all_movies,
         icon = Icons.Outlined.GridView,
-        tag = MovieListTags.TAG_MODE_BUTTON,
     )
 
     data object PendingFilter : ButtonSpec(
         labelRes = R.string.to_watch,
         icon = Icons.Outlined.WatchLater,
-        tag = MovieListTags.TAG_MODE_BUTTON,
     )
 
     data object WatchedFilter : ButtonSpec(
         labelRes = R.string.seen,
         icon = Icons.Outlined.RemoveRedEye,
-        tag = MovieListTags.TAG_MODE_BUTTON,
     )
 }

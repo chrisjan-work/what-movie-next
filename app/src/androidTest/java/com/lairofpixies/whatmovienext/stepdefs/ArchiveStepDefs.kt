@@ -8,8 +8,7 @@ import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
-import com.lairofpixies.whatmovienext.views.screens.ArchiveTags
-import com.lairofpixies.whatmovienext.views.screens.PopupDialogTags
+import com.lairofpixies.whatmovienext.views.screens.UiTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
@@ -29,7 +28,7 @@ class ArchiveStepDefs(
     @Then("the entry {string} is visible in the archive")
     fun theEntryIsVisibleInTheArchive(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(movieTitle, ArchiveTags.TAG_ARCHIVE_LIST)
+            onNodeWithTextUnderTag(movieTitle, UiTags.Screens.ARCHIVE)
                 .assertIsDisplayed()
         }
 
@@ -46,7 +45,7 @@ class ArchiveStepDefs(
     @And("the user selects the entry {string} in the archive")
     fun theUserSelectsTheEntryInTheArchive(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(movieTitle, ArchiveTags.TAG_ARCHIVE_LIST)
+            onNodeWithTextUnderTag(movieTitle, UiTags.Screens.ARCHIVE)
                 .performClick()
         }
 
@@ -60,21 +59,21 @@ class ArchiveStepDefs(
                     else -> throw PendingException("Action $action is not supported")
                 }
 
-            onNodeWithTextUnderTag(label, ArchiveTags.TAG_ARCHIVE_LIST)
+            onNodeWithTextUnderTag(label, UiTags.Screens.ARCHIVE)
                 .performClick()
         }
 
     @Then("the entry {string} is not available in the archive")
     fun theEntryIsNotAvailableInTheArchive(movieTitle: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(movieTitle, ArchiveTags.TAG_ARCHIVE_LIST)
+            onNodeWithTextUnderTag(movieTitle, UiTags.Screens.ARCHIVE)
                 .assertDoesNotExist()
         }
 
     @Then("a pop-up asks for confirmation for deleting the entry")
     fun aPopUpAsksForConfirmationForDeletingTheEntry() =
         composeRule.composeStep {
-            onNodeWithTag(PopupDialogTags.ConfirmDeletion.name)
+            onNodeWithTag(UiTags.Popups.CONFIRM_DELETION)
                 .performClick()
         }
 
@@ -88,7 +87,7 @@ class ArchiveStepDefs(
                     else -> throw PendingException("Unknown option: $deletionConfirmation")
                 }
 
-            onNodeWithTextUnderTag(label, PopupDialogTags.ConfirmDeletion.name)
+            onNodeWithTextUnderTag(label, UiTags.Popups.CONFIRM_DELETION)
                 .performClick()
         }
     }

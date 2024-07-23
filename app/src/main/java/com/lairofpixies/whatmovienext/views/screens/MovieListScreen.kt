@@ -22,11 +22,6 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.ListMode
 
-object MovieListTags {
-    const val TAG_MODE_BUTTON = "ListModeButton"
-    const val TAG_MOVIE_LIST = "MovieList"
-}
-
 @Composable
 fun MovieList(
     listMode: ListMode,
@@ -72,7 +67,7 @@ fun MovieList(
                     .padding(innerPadding),
         ) {
             LazyColumn(
-                modifier = Modifier.testTag(MovieListTags.TAG_MOVIE_LIST),
+                modifier = Modifier.testTag(UiTags.Screens.MOVIE_LIST),
             ) {
                 items(filteredMovies) { movie ->
                     MovieListItem(movie) { onMovieClicked(movie) }
@@ -118,7 +113,7 @@ fun filterListItem(
             ListMode.PENDING -> ButtonSpec.PendingFilter
             ListMode.WATCHED -> ButtonSpec.WatchedFilter
         }
-    return CustomBarItem(buttonSpec) {
+    return CustomBarItem(buttonSpec, tag = UiTags.Buttons.LIST_MODE) {
         onListModeChanged(listMode.next())
     }
 }

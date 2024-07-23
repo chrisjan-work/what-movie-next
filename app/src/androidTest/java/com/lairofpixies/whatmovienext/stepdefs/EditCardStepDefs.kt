@@ -14,9 +14,7 @@ import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
-import com.lairofpixies.whatmovienext.views.screens.EditCardScreenTags
-import com.lairofpixies.whatmovienext.views.screens.MovieCardScreenTags
-import com.lairofpixies.whatmovienext.views.screens.PopupDialogTags
+import com.lairofpixies.whatmovienext.views.screens.UiTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
@@ -40,7 +38,7 @@ class EditCardStepDefs(
     @Then("An editable card view is open")
     fun anEditCardViewIsOpen() =
         composeRule.composeStep {
-            onNodeWithTag(EditCardScreenTags.TAG_EDITABLE_MOVIE_CARD)
+            onNodeWithTag(UiTags.Screens.EDIT_CARD)
                 .isDisplayed()
         }
 
@@ -118,7 +116,7 @@ class EditCardStepDefs(
                     else -> throw PendingException("Unknown option: $saveOption")
                 }
 
-            onNodeWithTextUnderTag(label, PopupDialogTags.UnsavedChanges.name)
+            onNodeWithTextUnderTag(label, UiTags.Popups.UNSAVED_CHANGES)
                 .performClick()
         }
 
@@ -133,7 +131,7 @@ class EditCardStepDefs(
                     else -> throw PendingException("Unknown option: $overwriteOption")
                 }
 
-            onNodeWithTextUnderTag(label, PopupDialogTags.DuplicatedTitle.name)
+            onNodeWithTextUnderTag(label, UiTags.Popups.DUPLICATED_TITLE)
                 .performClick()
         }
     }
@@ -148,7 +146,7 @@ class EditCardStepDefs(
     @Then("the edit view is visible")
     fun theEditViewIsVisible() =
         composeRule.composeStep {
-            onNodeWithTag(EditCardScreenTags.TAG_EDITABLE_MOVIE_CARD)
+            onNodeWithTag(UiTags.Screens.EDIT_CARD)
                 .assertIsDisplayed()
         }
 
@@ -233,7 +231,7 @@ class EditCardStepDefs(
         // for "-" no card view expected
         if (movieTitle != "-") {
             composeRule.composeStep {
-                onNodeWithTextUnderTag(movieTitle, MovieCardScreenTags.TAG_MOVIE_CARD)
+                onNodeWithTextUnderTag(movieTitle, UiTags.Screens.MOVIE_CARD)
                     .assertIsDisplayed()
             }
             theUserNavigatesBack()

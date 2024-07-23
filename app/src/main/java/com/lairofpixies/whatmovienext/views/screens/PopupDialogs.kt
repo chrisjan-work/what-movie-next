@@ -15,13 +15,6 @@ import androidx.compose.ui.platform.testTag
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.views.state.ErrorState
 
-enum class PopupDialogTags {
-    SavingWithEmptyTitle,
-    UnsavedChanges,
-    DuplicatedTitle,
-    ConfirmDeletion,
-}
-
 @Composable
 fun PopupDialogs(
     modifier: Modifier = Modifier,
@@ -33,14 +26,14 @@ fun PopupDialogs(
         ErrorState.None -> {}
         ErrorState.SavingWithEmptyTitle ->
             SingleButtonDialog(
-                modifier = modifier.testTag(PopupDialogTags.SavingWithEmptyTitle.name),
+                modifier = modifier.testTag(UiTags.Popups.SAVING_WITH_EMPTY_TITLE),
                 R.string.error_title_is_required,
                 onDismiss = onDismiss,
             )
 
         is ErrorState.UnsavedChanges ->
             ThreeButtonDialog(
-                modifier = modifier.testTag(PopupDialogTags.UnsavedChanges.name),
+                modifier = modifier.testTag(UiTags.Popups.UNSAVED_CHANGES),
                 errorMessage = context.getString(R.string.warning_changes_not_saved),
                 saveLabel = context.getString(R.string.save),
                 onSave = errorState.onSave,
@@ -52,7 +45,7 @@ fun PopupDialogs(
 
         is ErrorState.DuplicatedTitle ->
             ThreeButtonDialog(
-                modifier = modifier.testTag(PopupDialogTags.DuplicatedTitle.name),
+                modifier = modifier.testTag(UiTags.Popups.DUPLICATED_TITLE),
                 errorMessage = context.getString(R.string.error_title_already_exists),
                 context.getString(R.string.overwrite),
                 onSave = errorState.onSave,
@@ -64,7 +57,7 @@ fun PopupDialogs(
 
         is ErrorState.ConfirmDeletion ->
             TwoButtonDialog(
-                modifier = modifier.testTag(PopupDialogTags.ConfirmDeletion.name),
+                modifier = modifier.testTag(UiTags.Popups.CONFIRM_DELETION),
                 titleStringResource = R.string.delete_forever,
                 contentStringResource = R.string.please_confirm_deletion,
                 confirmStringResource = R.string.confirm_deletion,

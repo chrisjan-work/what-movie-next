@@ -25,10 +25,6 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 
-object MovieCardScreenTags {
-    const val TAG_MOVIE_CARD = "MovieCard"
-}
-
 @Composable
 fun MovieCardScreen(
     movieId: Long?,
@@ -64,7 +60,7 @@ fun MovieCard(
     onUpdateAction: (Movie) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier.testTag(MovieCardScreenTags.TAG_MOVIE_CARD),
+        modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
         bottomBar = {
             CustomBottomBar(
                 items =
