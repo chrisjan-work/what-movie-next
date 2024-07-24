@@ -9,12 +9,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 open class ScreenViewModel protected constructor() : ViewModel() {
-    private lateinit var navController: NavHostController
+    private lateinit var navHostController: NavHostController
     protected lateinit var mainViewModel: MainViewModel
         private set
 
     fun attachNavController(navController: NavHostController) {
-        this.navController = navController
+        this.navHostController = navController
     }
 
     fun attachMainViewModel(mainViewModel: MainViewModel) {
@@ -23,7 +23,7 @@ open class ScreenViewModel protected constructor() : ViewModel() {
 
     fun onCancelAction() =
         CoroutineScope(Dispatchers.Main).launch {
-            navController?.navigate(Routes.HOME.route) {
+            navHostController.navigate(Routes.HOME.route) {
                 popUpTo(Routes.HOME.route) {
                     inclusive = true
                 }
@@ -33,9 +33,9 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     fun onCloseWithIdAction(id: Long) {
         CoroutineScope(Dispatchers.Main).launch {
             if (id == Movie.NEW_ID) {
-                navController.popBackStack()
+                navHostController.popBackStack()
             } else {
-                navController.navigate(Routes.SingleMovieView.route(id)) {
+                navHostController.navigate(Routes.SingleMovieView.route(id)) {
                     popUpTo(Routes.AllMoviesView.route) { inclusive = false }
                 }
             }
@@ -43,10 +43,10 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     }
 
     fun onNavigateToMovieList() {
-        navController.navigate(Routes.AllMoviesView.route)
+        navHostController.navigate(Routes.AllMoviesView.route)
     }
 
     fun onNavigateToEditCard(movieId: Long) {
-        navController.navigate(Routes.EditMovieView.route(movieId))
+        navHostController.navigate(Routes.EditMovieView.route(movieId))
     }
 }
