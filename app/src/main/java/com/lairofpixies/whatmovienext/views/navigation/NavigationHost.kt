@@ -11,6 +11,8 @@ import androidx.navigation.navArgument
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
+import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
+import com.lairofpixies.whatmovienext.viewmodels.ScreenViewModel
 import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
 import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieCardScreen
@@ -27,6 +29,12 @@ fun NavigationHost(
     uiState: UiState,
     mainViewModel: MainViewModel,
 ) {
+    fun <T : ScreenViewModel> T.connect() =
+        apply {
+            attachNavController(navController)
+            attachMainViewModel(mainViewModel)
+        }
+
     val onCancelAction: () -> Unit = {
         navController.navigate(Routes.HOME.route) {
             popUpTo(Routes.HOME.route) {
@@ -74,11 +82,10 @@ fun NavigationHost(
                     },
                 ),
         ) { entry ->
+            val cardViewModel = hiltViewModel<MovieCardViewModel>().connect()
             MovieCardScreen(
                 movieId = entry.arguments?.getLong(Routes.SingleMovieView.argumentOrEmpty),
-                onCancelAction = onCancelAction,
-                navController = navController,
-                viewModel = mainViewModel,
+                cardViewModel = cardViewModel,
             )
         }
         composable(Routes.CreateMovieView.route) {
@@ -108,11 +115,7 @@ fun NavigationHost(
             )
         }
         composable(Routes.ArchiveView.route) {
-            val archiveViewModel: ArchiveViewModel =
-                hiltViewModel<ArchiveViewModel>().apply {
-                    attachNavController(navController)
-                    attachMainViewModel(mainViewModel)
-                }
+            val archiveViewModel = hiltViewModel<ArchiveViewModel>().connect()
 
             ArchiveScreen(
                 archiveViewModel = archiveViewModel,

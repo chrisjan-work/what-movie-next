@@ -15,41 +15,39 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
-import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
+import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
-import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 @Composable
 fun MovieCardScreen(
     movieId: Long?,
-    onCancelAction: () -> Unit,
-    viewModel: MainViewModel,
-    navController: NavController,
+    cardViewModel: MovieCardViewModel,
 ) {
     val context = LocalContext.current
-    val partialMovie = movieId?.let { viewModel.getMovie(it).collectAsState().value }
+    val partialMovie = movieId?.let { cardViewModel.getMovie(it).collectAsState().value }
 
     LaunchedEffect(partialMovie) {
-        if (movieId == null || partialMovie.isMissing()) {
-            Toast.makeText(context, context.getString(R.string.movie_not_found), Toast.LENGTH_SHORT).show()
-            onCancelAction()
+        if (partialMovie.isMissing()) {
+            Toast
+                .makeText(context, context.getString(R.string.movie_not_found), Toast.LENGTH_SHORT)
+                .show()
+            cardViewModel.onCancelAction()
         }
     }
 
     if (partialMovie is AsyncMovieInfo.Single) {
         MovieCard(
             movie = partialMovie.movie,
-            navController = navController,
-            onEditAction = { navController.navigate(Routes.EditMovieView.route(it.id)) },
-            onUpdateAction = { viewModel.updateMovieWatched(it.id, it.watchState) },
+            onHomeAction = { cardViewModel.onNavigateToMovieList() },
+            onEditAction = { cardViewModel.onNavigateToEditCard(it) },
+            onUpdateAction = { id, watchState -> cardViewModel.updateMovieWatched(id, watchState) },
         )
     }
 }
@@ -57,9 +55,9 @@ fun MovieCardScreen(
 @Composable
 fun MovieCard(
     movie: Movie,
-    navController: NavController,
-    onEditAction: (Movie) -> Unit,
-    onUpdateAction: (Movie) -> Unit,
+    onHomeAction: () -> Unit,
+    onEditAction: (Long) -> Unit,
+    onUpdateAction: (Long, WatchState) -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
@@ -68,7 +66,7 @@ fun MovieCard(
                 items =
                     bottomItemsForMovieCard(
                         movie,
-                        onHomeAction = { navController.navigate(Routes.AllMoviesView.route) },
+                        onHomeAction = onHomeAction,
                         onEditAction = onEditAction,
                         onUpdateAction = onUpdateAction,
                     ),
@@ -98,29 +96,21 @@ fun MovieCard(
 fun bottomItemsForMovieCard(
     movie: Movie,
     onHomeAction: () -> Unit,
-    onEditAction: (Movie) -> Unit,
-    onUpdateAction: (Movie) -> Unit,
+    onEditAction: (Long) -> Unit,
+    onUpdateAction: (Long, WatchState) -> Unit,
 ): List<CustomBarItem> =
     listOf(
         CustomBarItem(ButtonSpec.MoviesShortcut, onHomeAction),
         if (movie.watchState == WatchState.PENDING) {
             CustomBarItem(ButtonSpec.PendingMovieState) {
-                onUpdateAction(
-                    movie.copy(
-                        watchState = WatchState.WATCHED,
-                    ),
-                )
+                onUpdateAction(movie.id, WatchState.WATCHED)
             }
         } else {
             CustomBarItem(ButtonSpec.WatchedMovieState) {
-                onUpdateAction(
-                    movie.copy(
-                        watchState = WatchState.PENDING,
-                    ),
-                )
+                onUpdateAction(movie.id, WatchState.PENDING)
             }
         },
-        CustomBarItem(ButtonSpec.EditShortcut) { onEditAction(movie) },
+        CustomBarItem(ButtonSpec.EditShortcut) { onEditAction(movie.id) },
     )
 
 @Composable

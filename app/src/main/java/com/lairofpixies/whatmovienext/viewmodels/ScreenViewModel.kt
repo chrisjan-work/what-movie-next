@@ -45,4 +45,8 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     fun onNavigateToMovieList() {
         navController.navigate(Routes.AllMoviesView.route)
     }
+
+    fun onNavigateToEditCard(movieId: Long) {
+        navController.navigate(Routes.EditMovieView.route(movieId))
+    }
 }

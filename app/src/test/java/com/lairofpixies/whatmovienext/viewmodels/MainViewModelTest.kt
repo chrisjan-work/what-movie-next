@@ -1,6 +1,5 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -78,23 +77,6 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `get single movie`() {
-        // Given
-        val partialMovie =
-            AsyncMovieInfo.Single(
-                Movie(id = 10, title = "single movie"),
-            )
-        every { repo.getMovie(10) } returns
-            MutableStateFlow(partialMovie).asStateFlow()
-
-        // When
-        val result = mainViewModel.getMovie(10).value
-
-        // Then
-        assertEquals(partialMovie, result)
-    }
-
-    @Test
     fun `add movie`() =
         runTest {
             // Given
@@ -109,15 +91,6 @@ class MainViewModelTest {
             assertEquals("adding movie", movie.captured.title)
             assertEquals(10, returnedId)
         }
-
-    @Test
-    fun `update watch state of movie`() {
-        // When
-        mainViewModel.updateMovieWatched(1, WatchState.WATCHED)
-
-        // Then
-        coVerify { repo.setWatchState(1, WatchState.WATCHED) }
-    }
 
     @Test
     fun `archive movie`() {

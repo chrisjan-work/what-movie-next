@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.hasQuietSaveableChanges
 import com.lairofpixies.whatmovienext.models.data.hasSaveableChanges
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -45,6 +44,9 @@ class MainViewModel
             }
         }
 
+        // TODO: move to sub-view-model
+        fun mainGetMovie(movieId: Long): StateFlow<AsyncMovieInfo> = repo.getMovie(movieId)
+
         private fun refreshMovieList(movies: List<Movie>) {
             _uiState.update { currentState ->
                 currentState.copy(
@@ -60,8 +62,6 @@ class MainViewModel
                 )
             }
         }
-
-        fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo> = repo.getMovie(movieId)
 
         @VisibleForTesting
         suspend fun addMovie(movie: Movie): Long =
@@ -81,11 +81,6 @@ class MainViewModel
                         currentlyEditing = movie
                     }
                 }.await()
-
-        fun updateMovieWatched(
-            movieId: Long,
-            watchState: WatchState,
-        ) = viewModelScope.launch { repo.setWatchState(movieId, watchState) }
 
         // Archive
         fun archiveMovie(movieId: Long) = viewModelScope.launch { repo.archiveMovie(movieId) }

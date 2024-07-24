@@ -49,7 +49,7 @@ fun EditCardScreen(
         focusRequester.requestFocus()
     }
 
-    val partialMovie = movieId?.let { viewModel.getMovie(it).collectAsState().value }
+    val partialMovie = movieId?.let { viewModel.mainGetMovie(it).collectAsState().value }
     val editableMovie =
         remember {
             mutableStateOf(
