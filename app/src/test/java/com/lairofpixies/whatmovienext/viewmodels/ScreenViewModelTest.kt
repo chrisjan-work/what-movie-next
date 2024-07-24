@@ -42,7 +42,7 @@ class ScreenViewModelTest {
         navHostControllerMock = mockk(relaxed = true)
         mainViewModelMock = mockk(relaxed = true)
         screenViewModel = TestScreenViewModel()
-        screenViewModel.attachNavController(navHostControllerMock)
+        screenViewModel.attachNavHostController(navHostControllerMock)
         screenViewModel.attachMainViewModel(mainViewModelMock)
     }
 

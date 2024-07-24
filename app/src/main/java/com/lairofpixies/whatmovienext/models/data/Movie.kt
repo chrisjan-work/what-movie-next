@@ -15,14 +15,14 @@ data class Movie(
     }
 }
 
-fun Movie.hasSaveableChanges(lastSavedMovie: Movie?): Boolean =
+fun Movie.hasSaveableChangesSince(lastSavedMovie: Movie?): Boolean =
     when {
         title.isBlank() -> false
         lastSavedMovie == null -> true
         else -> title != lastSavedMovie.title
     }
 
-fun Movie.hasQuietSaveableChanges(lastSavedMovie: Movie?): Boolean =
+fun Movie.hasQuietSaveableChangesSince(lastSavedMovie: Movie?): Boolean =
     when {
         title.isBlank() -> false
         lastSavedMovie == null -> true

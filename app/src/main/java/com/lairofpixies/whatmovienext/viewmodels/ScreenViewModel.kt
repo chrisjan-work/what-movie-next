@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.views.navigation.Routes
+import com.lairofpixies.whatmovienext.views.state.ErrorState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,8 +14,8 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     protected lateinit var mainViewModel: MainViewModel
         private set
 
-    fun attachNavController(navController: NavHostController) {
-        this.navHostController = navController
+    fun attachNavHostController(navHostController: NavHostController) {
+        this.navHostController = navHostController
     }
 
     fun attachMainViewModel(mainViewModel: MainViewModel) {
@@ -49,4 +50,6 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     fun onNavigateToEditCard(movieId: Long) {
         navHostController.navigate(Routes.EditMovieView.route(movieId))
     }
+
+    fun showError(errorState: ErrorState) = mainViewModel.showError(errorState)
 }
