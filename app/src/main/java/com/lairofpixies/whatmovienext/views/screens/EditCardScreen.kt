@@ -12,6 +12,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -20,7 +21,9 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isNew
@@ -36,9 +39,7 @@ fun EditCardScreen(
 ) {
     val currentMovie = editViewModel.currentMovie.collectAsState()
 
-    val focusRequester = remember { FocusRequester() }
     LaunchedEffect(movieId) {
-        focusRequester.requestFocus()
         movieId?.let {
             editViewModel.loadMovieForEdit(movieId)
         }
@@ -55,7 +56,6 @@ fun EditCardScreen(
     EditCard(
         currentMovie = currentMovie.value,
         onUpdateEdits = { editViewModel.updateMovieEdits { it } },
-        focusRequester = focusRequester,
         onCancelAction = { editViewModel.onCancelAction() },
         onSaveAction = { editViewModel.onSaveAction() },
         onArchiveAction = {
@@ -70,7 +70,6 @@ fun EditCardScreen(
 fun EditCard(
     currentMovie: Movie,
     onUpdateEdits: (Movie) -> Unit,
-    focusRequester: FocusRequester,
     onCancelAction: () -> Unit,
     onSaveAction: () -> Unit,
     onArchiveAction: () -> Unit,
@@ -101,7 +100,6 @@ fun EditCard(
         ) {
             EditableTitleField(
                 currentMovie.title,
-                focusRequester,
             ) {
                 onUpdateEdits(currentMovie.copy(title = it))
             }
@@ -112,15 +110,36 @@ fun EditCard(
 @Composable
 fun EditableTitleField(
     title: String,
-    focusRequester: FocusRequester,
     onTitleChanged: (String) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+
+    // start focused by default
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    // update cursor and re-focus if title changed externally
+    val textFieldValue = remember { mutableStateOf(TextFieldValue(title)) }
+    LaunchedEffect(title) {
+        if (title != textFieldValue.value.text) {
+            focusRequester.requestFocus()
+            textFieldValue.value =
+                textFieldValue.value.copy(
+                    text = title,
+                    selection = TextRange(title.length),
+                )
+        }
+    }
 
     TextField(
-        value = title,
-        onValueChange = onTitleChanged,
+        value = textFieldValue.value,
+        onValueChange = {
+            textFieldValue.value = it
+            onTitleChanged(it.text)
+        },
         label = { Text(stringResource(id = R.string.title)) },
         modifier = Modifier.focusRequester(focusRequester),
         keyboardOptions =
