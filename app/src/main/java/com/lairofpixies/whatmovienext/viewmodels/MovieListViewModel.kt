@@ -2,8 +2,9 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.data.filter
+import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.util.mapState
 import com.lairofpixies.whatmovienext.views.state.ListMode
@@ -32,8 +33,8 @@ class MovieListViewModel
 
         init {
             viewModelScope.launch {
-                repo.archivedMovies.collect { movies ->
-                    _hasArchivedMovies.value = movies.isNotEmpty()
+                repo.archivedMovies.collect { movieInfo ->
+                    _hasArchivedMovies.value = movieInfo.hasMovie()
                 }
             }
         }
@@ -45,8 +46,8 @@ class MovieListViewModel
             listMode = mainViewModel.uiState.mapState { it.listMode }
             viewModelScope.launch {
                 repo.movies
-                    .combine(listMode) { movies, listMode ->
-                        filterMovies(listMode, movies)
+                    .combine(listMode) { movieInfo, listMode ->
+                        filterMovies(movieInfo, listMode)
                     }.collect { filteredMovies ->
                         _listedMovies.value = filteredMovies
                     }
@@ -58,14 +59,12 @@ class MovieListViewModel
         }
 
         private fun filterMovies(
+            movieInfo: AsyncMovieInfo,
             listMode: ListMode,
-            movies: List<Movie>,
         ): AsyncMovieInfo =
-            AsyncMovieInfo.fromList(
-                when (listMode) {
-                    ListMode.ALL -> movies
-                    ListMode.WATCHED -> movies.filter { it.watchState == WatchState.WATCHED }
-                    ListMode.PENDING -> movies.filter { it.watchState == WatchState.PENDING }
-                },
-            )
+            when (listMode) {
+                ListMode.ALL -> movieInfo
+                ListMode.WATCHED -> movieInfo.filter { it.watchState == WatchState.WATCHED }
+                ListMode.PENDING -> movieInfo.filter { it.watchState == WatchState.PENDING }
+            }
     }

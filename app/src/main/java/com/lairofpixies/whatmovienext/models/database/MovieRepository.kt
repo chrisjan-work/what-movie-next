@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface MovieRepository {
     // read
-    val movies: Flow<List<Movie>>
+    val movies: Flow<AsyncMovieInfo>
 
-    val archivedMovies: Flow<List<Movie>>
+    val archivedMovies: Flow<AsyncMovieInfo>
 
-    fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo>
+    fun singleMovie(movieId: Long): StateFlow<AsyncMovieInfo>
 
     suspend fun fetchMovieById(movieId: Long): Movie?
 

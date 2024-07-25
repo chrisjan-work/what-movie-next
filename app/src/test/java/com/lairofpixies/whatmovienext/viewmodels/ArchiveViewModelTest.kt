@@ -1,5 +1,6 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.toList
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -48,7 +49,9 @@ class ArchiveViewModelTest {
         // Given
         val movie = Movie(title = "example movie", isArchived = true)
         every { repo.archivedMovies } returns
-            MutableStateFlow(listOf(movie)).asStateFlow()
+            MutableStateFlow(
+                AsyncMovieInfo.Single(movie),
+            ).asStateFlow()
 
         // When
         archiveViewModel = ArchiveViewModel(repo)

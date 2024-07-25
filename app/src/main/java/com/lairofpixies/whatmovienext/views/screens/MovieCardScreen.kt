@@ -80,7 +80,6 @@ fun MovieCard(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .background(
-                        // Todo: use colors from theme
                         color =
                             if (movie.watchState == WatchState.PENDING) {
                                 Color.White

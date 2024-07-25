@@ -46,7 +46,7 @@ class MovieCardViewModelTest {
             AsyncMovieInfo.Single(
                 Movie(id = 10, title = "single movie"),
             )
-        every { repo.getMovie(10) } returns
+        every { repo.singleMovie(10) } returns
             MutableStateFlow(partialMovie).asStateFlow()
 
         // When

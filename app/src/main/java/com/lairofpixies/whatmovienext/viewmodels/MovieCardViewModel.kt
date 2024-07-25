@@ -15,7 +15,7 @@ class MovieCardViewModel
     constructor(
         private val repo: MovieRepository,
     ) : ScreenViewModel() {
-        fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo> = repo.getMovie(movieId)
+        fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo> = repo.singleMovie(movieId)
 
         fun updateMovieWatched(
             movieId: Long,

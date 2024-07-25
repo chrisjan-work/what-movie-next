@@ -22,11 +22,19 @@ class MovieRepositoryImpl(
 ) : MovieRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    override val movies: Flow<List<Movie>> = dao.getAllMovies().flowOn(ioDispatcher)
+    override val movies: Flow<AsyncMovieInfo> =
+        dao
+            .getAllMovies()
+            .map { AsyncMovieInfo.fromList(it) }
+            .flowOn(ioDispatcher)
 
-    override val archivedMovies: Flow<List<Movie>> = dao.getArchivedMovies().flowOn(ioDispatcher)
+    override val archivedMovies: Flow<AsyncMovieInfo> =
+        dao
+            .getArchivedMovies()
+            .map { AsyncMovieInfo.fromList(it) }
+            .flowOn(ioDispatcher)
 
-    override fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo> =
+    override fun singleMovie(movieId: Long): StateFlow<AsyncMovieInfo> =
         dao
             .getMovie(movieId)
             .map { it?.let { AsyncMovieInfo.Single(it) } ?: AsyncMovieInfo.Empty }

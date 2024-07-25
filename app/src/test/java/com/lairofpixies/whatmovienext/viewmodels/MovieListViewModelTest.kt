@@ -12,6 +12,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -56,6 +57,11 @@ class MovieListViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private fun packMoviesToStateFlow(vararg movies: Movie): StateFlow<AsyncMovieInfo> =
+        MutableStateFlow(
+            AsyncMovieInfo.fromList(movies.toList()),
+        ).asStateFlow()
+
     @Test
     fun `forward movie list with all movies filter`() =
         runTest {
@@ -64,7 +70,7 @@ class MovieListViewModelTest {
             val unseenMovie =
                 Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
             every { repo.movies } returns
-                MutableStateFlow(listOf(unseenMovie, seenMovie)).asStateFlow()
+                packMoviesToStateFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.uiState } returns
                 MutableStateFlow(
                     UiState(
@@ -89,7 +95,7 @@ class MovieListViewModelTest {
             val unseenMovie =
                 Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
             every { repo.movies } returns
-                MutableStateFlow(listOf(unseenMovie, seenMovie)).asStateFlow()
+                packMoviesToStateFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.uiState } returns
                 MutableStateFlow(
                     UiState(
@@ -114,7 +120,7 @@ class MovieListViewModelTest {
             val unseenMovie =
                 Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
             every { repo.movies } returns
-                MutableStateFlow(listOf(unseenMovie, seenMovie)).asStateFlow()
+                packMoviesToStateFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.uiState } returns
                 MutableStateFlow(
                     UiState(
@@ -154,7 +160,7 @@ class MovieListViewModelTest {
     fun `detect if the archive is empty`() {
         // Given
         every { repo.archivedMovies } returns
-            MutableStateFlow(emptyList<Movie>()).asStateFlow()
+            packMoviesToStateFlow()
 
         // When
         rerunConstructor()
@@ -167,9 +173,8 @@ class MovieListViewModelTest {
     @Test
     fun `detect if there are archived movies`() {
         // Given
-        val movie = Movie(title = "example movie", isArchived = true)
         every { repo.archivedMovies } returns
-            MutableStateFlow(listOf(movie)).asStateFlow()
+            packMoviesToStateFlow(Movie(title = "archived movie", isArchived = true))
 
         // When
         rerunConstructor()

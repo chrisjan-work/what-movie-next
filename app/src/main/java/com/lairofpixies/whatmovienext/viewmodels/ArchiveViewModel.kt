@@ -26,8 +26,8 @@ class ArchiveViewModel
 
         init {
             viewModelScope.launch {
-                repo.archivedMovies.collect { movies ->
-                    _archivedMovies.value = AsyncMovieInfo.fromList(movies)
+                repo.archivedMovies.collect { movieInfo ->
+                    _archivedMovies.value = movieInfo
                 }
             }
         }

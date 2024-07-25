@@ -45,44 +45,44 @@ class MovieRepositoryImplTest {
             val result = sut.movies.first()
 
             // Then
-            assertEquals(movies, result)
+            assertEquals(AsyncMovieInfo.Multiple(movies), result)
         }
 
     @Test
-    fun getMovie() {
+    fun `single movie`() {
         // Given
         val movie = Movie(1, "first", WatchState.WATCHED)
         coEvery { movieDao.getMovie(1) } returns flowOf(movie)
 
         // When
         sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-        val result = sut.getMovie(1).value
+        val result = sut.singleMovie(1).value
 
         // Then
         assertEquals(AsyncMovieInfo.Single(movie), result)
     }
 
     @Test
-    fun `getMovie loading`() {
+    fun `single movie, loading`() {
         // Given
         coEvery { movieDao.getMovie(1) } returns emptyFlow()
 
         // When
         sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-        val result = sut.getMovie(1).value
+        val result = sut.singleMovie(1).value
 
         // Then
         assertEquals(AsyncMovieInfo.Loading, result)
     }
 
     @Test
-    fun `getMovie not found`() {
+    fun `single movie, not found`() {
         // Given
         coEvery { movieDao.getMovie(1) } returns flowOf(null)
 
         // When
         sut = MovieRepositoryImpl(movieDao, UnconfinedTestDispatcher())
-        val result = sut.getMovie(1).value
+        val result = sut.singleMovie(1).value
 
         // Then
         assertEquals(AsyncMovieInfo.Empty, result)
