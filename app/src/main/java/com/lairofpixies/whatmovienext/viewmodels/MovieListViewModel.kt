@@ -43,7 +43,7 @@ class MovieListViewModel
             super.attachMainViewModel(mainViewModel)
 
             // initialize and connect list mode
-            listMode = mainViewModel.uiState.mapState { it.listMode }
+            listMode = mainViewModel.movieListDisplayState.mapState { it.listMode }
             viewModelScope.launch {
                 repo.movies
                     .combine(listMode) { movieInfo, listMode ->

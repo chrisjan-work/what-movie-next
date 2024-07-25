@@ -5,8 +5,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.ListMode
-import com.lairofpixies.whatmovienext.views.state.PopupInfo
-import com.lairofpixies.whatmovienext.views.state.UiState
+import com.lairofpixies.whatmovienext.views.state.MovieListDisplayState
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -38,11 +37,10 @@ class MovieListViewModelTest {
         repo = mockk(relaxed = true)
 
         mainViewModelMock = mockk(relaxed = true)
-        every { mainViewModelMock.uiState } returns
+        every { mainViewModelMock.movieListDisplayState } returns
             MutableStateFlow(
-                UiState(
+                MovieListDisplayState(
                     listMode = ListMode.ALL,
-                    popupInfo = PopupInfo.None,
                 ),
             )
     }
@@ -71,11 +69,10 @@ class MovieListViewModelTest {
                 Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
             every { repo.movies } returns
                 packMoviesToStateFlow(unseenMovie, seenMovie)
-            every { mainViewModelMock.uiState } returns
+            every { mainViewModelMock.movieListDisplayState } returns
                 MutableStateFlow(
-                    UiState(
+                    MovieListDisplayState(
                         listMode = ListMode.ALL,
-                        popupInfo = PopupInfo.None,
                     ),
                 )
 
@@ -96,11 +93,10 @@ class MovieListViewModelTest {
                 Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
             every { repo.movies } returns
                 packMoviesToStateFlow(unseenMovie, seenMovie)
-            every { mainViewModelMock.uiState } returns
+            every { mainViewModelMock.movieListDisplayState } returns
                 MutableStateFlow(
-                    UiState(
+                    MovieListDisplayState(
                         listMode = ListMode.PENDING,
-                        popupInfo = PopupInfo.None,
                     ),
                 )
 
@@ -121,11 +117,10 @@ class MovieListViewModelTest {
                 Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
             every { repo.movies } returns
                 packMoviesToStateFlow(unseenMovie, seenMovie)
-            every { mainViewModelMock.uiState } returns
+            every { mainViewModelMock.movieListDisplayState } returns
                 MutableStateFlow(
-                    UiState(
+                    MovieListDisplayState(
                         listMode = ListMode.WATCHED,
-                        popupInfo = PopupInfo.None,
                     ),
                 )
 
@@ -141,11 +136,10 @@ class MovieListViewModelTest {
     fun `forward list mode`() =
         runTest {
             // Given
-            every { mainViewModelMock.uiState } returns
+            every { mainViewModelMock.movieListDisplayState } returns
                 MutableStateFlow(
-                    UiState(
+                    MovieListDisplayState(
                         listMode = ListMode.WATCHED,
-                        popupInfo = PopupInfo.None,
                     ),
                 )
 

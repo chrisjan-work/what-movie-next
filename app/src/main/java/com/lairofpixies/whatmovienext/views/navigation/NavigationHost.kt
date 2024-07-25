@@ -17,12 +17,10 @@ import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
 import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieListScreen
-import com.lairofpixies.whatmovienext.views.state.UiState
 
 @Composable
 fun NavigationHost(
     navController: NavHostController,
-    uiState: UiState,
     mainViewModel: MainViewModel,
 ) {
     fun <T : ScreenViewModel> T.connect() =

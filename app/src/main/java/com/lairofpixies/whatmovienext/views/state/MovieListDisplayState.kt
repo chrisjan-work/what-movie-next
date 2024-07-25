@@ -1,6 +1,5 @@
 package com.lairofpixies.whatmovienext.views.state
 
-data class UiState(
+data class MovieListDisplayState(
     val listMode: ListMode = ListMode.ALL,
-    val popupInfo: PopupInfo = PopupInfo.None,
 )

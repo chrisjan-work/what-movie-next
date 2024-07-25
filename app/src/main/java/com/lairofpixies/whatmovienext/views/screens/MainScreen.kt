@@ -14,7 +14,6 @@ import com.lairofpixies.whatmovienext.views.navigation.NavigationHost
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
     val navController = rememberNavController()
-    val uiState = viewModel.uiState.collectAsState().value
 
     WhatMovieNextTheme {
         Surface(
@@ -23,12 +22,11 @@ fun MainScreen(viewModel: MainViewModel) {
         ) {
             NavigationHost(
                 navController = navController,
-                uiState = uiState,
                 mainViewModel = viewModel,
             )
 
             PopupDialogs(
-                popupInfo = uiState.popupInfo,
+                popupInfo = viewModel.popupInfo.collectAsState().value,
             ) {
                 viewModel.clearPopup()
             }

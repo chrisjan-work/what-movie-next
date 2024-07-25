@@ -36,7 +36,7 @@ class MainViewModelTest {
         ListMode.entries.forEach { mode ->
             // When
             mainViewModel.setListMode(mode)
-            val result = mainViewModel.uiState.value.listMode
+            val result = mainViewModel.movieListDisplayState.value.listMode
 
             // Then
             assertEquals(mode, result)
@@ -44,19 +44,19 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `pass error state and clear`() =
+    fun `pass popup info, and then clear`() =
         runTest {
             // Given
             val resultList =
                 mutableListOf(
-                    mainViewModel.uiState.value.popupInfo,
+                    mainViewModel.popupInfo.value,
                 )
 
             // When
             mainViewModel.showPopup(PopupInfo.SavingWithEmptyTitle)
-            resultList.add(mainViewModel.uiState.value.popupInfo)
+            resultList.add(mainViewModel.popupInfo.value)
             mainViewModel.clearPopup()
-            resultList.add(mainViewModel.uiState.value.popupInfo)
+            resultList.add(mainViewModel.popupInfo.value)
 
             // Then
             assertEquals(
