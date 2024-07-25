@@ -24,6 +24,7 @@ import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 @Composable
 fun MovieCardScreen(
@@ -45,8 +46,8 @@ fun MovieCardScreen(
     if (partialMovie is AsyncMovieInfo.Single) {
         MovieCard(
             movie = partialMovie.movie,
-            onHomeAction = { cardViewModel.onNavigateToMovieList() },
-            onEditAction = { cardViewModel.onNavigateToEditCard(it) },
+            onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
+            onEditAction = { id -> cardViewModel.onNavigateWithParam(Routes.EditMovieView, id) },
             onUpdateAction = { id, watchState -> cardViewModel.updateMovieWatched(id, watchState) },
         )
     }

@@ -11,6 +11,7 @@ import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
 import com.lairofpixies.whatmovienext.viewmodels.EditCardViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
+import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.viewmodels.ScreenViewModel
 import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
 import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
@@ -32,19 +33,9 @@ fun NavigationHost(
 
     NavHost(navController = navController, startDestination = Routes.HOME.route) {
         composable(Routes.AllMoviesView.route) {
+            val movieListViewModel = hiltViewModel<MovieListViewModel>().connect()
             MovieListScreen(
-                listMode = uiState.listMode,
-                movies = uiState.movieList,
-                isArchiveVisitable = uiState.archiveList.isNotEmpty(),
-                onListModeChanged = { mainViewModel.setListMode(it) },
-                onMovieClicked = { movie ->
-                    navController.navigate(
-                        Routes.SingleMovieView.route(
-                            movie.id,
-                        ),
-                    )
-                },
-                navController = navController,
+                listViewModel = movieListViewModel,
             )
         }
 

@@ -99,10 +99,10 @@ class ScreenViewModelTest {
         }
 
     @Test
-    fun onNavigateToMovieList() =
+    fun `navigate to all movies`() =
         runTest {
             // When
-            screenViewModel.onNavigateToMovieList()
+            screenViewModel.onNavigateTo(Routes.AllMoviesView)
 
             // Then
             coVerify {
@@ -111,10 +111,22 @@ class ScreenViewModelTest {
         }
 
     @Test
+    fun `navigate to archive`() =
+        runTest {
+            // When
+            screenViewModel.onNavigateTo(Routes.ArchiveView)
+
+            // Then
+            coVerify {
+                navHostControllerMock.navigate(Routes.ArchiveView.route)
+            }
+        }
+
+    @Test
     fun onNavigateToEditCard() =
         runTest {
             // When
-            screenViewModel.onNavigateToEditCard(84)
+            screenViewModel.onNavigateWithParam(Routes.EditMovieView, 84)
 
             // Then
             coVerify {

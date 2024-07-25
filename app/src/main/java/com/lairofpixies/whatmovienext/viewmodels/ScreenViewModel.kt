@@ -14,11 +14,11 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     protected lateinit var mainViewModel: MainViewModel
         private set
 
-    fun attachNavHostController(navHostController: NavHostController) {
+    open fun attachNavHostController(navHostController: NavHostController) {
         this.navHostController = navHostController
     }
 
-    fun attachMainViewModel(mainViewModel: MainViewModel) {
+    open fun attachMainViewModel(mainViewModel: MainViewModel) {
         this.mainViewModel = mainViewModel
     }
 
@@ -43,12 +43,15 @@ open class ScreenViewModel protected constructor() : ViewModel() {
         }
     }
 
-    fun onNavigateToMovieList() {
-        navHostController.navigate(Routes.AllMoviesView.route)
+    fun onNavigateTo(destination: Routes) {
+        navHostController.navigate(destination.route)
     }
 
-    fun onNavigateToEditCard(movieId: Long) {
-        navHostController.navigate(Routes.EditMovieView.route(movieId))
+    fun onNavigateWithParam(
+        destination: Routes,
+        parameter: Long,
+    ) {
+        navHostController.navigate(destination.route(parameter))
     }
 
     fun showError(errorState: ErrorState) = mainViewModel.showError(errorState)

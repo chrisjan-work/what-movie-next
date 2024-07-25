@@ -22,6 +22,7 @@ import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 @Composable
 fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
@@ -39,7 +40,7 @@ fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
                 items =
                     bottomItemsForArchive(
                         selection = selection,
-                        onNavigateToMovieList = { archiveViewModel.onNavigateToMovieList() },
+                        onNavigateToMovieList = { archiveViewModel.onNavigateTo(Routes.AllMoviesView) },
                         onRestoreSelectedMovies = { archiveViewModel.restoreSelectedMovies() },
                         onDeleteSelectedMovies = { archiveViewModel.deleteSelectedMovies() },
                     ),

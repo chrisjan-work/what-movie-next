@@ -10,12 +10,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.navigation.NavController
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.data.toList
+import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
@@ -23,37 +25,37 @@ import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.ListMode
 
 @Composable
-fun MovieListScreen(
-    listMode: ListMode,
-    movies: List<Movie>,
-    isArchiveVisitable: Boolean,
-    onListModeChanged: (ListMode) -> Unit,
-    onMovieClicked: (Movie) -> Unit,
-    navController: NavController,
-) {
-    val filteredMovies =
-        when (listMode) {
-            ListMode.ALL -> movies
-            ListMode.WATCHED -> movies.filter { it.watchState == WatchState.WATCHED }
-            ListMode.PENDING -> movies.filter { it.watchState == WatchState.PENDING }
-        }
-
+fun MovieListScreen(listViewModel: MovieListViewModel) {
     Scaffold(
         bottomBar = {
             CustomBottomBar(
                 items =
                     bottomItemsForMovieList(
-                        listMode,
-                        onListModeChanged,
-                        isArchiveVisitable,
-                        navController,
+                        listMode = listViewModel.listMode.collectAsState().value,
+                        isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
+                        onListModeChanged = { listViewModel.setListMode(it) },
+                        onCreateNewMovie = {
+                            listViewModel.onNavigateTo(Routes.CreateMovieView)
+                        },
+                        onOpenArchive = {
+                            listViewModel.onNavigateTo(Routes.ArchiveView)
+                        },
                     ),
             )
         },
     ) { innerPadding ->
         MovieList(
-            filteredMovies = filteredMovies,
-            onMovieClicked = onMovieClicked,
+            filteredMovies =
+                listViewModel.listedMovies
+                    .collectAsState()
+                    .value
+                    .toList(),
+            onMovieClicked = { movieId ->
+                listViewModel.onNavigateWithParam(
+                    Routes.SingleMovieView,
+                    movieId,
+                )
+            },
             modifier =
                 Modifier
                     .fillMaxSize()
@@ -65,7 +67,7 @@ fun MovieListScreen(
 @Composable
 fun MovieList(
     filteredMovies: List<Movie>,
-    onMovieClicked: (Movie) -> Unit,
+    onMovieClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -75,7 +77,7 @@ fun MovieList(
             modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
         ) {
             items(filteredMovies) { movie ->
-                MovieListItem(movie) { onMovieClicked(movie) }
+                MovieListItem(movie) { onMovieClicked(movie.id) }
             }
         }
     }
@@ -109,9 +111,10 @@ fun MovieListItem(
 
 fun bottomItemsForMovieList(
     listMode: ListMode,
-    onListModeChanged: (ListMode) -> Unit,
     isArchiveVisitable: Boolean,
-    navController: NavController,
+    onListModeChanged: (ListMode) -> Unit,
+    onCreateNewMovie: () -> Unit,
+    onOpenArchive: () -> Unit,
 ): List<CustomBarItem> {
     val filterItem =
         CustomBarItem(
@@ -125,16 +128,11 @@ fun bottomItemsForMovieList(
             onListModeChanged(listMode.next())
         }
 
-    val createItem =
-        CustomBarItem(ButtonSpec.CreateMovieShortcut) {
-            navController.navigate(Routes.CreateMovieView.route)
-        }
+    val createItem = CustomBarItem(ButtonSpec.CreateMovieShortcut, onCreateNewMovie)
 
     val archiveItem =
         if (isArchiveVisitable) {
-            CustomBarItem(ButtonSpec.ArchiveShortcut) {
-                navController.navigate(Routes.ArchiveView.route)
-            }
+            CustomBarItem(ButtonSpec.ArchiveShortcut, onOpenArchive)
         } else {
             null
         }
