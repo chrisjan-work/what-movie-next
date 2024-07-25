@@ -122,4 +122,84 @@ class AsyncMovieInfoTest {
 
         assertEquals(emptyList<Movie>(), movieList)
     }
+
+    @Test
+    fun `filter list - filter to empty`() {
+        val filtered =
+            AsyncMovieInfo
+                .Multiple(
+                    listOf(
+                        Movie(title = "The Thin Red Line"),
+                        Movie(title = "Badlands"),
+                        Movie(title = "Knight of Cups"),
+                    ),
+                ).filter { it.title.contains("wild") }
+
+        assertEquals(AsyncMovieInfo.Empty, filtered)
+    }
+
+    @Test
+    fun `filter list - filter to one`() {
+        val filtered =
+            AsyncMovieInfo
+                .Multiple(
+                    listOf(
+                        Movie(title = "The Thin Red Line"),
+                        Movie(title = "Badlands"),
+                        Movie(title = "Knight of Cups"),
+                    ),
+                ).filter { it.title.contains("Red") }
+
+        assertEquals(AsyncMovieInfo.Single(Movie(title = "The Thin Red Line")), filtered)
+    }
+
+    @Test
+    fun `filter list - filter to multiple`() {
+        val filtered =
+            AsyncMovieInfo
+                .Multiple(
+                    listOf(
+                        Movie(title = "The Thin Red Line"),
+                        Movie(title = "Badlands"),
+                        Movie(title = "Knight of Cups"),
+                    ),
+                ).filter { it.title.contains("i") }
+        assertEquals(
+            AsyncMovieInfo.Multiple(
+                listOf(
+                    Movie(title = "The Thin Red Line"),
+                    Movie(title = "Knight of Cups"),
+                ),
+            ),
+            filtered,
+        )
+    }
+
+    @Test
+    fun `filter list - empty stays empty`() {
+        val filtered = AsyncMovieInfo.Empty.filter { true }
+        assertEquals(AsyncMovieInfo.Empty, filtered)
+    }
+
+    @Test
+    fun `filter list - single input stays`() {
+        val filtered =
+            AsyncMovieInfo
+                .Single(Movie(title = "Forrest Gump"))
+                .filter { true }
+        assertEquals(
+            AsyncMovieInfo
+                .Single(Movie(title = "Forrest Gump")),
+            filtered,
+        )
+    }
+
+    @Test
+    fun `filter list - single input goes`() {
+        val filtered =
+            AsyncMovieInfo
+                .Single(Movie(title = "Forrest Gump"))
+                .filter { false }
+        assertEquals(AsyncMovieInfo.Empty, filtered)
+    }
 }
