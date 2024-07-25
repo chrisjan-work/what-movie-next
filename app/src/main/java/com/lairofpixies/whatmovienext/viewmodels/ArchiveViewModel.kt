@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.views.state.ErrorState
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,8 +49,8 @@ class ArchiveViewModel
             }
 
         fun deleteSelectedMovies() {
-            mainViewModel.showError(
-                ErrorState.ConfirmDeletion {
+            mainViewModel.showPopup(
+                PopupInfo.ConfirmDeletion {
                     viewModelScope.launch {
                         selection.value.forEach {
                             repo.deleteMovie(it)

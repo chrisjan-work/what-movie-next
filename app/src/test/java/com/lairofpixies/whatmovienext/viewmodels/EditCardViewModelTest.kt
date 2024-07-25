@@ -4,7 +4,7 @@ import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.views.state.ErrorState
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -136,7 +136,7 @@ class EditCardViewModelTest {
         // Then
         verify { spy.onCloseWithIdAction(89) }
         verify(exactly = 0) { spy.onSaveAction() }
-        verify(exactly = 0) { spy.showError(any<ErrorState.UnsavedChanges>()) }
+        verify(exactly = 0) { spy.showPopup(any<PopupInfo.UnsavedChanges>()) }
     }
 
     @Test
@@ -144,7 +144,7 @@ class EditCardViewModelTest {
         // Given
         val movie = Movie(id = 117, title = "OSS 117 Cairo, Nest of Spies")
         val spy = spyk(editViewModel)
-        every { spy.showError(any<ErrorState.UnsavedChanges>()) } just runs
+        every { spy.showPopup(any<PopupInfo.UnsavedChanges>()) } just runs
         spy.updateMovieEdits(resetSaved = false) { movie }
 
         // When
@@ -153,7 +153,7 @@ class EditCardViewModelTest {
         // Then
         verify(exactly = 0) { spy.onCloseWithIdAction(117) }
         verify(exactly = 0) { spy.onSaveAction() }
-        verify(exactly = 1) { spy.showError(any<ErrorState.UnsavedChanges>()) }
+        verify(exactly = 1) { spy.showPopup(any<PopupInfo.UnsavedChanges>()) }
     }
 
     @Test
@@ -161,8 +161,8 @@ class EditCardViewModelTest {
         // Given
         val movie = Movie(id = 117, title = "OSS 117 Cairo, Nest of Spies")
         val spy = spyk(editViewModel)
-        val capturedError = slot<ErrorState.UnsavedChanges>()
-        every { spy.showError(capture(capturedError)) } just runs
+        val capturedError = slot<PopupInfo.UnsavedChanges>()
+        every { spy.showPopup(capture(capturedError)) } just runs
         spy.updateMovieEdits(resetSaved = false) { movie }
 
         // When
@@ -179,8 +179,8 @@ class EditCardViewModelTest {
         // Given
         val movie = Movie(id = 117, title = "OSS 117 Cairo, Nest of Spies")
         val spy = spyk(editViewModel)
-        val capturedError = slot<ErrorState.UnsavedChanges>()
-        every { spy.showError(capture(capturedError)) } just runs
+        val capturedError = slot<PopupInfo.UnsavedChanges>()
+        every { spy.showPopup(capture(capturedError)) } just runs
         spy.updateMovieEdits(resetSaved = false) { movie }
 
         // When
@@ -207,7 +207,7 @@ class EditCardViewModelTest {
         // Then
         verify(exactly = 0) { spy.onCloseWithIdAction(201) }
         verify(exactly = 1) { spy.onSaveAction() }
-        verify(exactly = 0) { spy.showError(any<ErrorState.UnsavedChanges>()) }
+        verify(exactly = 0) { spy.showPopup(any<PopupInfo.UnsavedChanges>()) }
     }
 
     @Test
@@ -249,14 +249,14 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val movie = Movie(id = 1, title = "  ")
-            coEvery { mainViewModelMock.showError(any<ErrorState.SavingWithEmptyTitle>()) } just runs
+            coEvery { mainViewModelMock.showPopup(any<PopupInfo.SavingWithEmptyTitle>()) } just runs
 
             // When
             editViewModel.updateMovieEdits { movie }
             editViewModel.onSaveAction()
 
             // Then
-            coVerify { mainViewModelMock.showError(any<ErrorState.SavingWithEmptyTitle>()) }
+            coVerify { mainViewModelMock.showPopup(any<PopupInfo.SavingWithEmptyTitle>()) }
         }
 
     @Test
@@ -267,14 +267,14 @@ class EditCardViewModelTest {
             val duplicatedMovie = Movie(id = 2, title = "duplicate movie")
             coEvery { repo.fetchMovieById(any()) } returns null
             coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
-            coEvery { mainViewModelMock.showError(any<ErrorState.DuplicatedTitle>()) } just runs
+            coEvery { mainViewModelMock.showPopup(any<PopupInfo.DuplicatedTitle>()) } just runs
 
             // When
             editViewModel.updateMovieEdits { movieToSave }
             editViewModel.onSaveAction()
 
             // Then
-            coVerify { mainViewModelMock.showError(any<ErrorState.DuplicatedTitle>()) }
+            coVerify { mainViewModelMock.showPopup(any<PopupInfo.DuplicatedTitle>()) }
         }
 
     @Test
@@ -285,9 +285,9 @@ class EditCardViewModelTest {
             val duplicatedMovie = Movie(id = 293, title = "duplicate movie")
             coEvery { repo.fetchMovieById(any()) } returns null
             coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
-            val capturedError = slot<ErrorState.DuplicatedTitle>()
+            val capturedError = slot<PopupInfo.DuplicatedTitle>()
             val spy = spyk(editViewModel)
-            coEvery { spy.showError(capture(capturedError)) } just runs
+            coEvery { spy.showPopup(capture(capturedError)) } just runs
 
             // When
             spy.updateMovieEdits { movieToSave }
@@ -318,9 +318,9 @@ class EditCardViewModelTest {
                 )
             coEvery { repo.fetchMovieById(any()) } returns null
             coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
-            val capturedError = slot<ErrorState.DuplicatedTitle>()
+            val capturedError = slot<PopupInfo.DuplicatedTitle>()
             val spy = spyk(editViewModel)
-            coEvery { spy.showError(capture(capturedError)) } just runs
+            coEvery { spy.showPopup(capture(capturedError)) } just runs
 
             // When
             spy.updateMovieEdits { movieToSave }
@@ -357,9 +357,9 @@ class EditCardViewModelTest {
                 )
             coEvery { repo.fetchMovieById(any()) } returns movieToSave
             coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
-            val capturedError = slot<ErrorState.DuplicatedTitle>()
+            val capturedError = slot<PopupInfo.DuplicatedTitle>()
             val spy = spyk(editViewModel)
-            coEvery { spy.showError(capture(capturedError)) } just runs
+            coEvery { spy.showPopup(capture(capturedError)) } just runs
 
             // When
             spy.updateMovieEdits { movieToSave }

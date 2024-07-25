@@ -6,7 +6,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.hasQuietSaveableChangesSince
 import com.lairofpixies.whatmovienext.models.data.hasSaveableChangesSince
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.views.state.ErrorState
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,7 +78,7 @@ class EditCardViewModel
 
                 // reject movies with empty titles
                 if (movie.title.isBlank()) {
-                    showError(ErrorState.SavingWithEmptyTitle)
+                    showPopup(PopupInfo.SavingWithEmptyTitle)
                     return@launch
                 }
 
@@ -88,8 +88,8 @@ class EditCardViewModel
 
                 // if a movie with the same title exists, offer to overwrite it or discard edits
                 if (duplicateMovie != null) {
-                    val error =
-                        ErrorState.DuplicatedTitle(
+                    val errorInfo =
+                        PopupInfo.DuplicatedTitle(
                             onSave = {
                                 viewModelScope.launch {
                                     val movieToUpdate = movie.copy(id = duplicateMovie.id)
@@ -104,7 +104,7 @@ class EditCardViewModel
                                 onSuccess(movie.id)
                             },
                         )
-                    showError(error)
+                    showPopup(errorInfo)
                     return@launch
                 }
 
@@ -123,8 +123,8 @@ class EditCardViewModel
         fun handleBackButton() {
             when {
                 currentMovie.value.hasSaveableChangesSince(lastSavedMovie) ->
-                    showError(
-                        ErrorState.UnsavedChanges(
+                    showPopup(
+                        PopupInfo.UnsavedChanges(
                             onSave = { onSaveAction() },
                             onDiscard = { onCloseWithIdAction(currentMovie.value.id) },
                         ),

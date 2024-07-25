@@ -1,7 +1,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.views.state.ErrorState
 import com.lairofpixies.whatmovienext.views.state.ListMode
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher
@@ -49,18 +49,18 @@ class MainViewModelTest {
             // Given
             val resultList =
                 mutableListOf(
-                    mainViewModel.uiState.value.errorState,
+                    mainViewModel.uiState.value.popupInfo,
                 )
 
             // When
-            mainViewModel.showError(ErrorState.SavingWithEmptyTitle)
-            resultList.add(mainViewModel.uiState.value.errorState)
-            mainViewModel.clearError()
-            resultList.add(mainViewModel.uiState.value.errorState)
+            mainViewModel.showPopup(PopupInfo.SavingWithEmptyTitle)
+            resultList.add(mainViewModel.uiState.value.popupInfo)
+            mainViewModel.clearPopup()
+            resultList.add(mainViewModel.uiState.value.popupInfo)
 
             // Then
             assertEquals(
-                listOf(ErrorState.None, ErrorState.SavingWithEmptyTitle, ErrorState.None),
+                listOf(PopupInfo.None, PopupInfo.SavingWithEmptyTitle, PopupInfo.None),
                 resultList.toList(),
             )
         }

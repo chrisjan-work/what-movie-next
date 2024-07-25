@@ -1,5 +1,6 @@
 package com.lairofpixies.whatmovienext.views.screens
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,55 +14,55 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.views.state.ErrorState
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 
 @Composable
 fun PopupDialogs(
     modifier: Modifier = Modifier,
-    errorState: ErrorState,
+    popupInfo: PopupInfo,
     onDismiss: () -> Unit,
 ) {
-    when (errorState) {
-        ErrorState.None -> {}
-        ErrorState.SavingWithEmptyTitle ->
+    when (popupInfo) {
+        PopupInfo.None -> {}
+        PopupInfo.SavingWithEmptyTitle ->
             SingleButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.SAVING_WITH_EMPTY_TITLE),
-                errorMessageResource = R.string.error_title_is_required,
+                bodyRes = R.string.error_title_is_required,
                 onDismiss = onDismiss,
             )
 
-        is ErrorState.UnsavedChanges ->
+        is PopupInfo.UnsavedChanges ->
             ThreeButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.UNSAVED_CHANGES),
-                errorMessageResource = R.string.warning_changes_not_saved,
-                saveLabelResource = R.string.save,
-                onSave = errorState.onSave,
-                discardLabelResource = R.string.discard,
-                onDiscard = errorState.onDiscard,
-                dismissLabelResource = R.string.continue_editing,
+                bodyRes = R.string.warning_changes_not_saved,
+                saveLabelRes = R.string.save,
+                onSave = popupInfo.onSave,
+                discardLabelRes = R.string.discard,
+                onDiscard = popupInfo.onDiscard,
+                dismissLabelRes = R.string.continue_editing,
                 onDismiss = onDismiss,
             )
 
-        is ErrorState.DuplicatedTitle ->
+        is PopupInfo.DuplicatedTitle ->
             ThreeButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.DUPLICATED_TITLE),
-                errorMessageResource = R.string.error_title_already_exists,
-                saveLabelResource = R.string.overwrite,
-                onSave = errorState.onSave,
-                discardLabelResource = R.string.discard_changes,
-                onDiscard = errorState.onDiscard,
-                dismissLabelResource = R.string.continue_editing,
+                bodyRes = R.string.error_title_already_exists,
+                saveLabelRes = R.string.overwrite,
+                onSave = popupInfo.onSave,
+                discardLabelRes = R.string.discard_changes,
+                onDiscard = popupInfo.onDiscard,
+                dismissLabelRes = R.string.continue_editing,
                 onDismiss = onDismiss,
             )
 
-        is ErrorState.ConfirmDeletion ->
+        is PopupInfo.ConfirmDeletion ->
             TwoButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.CONFIRM_DELETION),
-                titleStringResource = R.string.delete_forever,
-                contentStringResource = R.string.please_confirm_deletion,
-                confirmStringResource = R.string.confirm_deletion,
-                dismissStringResource = R.string.cancel,
-                onConfirm = errorState.onConfirm,
+                titleRes = R.string.delete_forever,
+                contentRes = R.string.please_confirm_deletion,
+                confirmRes = R.string.confirm_deletion,
+                dismissRes = R.string.cancel,
+                onConfirm = popupInfo.onConfirm,
                 onDismiss = onDismiss,
             )
     }
@@ -69,7 +70,7 @@ fun PopupDialogs(
 
 @Composable
 fun SingleButtonDialog(
-    errorMessageResource: Int,
+    @StringRes bodyRes: Int,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -78,7 +79,7 @@ fun SingleButtonDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
         title = { Text(context.getString(R.string.error_title)) },
-        text = { Text(context.getString(errorMessageResource)) },
+        text = { Text(context.getString(bodyRes)) },
         confirmButton = {
             Button(onClick = onDismiss) {
                 Text(context.getString(R.string.close))
@@ -89,10 +90,10 @@ fun SingleButtonDialog(
 
 @Composable
 fun TwoButtonDialog(
-    titleStringResource: Int,
-    contentStringResource: Int,
-    confirmStringResource: Int,
-    dismissStringResource: Int,
+    @StringRes titleRes: Int,
+    @StringRes contentRes: Int,
+    @StringRes confirmRes: Int,
+    @StringRes dismissRes: Int,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -101,19 +102,19 @@ fun TwoButtonDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
-        title = { Text(context.getString(titleStringResource)) },
-        text = { Text(context.getString(contentStringResource)) },
+        title = { Text(context.getString(titleRes)) },
+        text = { Text(context.getString(contentRes)) },
         confirmButton = {
             Button(onClick = {
                 onConfirm()
                 onDismiss()
             }) {
-                Text(context.getString(confirmStringResource))
+                Text(context.getString(confirmRes))
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text(context.getString(dismissStringResource))
+                Text(context.getString(dismissRes))
             }
         },
     )
@@ -122,12 +123,12 @@ fun TwoButtonDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThreeButtonDialog(
-    errorMessageResource: Int,
-    saveLabelResource: Int,
+    @StringRes bodyRes: Int,
+    @StringRes saveLabelRes: Int,
     onSave: () -> Unit,
-    discardLabelResource: Int,
+    @StringRes discardLabelRes: Int,
     onDiscard: () -> Unit,
-    dismissLabelResource: Int,
+    @StringRes dismissLabelRes: Int,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -138,22 +139,22 @@ fun ThreeButtonDialog(
     ) {
         Box {
             Column {
-                Text(context.getString(errorMessageResource))
+                Text(context.getString(bodyRes))
                 Row {
                     Button(onClick = {
                         onSave()
                         onDismiss()
                     }) {
-                        Text(context.getString(saveLabelResource))
+                        Text(context.getString(saveLabelRes))
                     }
                     Button(onClick = {
                         onDiscard()
                         onDismiss()
                     }) {
-                        Text(context.getString(discardLabelResource))
+                        Text(context.getString(discardLabelRes))
                     }
                     Button(onClick = onDismiss) {
-                        Text(context.getString(dismissLabelResource))
+                        Text(context.getString(dismissLabelRes))
                     }
                 }
             }

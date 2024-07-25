@@ -28,9 +28,9 @@ fun MainScreen(viewModel: MainViewModel) {
             )
 
             PopupDialogs(
-                errorState = uiState.errorState,
+                popupInfo = uiState.popupInfo,
             ) {
-                viewModel.clearError()
+                viewModel.clearPopup()
             }
         }
     }

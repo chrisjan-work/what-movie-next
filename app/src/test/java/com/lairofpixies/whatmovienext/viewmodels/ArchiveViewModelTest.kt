@@ -4,7 +4,7 @@ import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.toList
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.views.state.ErrorState
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
@@ -103,8 +103,8 @@ class ArchiveViewModelTest {
         runTest {
             // Given
             val mainViewModel: MainViewModel = mockk(relaxed = true)
-            val errorState = slot<ErrorState.ConfirmDeletion>()
-            every { mainViewModel.showError(capture(errorState)) } just runs
+            val popupInfo = slot<PopupInfo.ConfirmDeletion>()
+            every { mainViewModel.showPopup(capture(popupInfo)) } just runs
             archiveViewModel.attachMainViewModel(mainViewModel)
 
             val moviesToDelete =
@@ -118,7 +118,7 @@ class ArchiveViewModelTest {
 
             // When
             archiveViewModel.deleteSelectedMovies()
-            errorState.captured.onConfirm()
+            popupInfo.captured.onConfirm()
 
             // Then
             coVerify {

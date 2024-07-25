@@ -1,8 +1,8 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.ViewModel
-import com.lairofpixies.whatmovienext.views.state.ErrorState
 import com.lairofpixies.whatmovienext.views.state.ListMode
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import com.lairofpixies.whatmovienext.views.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,11 +22,11 @@ class MainViewModel
             _uiState.update { it.copy(listMode = listMode) }
         }
 
-        fun showError(errorState: ErrorState) {
-            _uiState.update { it.copy(errorState = errorState) }
+        fun showPopup(popupInfo: PopupInfo) {
+            _uiState.update { it.copy(popupInfo = popupInfo) }
         }
 
-        fun clearError() {
-            _uiState.update { it.copy(errorState = ErrorState.None) }
+        fun clearPopup() {
+            _uiState.update { it.copy(popupInfo = PopupInfo.None) }
         }
     }

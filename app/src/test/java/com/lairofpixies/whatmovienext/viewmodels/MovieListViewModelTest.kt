@@ -4,8 +4,8 @@ import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.views.state.ErrorState
 import com.lairofpixies.whatmovienext.views.state.ListMode
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import com.lairofpixies.whatmovienext.views.state.UiState
 import io.mockk.every
 import io.mockk.mockk
@@ -42,7 +42,7 @@ class MovieListViewModelTest {
             MutableStateFlow(
                 UiState(
                     listMode = ListMode.ALL,
-                    errorState = ErrorState.None,
+                    popupInfo = PopupInfo.None,
                 ),
             )
     }
@@ -75,7 +75,7 @@ class MovieListViewModelTest {
                 MutableStateFlow(
                     UiState(
                         listMode = ListMode.ALL,
-                        errorState = ErrorState.None,
+                        popupInfo = PopupInfo.None,
                     ),
                 )
 
@@ -100,7 +100,7 @@ class MovieListViewModelTest {
                 MutableStateFlow(
                     UiState(
                         listMode = ListMode.PENDING,
-                        errorState = ErrorState.None,
+                        popupInfo = PopupInfo.None,
                     ),
                 )
 
@@ -125,7 +125,7 @@ class MovieListViewModelTest {
                 MutableStateFlow(
                     UiState(
                         listMode = ListMode.WATCHED,
-                        errorState = ErrorState.None,
+                        popupInfo = PopupInfo.None,
                     ),
                 )
 
@@ -145,7 +145,7 @@ class MovieListViewModelTest {
                 MutableStateFlow(
                     UiState(
                         listMode = ListMode.WATCHED,
-                        errorState = ErrorState.None,
+                        popupInfo = PopupInfo.None,
                     ),
                 )
 
