@@ -50,8 +50,7 @@ fun AsyncMovieInfo.filter(sieve: (Movie) -> Boolean): AsyncMovieInfo =
     when (this) {
         is AsyncMovieInfo.Single -> if (sieve(movie)) this else AsyncMovieInfo.Empty
         is AsyncMovieInfo.Multiple -> {
-            val filtered = movies.filter(sieve)
-            if (filtered.isEmpty()) AsyncMovieInfo.Empty else AsyncMovieInfo.fromList(filtered)
+            AsyncMovieInfo.fromList(movies.filter(sieve))
         }
 
         else -> this
