@@ -2,17 +2,23 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.hasQuietSaveableChangesSince
 import com.lairofpixies.whatmovienext.models.data.hasSaveableChangesSince
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,11 +26,26 @@ class EditCardViewModel
     @Inject
     constructor(
         private val movieRepo: MovieRepository,
+        private val apiRepo: ApiRepository,
     ) : ScreenViewModel() {
         private var lastSavedMovie: Movie? = null
 
         private val _currentMovie = MutableStateFlow(Movie(id = Movie.NEW_ID, title = ""))
         val currentMovie: StateFlow<Movie> = _currentMovie.asStateFlow()
+
+        private val _searchResults: MutableStateFlow<AsyncMovieInfo> =
+            MutableStateFlow(AsyncMovieInfo.Empty)
+        val searchResults: StateFlow<AsyncMovieInfo> = _searchResults.asStateFlow()
+        private var searchJob: Job? = null
+        private val shouldShowSearchPopup: Flow<Boolean> =
+            searchResults.map {
+                it is AsyncMovieInfo.Loading
+            }
+
+        override fun attachMainViewModel(mainViewModel: MainViewModel) {
+            super.attachMainViewModel(mainViewModel)
+            connectSearchPopupToSearchResults()
+        }
 
         // fetch a movie from the DB, store in-memory for editing
         fun loadMovieForEdit(movieId: Long) =
@@ -135,6 +156,62 @@ class EditCardViewModel
 
                 else -> {
                     onCloseWithIdAction(currentMovie.value.id)
+                }
+            }
+        }
+
+        fun startSearch() {
+            searchJob =
+                viewModelScope.launch {
+                    if (currentMovie.value.title.isBlank()) {
+                        _searchResults.value = AsyncMovieInfo.Empty
+                        showPopup(PopupInfo.EmptyTitle)
+                        return@launch
+                    }
+
+                    apiRepo.findMoviesByTitle(title = currentMovie.value.title).collect { results ->
+                        when (results) {
+                            is AsyncMovieInfo.Loading ->
+                                _searchResults.value = AsyncMovieInfo.Loading
+
+                            is AsyncMovieInfo.Failed -> {
+                                _searchResults.value = AsyncMovieInfo.Empty
+                                showPopup(PopupInfo.SearchFailed)
+                                // TODO: log error remotely
+                                Timber.e("Connection error: ${results.trowable}")
+                            }
+
+                            is AsyncMovieInfo.Empty -> {
+                                _searchResults.value = AsyncMovieInfo.Empty
+                                showPopup(PopupInfo.SearchEmpty)
+                            }
+
+                            is AsyncMovieInfo.Single -> {
+                                _currentMovie.value = results.movie
+                                _searchResults.value = AsyncMovieInfo.Empty
+                            }
+
+                            is AsyncMovieInfo.Multiple -> _searchResults.value = results
+                        }
+                    }
+                }
+        }
+
+        @VisibleForTesting
+        fun cancelSearch() {
+            searchJob?.cancel()
+            searchJob = null
+            _searchResults.value = AsyncMovieInfo.Empty
+        }
+
+        private fun connectSearchPopupToSearchResults() {
+            viewModelScope.launch {
+                shouldShowSearchPopup.collect { isLoading ->
+                    if (isLoading) {
+                        showPopup(PopupInfo.Searching { cancelSearch() })
+                    } else {
+                        closePopupOfType(PopupInfo.Searching::class)
+                    }
                 }
             }
         }

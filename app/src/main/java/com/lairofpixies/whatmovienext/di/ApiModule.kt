@@ -2,8 +2,8 @@ package com.lairofpixies.whatmovienext.di
 
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
-import com.lairofpixies.whatmovienext.models.network.FakeMovieApi
 import com.lairofpixies.whatmovienext.models.network.MovieApi
+import com.lairofpixies.whatmovienext.models.network.TestMovieApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +42,6 @@ object ApiModule {
 //            .client(okHttpClient)
 //            .build()
 //            .create(MovieApi::class.java)
-        return FakeMovieApi()
+        return TestMovieApi()
     }
 }

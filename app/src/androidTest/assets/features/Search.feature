@@ -2,6 +2,9 @@
 Feature: Search Online
   when entering movie details, the user can search for a movie online
 
+  Background: Start with an empty repo each time
+    Given the online repo is empty
+
 # TODO
 #  Scenario: Search movie with multiple options
 #    Given the user initiates a new entry
@@ -17,13 +20,11 @@ Feature: Search Online
 #    Then the search results view contains 3 entries with the title "Spaceballs"
 #    When the user selects the search result "Spaceballs"
 #    Then the card is filled with the information of "Spaceballs"
-#
-# TODO
-#  Scenario: Search movie with single option
-#    Given the user initiates a new entry
-#    Given the online repo contains an entry with title "Unique Movie"
-#    When the user searches for the title "Unique Movie"
-#    Then the card containing the information of "Unique Movie" should be visible
+
+  Scenario: Search movie with single option
+    Given the online repo returns an entry with title "Unique Movie"
+    When the user searches for the title "Unique"
+    Then the edit card title is filled with "Unique Movie"
 #
 #  # TODO
 #  Scenario: Search movie with no results

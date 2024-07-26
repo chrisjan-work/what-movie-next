@@ -45,10 +45,6 @@ fun EditCardScreen(
         }
     }
 
-    val onSearchAction = {
-        TODO()
-    }
-
     BackHandler(true) {
         editViewModel.handleBackButton()
     }
@@ -62,7 +58,7 @@ fun EditCardScreen(
             editViewModel.archiveCurrentMovie()
             editViewModel.onCancelAction()
         },
-        onSearchAction = onSearchAction,
+        onSearchAction = { editViewModel.startSearch() },
     )
 }
 

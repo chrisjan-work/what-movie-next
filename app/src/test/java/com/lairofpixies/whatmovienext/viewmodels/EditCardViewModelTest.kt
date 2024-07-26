@@ -1,10 +1,13 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.navigation.NavHostController
+import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
+import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -16,6 +19,8 @@ import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -29,7 +34,8 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class EditCardViewModelTest {
     private lateinit var editViewModel: EditCardViewModel
-    private lateinit var repo: MovieRepository
+    private lateinit var dbRepoMock: MovieRepository
+    private lateinit var apiRepoMock: ApiRepository
     private lateinit var navHostControllerMock: NavHostController
     private lateinit var mainViewModelMock: MainViewModel
 
@@ -38,12 +44,16 @@ class EditCardViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        repo = mockk(relaxed = true)
-        editViewModel = EditCardViewModel(repo)
+        dbRepoMock = mockk(relaxed = true)
+        apiRepoMock = mockk(relaxed = true)
         navHostControllerMock = mockk(relaxed = true)
-        editViewModel.attachNavHostController(navHostControllerMock)
         mainViewModelMock = mockk(relaxed = true)
-        editViewModel.attachMainViewModel(mainViewModelMock)
+
+        editViewModel =
+            EditCardViewModel(dbRepoMock, apiRepoMock).apply {
+                attachNavHostController(navHostControllerMock)
+                attachMainViewModel(mainViewModelMock)
+            }
     }
 
     @After
@@ -68,7 +78,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val returnedMovie = Movie(id = 778, title = "Film No. 778")
-            coEvery { repo.fetchMovieById(any()) } returns returnedMovie
+            coEvery { dbRepoMock.fetchMovieById(any()) } returns returnedMovie
 
             // When
             editViewModel.loadMovieForEdit(778)
@@ -82,13 +92,13 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val movie = slot<Movie>()
-            coEvery { repo.addMovie(capture(movie)) } returns 10
+            coEvery { dbRepoMock.addMovie(capture(movie)) } returns 10
 
             // When
             val returnedId = editViewModel.addMovieToDb(Movie(title = "adding movie"))
 
             // Then
-            coVerify { repo.addMovie(any()) }
+            coVerify { dbRepoMock.addMovie(any()) }
             assertEquals("adding movie", movie.captured.title)
             assertEquals(10, returnedId)
         }
@@ -98,13 +108,13 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val movie = slot<Movie>()
-            coEvery { repo.updateMovie(capture(movie)) } returns 6
+            coEvery { dbRepoMock.updateMovie(capture(movie)) } returns 6
 
             // When
             val returnedId = editViewModel.updateMovieInDb(Movie(id = 6, title = "updating movie"))
 
             // Then
-            coVerify { repo.updateMovie(any()) }
+            coVerify { dbRepoMock.updateMovie(any()) }
             assertEquals("updating movie", movie.captured.title)
             assertEquals(6, returnedId)
         }
@@ -119,7 +129,7 @@ class EditCardViewModelTest {
             editViewModel.archiveCurrentMovie()
 
             // Then
-            coVerify { repo.archiveMovie(2) }
+            coVerify { dbRepoMock.archiveMovie(2) }
         }
 
     @Test
@@ -215,16 +225,16 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val movie = Movie(id = 1, title = "successful movie")
-            coEvery { repo.fetchMovieById(any()) } returns null
-            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf()
+            coEvery { dbRepoMock.fetchMovieById(any()) } returns null
+            coEvery { dbRepoMock.fetchMoviesByTitle(any()) } returns listOf()
 
             // When
             editViewModel.updateMovieEdits { movie }
             editViewModel.onSaveAction()
 
             // Then
-            coVerify { repo.addMovie(movie) }
-            coVerify(exactly = 0) { repo.updateMovie(any()) }
+            coVerify { dbRepoMock.addMovie(movie) }
+            coVerify(exactly = 0) { dbRepoMock.updateMovie(any()) }
         }
 
     @Test
@@ -232,16 +242,16 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val movie = Movie(id = 1, title = "successful movie")
-            coEvery { repo.fetchMovieById(any()) } returns movie
-            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf()
+            coEvery { dbRepoMock.fetchMovieById(any()) } returns movie
+            coEvery { dbRepoMock.fetchMoviesByTitle(any()) } returns listOf()
 
             // When
             editViewModel.updateMovieEdits { movie }
             editViewModel.onSaveAction()
 
             // Then
-            coVerify { repo.updateMovie(movie) }
-            coVerify(exactly = 0) { repo.addMovie(any()) }
+            coVerify { dbRepoMock.updateMovie(movie) }
+            coVerify(exactly = 0) { dbRepoMock.addMovie(any()) }
         }
 
     @Test
@@ -265,8 +275,8 @@ class EditCardViewModelTest {
             // Given
             val movieToSave = Movie(id = 1, title = "duplicate movie")
             val duplicatedMovie = Movie(id = 2, title = "duplicate movie")
-            coEvery { repo.fetchMovieById(any()) } returns null
-            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
+            coEvery { dbRepoMock.fetchMovieById(any()) } returns null
+            coEvery { dbRepoMock.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
             coEvery { mainViewModelMock.showPopup(any<PopupInfo.DuplicatedTitle>()) } just runs
 
             // When
@@ -283,8 +293,8 @@ class EditCardViewModelTest {
             // Given
             val movieToSave = Movie(id = 890, title = "duplicate movie")
             val duplicatedMovie = Movie(id = 293, title = "duplicate movie")
-            coEvery { repo.fetchMovieById(any()) } returns null
-            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
+            coEvery { dbRepoMock.fetchMovieById(any()) } returns null
+            coEvery { dbRepoMock.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
             val capturedError = slot<PopupInfo.DuplicatedTitle>()
             val spy = spyk(editViewModel)
             coEvery { spy.showPopup(capture(capturedError)) } just runs
@@ -296,8 +306,8 @@ class EditCardViewModelTest {
 
             // Then
             coVerify { spy.onCloseWithIdAction(890) }
-            coVerify(exactly = 0) { repo.addMovie(any()) }
-            coVerify(exactly = 0) { repo.updateMovie(any()) }
+            coVerify(exactly = 0) { dbRepoMock.addMovie(any()) }
+            coVerify(exactly = 0) { dbRepoMock.updateMovie(any()) }
         }
 
     @Test
@@ -316,8 +326,8 @@ class EditCardViewModelTest {
                     title = "duplicate movie",
                     watchState = WatchState.WATCHED,
                 )
-            coEvery { repo.fetchMovieById(any()) } returns null
-            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
+            coEvery { dbRepoMock.fetchMovieById(any()) } returns null
+            coEvery { dbRepoMock.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
             val capturedError = slot<PopupInfo.DuplicatedTitle>()
             val spy = spyk(editViewModel)
             coEvery { spy.showPopup(capture(capturedError)) } just runs
@@ -334,9 +344,9 @@ class EditCardViewModelTest {
                     title = "duplicate movie",
                     watchState = WatchState.PENDING,
                 )
-            coVerify { repo.updateMovie(expectedMovie) }
-            coVerify(exactly = 0) { repo.addMovie(any()) }
-            coVerify(exactly = 0) { repo.deleteMovie(movieToSave) }
+            coVerify { dbRepoMock.updateMovie(expectedMovie) }
+            coVerify(exactly = 0) { dbRepoMock.addMovie(any()) }
+            coVerify(exactly = 0) { dbRepoMock.deleteMovie(movieToSave) }
         }
 
     @Test
@@ -355,8 +365,8 @@ class EditCardViewModelTest {
                     title = "duplicate movie",
                     watchState = WatchState.WATCHED,
                 )
-            coEvery { repo.fetchMovieById(any()) } returns movieToSave
-            coEvery { repo.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
+            coEvery { dbRepoMock.fetchMovieById(any()) } returns movieToSave
+            coEvery { dbRepoMock.fetchMoviesByTitle(any()) } returns listOf(duplicatedMovie)
             val capturedError = slot<PopupInfo.DuplicatedTitle>()
             val spy = spyk(editViewModel)
             coEvery { spy.showPopup(capture(capturedError)) } just runs
@@ -373,8 +383,122 @@ class EditCardViewModelTest {
                     title = "duplicate movie",
                     watchState = WatchState.PENDING,
                 )
-            coVerify { repo.updateMovie(expectedMovie) }
-            coVerify { repo.deleteMovie(movieToSave) }
-            coVerify(exactly = 0) { repo.addMovie(any()) }
+            coVerify { dbRepoMock.updateMovie(expectedMovie) }
+            coVerify { dbRepoMock.deleteMovie(movieToSave) }
+            coVerify(exactly = 0) { dbRepoMock.addMovie(any()) }
+        }
+
+    @Test
+    fun `attempt searching movie without title`() =
+        runTest {
+            // Given
+            editViewModel.updateMovieEdits { Movie(id = 0, title = "") }
+
+            // When
+            editViewModel.startSearch()
+
+            // Then
+            coVerify { mainViewModelMock.showPopup(any<PopupInfo.EmptyTitle>()) }
+        }
+
+    @Test
+    fun `show loading popup while search is ongoing`() =
+        runTest {
+            // Given
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+                MutableStateFlow(AsyncMovieInfo.Loading).asStateFlow()
+            editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
+
+            // When
+            editViewModel.startSearch()
+
+            // Then
+            coVerify { mainViewModelMock.showPopup(any<PopupInfo.Searching>()) }
+        }
+
+    @Test
+    fun `cancel ongoing search`() =
+        runTest {
+            // Given
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+                MutableStateFlow(AsyncMovieInfo.Loading).asStateFlow()
+            editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
+            editViewModel.startSearch()
+            clearMocks(mainViewModelMock)
+
+            // When
+            editViewModel.cancelSearch()
+
+            // Then
+            coVerify { mainViewModelMock.closePopupOfType(PopupInfo.Searching::class) }
+        }
+
+    @Test
+    fun `show error popup when search fails`() =
+        runTest {
+            // Given
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+                MutableStateFlow(AsyncMovieInfo.Failed(Exception())).asStateFlow()
+            editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
+
+            // When
+            editViewModel.startSearch()
+
+            // Then
+            coVerify { mainViewModelMock.showPopup(any<PopupInfo.SearchFailed>()) }
+        }
+
+    @Test
+    fun `empty search results`() =
+        runTest {
+            // Given
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+                MutableStateFlow(AsyncMovieInfo.Empty).asStateFlow()
+            editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
+
+            // When
+            editViewModel.startSearch()
+
+            // Then
+            coVerify { mainViewModelMock.showPopup(any<PopupInfo.SearchEmpty>()) }
+        }
+
+    @Test
+    fun `update edit movie when search delivers a single result`() =
+        runTest {
+            // Given
+            val movie = Movie(id = 1007, title = "From Russia with Love")
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+                MutableStateFlow(AsyncMovieInfo.Single(movie)).asStateFlow()
+            editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
+
+            // When
+            editViewModel.startSearch()
+
+            // Then
+            assertEquals(movie, editViewModel.currentMovie.value)
+        }
+
+    @Test
+    fun `load search results when search delivers more than one match`() =
+        runTest {
+            // Given
+            val asyncMovies =
+                AsyncMovieInfo.Multiple(
+                    listOf(
+                        Movie(id = 2007, title = "Live and let die"),
+                        Movie(id = 3007, title = "Moonraker"),
+                        Movie(id = 4007, title = "Octopussy"),
+                    ),
+                )
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+                MutableStateFlow(asyncMovies).asStateFlow()
+            editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
+
+            // When
+            editViewModel.startSearch()
+
+            // Then
+            assertEquals(asyncMovies, editViewModel.searchResults.value)
         }
 }

@@ -1,9 +1,15 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
+import androidx.compose.ui.test.assertTextContains
+import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.models.data.RemoteMovie
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
-import cucumber.api.PendingException
+import com.lairofpixies.whatmovienext.test.composeStep
+import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
+import com.lairofpixies.whatmovienext.views.screens.UiTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.Given
+import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 
 @HiltAndroidTest
@@ -15,10 +21,16 @@ class SearchStepDefs(
 
     private val editCardStepDefs = EditCardStepDefs(testContext)
 
-    @Given("the online repo contains an entry with title {string}")
-    fun theOnlineRepoContainsAnEntryWithTitle(title: String) {
-        // Write code here that turns the phrase above into concrete actions
-        throw PendingException()
+    @Given("the online repo is empty")
+    fun theOnlineRepoIsEmpty() {
+        testContext.movieApi.clearFakeResponse()
+    }
+
+    @Given("the online repo returns an entry with title {string}")
+    fun theOnlineRepoReturnsAnEntryWithTitle(title: String) {
+        testContext.movieApi.appendToFakeResponse(
+            RemoteMovie(title = title),
+        )
     }
 
     @When("the user searches for the title {string}")
@@ -29,4 +41,11 @@ class SearchStepDefs(
             theUserClicksOnTheFindButton()
         }
     }
+
+    @Then("the edit card title is filled with {string}")
+    fun theEditCardTitleIsFilledWith(title: String) =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(activity.getString(R.string.title), UiTags.Screens.EDIT_CARD)
+                .assertTextContains(title)
+        }
 }

@@ -3,6 +3,7 @@ package com.lairofpixies.whatmovienext.di
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.MovieApi
+import com.lairofpixies.whatmovienext.models.network.TestMovieApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -25,7 +26,11 @@ import javax.inject.Singleton
 )
 object TestApiModule {
     @Provides
-    fun provideApiRepository(movieApi: MovieApi): ApiRepository = ApiRepositoryImpl(movieApi, Dispatchers.IO)
+    fun provideApiRepository(movieApi: TestMovieApi): ApiRepository = ApiRepositoryImpl(movieApi, Dispatchers.IO)
+
+    @Singleton
+    @Provides
+    fun provideTestMovieApi() = TestMovieApi()
 
     @Provides
     @Singleton
