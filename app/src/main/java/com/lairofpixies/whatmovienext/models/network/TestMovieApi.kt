@@ -28,18 +28,18 @@ class TestMovieApi
 
         override suspend fun findMoviesByTitle(title: String): List<RemoteMovie> = fakeResponse()
 
-//        enum class FakeResponse(
-//            val getIt: () -> List<RemoteMovie>,
-//        ) {
-//            Single({ listOf(RemoteMovie(title = "Fake Movie")) }),
-//            Multiple({
-//                listOf(
-//                    RemoteMovie(title = "Fake Movie 1"),
-//                    RemoteMovie(title = "Fake Movie 2"),
-//                    RemoteMovie(title = "Fake Movie 3"),
-//                )
-//            }),
-//            Empty({ emptyList() }),
-//            Error({ throw Exception() }),
-//        }
+        enum class FakeResponse(
+            val getIt: () -> List<RemoteMovie>,
+        ) {
+            Single({ listOf(RemoteMovie(title = "Fake Movie")) }),
+            Multiple({
+                listOf(
+                    RemoteMovie(title = "Fake Movie 1"),
+                    RemoteMovie(title = "Fake Movie 2"),
+                    RemoteMovie(title = "Fake Movie 3"),
+                )
+            }),
+            Empty({ emptyList() }),
+            Error({ throw Exception() }),
+        }
     }
