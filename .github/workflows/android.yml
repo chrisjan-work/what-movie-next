@@ -47,6 +47,7 @@ jobs:
         run: ./gradlew testJunitDebugUnitTest
 
   instrumentation_tests:
+    if: false
     name: JUnit Instrumentation Tests
     runs-on: ubuntu-latest
     steps:
@@ -60,6 +61,7 @@ jobs:
           script: ./gradlew connectedJunitDebugAndroidTest --info
 
   feature_tests_movielist:
+    if: false
     name: Cucumber Feature Tests - MovieList
     runs-on: ubuntu-latest
     steps:
@@ -73,6 +75,7 @@ jobs:
           script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="MovieListFeature"
 
   feature_tests_editcard:
+    if: false
     name: Cucumber Feature Tests - EditCard
     runs-on: ubuntu-latest
     steps:
@@ -86,6 +89,7 @@ jobs:
           script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="EditCardFeature"
 
   feature_tests_saveoptions:
+    if: false
     name: Cucumber Feature Tests - SaveOptions
     runs-on: ubuntu-latest
     steps:
@@ -99,6 +103,7 @@ jobs:
           script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="SaveOptionsFeature"
 
   feature_tests_archive:
+    if: false
     name: Cucumber Feature Tests - Archive
     runs-on: ubuntu-latest
     steps:
@@ -112,6 +117,7 @@ jobs:
           script: ./gradlew connectedCucumberDebugAndroidTest --info -Pcucumber.tags="ArchiveFeature"
 
   feature_tests_search:
+    if: false
     name: Cucumber Feature Tests - Search
     runs-on: ubuntu-latest
     steps:

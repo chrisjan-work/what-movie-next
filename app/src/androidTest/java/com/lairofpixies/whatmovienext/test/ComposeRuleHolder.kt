@@ -23,7 +23,7 @@ class ComposeRuleHolder {
 }
 
 fun ComposeRule.composeStep(
-    timeoutMillis: Long = 10000,
+    timeoutMillis: Long = 5000,
     intervalMillis: Long = 1000,
     stepCode: ComposeRule.() -> Unit,
 ) {
