@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,17 +25,17 @@ fun PopupDialogs(
 ) {
     when (popupInfo) {
         PopupInfo.None -> {}
-        PopupInfo.SavingWithEmptyTitle ->
+        PopupInfo.EmptyTitle ->
             SingleButtonDialog(
-                modifier = modifier.testTag(UiTags.Popups.SAVING_WITH_EMPTY_TITLE),
-                bodyRes = R.string.error_title_is_required,
+                modifier = modifier.testTag(UiTags.Popups.EMPTY_TITLE),
+                contentRes = R.string.error_title_is_required,
                 onDismiss = onDismiss,
             )
 
         is PopupInfo.UnsavedChanges ->
             ThreeButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.UNSAVED_CHANGES),
-                bodyRes = R.string.warning_changes_not_saved,
+                contentRes = R.string.warning_changes_not_saved,
                 saveLabelRes = R.string.save,
                 onSave = popupInfo.onSave,
                 discardLabelRes = R.string.discard,
@@ -46,7 +47,7 @@ fun PopupDialogs(
         is PopupInfo.DuplicatedTitle ->
             ThreeButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.DUPLICATED_TITLE),
-                bodyRes = R.string.error_title_already_exists,
+                contentRes = R.string.error_title_already_exists,
                 saveLabelRes = R.string.overwrite,
                 onSave = popupInfo.onSave,
                 discardLabelRes = R.string.discard_changes,
@@ -65,27 +66,79 @@ fun PopupDialogs(
                 onConfirm = popupInfo.onConfirm,
                 onDismiss = onDismiss,
             )
+
+        is PopupInfo.Searching ->
+            ProgressDialog(
+                modifier = modifier.testTag(UiTags.Popups.SEARCHING),
+                contentRes = R.string.search_in_progress,
+                onDismiss = {
+                    popupInfo.onCancel()
+                    onDismiss()
+                },
+            )
+
+        is PopupInfo.SearchEmpty ->
+            SingleButtonDialog(
+                modifier = modifier.testTag(UiTags.Popups.SEARCH_EMPTY),
+                titleRes = R.string.search_empty_title,
+                contentRes = R.string.search_empty_explanation,
+                onDismiss = onDismiss,
+            )
+
+        is PopupInfo.SearchFailed ->
+            SingleButtonDialog(
+                modifier = modifier.testTag(UiTags.Popups.SEARCH_FAILED),
+                contentRes = R.string.search_failed_explanation,
+                onDismiss = onDismiss,
+            )
     }
 }
 
 @Composable
 fun SingleButtonDialog(
-    @StringRes bodyRes: Int,
+    @StringRes contentRes: Int,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    @StringRes titleRes: Int? = null,
 ) {
     val context = LocalContext.current
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
-        title = { Text(context.getString(R.string.error_title)) },
-        text = { Text(context.getString(bodyRes)) },
+        title = { Text(context.getString(titleRes ?: R.string.error_title)) },
+        text = { Text(context.getString(contentRes)) },
         confirmButton = {
             Button(onClick = onDismiss) {
                 Text(context.getString(R.string.close))
             }
         },
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ProgressDialog(
+    @StringRes contentRes: Int,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    BasicAlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismiss,
+    ) {
+        Box {
+            Column {
+                Row {
+                    CircularProgressIndicator()
+                    Text(context.getString(contentRes))
+                }
+                Button(onClick = onDismiss) {
+                    Text(context.getString(R.string.cancel))
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -123,7 +176,7 @@ fun TwoButtonDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ThreeButtonDialog(
-    @StringRes bodyRes: Int,
+    @StringRes contentRes: Int,
     @StringRes saveLabelRes: Int,
     onSave: () -> Unit,
     @StringRes discardLabelRes: Int,
@@ -139,7 +192,7 @@ fun ThreeButtonDialog(
     ) {
         Box {
             Column {
-                Text(context.getString(bodyRes))
+                Text(context.getString(contentRes))
                 Row {
                     Button(onClick = {
                         onSave()

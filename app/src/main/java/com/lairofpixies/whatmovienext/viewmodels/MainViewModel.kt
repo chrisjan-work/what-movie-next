@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlin.reflect.KClass
 
 @HiltViewModel
 class MainViewModel
@@ -30,7 +31,13 @@ class MainViewModel
             _popupInfo.value = popupInfo
         }
 
-        fun clearPopup() {
+        fun closePopup() {
             _popupInfo.value = PopupInfo.None
+        }
+
+        fun closePopupOfType(popupType: KClass<out PopupInfo>) {
+            if (popupType.isInstance(_popupInfo.value)) {
+                closePopup()
+            }
         }
     }

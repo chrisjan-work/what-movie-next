@@ -8,6 +8,7 @@ import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
 
 open class ScreenViewModel protected constructor() : ViewModel() {
     private lateinit var navHostController: NavHostController
@@ -55,4 +56,8 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     }
 
     fun showPopup(popupInfo: PopupInfo) = mainViewModel.showPopup(popupInfo)
+
+    fun closePopup() = mainViewModel.closePopup()
+
+    fun closePopupOfType(popupType: KClass<out PopupInfo>) = mainViewModel.closePopupOfType(popupType)
 }

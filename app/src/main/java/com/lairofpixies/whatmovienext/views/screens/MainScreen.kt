@@ -28,7 +28,7 @@ fun MainScreen(viewModel: MainViewModel) {
             PopupDialogs(
                 popupInfo = viewModel.popupInfo.collectAsState().value,
             ) {
-                viewModel.clearPopup()
+                viewModel.closePopup()
             }
         }
     }

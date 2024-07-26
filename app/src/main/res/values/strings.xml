@@ -27,4 +27,8 @@
     <string name="confirm_deletion">Yes, delete</string>
     <string name="lookup">Lookup</string>
     <string name="movie_not_found">Movie not found</string>
+    <string name="search_empty_explanation">No movies were found that match the search criteria. Please try a different query or check the spelling.</string>
+    <string name="search_failed_explanation">There was an error trying to connect to the online database. Please try again later.</string>
+    <string name="search_empty_title">No data found</string>
+    <string name="search_in_progress">Looking up in online database...</string>
 </resources>

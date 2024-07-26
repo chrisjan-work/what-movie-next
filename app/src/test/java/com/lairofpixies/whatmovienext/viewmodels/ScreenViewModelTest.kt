@@ -4,8 +4,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.views.navigation.Routes
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher
@@ -28,10 +30,10 @@ class ScreenViewModelTest {
         }
     }
 
-    lateinit var screenViewModel: TestScreenViewModel
+    private lateinit var screenViewModel: TestScreenViewModel
 
-    lateinit var navHostControllerMock: NavHostController
-    lateinit var mainViewModelMock: MainViewModel
+    private lateinit var navHostControllerMock: NavHostController
+    private lateinit var mainViewModelMock: MainViewModel
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
 
@@ -57,7 +59,7 @@ class ScreenViewModelTest {
     }
 
     @Test
-    fun onCancelAction() =
+    fun `onCancelAction navigates to the home route`() =
         runTest {
             // When
             screenViewModel.onCancelAction()
@@ -72,7 +74,7 @@ class ScreenViewModelTest {
         }
 
     @Test
-    fun `close new movie`() =
+    fun `close edit card with new movie just navigates back one step in stack`() =
         runTest {
             // When
             screenViewModel.onCloseWithIdAction(Movie.NEW_ID)
@@ -84,7 +86,7 @@ class ScreenViewModelTest {
         }
 
     @Test
-    fun `close existing movie`() =
+    fun `close edit card of existing movie navigates to single movie view`() =
         runTest {
             // When
             screenViewModel.onCloseWithIdAction(111)
@@ -99,7 +101,7 @@ class ScreenViewModelTest {
         }
 
     @Test
-    fun `navigate to all movies`() =
+    fun `navigate to movie list route`() =
         runTest {
             // When
             screenViewModel.onNavigateTo(Routes.AllMoviesView)
@@ -111,7 +113,7 @@ class ScreenViewModelTest {
         }
 
     @Test
-    fun `navigate to archive`() =
+    fun `navigate to archive route`() =
         runTest {
             // When
             screenViewModel.onNavigateTo(Routes.ArchiveView)
@@ -123,7 +125,7 @@ class ScreenViewModelTest {
         }
 
     @Test
-    fun onNavigateToEditCard() =
+    fun `navigate to edit card route with given id`() =
         runTest {
             // When
             screenViewModel.onNavigateWithParam(Routes.EditMovieView, 84)
@@ -133,4 +135,31 @@ class ScreenViewModelTest {
                 navHostControllerMock.navigate(Routes.EditMovieView.route(84))
             }
         }
+
+    @Test
+    fun `forward showpopup calls`() {
+        // When
+        screenViewModel.showPopup(PopupInfo.SearchEmpty)
+
+        // Then
+        verify { mainViewModelMock.showPopup(PopupInfo.SearchEmpty) }
+    }
+
+    @Test
+    fun `forward general closepopup calls`() {
+        // When
+        screenViewModel.closePopup()
+
+        // Then
+        verify { mainViewModelMock.closePopup() }
+    }
+
+    @Test
+    fun `forward closepopup calls for specific popup types`() {
+        // When
+        screenViewModel.closePopupOfType(PopupInfo.SearchEmpty::class)
+
+        // Then
+        verify { mainViewModelMock.closePopupOfType(PopupInfo.SearchEmpty::class) }
+    }
 }

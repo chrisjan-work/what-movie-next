@@ -249,14 +249,14 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val movie = Movie(id = 1, title = "  ")
-            coEvery { mainViewModelMock.showPopup(any<PopupInfo.SavingWithEmptyTitle>()) } just runs
+            coEvery { mainViewModelMock.showPopup(any<PopupInfo.EmptyTitle>()) } just runs
 
             // When
             editViewModel.updateMovieEdits { movie }
             editViewModel.onSaveAction()
 
             // Then
-            coVerify { mainViewModelMock.showPopup(any<PopupInfo.SavingWithEmptyTitle>()) }
+            coVerify { mainViewModelMock.showPopup(any<PopupInfo.EmptyTitle>()) }
         }
 
     @Test

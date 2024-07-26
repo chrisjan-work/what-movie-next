@@ -53,15 +53,39 @@ class MainViewModelTest {
                 )
 
             // When
-            mainViewModel.showPopup(PopupInfo.SavingWithEmptyTitle)
+            mainViewModel.showPopup(PopupInfo.EmptyTitle)
             resultList.add(mainViewModel.popupInfo.value)
-            mainViewModel.clearPopup()
+            mainViewModel.closePopup()
             resultList.add(mainViewModel.popupInfo.value)
 
             // Then
             assertEquals(
-                listOf(PopupInfo.None, PopupInfo.SavingWithEmptyTitle, PopupInfo.None),
+                listOf(PopupInfo.None, PopupInfo.EmptyTitle, PopupInfo.None),
                 resultList.toList(),
             )
         }
+
+    @Test
+    fun `attempt to close popup that was not open because there is a different popup`() {
+        // Given
+        mainViewModel.showPopup(PopupInfo.SearchFailed)
+
+        // When
+        mainViewModel.closePopupOfType(PopupInfo.DuplicatedTitle::class)
+
+        // Then
+        assertEquals(PopupInfo.SearchFailed, mainViewModel.popupInfo.value)
+    }
+
+    @Test
+    fun `close popup of a given type`() {
+        // Given
+        mainViewModel.showPopup(PopupInfo.SearchFailed)
+
+        // When
+        mainViewModel.closePopupOfType(PopupInfo.SearchFailed::class)
+
+        // Then
+        assertEquals(PopupInfo.None, mainViewModel.popupInfo.value)
+    }
 }

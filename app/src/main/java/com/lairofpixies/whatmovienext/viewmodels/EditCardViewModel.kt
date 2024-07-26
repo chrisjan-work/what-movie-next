@@ -78,7 +78,7 @@ class EditCardViewModel
 
                 // reject movies with empty titles
                 if (movie.title.isBlank()) {
-                    showPopup(PopupInfo.SavingWithEmptyTitle)
+                    showPopup(PopupInfo.EmptyTitle)
                     return@launch
                 }
 
