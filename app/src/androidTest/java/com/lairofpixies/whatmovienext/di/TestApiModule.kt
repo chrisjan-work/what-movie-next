@@ -1,5 +1,7 @@
 package com.lairofpixies.whatmovienext.di
 
+import com.lairofpixies.whatmovienext.models.network.ApiRepository
+import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.MovieApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -7,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.tls.HandshakeCertificates
@@ -21,6 +24,9 @@ import javax.inject.Singleton
     replaces = [ApiModule::class],
 )
 object TestApiModule {
+    @Provides
+    fun provideApiRepository(movieApi: MovieApi): ApiRepository = ApiRepositoryImpl(movieApi, Dispatchers.IO)
+
     @Provides
     @Singleton
     fun provideLocalhostCertificate(): HeldCertificate =

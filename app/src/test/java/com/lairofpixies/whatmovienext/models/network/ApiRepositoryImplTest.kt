@@ -7,8 +7,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
@@ -29,28 +27,13 @@ class ApiRepositoryImplTest {
     }
 
     @Test
-    fun `launch find movies by title, default state is loading`() =
-        runTest {
-            // Given
-            coEvery { movieApi.findMoviesByTitle(any()) } coAnswers {
-                suspendCancellableCoroutine {}
-            }
-
-            // When
-            val result = sut.findMoviesByTitle("test").first()
-
-            // Then
-            assertEquals(AsyncMovieInfo.Loading, result)
-        }
-
-    @Test
     fun `find movies by title, none available`() =
         runTest {
             // Given
             coEvery { movieApi.findMoviesByTitle(any()) } returns emptyList()
 
             // When
-            val result = sut.findMoviesByTitle("test").first()
+            val result = sut.findMoviesByTitle("test").value
 
             // Then
             assertEquals(AsyncMovieInfo.Empty, result)
@@ -66,7 +49,7 @@ class ApiRepositoryImplTest {
                 )
 
             // When
-            val result = sut.findMoviesByTitle("test").first()
+            val result = sut.findMoviesByTitle("test").value
 
             // Then
             assertEquals(AsyncMovieInfo.Single(Movie(title = "test")), result)
@@ -85,7 +68,7 @@ class ApiRepositoryImplTest {
             coEvery { movieApi.findMoviesByTitle(any()) } returns receivedMovies
 
             // When
-            val result = sut.findMoviesByTitle("test").first()
+            val result = sut.findMoviesByTitle("test").value
 
             // Then
             val expectedMovies =
@@ -111,7 +94,7 @@ class ApiRepositoryImplTest {
             coEvery { movieApi.findMoviesByTitle(any()) } throws http404
 
             // When
-            val result = sut.findMoviesByTitle("test").first()
+            val result = sut.findMoviesByTitle("test").value
 
             // Then
             assertEquals(AsyncMovieInfo.Failed(http404), result)
