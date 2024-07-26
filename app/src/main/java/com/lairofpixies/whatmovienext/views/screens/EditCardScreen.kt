@@ -50,6 +50,15 @@ fun EditCardScreen(
     val currentMovie = editViewModel.currentMovie.collectAsState()
     val searchResults = editViewModel.searchResults.collectAsState()
 
+    val softwareKeyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    val onCloseKeyboard: () -> Unit = {
+        softwareKeyboardController?.hide()
+        focusManager.clearFocus()
+        focusRequester.freeFocus()
+    }
+
     LaunchedEffect(movieId) {
         movieId?.let {
             editViewModel.loadMovieForEdit(movieId)
@@ -70,11 +79,16 @@ fun EditCardScreen(
             editViewModel.archiveCurrentMovie()
             editViewModel.onCancelAction()
         },
-        onSearchAction = { editViewModel.startSearch() },
+        onSearchAction = {
+            onCloseKeyboard()
+            editViewModel.startSearch()
+        },
         onSearchResultSelected = {
             editViewModel.updateMovieEdits { it }
             editViewModel.clearSearchResults()
         },
+        onCloseKeyboard = onCloseKeyboard,
+        focusRequester = focusRequester,
     )
 }
 
@@ -88,6 +102,8 @@ fun EditCard(
     onArchiveAction: () -> Unit,
     onSearchAction: () -> Unit,
     onSearchResultSelected: (Movie) -> Unit,
+    onCloseKeyboard: () -> Unit,
+    focusRequester: FocusRequester,
 ) {
     val creating = currentMovie.isNew()
     Box {
@@ -117,9 +133,10 @@ fun EditCard(
                 DebugTitle("Edit Movie")
                 EditableTitleField(
                     currentMovie.title,
-                ) {
-                    onUpdateEdits(currentMovie.copy(title = it))
-                }
+                    onTitleChanged = { onUpdateEdits(currentMovie.copy(title = it)) },
+                    onCloseKeyboard = onCloseKeyboard,
+                    focusRequester = focusRequester,
+                )
             }
         }
 
@@ -135,11 +152,9 @@ fun EditCard(
 fun EditableTitleField(
     title: String,
     onTitleChanged: (String) -> Unit,
+    onCloseKeyboard: () -> Unit,
+    focusRequester: FocusRequester,
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
-
     // start focused by default
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -149,7 +164,6 @@ fun EditableTitleField(
     val textFieldValue = remember { mutableStateOf(TextFieldValue(title)) }
     LaunchedEffect(title) {
         if (title != textFieldValue.value.text) {
-            focusRequester.requestFocus()
             textFieldValue.value =
                 textFieldValue.value.copy(
                     text = title,
@@ -172,11 +186,7 @@ fun EditableTitleField(
             ),
         keyboardActions =
             KeyboardActions(
-                onDone = {
-                    keyboardController?.hide()
-                    focusRequester.freeFocus()
-                    focusManager.clearFocus()
-                },
+                onDone = { onCloseKeyboard() },
             ),
     )
 }

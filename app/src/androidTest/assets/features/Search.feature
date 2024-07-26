@@ -36,6 +36,23 @@ Feature: Search Online
     When the user searches for the title "Failure"
     Then a pop-up is shown informing that an error occurred
 
+  Scenario: When search is launched, focus is cleared
+    Given the online repo returns an entry with title "Close Encounters of the Third Kind"
+    Given the user initiates a new entry
+    When the user enters the title "Close"
+    Then the title input is focused
+    When the user clicks on the find button
+    Then the title input is not focused
+
+  Scenario: Back button closes search results
+    Given the online repo returns an entry with title "The Day After Tomorrow"
+    And the online repo returns an entry with title "Edge of Tomorrow"
+    When the user searches for the title "Tomorrow"
+    Then the search results contains an entry with title "The Day After Tomorrow"
+    When the user navigates back
+    Then the edit card title is filled with "Tomorrow"
+    And the search results are not visible
+
 #  # TODO
 #  Scenario: App is offline
 #    Given the user initiates a new entry

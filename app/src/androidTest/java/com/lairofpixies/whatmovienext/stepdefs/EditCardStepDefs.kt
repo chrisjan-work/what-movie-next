@@ -2,6 +2,7 @@ package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -42,11 +43,18 @@ class EditCardStepDefs(
                 .isDisplayed()
         }
 
-    @And("the title input is focused")
+    @Then("the title input is focused")
     fun theTitleInputIsFocused() =
         composeRule.composeStep {
             onNodeWithText(activity.getString(R.string.title))
                 .assertIsFocused()
+        }
+
+    @Then("the title input is not focused")
+    fun theTitleInputIsNotFocused() =
+        composeRule.composeStep {
+            onNodeWithText(activity.getString(R.string.title))
+                .assertIsNotFocused()
         }
 
     @When("the user enters the title {string}")

@@ -4,6 +4,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.data.hasQuietSaveableChangesSince
 import com.lairofpixies.whatmovienext.models.data.hasSaveableChangesSince
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -140,9 +141,11 @@ class EditCardViewModel
             }
         }
 
+        // close search results if open, or else..
         // detect if there are unsaved changes, prompt the user or save quietly if necessary
         fun handleBackButton() {
             when {
+                searchResults.value.hasMovie() -> clearSearchResults()
                 currentMovie.value.hasSaveableChangesSince(lastSavedMovie) ->
                     showPopup(
                         PopupInfo.UnsavedChanges(

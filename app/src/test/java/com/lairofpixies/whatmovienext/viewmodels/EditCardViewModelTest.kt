@@ -501,4 +501,28 @@ class EditCardViewModelTest {
             // Then
             assertEquals(asyncMovies, editViewModel.searchResults.value)
         }
+
+    @Test
+    fun `back button close search results`() =
+        runTest {
+            // Given
+            val asyncMovies =
+                AsyncMovieInfo.Multiple(
+                    listOf(
+                        Movie(id = 2007, title = "Live and let die"),
+                        Movie(id = 3007, title = "Moonraker"),
+                        Movie(id = 4007, title = "Octopussy"),
+                    ),
+                )
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+                MutableStateFlow(asyncMovies).asStateFlow()
+            editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
+            editViewModel.startSearch()
+
+            // When
+            editViewModel.handleBackButton()
+
+            // Then
+            assertEquals(AsyncMovieInfo.Empty, editViewModel.searchResults.value)
+        }
 }
