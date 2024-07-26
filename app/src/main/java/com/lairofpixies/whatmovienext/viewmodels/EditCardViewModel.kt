@@ -19,7 +19,7 @@ import javax.inject.Inject
 class EditCardViewModel
     @Inject
     constructor(
-        private val repo: MovieRepository,
+        private val movieRepo: MovieRepository,
     ) : ScreenViewModel() {
         private var lastSavedMovie: Movie? = null
 
@@ -29,7 +29,7 @@ class EditCardViewModel
         // fetch a movie from the DB, store in-memory for editing
         fun loadMovieForEdit(movieId: Long) =
             viewModelScope.launch {
-                repo.fetchMovieById(movieId)?.let { movieFromDb ->
+                movieRepo.fetchMovieById(movieId)?.let { movieFromDb ->
                     updateMovieEdits(resetSaved = true) { movieFromDb }
                 }
             }
@@ -50,19 +50,19 @@ class EditCardViewModel
         suspend fun addMovieToDb(movie: Movie): Long =
             viewModelScope
                 .async {
-                    repo.addMovie(movie)
+                    movieRepo.addMovie(movie)
                 }.await()
 
         @VisibleForTesting
         suspend fun updateMovieInDb(movie: Movie) =
             viewModelScope
                 .async {
-                    repo.updateMovie(movie)
+                    movieRepo.updateMovie(movie)
                 }.await()
 
         fun archiveCurrentMovie() =
             viewModelScope.launch {
-                repo.archiveMovie(currentMovie.value.id)
+                movieRepo.archiveMovie(currentMovie.value.id)
             }
 
         // save currently edited movie in DB
@@ -82,9 +82,9 @@ class EditCardViewModel
                     return@launch
                 }
 
-                val isMovieAlreadyInDb = repo.fetchMovieById(movie.id) != null
+                val isMovieAlreadyInDb = movieRepo.fetchMovieById(movie.id) != null
                 val duplicateMovie =
-                    repo.fetchMoviesByTitle(movie.title).firstOrNull { it.id != movie.id }
+                    movieRepo.fetchMoviesByTitle(movie.title).firstOrNull { it.id != movie.id }
 
                 // if a movie with the same title exists, offer to overwrite it or discard edits
                 if (duplicateMovie != null) {
@@ -94,7 +94,7 @@ class EditCardViewModel
                                 viewModelScope.launch {
                                     val movieToUpdate = movie.copy(id = duplicateMovie.id)
                                     if (isMovieAlreadyInDb) {
-                                        repo.deleteMovie(movie)
+                                        movieRepo.deleteMovie(movie)
                                     }
                                     onSuccess(updateMovieInDb(movieToUpdate))
                                 }
