@@ -28,6 +28,7 @@ import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isNew
 import com.lairofpixies.whatmovienext.viewmodels.EditCardViewModel
+import com.lairofpixies.whatmovienext.views.components.DebugTitle
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
@@ -94,6 +95,7 @@ fun EditCard(
                     .fillMaxSize()
                     .padding(innerPadding),
         ) {
+            DebugTitle("Edit Movie")
             EditableTitleField(
                 currentMovie.title,
             ) {

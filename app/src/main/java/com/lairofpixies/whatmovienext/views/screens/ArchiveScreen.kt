@@ -2,7 +2,7 @@ package com.lairofpixies.whatmovienext.views.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +19,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.models.data.toList
 import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
+import com.lairofpixies.whatmovienext.views.components.DebugTitle
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
@@ -68,9 +69,10 @@ fun Archive(
     remove: (Movie) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Column(
         modifier = modifier,
     ) {
+        DebugTitle("Archive")
         LazyColumn {
             items(archivedMovies) { movie ->
                 ArchivedMovieListItem(

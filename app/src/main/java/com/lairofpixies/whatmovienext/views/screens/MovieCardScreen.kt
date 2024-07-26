@@ -21,6 +21,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
+import com.lairofpixies.whatmovienext.views.components.DebugTitle
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
@@ -88,6 +89,7 @@ fun MovieCard(
                             },
                     ),
         ) {
+            DebugTitle("View Movie")
             TitleField(movie.title)
         }
     }
