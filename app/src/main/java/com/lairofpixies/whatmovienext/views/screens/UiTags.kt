@@ -6,6 +6,7 @@ object UiTags {
         const val MOVIE_CARD = "MovieCard"
         const val EDIT_CARD = "EditCard"
         const val ARCHIVE = "Archive"
+        const val SEARCH_RESULTS = "SearchResults"
     }
 
     object Buttons {

@@ -164,7 +164,7 @@ class EditCardViewModel
             searchJob =
                 viewModelScope.launch {
                     if (currentMovie.value.title.isBlank()) {
-                        _searchResults.value = AsyncMovieInfo.Empty
+                        clearSearchResults()
                         showPopup(PopupInfo.EmptyTitle)
                         return@launch
                     }
@@ -175,20 +175,20 @@ class EditCardViewModel
                                 _searchResults.value = AsyncMovieInfo.Loading
 
                             is AsyncMovieInfo.Failed -> {
-                                _searchResults.value = AsyncMovieInfo.Empty
+                                clearSearchResults()
                                 showPopup(PopupInfo.SearchFailed)
                                 // TODO: log error remotely
                                 Timber.e("Connection error: ${results.trowable}")
                             }
 
                             is AsyncMovieInfo.Empty -> {
-                                _searchResults.value = AsyncMovieInfo.Empty
+                                clearSearchResults()
                                 showPopup(PopupInfo.SearchEmpty)
                             }
 
                             is AsyncMovieInfo.Single -> {
                                 _currentMovie.value = results.movie
-                                _searchResults.value = AsyncMovieInfo.Empty
+                                clearSearchResults()
                             }
 
                             is AsyncMovieInfo.Multiple -> _searchResults.value = results
@@ -201,7 +201,7 @@ class EditCardViewModel
         fun cancelSearch() {
             searchJob?.cancel()
             searchJob = null
-            _searchResults.value = AsyncMovieInfo.Empty
+            clearSearchResults()
         }
 
         private fun connectSearchPopupToSearchResults() {
@@ -214,5 +214,9 @@ class EditCardViewModel
                     }
                 }
             }
+        }
+
+        fun clearSearchResults() {
+            _searchResults.value = AsyncMovieInfo.Empty
         }
     }

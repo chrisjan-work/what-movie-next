@@ -3,6 +3,7 @@ package com.lairofpixies.whatmovienext.stepdefs
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.RemoteMovie
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
@@ -10,6 +11,7 @@ import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
@@ -70,5 +72,26 @@ class SearchStepDefs(
         composeRule.composeStep {
             onNodeWithTag(UiTags.Popups.SEARCH_FAILED)
                 .isDisplayed()
+        }
+
+    @Then("the search results contains an entry with title {string}")
+    fun theSearchResultsContainsAnEntryWithTitle(title: String) =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(title, UiTags.Screens.SEARCH_RESULTS)
+                .isDisplayed()
+        }
+
+    @When("the user selects the search result {string}")
+    fun theUserSelectsTheSearchResult(title: String) =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(title, UiTags.Screens.SEARCH_RESULTS)
+                .performClick()
+        }
+
+    @And("the search results are not visible")
+    fun theSearchResultsAreNotVisible() =
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Screens.SEARCH_RESULTS)
+                .assertDoesNotExist()
         }
 }

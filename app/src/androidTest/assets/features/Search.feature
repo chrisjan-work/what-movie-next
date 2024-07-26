@@ -5,21 +5,22 @@ Feature: Search Online
   Background: Start with an empty repo each time
     Given the online repo is empty
 
-# TODO
-#  Scenario: Search movie with multiple options
-#    Given the user initiates a new entry
-#    Given the online repository contains 2 entries with the title "Spaceballs"
-#    When the user searches for the title "Spaceballs"
-#    Then the search results view contains 2 entries with the title "Spaceballs"
-#
-## TODO
-#  Scenario: Choose search results with multiple options
-#    Given the user initiates a new entry
-#    Given the online repository contains 3 entries with the title "Spaceballs"
-#    When the user searches for the title "Spaceballs"
-#    Then the search results view contains 3 entries with the title "Spaceballs"
-#    When the user selects the search result "Spaceballs"
-#    Then the card is filled with the information of "Spaceballs"
+  Scenario: Search movie with multiple options
+    Given the online repo returns an entry with title "Star Trek The Movie"
+    And the online repo returns an entry with title "Star Wars: A New Hope"
+    When the user searches for the title "Star"
+    Then the search results contains an entry with title "Star Trek The Movie"
+    And the search results contains an entry with title "Star Wars: A New Hope"
+
+  Scenario: Choose search results with multiple options
+    Given the online repo returns an entry with title "The City of Lost Children"
+    And the online repo returns an entry with title "Dark City"
+    And the online repo returns an entry with title "City of Angels"
+    When the user searches for the title "City"
+    Then the search results contains an entry with title "Dark City"
+    When the user selects the search result "Dark City"
+    Then the edit card title is filled with "Dark City"
+    And the search results are not visible
 
   Scenario: Search movie with single option
     Given the online repo returns an entry with title "Unique Movie"

@@ -1,11 +1,18 @@
 package com.lairofpixies.whatmovienext.views.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -17,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
@@ -27,6 +35,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isNew
+import com.lairofpixies.whatmovienext.models.data.toList
 import com.lairofpixies.whatmovienext.viewmodels.EditCardViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
@@ -39,6 +48,7 @@ fun EditCardScreen(
     editViewModel: EditCardViewModel,
 ) {
     val currentMovie = editViewModel.currentMovie.collectAsState()
+    val searchResults = editViewModel.searchResults.collectAsState()
 
     LaunchedEffect(movieId) {
         movieId?.let {
@@ -52,6 +62,7 @@ fun EditCardScreen(
 
     EditCard(
         currentMovie = currentMovie.value,
+        searchResults = searchResults.value.toList(),
         onUpdateEdits = { editViewModel.updateMovieEdits { it } },
         onCancelAction = { editViewModel.onCancelAction() },
         onSaveAction = { editViewModel.onSaveAction() },
@@ -60,48 +71,63 @@ fun EditCardScreen(
             editViewModel.onCancelAction()
         },
         onSearchAction = { editViewModel.startSearch() },
+        onSearchResultSelected = {
+            editViewModel.updateMovieEdits { it }
+            editViewModel.clearSearchResults()
+        },
     )
 }
 
 @Composable
 fun EditCard(
     currentMovie: Movie,
+    searchResults: List<Movie>,
     onUpdateEdits: (Movie) -> Unit,
     onCancelAction: () -> Unit,
     onSaveAction: () -> Unit,
     onArchiveAction: () -> Unit,
     onSearchAction: () -> Unit,
+    onSearchResultSelected: (Movie) -> Unit,
 ) {
     val creating = currentMovie.isNew()
-    Scaffold(
-        modifier = Modifier.testTag(UiTags.Screens.EDIT_CARD),
-        bottomBar = {
-            CustomBottomBar(
-                items =
-                    bottomItemsForEditCard(
-                        creating,
-                        searchEnabled = currentMovie.title.isNotBlank(),
-                        onCancelAction = onCancelAction,
-                        onSaveAction = onSaveAction,
-                        onArchiveAction = onArchiveAction,
-                        onSearchAction = onSearchAction,
-                    ),
-            )
-        },
-    ) { innerPadding ->
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-        ) {
-            DebugTitle("Edit Movie")
-            EditableTitleField(
-                currentMovie.title,
+    Box {
+        Scaffold(
+            modifier = Modifier.testTag(UiTags.Screens.EDIT_CARD),
+            bottomBar = {
+                CustomBottomBar(
+                    items =
+                        bottomItemsForEditCard(
+                            creating,
+                            searchEnabled = currentMovie.title.isNotBlank(),
+                            onCancelAction = onCancelAction,
+                            onSaveAction = onSaveAction,
+                            onArchiveAction = onArchiveAction,
+                            onSearchAction = onSearchAction,
+                        ),
+                )
+            },
+        ) { innerPadding ->
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState()),
             ) {
-                onUpdateEdits(currentMovie.copy(title = it))
+                DebugTitle("Edit Movie")
+                EditableTitleField(
+                    currentMovie.title,
+                ) {
+                    onUpdateEdits(currentMovie.copy(title = it))
+                }
             }
         }
+
+        // should overlap editor, including bottom bar
+        SearchResultsPicker(
+            searchResults,
+            onSearchResultSelected,
+        )
     }
 }
 
@@ -172,3 +198,46 @@ fun bottomItemsForEditCard(
         CustomBarItem(ButtonSpec.SearchAction, searchEnabled, onClick = onSearchAction),
         CustomBarItem(ButtonSpec.SaveAction, onSaveAction),
     )
+
+@Composable
+fun SearchResultsPicker(
+    searchResults: List<Movie>,
+    onResultSelected: (Movie) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (searchResults.isEmpty()) {
+        return
+    }
+    Column(
+        modifier =
+            modifier
+                .testTag(UiTags.Screens.SEARCH_RESULTS)
+                .fillMaxSize()
+                .background(Color.White),
+    ) {
+        DebugTitle(title = "Search Results")
+        LazyColumn(
+            modifier = modifier,
+        ) {
+            items(searchResults) { movie ->
+                SearchResultItem(
+                    movie,
+                    onClick = {
+                        onResultSelected(movie)
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchResultItem(
+    movie: Movie,
+    onClick: () -> Unit,
+) {
+    Text(
+        text = movie.title,
+        modifier = Modifier.clickable(onClick = onClick),
+    )
+}
