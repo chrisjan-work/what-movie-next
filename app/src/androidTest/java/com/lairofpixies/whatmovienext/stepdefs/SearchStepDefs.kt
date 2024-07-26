@@ -1,6 +1,8 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.onNodeWithTag
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.RemoteMovie
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
@@ -33,6 +35,13 @@ class SearchStepDefs(
         )
     }
 
+    @Given("the online repo throws an error")
+    fun theOnlineRepoThrowsAnError() {
+        testContext.movieApi.replaceFakeResponse {
+            throw Exception("Fake error")
+        }
+    }
+
     @When("the user searches for the title {string}")
     fun theUserSearchesForTheTitle(title: String) {
         with(editCardStepDefs) {
@@ -47,5 +56,19 @@ class SearchStepDefs(
         composeRule.composeStep {
             onNodeWithTextUnderTag(activity.getString(R.string.title), UiTags.Screens.EDIT_CARD)
                 .assertTextContains(title)
+        }
+
+    @Then("a pop-up is shown informing that no results were found")
+    fun aPopUpIsShownInformingThatNoResultsWereFound() =
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Popups.SEARCH_EMPTY)
+                .isDisplayed()
+        }
+
+    @Then("a pop-up is shown informing that an error occurred")
+    fun aPopUpIsShownInformingThatAnErrorOccurred() =
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Popups.SEARCH_FAILED)
+                .isDisplayed()
         }
 }

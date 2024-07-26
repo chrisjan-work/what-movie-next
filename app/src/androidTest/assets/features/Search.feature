@@ -25,13 +25,16 @@ Feature: Search Online
     Given the online repo returns an entry with title "Unique Movie"
     When the user searches for the title "Unique"
     Then the edit card title is filled with "Unique Movie"
-#
-#  # TODO
-#  Scenario: Search movie with no results
-#    Given the user initiates a new entry
-#    When the user searches for the title "Non-existent Movie"
-#    Then a pop-up is shown informing that no results were found
-#
+
+  Scenario: Search movie with no results
+    When the user searches for the title "Non-existent Movie"
+    Then a pop-up is shown informing that no results were found
+
+  Scenario: Search movie with error
+    Given the online repo throws an error
+    When the user searches for the title "Failure"
+    Then a pop-up is shown informing that an error occurred
+
 #  # TODO
 #  Scenario: App is offline
 #    Given the user initiates a new entry
