@@ -43,12 +43,12 @@ class ApiRepositoryImpl(
                 val remoteMovies =
                     repositoryScope
                         .async {
-                            movieApi.findMoviesByTitle(title)
+                            movieApi.findMoviesByTitle(escapeForQuery(title))
                         }.await()
 
                 val asyncMovieInfo =
                     AsyncMovieInfo.fromList(
-                        remoteMovies.map { remoteMovie ->
+                        remoteMovies.results.map { remoteMovie ->
                             MovieMapper.mapNetToApp(remoteMovie)
                         },
                     )
@@ -63,4 +63,6 @@ class ApiRepositoryImpl(
             SharingStarted.Eagerly,
             initialValue = AsyncMovieInfo.Loading,
         )
+
+    private fun escapeForQuery(title: String) = title.trim().replace(" ", "+")
 }

@@ -16,25 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.test
+package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.di.TestMovieApi
-import com.lairofpixies.whatmovienext.models.database.MovieDatabase
-import dagger.hilt.android.testing.HiltAndroidTest
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.lairofpixies.whatmovienext.BuildConfig
+import okhttp3.Interceptor
+import okhttp3.Request
+import okhttp3.Response
 
-@HiltAndroidTest
-@Singleton
-class CucumberTestContext
-    @Inject
-    constructor(
-        val composeRuleHolder: ComposeRuleHolder,
-        val scenarioHolder: ActivityScenarioHolder,
-    ) {
-        @Inject
-        lateinit var appDatabase: MovieDatabase
+class RequestHeaderInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response = chain.proceed(chain.request().injectHeaders())
 
-        @Inject
-        lateinit var movieApi: TestMovieApi
-    }
+    private fun Request.injectHeaders() =
+        newBuilder()
+            .header("Authorization", "Bearer ${BuildConfig.apitoken}")
+            .header("User-Agent", BuildConfig.useragent)
+            .build()
+}

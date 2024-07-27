@@ -16,16 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.network
+package com.lairofpixies.whatmovienext.di
 
-import com.lairofpixies.whatmovienext.models.data.RemoteMovie
+import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.data.RemoteSearchResponse
+import com.lairofpixies.whatmovienext.models.network.MovieApi
 import javax.inject.Inject
 
 // TODO: move to the test module
 class TestMovieApi
     @Inject
     constructor() : MovieApi {
-        private lateinit var fakeResponse: () -> List<RemoteMovie>
+        private lateinit var fakeResponse: () -> List<RemoteMovieSummary>
 
         init {
             clearFakeResponse()
@@ -35,26 +37,26 @@ class TestMovieApi
             fakeResponse = { emptyList() }
         }
 
-        fun replaceFakeResponse(newFakeResponse: () -> List<RemoteMovie>) {
+        fun replaceFakeResponse(newFakeResponse: () -> List<RemoteMovieSummary>) {
             fakeResponse = newFakeResponse
         }
 
-        fun appendToFakeResponse(vararg movie: RemoteMovie) {
+        fun appendToFakeResponse(vararg movie: RemoteMovieSummary) {
             val newList = fakeResponse() + movie
             fakeResponse = { newList }
         }
 
-        override suspend fun findMoviesByTitle(title: String): List<RemoteMovie> = fakeResponse()
+        override suspend fun findMoviesByTitle(escapedTitle: String): RemoteSearchResponse = RemoteSearchResponse(results = fakeResponse())
 
         enum class FakeResponse(
-            val getIt: () -> List<RemoteMovie>,
+            val getIt: () -> List<RemoteMovieSummary>,
         ) {
-            Single({ listOf(RemoteMovie(title = "Fake Movie")) }),
+            Single({ listOf(RemoteMovieSummary(tmdbId = 1, title = "Fake Movie")) }),
             Multiple({
                 listOf(
-                    RemoteMovie(title = "Fake Movie 1"),
-                    RemoteMovie(title = "Fake Movie 2"),
-                    RemoteMovie(title = "Fake Movie 3"),
+                    RemoteMovieSummary(tmdbId = 1, title = "Fake Movie 1"),
+                    RemoteMovieSummary(tmdbId = 2, title = "Fake Movie 2"),
+                    RemoteMovieSummary(tmdbId = 3, title = "Fake Movie 3"),
                 )
             }),
             Empty({ emptyList() }),

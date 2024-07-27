@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.RemoteMovie
+import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
@@ -59,7 +59,9 @@ class MovieApiTest {
             val mockResponse =
                 MockResponse()
                     .setResponseCode(200)
-                    .setBody("[ { \"title\": \"example title\" }, { \"title\": \"example title\" } ]")
+                    .setBody(
+                        """{ "results" : [ { "id": 1, "title": "example title" }, { "id": 3, "title": "example title 2: the revenge" } ] }""",
+                    )
             mockWebServer.enqueue(mockResponse)
 
             // When
@@ -68,9 +70,9 @@ class MovieApiTest {
             // Then
             val expectedMovies =
                 listOf(
-                    RemoteMovie("example title"),
-                    RemoteMovie("example title"),
+                    RemoteMovieSummary(tmdbId = 1, title = "example title"),
+                    RemoteMovieSummary(tmdbId = 2, title = "example title 2: the revenge"),
                 )
-            assertEquals(expectedMovies, result)
+            assertEquals(expectedMovies, result.results)
         }
 }

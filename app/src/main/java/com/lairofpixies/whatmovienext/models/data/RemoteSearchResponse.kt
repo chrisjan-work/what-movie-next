@@ -16,25 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.test
+package com.lairofpixies.whatmovienext.models.data
 
-import com.lairofpixies.whatmovienext.di.TestMovieApi
-import com.lairofpixies.whatmovienext.models.database.MovieDatabase
-import dagger.hilt.android.testing.HiltAndroidTest
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-@HiltAndroidTest
-@Singleton
-class CucumberTestContext
-    @Inject
-    constructor(
-        val composeRuleHolder: ComposeRuleHolder,
-        val scenarioHolder: ActivityScenarioHolder,
-    ) {
-        @Inject
-        lateinit var appDatabase: MovieDatabase
-
-        @Inject
-        lateinit var movieApi: TestMovieApi
-    }
+// TODO: deal with the pagination
+@JsonClass(generateAdapter = true)
+data class RemoteSearchResponse(
+    @Json(name = "page")
+    val page: Int = 1,
+    @Json(name = "total_pages")
+    val totalPages: Int = 1,
+    @Json(name = "results")
+    val results: List<RemoteMovieSummary>,
+)

@@ -23,7 +23,7 @@ import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.RemoteMovie
+import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
@@ -51,7 +51,7 @@ class SearchStepDefs(
     @Given("the online repo returns an entry with title {string}")
     fun theOnlineRepoReturnsAnEntryWithTitle(title: String) {
         testContext.movieApi.appendToFakeResponse(
-            RemoteMovie(title = title),
+            RemoteMovieSummary(tmdbId = 1, title = title),
         )
     }
 

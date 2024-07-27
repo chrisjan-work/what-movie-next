@@ -21,7 +21,6 @@ package com.lairofpixies.whatmovienext.di
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.MovieApi
-import com.lairofpixies.whatmovienext.models.network.TestMovieApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module

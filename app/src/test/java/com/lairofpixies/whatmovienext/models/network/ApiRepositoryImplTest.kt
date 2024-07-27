@@ -20,14 +20,15 @@ package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.RemoteMovie
+import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.data.RemoteSearchResponse
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import okhttp3.ResponseBody
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
 import org.junit.Test
 import retrofit2.HttpException
@@ -48,7 +49,7 @@ class ApiRepositoryImplTest {
     fun `find movies by title, none available`() =
         runTest {
             // Given
-            coEvery { movieApi.findMoviesByTitle(any()) } returns emptyList()
+            coEvery { movieApi.findMoviesByTitle(any()) } returns RemoteSearchResponse(results = emptyList())
 
             // When
             val result = sut.findMoviesByTitle("test").value
@@ -62,8 +63,11 @@ class ApiRepositoryImplTest {
         runTest {
             // Given
             coEvery { movieApi.findMoviesByTitle(any()) } returns
-                listOf(
-                    RemoteMovie(title = "test"),
+                RemoteSearchResponse(
+                    results =
+                        listOf(
+                            RemoteMovieSummary(tmdbId = 1, title = "test"),
+                        ),
                 )
 
             // When
@@ -79,11 +83,12 @@ class ApiRepositoryImplTest {
             // Given
             val receivedMovies =
                 listOf(
-                    RemoteMovie(title = "movie1"),
-                    RemoteMovie(title = "movie2"),
-                    RemoteMovie(title = "movie3"),
+                    RemoteMovieSummary(tmdbId = 1, title = "movie1"),
+                    RemoteMovieSummary(tmdbId = 2, title = "movie2"),
+                    RemoteMovieSummary(tmdbId = 3, title = "movie3"),
                 )
-            coEvery { movieApi.findMoviesByTitle(any()) } returns receivedMovies
+            coEvery { movieApi.findMoviesByTitle(any()) } returns
+                RemoteSearchResponse(results = receivedMovies)
 
             // When
             val result = sut.findMoviesByTitle("test").value
@@ -106,7 +111,7 @@ class ApiRepositoryImplTest {
                 HttpException(
                     Response.error<Any>(
                         404,
-                        ResponseBody.create(null, ""),
+                        "".toResponseBody(null),
                     ),
                 )
             coEvery { movieApi.findMoviesByTitle(any()) } throws http404
