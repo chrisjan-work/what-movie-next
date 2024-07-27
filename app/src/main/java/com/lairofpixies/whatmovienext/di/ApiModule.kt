@@ -66,7 +66,7 @@ object ApiModule {
 
         return Retrofit
             .Builder()
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl(BuildConfig.apiurl)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
             .build()

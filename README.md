@@ -89,6 +89,7 @@ Languages and Frameworks
 **API**
  
  * [TMDB](https://www.themoviedb.org/)
+ * [Secrets Gradle Plugin](https://github.com/google/secrets-gradle-plugin)
  
 Skipped languages / frameworks
 ------------------------------

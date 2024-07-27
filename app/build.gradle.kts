@@ -23,6 +23,7 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinter)
+    alias(libs.plugins.gradle.secrets)
 }
 
 android {
@@ -42,8 +43,6 @@ android {
         }
 
         buildConfigField("String", "CUCUMBER_TAG_EXPRESSION", extractCucumberTags())
-        // TODO: proper url
-        buildConfigField("String", "BASE_URL", "\"localhost:8080\"")
     }
 
     buildTypes {
@@ -157,6 +156,10 @@ buildscript {
         // kotlinter rules for compose
         classpath(libs.rules.ktlint)
     }
+}
+
+secrets {
+    propertiesFileName = "secrets.properties"
 }
 
 fun extractCucumberTags(): String {

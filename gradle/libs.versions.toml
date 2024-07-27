@@ -23,6 +23,7 @@ okhttpTls = "4.12.0"
 retrofit = "2.11.0"
 moshi-kotlin = "1.15.1"
 room = "2.6.1"
+secretsGradlePlugin = "2.0.1"
 timber = "4.7.1"
 kotlinter = "4.4.0"
 
@@ -72,3 +73,4 @@ org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.re
 dagger-hilt = { id = "com.google.dagger.hilt.android", version.ref = "dagger-hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
+gradle-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
