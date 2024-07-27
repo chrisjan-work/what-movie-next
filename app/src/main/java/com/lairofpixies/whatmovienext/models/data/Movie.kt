@@ -25,6 +25,14 @@ import androidx.room.PrimaryKey
 data class Movie(
     @PrimaryKey(autoGenerate = true) val id: Long = NEW_ID,
     val title: String,
+    val tmdbId: Long? = null,
+    val imdbId: Long? = null,
+    val originalTitle: String = "",
+    val year: Int? = null,
+    val coverUrl: String = "",
+    val summary: String = "",
+    // TODO
+//    val genres: List<String> = emptyList(),
     val watchState: WatchState = WatchState.PENDING,
     val isArchived: Boolean = false,
 ) {

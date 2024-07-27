@@ -24,13 +24,13 @@ import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class RemoteMovieSummary(
     @Json(name = "id")
-    val tmdbId: Int,
+    val tmdbId: Long,
     @Json(name = "title")
     val title: String,
     @Json(name = "original_title")
     val originalTitle: String = "",
     @Json(name = "release_date")
-    val releaseDate: String = "",
+    val releaseDate: String? = null,
     @Json(name = "poster_path")
     val posterPath: String? = null,
     @Json(name = "genre_ids")
