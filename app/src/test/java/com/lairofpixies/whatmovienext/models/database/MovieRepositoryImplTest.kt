@@ -53,8 +53,8 @@ class MovieRepositoryImplTest {
             // Given
             val movies =
                 listOf(
-                    Movie(1, "first", WatchState.WATCHED),
-                    Movie(2, "second", WatchState.WATCHED),
+                    Movie(1, "first", watchState = WatchState.WATCHED),
+                    Movie(2, "second", watchState = WatchState.WATCHED),
                 )
             coEvery { movieDao.getAllMovies() } returns flowOf(movies)
 
@@ -69,7 +69,7 @@ class MovieRepositoryImplTest {
     @Test
     fun `single movie`() {
         // Given
-        val movie = Movie(1, "first", WatchState.WATCHED)
+        val movie = Movie(1, "first", watchState = WatchState.WATCHED)
         coEvery { movieDao.getMovie(1) } returns flowOf(movie)
 
         // When
@@ -110,7 +110,7 @@ class MovieRepositoryImplTest {
     fun fetchMovieById() =
         runTest {
             // Given
-            val movie = Movie(7, "gotById", WatchState.WATCHED)
+            val movie = Movie(7, "gotById", watchState = WatchState.WATCHED)
             coEvery { movieDao.fetchMovieById(7) } returns movie
 
             // When
@@ -139,7 +139,7 @@ class MovieRepositoryImplTest {
     fun fetchMoviesByTitle() =
         runTest {
             // Given
-            val movie = Movie(12, "gotByTitle", WatchState.WATCHED)
+            val movie = Movie(12, "gotByTitle", watchState = WatchState.WATCHED)
             coEvery { movieDao.fetchMoviesByTitle("gotByTitle") } returns listOf(movie)
 
             // When
@@ -207,7 +207,7 @@ class MovieRepositoryImplTest {
     fun archiveMovie() =
         runTest {
             // Given
-            val movieToArchive = Movie(1, "toArchive", WatchState.WATCHED, isArchived = false)
+            val movieToArchive = Movie(1, "toArchive", watchState = WatchState.WATCHED, isArchived = false)
             val requestedMovie = slot<Movie>()
             coEvery { movieDao.delete(capture(requestedMovie)) } just runs
 
@@ -223,7 +223,7 @@ class MovieRepositoryImplTest {
     fun restoreMovie() =
         runTest {
             // Given
-            val movieToRestore = Movie(1, "isArchived", WatchState.WATCHED, isArchived = true)
+            val movieToRestore = Movie(1, "isArchived", watchState = WatchState.WATCHED, isArchived = true)
             val requestedMovieId = slot<Long>()
             coEvery { movieDao.restore(capture(requestedMovieId)) } just runs
 
@@ -239,7 +239,7 @@ class MovieRepositoryImplTest {
     fun deleteMovie() =
         runTest {
             // Given
-            val movieToDelete = Movie(1, "isArchived", WatchState.WATCHED, isArchived = true)
+            val movieToDelete = Movie(1, "isArchived", watchState = WatchState.WATCHED, isArchived = true)
             val archivedMovie = slot<Movie>()
             coEvery { movieDao.delete(capture(archivedMovie)) } just runs
 

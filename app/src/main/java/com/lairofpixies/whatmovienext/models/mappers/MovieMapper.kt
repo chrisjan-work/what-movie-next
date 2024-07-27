@@ -21,11 +21,30 @@ package com.lairofpixies.whatmovienext.models.mappers
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Movie.Companion.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
+import java.lang.NumberFormatException
 
+// todo: fetch the genres (if necessary)
+// todo: decode poster path
 object MovieMapper {
     fun mapNetToApp(remoteMovieDetailed: RemoteMovieSummary) =
         Movie(
             id = NEW_ID,
+            tmdbId = remoteMovieDetailed.tmdbId,
             title = remoteMovieDetailed.title,
+            originalTitle = remoteMovieDetailed.originalTitle,
+            year = extractYear(remoteMovieDetailed.releaseDate),
         )
 }
+
+fun extractYear(releaseDate: String?): Int? =
+    if (!releaseDate.isNullOrBlank()) {
+        try {
+            releaseDate.substring(0, 4).toInt()
+        } catch (e: StringIndexOutOfBoundsException) {
+            null
+        } catch (e: NumberFormatException) {
+            null
+        }
+    } else {
+        null
+    }

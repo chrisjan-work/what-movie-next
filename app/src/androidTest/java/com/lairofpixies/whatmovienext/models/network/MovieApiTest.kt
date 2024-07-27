@@ -71,7 +71,7 @@ class MovieApiTest {
             val expectedMovies =
                 listOf(
                     RemoteMovieSummary(tmdbId = 1, title = "example title"),
-                    RemoteMovieSummary(tmdbId = 2, title = "example title 2: the revenge"),
+                    RemoteMovieSummary(tmdbId = 3, title = "example title 2: the revenge"),
                 )
             assertEquals(expectedMovies, result.results)
         }

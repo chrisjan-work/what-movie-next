@@ -19,18 +19,26 @@
 package com.lairofpixies.whatmovienext.views.screens
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -50,6 +58,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isNew
@@ -264,8 +273,46 @@ fun SearchResultItem(
     movie: Movie,
     onClick: () -> Unit,
 ) {
-    Text(
-        text = movie.title,
-        modifier = Modifier.clickable(onClick = onClick),
-    )
+    Row(
+        modifier =
+            Modifier
+                .clickable(onClick = onClick)
+                .fillMaxWidth()
+                .border(border = BorderStroke(1.dp, Color.LightGray), shape = RoundedCornerShape(4.dp))
+                .padding(4.dp),
+    ) {
+        // TODO: Coil image loading (will need a proper url tho)
+//        Image(
+//            painter = painterResource(id = movie.poster),
+//            contentDescription = null,
+//            modifier = Modifier.size(100.dp),
+//        )
+        Spacer(modifier = Modifier.size(16.dp))
+        Column {
+            Text(
+                text = movie.title,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            if (movie.originalTitle.isNotBlank() && movie.originalTitle != movie.title) {
+                Text(
+                    text = movie.originalTitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray,
+                )
+            }
+            movie.year?.let { year ->
+                Text(
+                    text = year.toString(),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            // TODO
+//            if (movie.genres.isNotEmpty()) {
+//                Text(
+//                    text = movie.genres.joinToString(" / "),
+//                    style = MaterialTheme.typography.bodySmall,
+//                )
+//            }
+        }
+    }
 }

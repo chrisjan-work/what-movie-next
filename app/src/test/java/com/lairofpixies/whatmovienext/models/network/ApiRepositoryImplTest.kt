@@ -74,7 +74,7 @@ class ApiRepositoryImplTest {
             val result = sut.findMoviesByTitle("test").value
 
             // Then
-            assertEquals(AsyncMovieInfo.Single(Movie(title = "test")), result)
+            assertEquals(AsyncMovieInfo.Single(Movie(tmdbId = 1, title = "test")), result)
         }
 
     @Test
@@ -96,9 +96,9 @@ class ApiRepositoryImplTest {
             // Then
             val expectedMovies =
                 listOf(
-                    Movie(title = "movie1"),
-                    Movie(title = "movie2"),
-                    Movie(title = "movie3"),
+                    Movie(tmdbId = 1, title = "movie1"),
+                    Movie(tmdbId = 2, title = "movie2"),
+                    Movie(tmdbId = 3, title = "movie3"),
                 )
             assertEquals(AsyncMovieInfo.Multiple(expectedMovies), result)
         }
