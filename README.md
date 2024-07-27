@@ -48,6 +48,11 @@ Languages and Frameworks
 
  * [Dagger/Hilt](https://dagger.dev/hilt/) 
 
+**Building**
+
+ * [Gradle](https://gradle.org/)
+ * [Gradle Kotlin DSL](https://kotlinlang.org/docs/gradle.html)
+
 **Testing**
 
  * [Jetpack Compose UI Testing framework](https://developer.android.com/develop/ui/compose/testing)
@@ -79,6 +84,7 @@ Languages and Frameworks
 
  * [Kotlinter](https://github.com/jeremymailen/kotlinter-gradle)
  * [KtLint](https://pinterest.github.io/ktlint/latest/)
+
  
 Skipped languages / frameworks
 ------------------------------
