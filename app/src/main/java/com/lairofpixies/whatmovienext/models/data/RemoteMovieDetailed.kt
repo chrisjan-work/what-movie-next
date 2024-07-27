@@ -16,25 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.test
+package com.lairofpixies.whatmovienext.models.data
 
-import com.lairofpixies.whatmovienext.di.TestMovieApi
-import com.lairofpixies.whatmovienext.models.database.MovieDatabase
-import dagger.hilt.android.testing.HiltAndroidTest
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.squareup.moshi.JsonClass
 
-@HiltAndroidTest
-@Singleton
-class CucumberTestContext
-    @Inject
-    constructor(
-        val composeRuleHolder: ComposeRuleHolder,
-        val scenarioHolder: ActivityScenarioHolder,
-    ) {
-        @Inject
-        lateinit var appDatabase: MovieDatabase
-
-        @Inject
-        lateinit var movieApi: TestMovieApi
-    }
+@JsonClass(generateAdapter = true)
+data class RemoteMovieDetailed(
+    val title: String,
+)

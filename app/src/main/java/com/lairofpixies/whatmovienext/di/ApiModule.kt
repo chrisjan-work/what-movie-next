@@ -22,7 +22,7 @@ import com.lairofpixies.whatmovienext.BuildConfig
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.MovieApi
-import com.lairofpixies.whatmovienext.models.network.TestMovieApi
+import com.lairofpixies.whatmovienext.models.network.RequestHeaderInterceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -39,20 +39,14 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
     @Provides
-    fun provideApiRepository(movieApi: TestMovieApi): ApiRepository = ApiRepositoryImpl(movieApi, Dispatchers.IO)
-
-    @Provides
-    @Singleton
-    fun provideTestMovieApi() =
-        TestMovieApi().apply {
-            replaceFakeResponse(TestMovieApi.FakeResponse.Multiple.getIt)
-        }
+    fun provideApiRepository(movieApi: MovieApi): ApiRepository = ApiRepositoryImpl(movieApi, Dispatchers.IO)
 
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient =
         OkHttpClient
             .Builder()
+            .addInterceptor(RequestHeaderInterceptor())
             .build()
 
     @Provides

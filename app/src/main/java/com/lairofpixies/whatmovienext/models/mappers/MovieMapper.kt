@@ -20,12 +20,12 @@ package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Movie.Companion.NEW_ID
-import com.lairofpixies.whatmovienext.models.data.RemoteMovie
+import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
 
 object MovieMapper {
-    fun mapNetToApp(remoteMovie: RemoteMovie) =
+    fun mapNetToApp(remoteMovieDetailed: RemoteMovieSummary) =
         Movie(
             id = NEW_ID,
-            title = remoteMovie.title,
+            title = remoteMovieDetailed.title,
         )
 }

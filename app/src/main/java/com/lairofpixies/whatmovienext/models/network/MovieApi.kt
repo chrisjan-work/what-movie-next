@@ -18,13 +18,13 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.RemoteMovie
+import com.lairofpixies.whatmovienext.models.data.RemoteSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface MovieApi {
-    @GET("find")
+    @GET("search/movie")
     suspend fun findMoviesByTitle(
-        @Query("title") title: String,
-    ): List<RemoteMovie>
+        @Query("query") escapedTitle: String,
+    ): RemoteSearchResponse
 }
