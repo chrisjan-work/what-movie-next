@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.org.jetbrains.kotlin.android)
@@ -167,4 +168,42 @@ fun extractCucumberTags(): String {
     val tagsList = tagsProperty.split(",").map { "@${it.trim()}" }.filter { it.isNotEmpty() }
     val asExpression = tagsList.joinToString(separator = " or ")
     return "\"$asExpression\""
+}
+
+tasks.register("checkHeaders") {
+    val headerFiles =
+        listOf(
+            listOf("kt", "kts", "java") to "header.kt",
+            listOf("feature") to "header.gherkin",
+            listOf("xml") to "header.xml",
+        ).map { (extensions, path) ->
+            extensions to file("../gpl_headers/$path").readLines()
+        }
+
+    doLast {
+        val errors = mutableListOf<String>()
+        headerFiles.forEach { (extensions, headerLines) ->
+            extensions.forEach { extension ->
+                val sourceFiles = fileTree(file("src/")) { include("**/*.$extension") }
+                sourceFiles.forEach { file ->
+                    if (file.readLines().take(headerLines.size) != headerLines) {
+                        errors.add("Header mismatch in file: ${file.name}")
+                    }
+                }
+            }
+        }
+
+        if (errors.isNotEmpty()) {
+            errors.forEach { println(it) }
+            throw GradleException("Header check failed.")
+        } else {
+            println("All headers are correct.")
+        }
+    }
+}
+
+tasks.forEach { task ->
+    if (task.name.startsWith("lint")) {
+        task.dependsOn("checkHeaders")
+    }
 }
