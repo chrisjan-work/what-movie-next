@@ -22,4 +22,5 @@ plugins {
     alias(libs.plugins.dagger.hilt) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlinter) apply false
+    alias(libs.plugins.gradle.secrets) apply false
 }
