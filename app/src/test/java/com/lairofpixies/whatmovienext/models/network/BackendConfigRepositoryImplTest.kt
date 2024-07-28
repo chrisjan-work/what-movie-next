@@ -19,7 +19,9 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
 import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -34,34 +36,48 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BackendConfigRepositoryImplTest {
     private lateinit var appPreferences: AppPreferences
+    private lateinit var movieApi: MovieApi
     private lateinit var backendConfigRepository: BackendConfigRepository
 
     @Before
     fun setUp() {
+        movieApi = mockk(relaxed = true)
         appPreferences = mockk(relaxed = true)
-        every { appPreferences.imagePaths() } returns
-            flowOf(
-                ImagePaths(
-                    "https://image.tmdb.org/t/p/",
-                    "w154",
-                    "w500",
-                ),
-            )
 
         backendConfigRepository =
             BackendConfigRepositoryImpl(
                 appPreferences = appPreferences,
+                movieApi = movieApi,
                 cacheExpirationTimeMillis = 1000L,
                 ioDispatcher = UnconfinedTestDispatcher(),
             )
+        // Feed valid paths by default
+        every { appPreferences.imagePaths() } returns flowOf(testStoredPaths())
         backendConfigRepository.initializeConfiguration()
     }
+
+    private fun testConfiguration() =
+        RemoteConfiguration(
+            images =
+                RemoteConfiguration.ImagesConfiguration(
+                    url = "somewhere",
+                    sizes = listOf("fixed"),
+                ),
+        )
+
+    private fun testStoredPaths() =
+        ImagePaths(
+            "https://image.tmdb.org/t/p/",
+            "w154",
+            "w500",
+        )
 
     @Test
     fun `when paths are missing fetch and store them`() =
         runTest {
             // Given
             every { appPreferences.imagePaths() } returns flowOf(null)
+            coEvery { movieApi.getConfiguration() } returns testConfiguration()
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(System.currentTimeMillis())
             // When
             backendConfigRepository.checkNow()
@@ -75,7 +91,9 @@ class BackendConfigRepositoryImplTest {
     @Test
     fun `when paths are old fetch and store them as an update`() =
         runTest {
+            // Given
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(0L)
+            coEvery { movieApi.getConfiguration() } returns testConfiguration()
             // When
             backendConfigRepository.checkNow()
             // Then
