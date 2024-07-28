@@ -160,6 +160,7 @@ buildscript {
 
 secrets {
     propertiesFileName = "secrets.properties"
+    defaultPropertiesFileName = "secrets.default.properties"
 }
 
 fun extractCucumberTags(): String {
