@@ -19,8 +19,11 @@
 package com.lairofpixies.whatmovienext.di
 
 import com.lairofpixies.whatmovienext.BuildConfig
+import com.lairofpixies.whatmovienext.models.mappers.MovieMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
+import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
+import com.lairofpixies.whatmovienext.models.network.BackendConfigRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.MovieApi
 import com.lairofpixies.whatmovienext.models.network.RequestHeaderInterceptor
 import com.squareup.moshi.Moshi
@@ -39,7 +42,15 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
     @Provides
-    fun provideApiRepository(movieApi: MovieApi): ApiRepository = ApiRepositoryImpl(movieApi, Dispatchers.IO)
+    fun provideApiRepository(
+        movieApi: MovieApi,
+        movieMapper: MovieMapper,
+    ): ApiRepository =
+        ApiRepositoryImpl(
+            movieApi,
+            movieMapper,
+            Dispatchers.IO,
+        )
 
     @Provides
     @Singleton
@@ -66,4 +77,7 @@ object ApiModule {
             .build()
             .create(MovieApi::class.java)
     }
+
+    @Provides
+    fun provideConfigRepository(): BackendConfigRepository = BackendConfigRepositoryImpl()
 }

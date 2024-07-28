@@ -18,17 +18,27 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
-import retrofit2.http.GET
-import retrofit2.http.Query
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
 
-interface MovieApi {
-    @GET("search/movie")
-    suspend fun findMoviesByTitle(
-        @Query("query") escapedTitle: String,
-    ): RemoteSearchResponse
+class BackendConfigRepositoryImplTest {
+    private lateinit var backendConfigRepository: BackendConfigRepository
 
-    @GET("configuration")
-    suspend fun getConfiguration(): RemoteConfiguration
+    @Before
+    fun setUp() {
+        backendConfigRepository = BackendConfigRepositoryImpl()
+    }
+
+    @Test
+    fun getThumbnailUrl() {
+        val url = backendConfigRepository.getThumbnailUrl("/test")
+        assertEquals("https://image.tmdb.org/t/p/w154/test", url)
+    }
+
+    @Test
+    fun getCoverUrl() {
+        val url = backendConfigRepository.getCoverUrl("/test")
+        assertEquals("https://image.tmdb.org/t/p/w500/test", url)
+    }
 }

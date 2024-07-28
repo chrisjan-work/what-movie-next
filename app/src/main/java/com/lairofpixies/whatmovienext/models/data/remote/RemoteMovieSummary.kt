@@ -16,19 +16,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.network
+package com.lairofpixies.whatmovienext.models.data.remote
 
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-interface MovieApi {
-    @GET("search/movie")
-    suspend fun findMoviesByTitle(
-        @Query("query") escapedTitle: String,
-    ): RemoteSearchResponse
-
-    @GET("configuration")
-    suspend fun getConfiguration(): RemoteConfiguration
-}
+@JsonClass(generateAdapter = true)
+data class RemoteMovieSummary(
+    @Json(name = "id")
+    val tmdbId: Long,
+    @Json(name = "title")
+    val title: String,
+    @Json(name = "original_title")
+    val originalTitle: String = "",
+    @Json(name = "release_date")
+    val releaseDate: String? = null,
+    @Json(name = "poster_path")
+    val posterPath: String? = null,
+    @Json(name = "genre_ids")
+    val genreIds: List<Int> = emptyList(),
+)

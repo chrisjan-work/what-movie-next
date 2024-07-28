@@ -18,8 +18,11 @@
  */
 package com.lairofpixies.whatmovienext.di
 
+import com.lairofpixies.whatmovienext.models.mappers.MovieMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
+import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
+import com.lairofpixies.whatmovienext.models.network.BackendConfigRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.MovieApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -43,7 +46,10 @@ import javax.inject.Singleton
 )
 object TestApiModule {
     @Provides
-    fun provideApiRepository(movieApi: TestMovieApi): ApiRepository = ApiRepositoryImpl(movieApi, Dispatchers.IO)
+    fun provideApiRepository(
+        movieApi: TestMovieApi,
+        movieMapper: MovieMapper,
+    ): ApiRepository = ApiRepositoryImpl(movieApi, movieMapper, Dispatchers.IO)
 
     @Singleton
     @Provides
@@ -109,4 +115,7 @@ object TestApiModule {
             .build()
             .create(MovieApi::class.java)
     }
+
+    @Provides
+    fun provideConfigRepo(): BackendConfigRepository = BackendConfigRepositoryImpl()
 }

@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
@@ -74,5 +74,26 @@ class MovieApiTest {
                     RemoteMovieSummary(tmdbId = 3, title = "example title 2: the revenge"),
                 )
             assertEquals(expectedMovies, result.results)
+        }
+
+    @Test
+    fun `retrieve config`() =
+        runTest {
+            // Given
+            val mockResponse =
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody(
+                        """{ "images" : { "base_url": "example.com", "poster_sizes": ["w92", "w154", "w780"] } }""",
+                    )
+            mockWebServer.enqueue(mockResponse)
+
+            // When
+            val result = movieApi.getConfiguration()
+
+            // Then
+            val expectedSizes = listOf("w92", "w154", "w780")
+            assertEquals("example.com", result.images.url)
+            assertEquals(expectedSizes, result.images.sizes)
         }
 }

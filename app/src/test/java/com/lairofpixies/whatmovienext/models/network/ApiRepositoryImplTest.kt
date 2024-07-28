@@ -20,8 +20,9 @@ package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
-import com.lairofpixies.whatmovienext.models.data.RemoteSearchResponse
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
+import com.lairofpixies.whatmovienext.models.mappers.MovieMapper
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
@@ -37,12 +38,16 @@ import retrofit2.Response
 @OptIn(ExperimentalCoroutinesApi::class)
 class ApiRepositoryImplTest {
     private lateinit var movieApi: MovieApi
+    private lateinit var configRepo: BackendConfigRepository
+    private lateinit var movieMapper: MovieMapper
     private lateinit var sut: ApiRepository
 
     @Before
     fun setUp() {
         movieApi = mockk(relaxed = true)
-        sut = ApiRepositoryImpl(movieApi, UnconfinedTestDispatcher())
+        configRepo = mockk(relaxed = true)
+        movieMapper = MovieMapper(configRepo)
+        sut = ApiRepositoryImpl(movieApi, movieMapper, UnconfinedTestDispatcher())
     }
 
     @Test

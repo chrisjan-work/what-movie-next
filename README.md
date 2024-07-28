@@ -90,6 +90,9 @@ Languages and Frameworks
  
  * [TMDB](https://www.themoviedb.org/)
  * [Secrets Gradle Plugin](https://github.com/google/secrets-gradle-plugin)
+
+**Images**
+ * [Coil](https://github.com/coil-kt/coil)
  
 Skipped languages / frameworks
 ------------------------------

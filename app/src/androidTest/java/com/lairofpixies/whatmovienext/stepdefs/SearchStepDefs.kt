@@ -18,12 +18,13 @@
  */
 package com.lairofpixies.whatmovienext.stepdefs
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
@@ -52,6 +53,23 @@ class SearchStepDefs(
     fun theOnlineRepoReturnsAnEntryWithTitle(title: String) {
         testContext.movieApi.appendToFakeResponse(
             RemoteMovieSummary(tmdbId = 1, title = title),
+        )
+    }
+
+    @Given("the online repo returns an entry with title {string} from {string} and poster {string}")
+    fun theOnlineRepoReturnsAnEntryWithTitleFromAndPoster(
+        title: String,
+        year: String,
+        poster: String,
+    ) {
+        testContext.movieApi.appendToFakeResponse(
+            RemoteMovieSummary(
+                tmdbId = 1,
+                title = title,
+                originalTitle = title,
+                releaseDate = "$year-01-01", // month and day don't matter
+                posterPath = poster,
+            ),
         )
     }
 
@@ -112,4 +130,15 @@ class SearchStepDefs(
             onNodeWithTag(UiTags.Screens.SEARCH_RESULTS)
                 .assertDoesNotExist()
         }
+
+    @And("the search results contains an entry with title {string} and year {string}")
+    fun theSearchResultsContainsAnEntryWithTitleAndYear(
+        title: String,
+        year: String,
+    ) = composeRule.composeStep {
+        onNodeWithTextUnderTag(title, UiTags.Screens.SEARCH_RESULTS)
+            .assertIsDisplayed()
+        onNodeWithTextUnderTag(year, UiTags.Screens.SEARCH_RESULTS)
+            .assertIsDisplayed()
+    }
 }

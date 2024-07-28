@@ -33,6 +33,7 @@ import retrofit2.HttpException
 
 class ApiRepositoryImpl(
     private val movieApi: MovieApi,
+    private val movieMapper: MovieMapper,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ApiRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
@@ -49,7 +50,7 @@ class ApiRepositoryImpl(
                 val asyncMovieInfo =
                     AsyncMovieInfo.fromList(
                         remoteMovies.results.map { remoteMovie ->
-                            MovieMapper.mapNetToApp(remoteMovie)
+                            movieMapper.mapNetToApp(remoteMovie)
                         },
                     )
                 emit(asyncMovieInfo)

@@ -18,8 +18,10 @@
  */
 package com.lairofpixies.whatmovienext.di
 
-import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
-import com.lairofpixies.whatmovienext.models.data.RemoteSearchResponse
+import com.lairofpixies.whatmovienext.models.data.remote.ImagesConfiguration
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
 import com.lairofpixies.whatmovienext.models.network.MovieApi
 import javax.inject.Inject
 
@@ -46,8 +48,6 @@ class TestMovieApi
             fakeResponse = { newList }
         }
 
-        override suspend fun findMoviesByTitle(escapedTitle: String): RemoteSearchResponse = RemoteSearchResponse(results = fakeResponse())
-
         enum class FakeResponse(
             val getIt: () -> List<RemoteMovieSummary>,
         ) {
@@ -62,4 +62,15 @@ class TestMovieApi
             Empty({ emptyList() }),
             Error({ throw Exception() }),
         }
+
+        override suspend fun findMoviesByTitle(escapedTitle: String): RemoteSearchResponse = RemoteSearchResponse(results = fakeResponse())
+
+        override suspend fun getConfiguration(): RemoteConfiguration =
+            RemoteConfiguration(
+                images =
+                    ImagesConfiguration(
+                        url = "localhost",
+                        sizes = listOf("microscopic", "unremarkable", "humongous"),
+                    ),
+            )
     }
