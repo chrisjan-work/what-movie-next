@@ -121,9 +121,13 @@ object TestApiModule {
 
     @Provides
     @Singleton
-    fun provideConfigRepository(appPreferences: AppPreferences): BackendConfigRepository =
+    fun provideConfigRepository(
+        appPreferences: AppPreferences,
+        movieApi: TestMovieApi,
+    ): BackendConfigRepository =
         BackendConfigRepositoryImpl(
             appPreferences = appPreferences,
+            movieApi = movieApi,
             cacheExpirationTimeMillis = BuildConfig.CACHE_EXPIRATION_TIME_MILLIS,
             ioDispatcher = Dispatchers.IO,
         )

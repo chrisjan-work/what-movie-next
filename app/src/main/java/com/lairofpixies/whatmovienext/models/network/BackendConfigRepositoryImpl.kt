@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
 import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
 import com.lairofpixies.whatmovienext.util.toCanonicalUrl
 import kotlinx.coroutines.CoroutineDispatcher
@@ -30,7 +31,7 @@ import kotlinx.coroutines.launch
 
 class BackendConfigRepositoryImpl(
     private val appPreferences: AppPreferences,
-//    private val movieApi: MovieApi,
+    private val movieApi: MovieApi,
     private val cacheExpirationTimeMillis: Long,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BackendConfigRepository {
@@ -59,17 +60,43 @@ class BackendConfigRepositoryImpl(
         }
     }
 
-    private suspend fun updatePaths(): ImagePaths {
-        val fetched =
-            ImagePaths(
-                baseUrl = "https://image.tmdb.org/t/p/",
-                thumbnailPath = "w154",
-                coverPath = "w500",
-            )
-        appPreferences.updateLastCheckedDateMillis(System.currentTimeMillis())
-        appPreferences.updateImagePaths(fetched)
-        return fetched
+    private suspend fun updatePaths() {
+        parseConfiguration(movieApi.getConfiguration())?.let { fetched ->
+            appPreferences.updateLastCheckedDateMillis(System.currentTimeMillis())
+            appPreferences.updateImagePaths(fetched)
+        }
     }
+
+    private fun parseConfiguration(configuration: RemoteConfiguration?): ImagePaths? =
+        configuration?.let {
+            with(it.images) {
+                val small: String
+                val big: String
+                when (sizes.size) {
+                    0 -> return@let null
+                    1 -> {
+                        small = sizes.first()
+                        big = sizes.first()
+                    }
+
+                    in 2..3 -> {
+                        small = sizes.first()
+                        big = sizes.last()
+                    }
+
+                    else -> {
+                        small = sizes[1]
+                        big = sizes[sizes.size - 2]
+                    }
+                }
+
+                ImagePaths(
+                    baseUrl = url,
+                    thumbnailPath = small,
+                    coverPath = big,
+                )
+            }
+        }
 
     override fun getThumbnailUrl(posterPath: String?): String =
         if (!posterPath.isNullOrBlank()) {
