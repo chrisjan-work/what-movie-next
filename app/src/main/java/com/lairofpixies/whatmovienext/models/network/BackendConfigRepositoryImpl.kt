@@ -18,17 +18,22 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
-import retrofit2.http.GET
-import retrofit2.http.Query
+class BackendConfigRepositoryImpl(
+    // TODO: fetch from movieApi
+//    private val movieApi: MovieApi,
+//    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : BackendConfigRepository {
+    private var baseUrl: String = ""
+    private var smallOption: String = ""
+    private var bigOption: String = ""
 
-interface MovieApi {
-    @GET("search/movie")
-    suspend fun findMoviesByTitle(
-        @Query("query") escapedTitle: String,
-    ): RemoteSearchResponse
+    init {
+        baseUrl = "https://image.tmdb.org/t/p/"
+        smallOption = "w154"
+        bigOption = "w500"
+    }
 
-    @GET("configuration")
-    suspend fun getConfiguration(): RemoteConfiguration
+    override fun getThumbnailUrl(posterPath: String?): String = if (!posterPath.isNullOrBlank()) "$baseUrl$smallOption$posterPath" else ""
+
+    override fun getCoverUrl(posterPath: String?): String = if (!posterPath.isNullOrBlank()) "$baseUrl$bigOption$posterPath" else ""
 }

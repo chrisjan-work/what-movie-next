@@ -22,6 +22,11 @@ Feature: Search Online
   Background: Start with an empty repo each time
     Given the online repo is empty
 
+  Scenario: Search movie with single option
+    Given the online repo returns an entry with title "Unique Movie"
+    When the user searches for the title "Unique"
+    Then the edit card title is filled with "Unique Movie"
+
   Scenario: Search movie with multiple options
     Given the online repo returns an entry with title "Star Trek The Movie"
     And the online repo returns an entry with title "Star Wars: A New Hope"
@@ -38,11 +43,6 @@ Feature: Search Online
     When the user selects the search result "Dark City"
     Then the edit card title is filled with "Dark City"
     And the search results are not visible
-
-  Scenario: Search movie with single option
-    Given the online repo returns an entry with title "Unique Movie"
-    When the user searches for the title "Unique"
-    Then the edit card title is filled with "Unique Movie"
 
   Scenario: Search movie with no results
     When the user searches for the title "Non-existent Movie"
@@ -69,6 +69,17 @@ Feature: Search Online
     When the user navigates back
     Then the edit card title is filled with "Tomorrow"
     And the search results are not visible
+
+  Scenario: search results contain data about the movie
+  Given the online repo returns an entry with title "Man of Steel" from "2013" and poster "image.png"
+  Given the online repo returns an entry with title "Batman vs Superman" from "2016" and poster "image.png"
+  When the user searches for the title "Man"
+  And the search results contains an entry with title "Man of Steel" and year "2013"
+
+  # TODO populate edit card with details
+
+  # TODO
+  # Feature: manage genres
 
 #  # TODO
 #  Scenario: App is offline

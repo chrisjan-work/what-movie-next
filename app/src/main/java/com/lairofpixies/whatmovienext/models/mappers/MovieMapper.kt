@@ -20,26 +20,37 @@ package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Movie.Companion.NEW_ID
-import com.lairofpixies.whatmovienext.models.data.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
 import java.lang.NumberFormatException
+import javax.inject.Inject
 
 // todo: fetch the genres (if necessary)
-// todo: decode poster path
-object MovieMapper {
-    fun mapNetToApp(remoteMovieDetailed: RemoteMovieSummary) =
-        Movie(
-            id = NEW_ID,
-            tmdbId = remoteMovieDetailed.tmdbId,
-            title = remoteMovieDetailed.title,
-            originalTitle = remoteMovieDetailed.originalTitle,
-            year = extractYear(remoteMovieDetailed.releaseDate),
-        )
-}
+class MovieMapper
+    @Inject
+    constructor(
+        private val configRepo: BackendConfigRepository,
+    ) {
+        fun mapNetToApp(remoteMovieSummary: RemoteMovieSummary) =
+            Movie(
+                id = NEW_ID,
+                tmdbId = remoteMovieSummary.tmdbId,
+                title = remoteMovieSummary.title,
+                originalTitle = remoteMovieSummary.originalTitle,
+                year = extractYear(remoteMovieSummary.releaseDate),
+                thumbnailUrl = configRepo.getThumbnailUrl(remoteMovieSummary.posterPath),
+                coverUrl = configRepo.getCoverUrl(remoteMovieSummary.posterPath),
+            )
+    }
 
 fun extractYear(releaseDate: String?): Int? =
     if (!releaseDate.isNullOrBlank()) {
         try {
-            releaseDate.substring(0, 4).toInt()
+            Regex("(\\d{4})-\\d{2}-\\d{2}")
+                .find(releaseDate)
+                ?.groupValues
+                ?.get(1)
+                ?.toInt()
         } catch (e: StringIndexOutOfBoundsException) {
             null
         } catch (e: NumberFormatException) {

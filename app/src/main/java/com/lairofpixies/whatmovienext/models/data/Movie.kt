@@ -29,6 +29,7 @@ data class Movie(
     val imdbId: Long? = null,
     val originalTitle: String = "",
     val year: Int? = null,
+    val thumbnailUrl: String = "",
     val coverUrl: String = "",
     val summary: String = "",
     // TODO
