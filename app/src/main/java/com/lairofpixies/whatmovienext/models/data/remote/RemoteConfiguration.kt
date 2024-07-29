@@ -25,12 +25,12 @@ import com.squareup.moshi.JsonClass
 data class RemoteConfiguration(
     @Json(name = "images")
     val images: ImagesConfiguration,
-)
-
-@JsonClass(generateAdapter = true)
-data class ImagesConfiguration(
-    @Json(name = "base_url")
-    val url: String,
-    @Json(name = "poster_sizes")
-    val sizes: List<String>,
-)
+) {
+    @JsonClass(generateAdapter = true)
+    data class ImagesConfiguration(
+        @Json(name = "secure_base_url")
+        val url: String,
+        @Json(name = "poster_sizes")
+        val sizes: List<String>,
+    )
+}
