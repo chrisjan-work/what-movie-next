@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 class BackendConfigRepositoryImpl(
     private val appPreferences: AppPreferences,
     private val movieApi: MovieApi,
+    private val connectivityTracker: ConnectivityTracker,
     private val cacheExpirationTimeMillis: Long,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BackendConfigRepository {
@@ -46,7 +47,11 @@ class BackendConfigRepositoryImpl(
             }
         }
 
-        checkNow()
+        repositoryScope.launch {
+            connectivityTracker.isOnline().collect { isOnline ->
+                if (isOnline) checkNow()
+            }
+        }
     }
 
     override fun checkNow() {
