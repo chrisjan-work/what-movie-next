@@ -21,10 +21,8 @@
     <string name="close">Close</string>
     <string name="archive">Archive</string>
     <string name="add_new_movie">Add new movie</string>
-    <string name="done">Done</string>
     <string name="edit">Edit</string>
     <string name="title">Title</string>
-    <string name="save_and_close">Save and Close</string>
     <string name="error_title_is_required">Title is missing. Please provide one.</string>
     <string name="error_title">Problem</string>
     <string name="warning_changes_not_saved">There are unsaved changes in the movie description</string>
@@ -48,5 +46,5 @@
     <string name="search_empty_explanation">No movies were found that match the search criteria. Please try a different query or check the spelling.</string>
     <string name="search_failed_explanation">There was an error trying to connect to the online database. Please try again later.</string>
     <string name="search_empty_title">No data found</string>
-    <string name="search_in_progress">Looking up in online database...</string>
+    <string name="search_in_progress">Looking up in online database…</string>
 </resources>

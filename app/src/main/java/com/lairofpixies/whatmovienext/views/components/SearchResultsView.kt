@@ -120,13 +120,6 @@ fun SearchResultItem(
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
-            // TODO
-//            if (movie.genres.isNotEmpty()) {
-//                Text(
-//                    text = movie.genres.joinToString(" / "),
-//                    style = MaterialTheme.typography.bodySmall,
-//                )
-//            }
         }
     }
 }
