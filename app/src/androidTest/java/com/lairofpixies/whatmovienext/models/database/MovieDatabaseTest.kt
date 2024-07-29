@@ -18,26 +18,33 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import androidx.room.Room
-import androidx.test.platform.app.InstrumentationRegistry
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
+@HiltAndroidTest
 class MovieDatabaseTest {
-    private lateinit var db: MovieDatabase
-    private lateinit var dao: MovieDao
+    @get:Rule
+    var hiltRule = HiltAndroidRule(this)
+
+    @Inject
+    lateinit var db: MovieDatabase
+
+    @Inject
+    lateinit var dao: MovieDao
 
     @Before
     fun setUp() {
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        db = Room.inMemoryDatabaseBuilder(appContext, MovieDatabase::class.java).build()
-        dao = db.movieDao()
+        hiltRule.inject()
     }
 
     @After
