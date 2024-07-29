@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.di
 
 import com.lairofpixies.whatmovienext.BuildConfig
+import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
 import com.lairofpixies.whatmovienext.models.mappers.MovieMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
@@ -79,5 +80,11 @@ object ApiModule {
     }
 
     @Provides
-    fun provideConfigRepository(): BackendConfigRepository = BackendConfigRepositoryImpl()
+    @Singleton
+    fun provideConfigRepository(appPreferences: AppPreferences): BackendConfigRepository =
+        BackendConfigRepositoryImpl(
+            appPreferences = appPreferences,
+            cacheExpirationTimeMillis = BuildConfig.CACHE_EXPIRATION_TIME_MILLIS,
+            ioDispatcher = Dispatchers.IO,
+        )
 }

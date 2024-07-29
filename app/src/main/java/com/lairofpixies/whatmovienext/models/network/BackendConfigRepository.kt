@@ -19,6 +19,10 @@
 package com.lairofpixies.whatmovienext.models.network
 
 interface BackendConfigRepository {
+    fun initializeConfiguration()
+
+    fun checkNow()
+
     fun getThumbnailUrl(posterPath: String?): String
 
     fun getCoverUrl(posterPath: String?): String
