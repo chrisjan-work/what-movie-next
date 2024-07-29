@@ -18,7 +18,6 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.remote.ImagesConfiguration
 import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
 import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
 import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
@@ -66,7 +65,7 @@ class TestMovieApi
         override suspend fun getConfiguration(): RemoteConfiguration =
             RemoteConfiguration(
                 images =
-                    ImagesConfiguration(
+                    RemoteConfiguration.ImagesConfiguration(
                         url = "localhost",
                         sizes = listOf("microscopic", "unremarkable", "humongous"),
                     ),

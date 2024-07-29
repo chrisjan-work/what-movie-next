@@ -84,7 +84,7 @@ class MovieApiTest {
                 MockResponse()
                     .setResponseCode(200)
                     .setBody(
-                        """{ "images" : { "base_url": "example.com", "poster_sizes": ["w92", "w154", "w780"] } }""",
+                        """{ "images" : { "secure_base_url": "example.com", "poster_sizes": ["w92", "w154", "w780"] } }""",
                     )
             mockWebServer.enqueue(mockResponse)
 
