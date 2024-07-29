@@ -25,6 +25,7 @@ import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
 import com.lairofpixies.whatmovienext.models.network.BackendConfigRepositoryImpl
+import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
 import com.lairofpixies.whatmovienext.models.network.MovieApi
 import com.lairofpixies.whatmovienext.models.network.RequestHeaderInterceptor
 import com.squareup.moshi.Moshi
@@ -84,10 +85,12 @@ object ApiModule {
     fun provideConfigRepository(
         appPreferences: AppPreferences,
         movieApi: MovieApi,
+        connectivityTracker: ConnectivityTracker,
     ): BackendConfigRepository =
         BackendConfigRepositoryImpl(
             appPreferences = appPreferences,
             movieApi = movieApi,
+            connectivityTracker = connectivityTracker,
             cacheExpirationTimeMillis = BuildConfig.CACHE_EXPIRATION_TIME_MILLIS,
             ioDispatcher = Dispatchers.IO,
         )

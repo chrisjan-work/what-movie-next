@@ -21,11 +21,13 @@ package com.lairofpixies.whatmovienext.models.network
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
 import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
 import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
+import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -37,22 +39,27 @@ import org.junit.Test
 class BackendConfigRepositoryImplTest {
     private lateinit var appPreferences: AppPreferences
     private lateinit var movieApi: MovieApi
+    private lateinit var connectivityTracker: ConnectivityTracker
     private lateinit var backendConfigRepository: BackendConfigRepository
 
     @Before
     fun setUp() {
         movieApi = mockk(relaxed = true)
         appPreferences = mockk(relaxed = true)
+        connectivityTracker = mockk(relaxed = true)
 
         backendConfigRepository =
             BackendConfigRepositoryImpl(
                 appPreferences = appPreferences,
                 movieApi = movieApi,
+                connectivityTracker = connectivityTracker,
                 cacheExpirationTimeMillis = 1000L,
                 ioDispatcher = UnconfinedTestDispatcher(),
             )
         // Feed valid paths by default
+        coEvery { movieApi.getConfiguration() } returns testConfiguration()
         every { appPreferences.imagePaths() } returns flowOf(testStoredPaths())
+        every { connectivityTracker.isOnline() } returns flowOf(true)
         backendConfigRepository.initializeConfiguration()
     }
 
@@ -77,7 +84,6 @@ class BackendConfigRepositoryImplTest {
         runTest {
             // Given
             every { appPreferences.imagePaths() } returns flowOf(null)
-            coEvery { movieApi.getConfiguration() } returns testConfiguration()
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(System.currentTimeMillis())
             // When
             backendConfigRepository.checkNow()
@@ -93,7 +99,7 @@ class BackendConfigRepositoryImplTest {
         runTest {
             // Given
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(0L)
-            coEvery { movieApi.getConfiguration() } returns testConfiguration()
+
             // When
             backendConfigRepository.checkNow()
             // Then
@@ -101,6 +107,56 @@ class BackendConfigRepositoryImplTest {
                 appPreferences.updateLastCheckedDateMillis(any())
                 appPreferences.updateImagePaths(any())
             }
+        }
+
+    @Test
+    fun `when paths are up to date do not fetch`() =
+        runTest {
+            clearMocks(appPreferences)
+            // Given
+            every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(System.currentTimeMillis())
+
+            // When
+            backendConfigRepository.checkNow()
+            // Then
+            coVerify {
+                appPreferences.updateLastCheckedDateMillis(any())
+                appPreferences.updateImagePaths(any())
+            }
+        }
+
+    @Test
+    fun `when connection is down do not fetch`() =
+        runTest {
+            // Given
+            clearMocks(appPreferences)
+            every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(0L)
+            every { connectivityTracker.isOnline() } returns flowOf(false)
+
+            // When
+            backendConfigRepository.initializeConfiguration()
+
+            // Then
+            coVerify(exactly = 0) { appPreferences.updateImagePaths(any()) }
+        }
+
+    @Test
+    fun `when connection becomes enabled fetch`() =
+        runTest {
+            // Given
+            clearMocks(appPreferences)
+            every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(0L)
+            val connection = MutableStateFlow(false)
+            every { connectivityTracker.isOnline() } returns connection
+
+            backendConfigRepository.initializeConfiguration()
+            coVerify(exactly = 0) { appPreferences.updateImagePaths(any()) }
+
+            // When
+            connection.value = true
+
+            // Then
+            coVerify(exactly = 1) { appPreferences.updateImagePaths(any()) }
         }
 
     @Test
