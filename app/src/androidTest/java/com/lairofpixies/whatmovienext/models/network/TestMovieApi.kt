@@ -16,16 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.di
+package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.remote.ImagesConfiguration
 import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
 import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
 import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
-import com.lairofpixies.whatmovienext.models.network.MovieApi
 import javax.inject.Inject
 
-// TODO: move to the test module
 class TestMovieApi
     @Inject
     constructor() : MovieApi {
