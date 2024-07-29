@@ -19,11 +19,16 @@
 package com.lairofpixies.whatmovienext.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.lairofpixies.whatmovienext.models.database.MovieDao
 import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.MovieRepositoryImpl
+import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
+import com.lairofpixies.whatmovienext.models.datastore.AppPreferencesImpl
+import com.lairofpixies.whatmovienext.models.datastore.TestDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -49,4 +54,11 @@ object TestDBModule {
     @Singleton
     @Provides
     fun provideMovieDao(db: MovieDatabase): MovieDao = db.movieDao()
+
+    @Singleton
+    @Provides
+    fun provideDataStore(): DataStore<Preferences> = TestDataStore()
+
+    @Provides
+    fun provideAppPreferences(dataStore: DataStore<Preferences>): AppPreferences = AppPreferencesImpl(dataStore)
 }

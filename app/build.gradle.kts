@@ -43,6 +43,8 @@ android {
         }
 
         buildConfigField("String", "CUCUMBER_TAG_EXPRESSION", extractCucumberTags())
+        val oneWeek: Long = 1000 * 60 * 60 * 24 * 7
+        buildConfigField("Long", "CACHE_EXPIRATION_TIME_MILLIS", "${oneWeek}L")
     }
 
     buildTypes {
@@ -114,6 +116,9 @@ dependencies {
     // timber
     implementation(libs.timber)
 
+    // datastore
+    implementation(libs.androidx.datastore.preferences)
+
     // coroutines
     implementation(libs.coroutines.android)
     implementation(libs.coroutines.core)
@@ -151,7 +156,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // coil
-//    implementation(libs.coil)
     implementation(libs.coil.compose)
 }
 

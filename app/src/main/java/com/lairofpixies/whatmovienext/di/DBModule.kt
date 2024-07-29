@@ -19,11 +19,17 @@
 package com.lairofpixies.whatmovienext.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.lairofpixies.whatmovienext.models.database.MovieDao
 import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.MovieRepositoryImpl
+import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
+import com.lairofpixies.whatmovienext.models.datastore.AppPreferencesImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,4 +57,16 @@ object DBModule {
     @Singleton
     @Provides
     fun provideMovieDao(db: MovieDatabase) = db.movieDao()
+
+    @Singleton
+    @Provides
+    fun provideDataStore(
+        @ApplicationContext context: Context,
+    ): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("preferences")
+        }
+
+    @Provides
+    fun provideAppPreferences(dataStore: DataStore<Preferences>): AppPreferences = AppPreferencesImpl(dataStore)
 }
