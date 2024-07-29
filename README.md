@@ -76,6 +76,7 @@ Languages and Frameworks
 **Database**
 
  * [Room](https://developer.android.com/jetpack/androidx/releases/room)
+ * [DataStore](https://developer.android.com/topic/libraries/architecture/datastore)
 
 **Logging**
 
