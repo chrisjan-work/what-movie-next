@@ -95,17 +95,6 @@ Languages and Frameworks
 
 **Images**
  * [Coil](https://github.com/coil-kt/coil)
- 
-Skipped languages / frameworks
-------------------------------
-
- * **Java**: traditionally Android apps were written in Java. Modern apps are written in **Kotlin**.
- * **Espresso**: this UI testing framework is for UIs based on Android Layouts. Since here the UI is written in Jetpack Compose, I am using its equivalent.
- * **EventBus**, **RxJava**, **RxKotlin**, **LiveData**: used **Kotlin Coroutines** and **Flows** instead, as the more modern alternative for asynchronous data.
- * **Koin**: used **Hilt** on top of **Dagger**, as recommended by Google.
- * **Mockito**: used **Mockk** instead, but I don't have any special preference. 
- * **Detekt**: relying on **Ktlint** for linting.
-
 
 Feature tests
 -------------
