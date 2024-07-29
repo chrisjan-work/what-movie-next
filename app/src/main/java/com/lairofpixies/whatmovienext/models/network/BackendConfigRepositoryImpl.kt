@@ -18,33 +18,69 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
+import com.lairofpixies.whatmovienext.models.data.ImagePaths
+import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
 import com.lairofpixies.whatmovienext.util.toCanonicalUrl
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 class BackendConfigRepositoryImpl(
-    // TODO: fetch from movieApi
+    private val appPreferences: AppPreferences,
 //    private val movieApi: MovieApi,
-//    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val cacheExpirationTimeMillis: Long,
+    ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BackendConfigRepository {
-    private var baseUrl: String = ""
-    private var smallOption: String = ""
-    private var bigOption: String = ""
+    private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    init {
-        baseUrl = "https://image.tmdb.org/t/p/"
-        smallOption = "w154"
-        bigOption = "w500"
+    private var imagePaths: ImagePaths = ImagePaths("", "", "")
+
+    override fun initializeConfiguration() {
+        repositoryScope.launch {
+            appPreferences.imagePaths().collect { storedPaths ->
+                storedPaths?.let { imagePaths = storedPaths }
+            }
+        }
+
+        checkNow()
+    }
+
+    override fun checkNow() {
+        repositoryScope.launch {
+            val lastImagePaths = appPreferences.imagePaths().firstOrNull()
+            val lastCheckDateMillis = appPreferences.lastCheckedDateMillis(0L).firstOrNull() ?: 0L
+            val dateThreshold = System.currentTimeMillis() - cacheExpirationTimeMillis
+            if (lastImagePaths == null || lastCheckDateMillis < dateThreshold) {
+                updatePaths()
+            }
+        }
+    }
+
+    private suspend fun updatePaths(): ImagePaths {
+        val fetched =
+            ImagePaths(
+                baseUrl = "https://image.tmdb.org/t/p/",
+                thumbnailPath = "w154",
+                coverPath = "w500",
+            )
+        appPreferences.updateLastCheckedDateMillis(System.currentTimeMillis())
+        appPreferences.updateImagePaths(fetched)
+        return fetched
     }
 
     override fun getThumbnailUrl(posterPath: String?): String =
         if (!posterPath.isNullOrBlank()) {
-            "$baseUrl$smallOption$posterPath".toCanonicalUrl()
+            "${imagePaths.baseUrl}/${imagePaths.thumbnailPath}/$posterPath".toCanonicalUrl()
         } else {
             ""
         }
 
     override fun getCoverUrl(posterPath: String?): String =
         if (!posterPath.isNullOrBlank()) {
-            "$baseUrl$bigOption$posterPath".toCanonicalUrl()
+            "${imagePaths.baseUrl}/${imagePaths.coverPath}/$posterPath".toCanonicalUrl()
         } else {
             ""
         }
