@@ -25,7 +25,7 @@ import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
-// todo: fetch the genres (if necessary)
+// todo: fetch the genres
 class MovieMapper
     @Inject
     constructor(
