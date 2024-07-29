@@ -18,6 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
+import com.lairofpixies.whatmovienext.util.toCanonicalUrl
+
 class BackendConfigRepositoryImpl(
     // TODO: fetch from movieApi
 //    private val movieApi: MovieApi,
@@ -33,7 +35,17 @@ class BackendConfigRepositoryImpl(
         bigOption = "w500"
     }
 
-    override fun getThumbnailUrl(posterPath: String?): String = if (!posterPath.isNullOrBlank()) "$baseUrl$smallOption$posterPath" else ""
+    override fun getThumbnailUrl(posterPath: String?): String =
+        if (!posterPath.isNullOrBlank()) {
+            "$baseUrl$smallOption$posterPath".toCanonicalUrl()
+        } else {
+            ""
+        }
 
-    override fun getCoverUrl(posterPath: String?): String = if (!posterPath.isNullOrBlank()) "$baseUrl$bigOption$posterPath" else ""
+    override fun getCoverUrl(posterPath: String?): String =
+        if (!posterPath.isNullOrBlank()) {
+            "$baseUrl$bigOption$posterPath".toCanonicalUrl()
+        } else {
+            ""
+        }
 }
