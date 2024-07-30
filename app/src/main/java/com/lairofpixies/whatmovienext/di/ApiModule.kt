@@ -19,7 +19,6 @@
 package com.lairofpixies.whatmovienext.di
 
 import com.lairofpixies.whatmovienext.BuildConfig
-import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
@@ -28,6 +27,7 @@ import com.lairofpixies.whatmovienext.models.network.BackendConfigRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
 import com.lairofpixies.whatmovienext.models.network.MovieApi
 import com.lairofpixies.whatmovienext.models.network.RequestHeaderInterceptor
+import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module

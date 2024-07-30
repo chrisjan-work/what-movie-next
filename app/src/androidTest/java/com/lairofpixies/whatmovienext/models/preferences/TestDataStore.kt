@@ -16,17 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.datastore
+package com.lairofpixies.whatmovienext.models.preferences
 
-import com.lairofpixies.whatmovienext.models.data.ImagePaths
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 
-interface AppPreferences {
-    fun lastCheckedDateMillis(default: Long): Flow<Long>
+class TestDataStore : DataStore<Preferences> {
+    private val _data = MutableStateFlow(emptyPreferences())
 
-    suspend fun updateLastCheckedDateMillis(dateMillis: Long)
+    override val data: Flow<Preferences> = _data
 
-    fun imagePaths(): Flow<ImagePaths?>
-
-    suspend fun updateImagePaths(config: ImagePaths)
+    override suspend fun updateData(transform: suspend (Preferences) -> Preferences): Preferences {
+        val newData = transform(_data.value)
+        _data.value = newData
+        return newData
+    }
 }

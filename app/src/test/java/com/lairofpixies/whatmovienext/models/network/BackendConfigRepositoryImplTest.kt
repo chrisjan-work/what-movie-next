@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
 import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
-import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
+import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.coVerify

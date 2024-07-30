@@ -28,8 +28,8 @@ import com.lairofpixies.whatmovienext.models.database.MovieDao
 import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.MovieRepositoryImpl
-import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
-import com.lairofpixies.whatmovienext.models.datastore.AppPreferencesImpl
+import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
+import com.lairofpixies.whatmovienext.models.preferences.AppPreferencesImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
