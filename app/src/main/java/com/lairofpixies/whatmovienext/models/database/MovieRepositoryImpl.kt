@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.models.database
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +37,7 @@ import kotlinx.coroutines.launch
 
 class MovieRepositoryImpl(
     private val dao: MovieDao,
+    private val dbMapper: DbMapper,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : MovieRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
@@ -43,20 +45,26 @@ class MovieRepositoryImpl(
     override val movies: Flow<AsyncMovieInfo> =
         dao
             .getAllMovies()
-            .map { AsyncMovieInfo.fromList(it) }
-            .flowOn(ioDispatcher)
+            .map { dbMovies ->
+                dbMapper.toAsyncMovies(dbMovies)
+            }.flowOn(ioDispatcher)
 
     override val archivedMovies: Flow<AsyncMovieInfo> =
         dao
             .getArchivedMovies()
-            .map { AsyncMovieInfo.fromList(it) }
-            .flowOn(ioDispatcher)
+            .map { dbMovies ->
+                dbMapper.toAsyncMovies(dbMovies)
+            }.flowOn(ioDispatcher)
 
     override fun singleMovie(movieId: Long): StateFlow<AsyncMovieInfo> =
         dao
             .getMovie(movieId)
-            .map { it?.let { AsyncMovieInfo.Single(it) } ?: AsyncMovieInfo.Empty }
-            .stateIn(
+            .map { maybeMovie ->
+                maybeMovie
+                    ?.let { dbMapper.toMovie(it) }
+                    ?.let { AsyncMovieInfo.Single(it) }
+                    ?: AsyncMovieInfo.Empty
+            }.stateIn(
                 repositoryScope,
                 SharingStarted.Eagerly,
                 initialValue = AsyncMovieInfo.Loading,
@@ -66,7 +74,9 @@ class MovieRepositoryImpl(
         repositoryScope
             .async {
                 if (movieId != Movie.NEW_ID) {
-                    dao.fetchMovieById(movieId)
+                    dao.fetchMovieById(movieId)?.let {
+                        dbMapper.toMovie(it)
+                    }
                 } else {
                     null
                 }
@@ -75,19 +85,19 @@ class MovieRepositoryImpl(
     override suspend fun fetchMoviesByTitle(movieTitle: String): List<Movie> =
         repositoryScope
             .async {
-                dao.fetchMoviesByTitle(movieTitle)
+                dbMapper.toMovies(dao.fetchMoviesByTitle(movieTitle))
             }.await()
 
     override suspend fun addMovie(movie: Movie): Long =
         repositoryScope
             .async {
-                dao.insertMovie(movie)
+                dao.insertMovie(dbMapper.toDbMovie(movie))
             }.await()
 
     override suspend fun updateMovie(movie: Movie): Long {
         repositoryScope
             .launch {
-                dao.updateMovie(movie)
+                dao.updateMovie(dbMapper.toDbMovie(movie))
             }.join()
         return movie.id
     }
@@ -116,10 +126,11 @@ class MovieRepositoryImpl(
             }
     }
 
-    override suspend fun deleteMovie(movie: Movie) {
+    override suspend fun deleteMovie(movieId: Long) {
         repositoryScope
             .launch {
-                dao.delete(movie)
+                val dbMovie = dao.fetchMovieById(movieId)
+                dbMovie?.let { dao.delete(dbMovie) }
             }
     }
 }

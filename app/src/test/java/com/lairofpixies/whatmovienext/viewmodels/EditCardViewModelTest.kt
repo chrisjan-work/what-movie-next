@@ -364,7 +364,7 @@ class EditCardViewModelTest {
                 )
             coVerify { dbRepoMock.updateMovie(expectedMovie) }
             coVerify(exactly = 0) { dbRepoMock.addMovie(any()) }
-            coVerify(exactly = 0) { dbRepoMock.deleteMovie(movieToSave) }
+            coVerify(exactly = 0) { dbRepoMock.deleteMovie(movieToSave.id) }
         }
 
     @Test
@@ -402,7 +402,7 @@ class EditCardViewModelTest {
                     watchState = WatchState.PENDING,
                 )
             coVerify { dbRepoMock.updateMovie(expectedMovie) }
-            coVerify { dbRepoMock.deleteMovie(movieToSave) }
+            coVerify { dbRepoMock.deleteMovie(movieToSave.id) }
             coVerify(exactly = 0) { dbRepoMock.addMovie(any()) }
         }
 
