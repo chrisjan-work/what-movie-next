@@ -25,22 +25,23 @@ import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
-// todo: fetch the genres
-class MovieMapper
+class RemoteMapper
     @Inject
     constructor(
         private val configRepo: BackendConfigRepository,
     ) {
-        fun mapNetToApp(remoteMovieSummary: RemoteMovieSummary) =
-            Movie(
-                id = NEW_ID,
-                tmdbId = remoteMovieSummary.tmdbId,
-                title = remoteMovieSummary.title,
-                originalTitle = remoteMovieSummary.originalTitle,
-                year = extractYear(remoteMovieSummary.releaseDate),
-                thumbnailUrl = configRepo.getThumbnailUrl(remoteMovieSummary.posterPath),
-                coverUrl = configRepo.getCoverUrl(remoteMovieSummary.posterPath),
-            )
+        fun toMovie(remoteMovieSummary: RemoteMovieSummary): Movie =
+            with(remoteMovieSummary) {
+                Movie(
+                    id = NEW_ID,
+                    tmdbId = tmdbId,
+                    title = title,
+                    originalTitle = originalTitle,
+                    year = extractYear(releaseDate),
+                    thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
+                    coverUrl = configRepo.getCoverUrl(posterPath),
+                )
+            }
     }
 
 fun extractYear(releaseDate: String?): Int? =
