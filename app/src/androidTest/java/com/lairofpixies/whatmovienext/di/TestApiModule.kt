@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.di
 
 import com.lairofpixies.whatmovienext.BuildConfig
 import com.lairofpixies.whatmovienext.models.datastore.AppPreferences
-import com.lairofpixies.whatmovienext.models.mappers.MovieMapper
+import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
@@ -52,8 +52,8 @@ object TestApiModule {
     @Provides
     fun provideApiRepository(
         movieApi: TestMovieApi,
-        movieMapper: MovieMapper,
-    ): ApiRepository = ApiRepositoryImpl(movieApi, movieMapper, Dispatchers.IO)
+        remoteMapper: RemoteMapper,
+    ): ApiRepository = ApiRepositoryImpl(movieApi, remoteMapper, Dispatchers.IO)
 
     @Singleton
     @Provides

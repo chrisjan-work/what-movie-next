@@ -27,20 +27,20 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class MovieMapperTest {
+class RemoteMapperTest {
     private lateinit var configRepo: BackendConfigRepository
-    private lateinit var movieMapper: MovieMapper
+    private lateinit var remoteMapper: RemoteMapper
 
     @Before
     fun setUp() {
         configRepo = mockk(relaxed = true)
-        movieMapper = MovieMapper(configRepo)
+        remoteMapper = RemoteMapper(configRepo)
     }
 
     @Test
     fun `always new id`() {
         val remoteMovieSummary = RemoteMovieSummary(tmdbId = 1, title = "Anything")
-        val movie = movieMapper.mapNetToApp(remoteMovieSummary)
+        val movie = remoteMapper.toMovie(remoteMovieSummary)
         assertEquals(movie.id, Movie.NEW_ID)
     }
 
@@ -48,7 +48,7 @@ class MovieMapperTest {
     fun `copy verbatim data`() {
         val remoteMovieSummary =
             RemoteMovieSummary(tmdbId = 1, title = "Anything", originalTitle = "Irgendetwas")
-        val movie = movieMapper.mapNetToApp(remoteMovieSummary)
+        val movie = remoteMapper.toMovie(remoteMovieSummary)
         assertEquals(remoteMovieSummary.tmdbId, movie.tmdbId)
         assertEquals(remoteMovieSummary.title, movie.title)
         assertEquals(remoteMovieSummary.originalTitle, movie.originalTitle)
@@ -58,7 +58,7 @@ class MovieMapperTest {
     fun `parse year when date is valid`() {
         val remoteMovieSummary =
             RemoteMovieSummary(tmdbId = 1, title = "Anything", releaseDate = "2001-01-01")
-        val movie = movieMapper.mapNetToApp(remoteMovieSummary)
+        val movie = remoteMapper.toMovie(remoteMovieSummary)
         assertEquals(2001, movie.year)
     }
 
@@ -66,7 +66,7 @@ class MovieMapperTest {
     fun `parse year when date is invalid`() {
         val remoteMovieSummary =
             RemoteMovieSummary(tmdbId = 1, title = "Anything", releaseDate = "2021")
-        val movie = movieMapper.mapNetToApp(remoteMovieSummary)
+        val movie = remoteMapper.toMovie(remoteMovieSummary)
         assertEquals(null, movie.year)
     }
 
@@ -74,7 +74,7 @@ class MovieMapperTest {
     fun `parse year when date is missing`() {
         val remoteMovieSummary =
             RemoteMovieSummary(tmdbId = 1, title = "Anything")
-        val movie = movieMapper.mapNetToApp(remoteMovieSummary)
+        val movie = remoteMapper.toMovie(remoteMovieSummary)
         assertEquals(null, movie.year)
     }
 
@@ -91,7 +91,7 @@ class MovieMapperTest {
             RemoteMovieSummary(tmdbId = 1, title = "Anything", posterPath = "abcd")
 
         // When
-        val movie = movieMapper.mapNetToApp(remoteMovieSummary)
+        val movie = remoteMapper.toMovie(remoteMovieSummary)
 
         // Then
         assertEquals("localhost/thumb/abcd", movie.thumbnailUrl)
