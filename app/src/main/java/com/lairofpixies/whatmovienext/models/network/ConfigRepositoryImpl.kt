@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
+import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.lairofpixies.whatmovienext.util.toCanonicalUrl
 import kotlinx.coroutines.CoroutineDispatcher
@@ -29,13 +29,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class BackendConfigRepositoryImpl(
+class ConfigRepositoryImpl(
     private val appPreferences: AppPreferences,
-    private val movieApi: MovieApi,
+    private val tmdbApi: TmdbApi,
     private val connectivityTracker: ConnectivityTracker,
     private val cacheExpirationTimeMillis: Long,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BackendConfigRepository {
+) : ConfigRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
     private var imagePaths: ImagePaths = ImagePaths("", "", "")
@@ -66,13 +66,13 @@ class BackendConfigRepositoryImpl(
     }
 
     private suspend fun updatePaths() {
-        parseConfiguration(movieApi.getConfiguration())?.let { fetched ->
+        parseConfiguration(tmdbApi.getConfiguration())?.let { fetched ->
             appPreferences.updateLastCheckedDateMillis(System.currentTimeMillis())
             appPreferences.updateImagePaths(fetched)
         }
     }
 
-    private fun parseConfiguration(configuration: RemoteConfiguration?): ImagePaths? =
+    private fun parseConfiguration(configuration: TmdbConfiguration?): ImagePaths? =
         configuration?.let {
             with(it.images) {
                 val small: String

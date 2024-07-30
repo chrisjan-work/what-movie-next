@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
@@ -32,7 +32,7 @@ import org.junit.Test
 import javax.inject.Inject
 
 @HiltAndroidTest
-class MovieApiTest {
+class TmdbApiTest {
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
 
@@ -40,7 +40,7 @@ class MovieApiTest {
     lateinit var mockWebServer: MockWebServer
 
     @Inject
-    lateinit var movieApi: MovieApi
+    lateinit var tmdbApi: TmdbApi
 
     @Before
     fun setUp() {
@@ -65,13 +65,13 @@ class MovieApiTest {
             mockWebServer.enqueue(mockResponse)
 
             // When
-            val result = movieApi.findMoviesByTitle("example title")
+            val result = tmdbApi.findMoviesByTitle("example title")
 
             // Then
             val expectedMovies =
                 listOf(
-                    RemoteMovieSummary(tmdbId = 1, title = "example title"),
-                    RemoteMovieSummary(tmdbId = 3, title = "example title 2: the revenge"),
+                    TmdbMovieBasic(tmdbId = 1, title = "example title"),
+                    TmdbMovieBasic(tmdbId = 3, title = "example title 2: the revenge"),
                 )
             assertEquals(expectedMovies, result.results)
         }
@@ -89,7 +89,7 @@ class MovieApiTest {
             mockWebServer.enqueue(mockResponse)
 
             // When
-            val result = movieApi.getConfiguration()
+            val result = tmdbApi.getConfiguration()
 
             // Then
             val expectedSizes = listOf("w92", "w154", "w780")

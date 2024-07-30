@@ -16,23 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.data.remote
+package com.lairofpixies.whatmovienext.models.network.data
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+// TODO: deal with the pagination
 @JsonClass(generateAdapter = true)
-data class RemoteMovieSummary(
-    @Json(name = "id")
-    val tmdbId: Long,
-    @Json(name = "title")
-    val title: String,
-    @Json(name = "original_title")
-    val originalTitle: String = "",
-    @Json(name = "release_date")
-    val releaseDate: String? = null,
-    @Json(name = "poster_path")
-    val posterPath: String? = null,
-    @Json(name = "genre_ids")
-    val genreIds: List<Int> = emptyList(),
+data class TmdbSearchResults(
+    @Json(name = "page")
+    val page: Int = 1,
+    @Json(name = "total_pages")
+    val totalPages: Int = 1,
+    @Json(name = "results")
+    val results: List<TmdbMovieBasic>,
 )

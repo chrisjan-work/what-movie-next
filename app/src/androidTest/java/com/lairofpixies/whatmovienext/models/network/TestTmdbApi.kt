@@ -18,15 +18,15 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
+import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
+import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
 import javax.inject.Inject
 
-class TestMovieApi
+class TestTmdbApi
     @Inject
-    constructor() : MovieApi {
-        private lateinit var fakeResponse: () -> List<RemoteMovieSummary>
+    constructor() : TmdbApi {
+        private lateinit var fakeResponse: () -> List<TmdbMovieBasic>
 
         init {
             clearFakeResponse()
@@ -36,36 +36,36 @@ class TestMovieApi
             fakeResponse = { emptyList() }
         }
 
-        fun replaceFakeResponse(newFakeResponse: () -> List<RemoteMovieSummary>) {
+        fun replaceFakeResponse(newFakeResponse: () -> List<TmdbMovieBasic>) {
             fakeResponse = newFakeResponse
         }
 
-        fun appendToFakeResponse(vararg movie: RemoteMovieSummary) {
+        fun appendToFakeResponse(vararg movie: TmdbMovieBasic) {
             val newList = fakeResponse() + movie
             fakeResponse = { newList }
         }
 
         enum class FakeResponse(
-            val getIt: () -> List<RemoteMovieSummary>,
+            val getIt: () -> List<TmdbMovieBasic>,
         ) {
-            Single({ listOf(RemoteMovieSummary(tmdbId = 1, title = "Fake Movie")) }),
+            Single({ listOf(TmdbMovieBasic(tmdbId = 1, title = "Fake Movie")) }),
             Multiple({
                 listOf(
-                    RemoteMovieSummary(tmdbId = 1, title = "Fake Movie 1"),
-                    RemoteMovieSummary(tmdbId = 2, title = "Fake Movie 2"),
-                    RemoteMovieSummary(tmdbId = 3, title = "Fake Movie 3"),
+                    TmdbMovieBasic(tmdbId = 1, title = "Fake Movie 1"),
+                    TmdbMovieBasic(tmdbId = 2, title = "Fake Movie 2"),
+                    TmdbMovieBasic(tmdbId = 3, title = "Fake Movie 3"),
                 )
             }),
             Empty({ emptyList() }),
             Error({ throw Exception() }),
         }
 
-        override suspend fun findMoviesByTitle(escapedTitle: String): RemoteSearchResponse = RemoteSearchResponse(results = fakeResponse())
+        override suspend fun findMoviesByTitle(escapedTitle: String): TmdbSearchResults = TmdbSearchResults(results = fakeResponse())
 
-        override suspend fun getConfiguration(): RemoteConfiguration =
-            RemoteConfiguration(
+        override suspend fun getConfiguration(): TmdbConfiguration =
+            TmdbConfiguration(
                 images =
-                    RemoteConfiguration.ImagesConfiguration(
+                    TmdbConfiguration.Images(
                         url = "localhost",
                         sizes = listOf("microscopic", "unremarkable", "humongous"),
                     ),

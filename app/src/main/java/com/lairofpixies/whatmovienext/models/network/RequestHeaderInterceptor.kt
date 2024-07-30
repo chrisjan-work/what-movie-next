@@ -28,7 +28,7 @@ class RequestHeaderInterceptor : Interceptor {
 
     private fun Request.injectHeaders() =
         newBuilder()
-            .header("Authorization", "Bearer ${BuildConfig.apitoken}")
-            .header("User-Agent", BuildConfig.useragent)
+            .header("Authorization", "Bearer ${BuildConfig.tmdbtoken}")
+            .header("User-Agent", BuildConfig.tmdbuseragent)
             .build()
 }

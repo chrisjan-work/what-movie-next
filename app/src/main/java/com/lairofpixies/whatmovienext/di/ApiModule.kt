@@ -22,11 +22,11 @@ import com.lairofpixies.whatmovienext.BuildConfig
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
-import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
-import com.lairofpixies.whatmovienext.models.network.BackendConfigRepositoryImpl
+import com.lairofpixies.whatmovienext.models.network.ConfigRepository
+import com.lairofpixies.whatmovienext.models.network.ConfigRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
-import com.lairofpixies.whatmovienext.models.network.MovieApi
 import com.lairofpixies.whatmovienext.models.network.RequestHeaderInterceptor
+import com.lairofpixies.whatmovienext.models.network.TmdbApi
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -45,11 +45,11 @@ import javax.inject.Singleton
 object ApiModule {
     @Provides
     fun provideApiRepository(
-        movieApi: MovieApi,
+        tmdbApi: TmdbApi,
         remoteMapper: RemoteMapper,
     ): ApiRepository =
         ApiRepositoryImpl(
-            movieApi,
+            tmdbApi,
             remoteMapper,
             Dispatchers.IO,
         )
@@ -64,7 +64,7 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideMovieApi(okHttpClient: OkHttpClient): MovieApi {
+    fun provideMovieApi(okHttpClient: OkHttpClient): TmdbApi {
         val moshi =
             Moshi
                 .Builder()
@@ -73,23 +73,23 @@ object ApiModule {
 
         return Retrofit
             .Builder()
-            .baseUrl(BuildConfig.apiurl)
+            .baseUrl(BuildConfig.tmdburl)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .client(okHttpClient)
             .build()
-            .create(MovieApi::class.java)
+            .create(TmdbApi::class.java)
     }
 
     @Provides
     @Singleton
     fun provideConfigRepository(
         appPreferences: AppPreferences,
-        movieApi: MovieApi,
+        tmdbApi: TmdbApi,
         connectivityTracker: ConnectivityTracker,
-    ): BackendConfigRepository =
-        BackendConfigRepositoryImpl(
+    ): ConfigRepository =
+        ConfigRepositoryImpl(
             appPreferences = appPreferences,
-            movieApi = movieApi,
+            tmdbApi = tmdbApi,
             connectivityTracker = connectivityTracker,
             cacheExpirationTimeMillis = BuildConfig.CACHE_EXPIRATION_TIME_MILLIS,
             ioDispatcher = Dispatchers.IO,

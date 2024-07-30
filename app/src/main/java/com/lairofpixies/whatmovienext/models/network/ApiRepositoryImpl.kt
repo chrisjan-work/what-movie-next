@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import retrofit2.HttpException
 
 class ApiRepositoryImpl(
-    private val movieApi: MovieApi,
+    private val tmdbApi: TmdbApi,
     private val remoteMapper: RemoteMapper,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ApiRepository {
@@ -44,7 +44,7 @@ class ApiRepositoryImpl(
                 val remoteMovies =
                     repositoryScope
                         .async {
-                            movieApi.findMoviesByTitle(escapeForQuery(title))
+                            tmdbApi.findMoviesByTitle(escapeForQuery(title))
                         }.await()
 
                 val asyncMovieInfo =

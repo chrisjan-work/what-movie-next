@@ -19,8 +19,8 @@
 package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
-import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
+import com.lairofpixies.whatmovienext.models.network.ConfigRepository
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -28,7 +28,7 @@ import org.junit.Before
 import org.junit.Test
 
 class RemoteMapperTest {
-    private lateinit var configRepo: BackendConfigRepository
+    private lateinit var configRepo: ConfigRepository
     private lateinit var remoteMapper: RemoteMapper
 
     @Before
@@ -39,42 +39,42 @@ class RemoteMapperTest {
 
     @Test
     fun `always new id`() {
-        val remoteMovieSummary = RemoteMovieSummary(tmdbId = 1, title = "Anything")
-        val movie = remoteMapper.toMovie(remoteMovieSummary)
+        val tmdbMovieBasic = TmdbMovieBasic(tmdbId = 1, title = "Anything")
+        val movie = remoteMapper.toMovie(tmdbMovieBasic)
         assertEquals(movie.id, Movie.NEW_ID)
     }
 
     @Test
     fun `copy verbatim data`() {
-        val remoteMovieSummary =
-            RemoteMovieSummary(tmdbId = 1, title = "Anything", originalTitle = "Irgendetwas")
-        val movie = remoteMapper.toMovie(remoteMovieSummary)
-        assertEquals(remoteMovieSummary.tmdbId, movie.tmdbId)
-        assertEquals(remoteMovieSummary.title, movie.title)
-        assertEquals(remoteMovieSummary.originalTitle, movie.originalTitle)
+        val tmdbMovieBasic =
+            TmdbMovieBasic(tmdbId = 1, title = "Anything", originalTitle = "Irgendetwas")
+        val movie = remoteMapper.toMovie(tmdbMovieBasic)
+        assertEquals(tmdbMovieBasic.tmdbId, movie.tmdbId)
+        assertEquals(tmdbMovieBasic.title, movie.title)
+        assertEquals(tmdbMovieBasic.originalTitle, movie.originalTitle)
     }
 
     @Test
     fun `parse year when date is valid`() {
-        val remoteMovieSummary =
-            RemoteMovieSummary(tmdbId = 1, title = "Anything", releaseDate = "2001-01-01")
-        val movie = remoteMapper.toMovie(remoteMovieSummary)
+        val tmdbMovieBasic =
+            TmdbMovieBasic(tmdbId = 1, title = "Anything", releaseDate = "2001-01-01")
+        val movie = remoteMapper.toMovie(tmdbMovieBasic)
         assertEquals(2001, movie.year)
     }
 
     @Test
     fun `parse year when date is invalid`() {
-        val remoteMovieSummary =
-            RemoteMovieSummary(tmdbId = 1, title = "Anything", releaseDate = "2021")
-        val movie = remoteMapper.toMovie(remoteMovieSummary)
+        val tmdbMovieBasic =
+            TmdbMovieBasic(tmdbId = 1, title = "Anything", releaseDate = "2021")
+        val movie = remoteMapper.toMovie(tmdbMovieBasic)
         assertEquals(null, movie.year)
     }
 
     @Test
     fun `parse year when date is missing`() {
-        val remoteMovieSummary =
-            RemoteMovieSummary(tmdbId = 1, title = "Anything")
-        val movie = remoteMapper.toMovie(remoteMovieSummary)
+        val tmdbMovieBasic =
+            TmdbMovieBasic(tmdbId = 1, title = "Anything")
+        val movie = remoteMapper.toMovie(tmdbMovieBasic)
         assertEquals(null, movie.year)
     }
 
@@ -87,11 +87,11 @@ class RemoteMapperTest {
         every { configRepo.getCoverUrl(any()) } answers {
             "localhost/cover/${firstArg<String>()}"
         }
-        val remoteMovieSummary =
-            RemoteMovieSummary(tmdbId = 1, title = "Anything", posterPath = "abcd")
+        val tmdbMovieBasic =
+            TmdbMovieBasic(tmdbId = 1, title = "Anything", posterPath = "abcd")
 
         // When
-        val movie = remoteMapper.toMovie(remoteMovieSummary)
+        val movie = remoteMapper.toMovie(tmdbMovieBasic)
 
         // Then
         assertEquals("localhost/thumb/abcd", movie.thumbnailUrl)
