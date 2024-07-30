@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext
 
 import android.app.Application
-import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
+import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
@@ -27,11 +27,11 @@ import javax.inject.Inject
 @HiltAndroidApp
 class MainApplication : Application() {
     @Inject
-    lateinit var backendConfigRepository: BackendConfigRepository
+    lateinit var configRepository: ConfigRepository
 
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-        backendConfigRepository.initializeConfiguration()
+        configRepository.initializeConfiguration()
     }
 }

@@ -16,14 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.network
+package com.lairofpixies.whatmovienext.models.network.data
 
-interface BackendConfigRepository {
-    fun initializeConfiguration()
+import com.squareup.moshi.JsonClass
 
-    fun checkNow()
-
-    fun getThumbnailUrl(posterPath: String?): String
-
-    fun getCoverUrl(posterPath: String?): String
-}
+@JsonClass(generateAdapter = true)
+data class TmdbMovieDetailed(
+    val title: String,
+)

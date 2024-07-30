@@ -22,11 +22,11 @@ import com.lairofpixies.whatmovienext.BuildConfig
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
-import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
-import com.lairofpixies.whatmovienext.models.network.BackendConfigRepositoryImpl
+import com.lairofpixies.whatmovienext.models.network.ConfigRepository
+import com.lairofpixies.whatmovienext.models.network.ConfigRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
-import com.lairofpixies.whatmovienext.models.network.MovieApi
-import com.lairofpixies.whatmovienext.models.network.TestMovieApi
+import com.lairofpixies.whatmovienext.models.network.TestTmdbApi
+import com.lairofpixies.whatmovienext.models.network.TmdbApi
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -51,13 +51,13 @@ import javax.inject.Singleton
 object TestApiModule {
     @Provides
     fun provideApiRepository(
-        movieApi: TestMovieApi,
+        movieApi: TestTmdbApi,
         remoteMapper: RemoteMapper,
     ): ApiRepository = ApiRepositoryImpl(movieApi, remoteMapper, Dispatchers.IO)
 
     @Singleton
     @Provides
-    fun provideTestMovieApi() = TestMovieApi()
+    fun provideTestMovieApi() = TestTmdbApi()
 
     @Provides
     @Singleton
@@ -104,7 +104,7 @@ object TestApiModule {
     fun provideMovieApi(
         mockWebServer: MockWebServer,
         okHttpClient: OkHttpClient,
-    ): MovieApi {
+    ): TmdbApi {
         val moshi =
             Moshi
                 .Builder()
@@ -117,19 +117,19 @@ object TestApiModule {
             .baseUrl(mockWebServer.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-            .create(MovieApi::class.java)
+            .create(TmdbApi::class.java)
     }
 
     @Provides
     @Singleton
     fun provideConfigRepository(
         appPreferences: AppPreferences,
-        movieApi: TestMovieApi,
+        movieApi: TestTmdbApi,
         connectivityTracker: ConnectivityTracker,
-    ): BackendConfigRepository =
-        BackendConfigRepositoryImpl(
+    ): ConfigRepository =
+        ConfigRepositoryImpl(
             appPreferences = appPreferences,
-            movieApi = movieApi,
+            tmdbApi = movieApi,
             connectivityTracker = connectivityTracker,
             cacheExpirationTimeMillis = BuildConfig.CACHE_EXPIRATION_TIME_MILLIS,
             ioDispatcher = Dispatchers.IO,

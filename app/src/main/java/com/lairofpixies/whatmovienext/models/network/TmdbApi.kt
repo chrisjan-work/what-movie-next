@@ -16,21 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.data.remote
+package com.lairofpixies.whatmovienext.models.network
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
+import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-@JsonClass(generateAdapter = true)
-data class RemoteConfiguration(
-    @Json(name = "images")
-    val images: ImagesConfiguration,
-) {
-    @JsonClass(generateAdapter = true)
-    data class ImagesConfiguration(
-        @Json(name = "secure_base_url")
-        val url: String,
-        @Json(name = "poster_sizes")
-        val sizes: List<String>,
-    )
+interface TmdbApi {
+    @GET("search/movie")
+    suspend fun findMoviesByTitle(
+        @Query("query") escapedTitle: String,
+    ): TmdbSearchResults
+
+    @GET("configuration")
+    suspend fun getConfiguration(): TmdbConfiguration
 }

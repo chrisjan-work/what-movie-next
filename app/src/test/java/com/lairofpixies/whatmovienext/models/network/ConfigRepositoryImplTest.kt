@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
+import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import io.mockk.clearMocks
 import io.mockk.coEvery
@@ -36,37 +36,37 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class BackendConfigRepositoryImplTest {
+class ConfigRepositoryImplTest {
     private lateinit var appPreferences: AppPreferences
-    private lateinit var movieApi: MovieApi
+    private lateinit var tmdbApi: TmdbApi
     private lateinit var connectivityTracker: ConnectivityTracker
-    private lateinit var backendConfigRepository: BackendConfigRepository
+    private lateinit var configRepository: ConfigRepository
 
     @Before
     fun setUp() {
-        movieApi = mockk(relaxed = true)
+        tmdbApi = mockk(relaxed = true)
         appPreferences = mockk(relaxed = true)
         connectivityTracker = mockk(relaxed = true)
 
-        backendConfigRepository =
-            BackendConfigRepositoryImpl(
+        configRepository =
+            ConfigRepositoryImpl(
                 appPreferences = appPreferences,
-                movieApi = movieApi,
+                tmdbApi = tmdbApi,
                 connectivityTracker = connectivityTracker,
                 cacheExpirationTimeMillis = 1000L,
                 ioDispatcher = UnconfinedTestDispatcher(),
             )
         // Feed valid paths by default
-        coEvery { movieApi.getConfiguration() } returns testConfiguration()
+        coEvery { tmdbApi.getConfiguration() } returns testConfiguration()
         every { appPreferences.imagePaths() } returns flowOf(testStoredPaths())
         every { connectivityTracker.isOnline() } returns flowOf(true)
-        backendConfigRepository.initializeConfiguration()
+        configRepository.initializeConfiguration()
     }
 
     private fun testConfiguration() =
-        RemoteConfiguration(
+        TmdbConfiguration(
             images =
-                RemoteConfiguration.ImagesConfiguration(
+                TmdbConfiguration.Images(
                     url = "somewhere",
                     sizes = listOf("fixed"),
                 ),
@@ -86,7 +86,7 @@ class BackendConfigRepositoryImplTest {
             every { appPreferences.imagePaths() } returns flowOf(null)
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(System.currentTimeMillis())
             // When
-            backendConfigRepository.checkNow()
+            configRepository.checkNow()
             // Then
             coVerify {
                 appPreferences.updateLastCheckedDateMillis(any())
@@ -101,7 +101,7 @@ class BackendConfigRepositoryImplTest {
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(0L)
 
             // When
-            backendConfigRepository.checkNow()
+            configRepository.checkNow()
             // Then
             coVerify {
                 appPreferences.updateLastCheckedDateMillis(any())
@@ -117,7 +117,7 @@ class BackendConfigRepositoryImplTest {
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(System.currentTimeMillis())
 
             // When
-            backendConfigRepository.checkNow()
+            configRepository.checkNow()
             // Then
             coVerify {
                 appPreferences.updateLastCheckedDateMillis(any())
@@ -134,7 +134,7 @@ class BackendConfigRepositoryImplTest {
             every { connectivityTracker.isOnline() } returns flowOf(false)
 
             // When
-            backendConfigRepository.initializeConfiguration()
+            configRepository.initializeConfiguration()
 
             // Then
             coVerify(exactly = 0) { appPreferences.updateImagePaths(any()) }
@@ -149,7 +149,7 @@ class BackendConfigRepositoryImplTest {
             val connection = MutableStateFlow(false)
             every { connectivityTracker.isOnline() } returns connection
 
-            backendConfigRepository.initializeConfiguration()
+            configRepository.initializeConfiguration()
             coVerify(exactly = 0) { appPreferences.updateImagePaths(any()) }
 
             // When
@@ -161,13 +161,13 @@ class BackendConfigRepositoryImplTest {
 
     @Test
     fun getThumbnailUrl() {
-        val url = backendConfigRepository.getThumbnailUrl("/test")
+        val url = configRepository.getThumbnailUrl("/test")
         assertEquals("https://image.tmdb.org/t/p/w154/test", url)
     }
 
     @Test
     fun getCoverUrl() {
-        val url = backendConfigRepository.getCoverUrl("/test")
+        val url = configRepository.getCoverUrl("/test")
         assertEquals("https://image.tmdb.org/t/p/w500/test", url)
     }
 }

@@ -18,17 +18,12 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteConfiguration
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteSearchResponse
-import retrofit2.http.GET
-import retrofit2.http.Query
+interface ConfigRepository {
+    fun initializeConfiguration()
 
-interface MovieApi {
-    @GET("search/movie")
-    suspend fun findMoviesByTitle(
-        @Query("query") escapedTitle: String,
-    ): RemoteSearchResponse
+    fun checkNow()
 
-    @GET("configuration")
-    suspend fun getConfiguration(): RemoteConfiguration
+    fun getThumbnailUrl(posterPath: String?): String
+
+    fun getCoverUrl(posterPath: String?): String
 }

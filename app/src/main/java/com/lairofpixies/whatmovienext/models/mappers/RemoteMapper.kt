@@ -20,18 +20,18 @@ package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Movie.Companion.NEW_ID
-import com.lairofpixies.whatmovienext.models.data.remote.RemoteMovieSummary
-import com.lairofpixies.whatmovienext.models.network.BackendConfigRepository
+import com.lairofpixies.whatmovienext.models.network.ConfigRepository
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
 class RemoteMapper
     @Inject
     constructor(
-        private val configRepo: BackendConfigRepository,
+        private val configRepo: ConfigRepository,
     ) {
-        fun toMovie(remoteMovieSummary: RemoteMovieSummary): Movie =
-            with(remoteMovieSummary) {
+        fun toMovie(tmdbMovieBasic: TmdbMovieBasic): Movie =
+            with(tmdbMovieBasic) {
                 Movie(
                     id = NEW_ID,
                     tmdbId = tmdbId,
