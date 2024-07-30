@@ -26,8 +26,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
@@ -52,7 +52,7 @@ class MovieListStepDefs(
         runBlocking {
             testContext.appDatabase
                 .movieDao()
-                .insertMovie(Movie(title = movieTitle, watchState = WatchState.PENDING))
+                .insertMovie(DbMovie(title = movieTitle, watchState = WatchState.PENDING))
         }
         composeRule.waitForIdle()
     }
@@ -62,7 +62,7 @@ class MovieListStepDefs(
         runBlocking {
             testContext.appDatabase
                 .movieDao()
-                .insertMovie(Movie(title = movieTitle, watchState = WatchState.WATCHED))
+                .insertMovie(DbMovie(title = movieTitle, watchState = WatchState.WATCHED))
         }
         composeRule.waitForIdle()
     }
@@ -170,7 +170,7 @@ class MovieListStepDefs(
                 .map { index ->
                     titlePattern.replace(indexPattern, index.toString())
                 }.map {
-                    Movie(title = it)
+                    DbMovie(title = it)
                 }
 
         runBlocking {

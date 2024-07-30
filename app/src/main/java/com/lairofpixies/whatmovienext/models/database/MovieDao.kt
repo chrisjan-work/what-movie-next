@@ -23,48 +23,48 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
-    @Query("SELECT * FROM movie WHERE isArchived = 0")
-    fun getAllMovies(): Flow<List<Movie>>
+    @Query("SELECT * FROM dbmovie WHERE isArchived = 0")
+    fun getAllMovies(): Flow<List<DbMovie>>
 
-    @Query("SELECT * FROM movie WHERE id = :id")
-    fun getMovie(id: Long): Flow<Movie?>
+    @Query("SELECT * FROM dbmovie WHERE id = :id")
+    fun getMovie(id: Long): Flow<DbMovie?>
 
-    @Query("SELECT * FROM movie WHERE id = :id")
-    suspend fun fetchMovieById(id: Long): Movie?
+    @Query("SELECT * FROM dbmovie WHERE id = :id")
+    suspend fun fetchMovieById(id: Long): DbMovie?
 
-    @Query("SELECT * FROM movie WHERE UPPER(title) = UPPER(:title)")
-    suspend fun fetchMoviesByTitle(title: String): List<Movie>
+    @Query("SELECT * FROM dbmovie WHERE UPPER(title) = UPPER(:title)")
+    suspend fun fetchMoviesByTitle(title: String): List<DbMovie>
 
-    @Query("SELECT * FROM movie WHERE isArchived = 1")
-    fun getArchivedMovies(): Flow<List<Movie>>
-
-    @Insert
-    suspend fun insertMovie(movie: Movie): Long
+    @Query("SELECT * FROM dbmovie WHERE isArchived = 1")
+    fun getArchivedMovies(): Flow<List<DbMovie>>
 
     @Insert
-    suspend fun insertMovies(movies: List<Movie>)
+    suspend fun insertMovie(movie: DbMovie): Long
+
+    @Insert
+    suspend fun insertMovies(movies: List<DbMovie>)
 
     @Delete
-    suspend fun delete(movie: Movie)
+    suspend fun delete(movie: DbMovie)
 
     @Update
-    suspend fun updateMovie(movie: Movie)
+    suspend fun updateMovie(movie: DbMovie)
 
-    @Query("UPDATE movie SET watchState = :watchState WHERE id = :id")
+    @Query("UPDATE dbmovie SET watchState = :watchState WHERE id = :id")
     suspend fun updateWatchState(
         id: Long,
         watchState: WatchState,
     )
 
-    @Query("UPDATE movie SET isArchived = 1 WHERE id = :id")
+    @Query("UPDATE dbmovie SET isArchived = 1 WHERE id = :id")
     suspend fun archive(id: Long)
 
-    @Query("UPDATE movie SET isArchived = 0 WHERE id = :id")
+    @Query("UPDATE dbmovie SET isArchived = 0 WHERE id = :id")
     suspend fun restore(id: Long)
 }

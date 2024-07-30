@@ -18,12 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.models.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity
 data class Movie(
-    @PrimaryKey(autoGenerate = true) val id: Long = NEW_ID,
+    val id: Long = NEW_ID,
     val title: String,
     val tmdbId: Long? = null,
     val imdbId: Long? = null,
@@ -32,8 +28,7 @@ data class Movie(
     val thumbnailUrl: String = "",
     val coverUrl: String = "",
     val summary: String = "",
-    // TODO
-//    val genres: List<String> = emptyList(),
+    val genres: List<String> = emptyList(),
     val watchState: WatchState = WatchState.PENDING,
     val isArchived: Boolean = false,
 ) {

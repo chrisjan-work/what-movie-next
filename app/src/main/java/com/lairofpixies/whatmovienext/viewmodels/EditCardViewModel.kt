@@ -134,7 +134,7 @@ class EditCardViewModel
                                 viewModelScope.launch {
                                     val movieToUpdate = movie.copy(id = duplicateMovie.id)
                                     if (isMovieAlreadyInDb) {
-                                        movieRepo.deleteMovie(movie)
+                                        movieRepo.deleteMovie(movie.id)
                                     }
                                     onSuccess(updateMovieInDb(movieToUpdate))
                                 }

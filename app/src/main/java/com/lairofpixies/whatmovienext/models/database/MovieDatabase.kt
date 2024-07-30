@@ -20,9 +20,9 @@ package com.lairofpixies.whatmovienext.models.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 
-@Database(entities = [Movie::class], version = 1, exportSchema = false)
+@Database(entities = [DbMovie::class], version = 1, exportSchema = false)
 abstract class MovieDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
 }

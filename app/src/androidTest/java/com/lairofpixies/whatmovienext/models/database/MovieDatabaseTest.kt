@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
@@ -60,7 +61,7 @@ class MovieDatabaseTest {
 
             // When we insert a movie
             val movie =
-                Movie(
+                DbMovie(
                     id = 10,
                     title = "Casino",
                     watchState = WatchState.PENDING,
@@ -80,17 +81,17 @@ class MovieDatabaseTest {
             // When we insert some movies
             val movies =
                 listOf(
-                    Movie(
+                    DbMovie(
                         id = 1,
                         title = "Someone flew over the cuckoo's nest",
                         watchState = WatchState.PENDING,
                     ),
-                    Movie(
+                    DbMovie(
                         id = 2,
                         title = "Watchmen",
                         watchState = WatchState.PENDING,
                     ),
-                    Movie(
+                    DbMovie(
                         id = 3,
                         title = "A Beautiful Mind",
                         watchState = WatchState.PENDING,
@@ -108,7 +109,7 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             assert(dao.getAllMovies().first().isEmpty())
-            val movie = Movie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+            val movie = DbMovie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
             dao.insertMovie(movie)
 
             // When we remove it
@@ -122,7 +123,7 @@ class MovieDatabaseTest {
     fun `update movie details`() =
         runTest {
             // Given a database with a single movie
-            val movie = Movie(id = 9, title = "Stargate", watchState = WatchState.PENDING)
+            val movie = DbMovie(id = 9, title = "Stargate", watchState = WatchState.PENDING)
             dao.insertMovie(movie)
 
             // When updating the movie details
@@ -143,7 +144,7 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             assert(dao.getAllMovies().first().isEmpty())
-            val movie = Movie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+            val movie = DbMovie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
             dao.insertMovie(movie)
 
             // When setting the movie to watched
@@ -165,7 +166,7 @@ class MovieDatabaseTest {
             // Given a database with a single movie
             assert(dao.getAllMovies().first().isEmpty())
             val movie =
-                Movie(
+                DbMovie(
                     id = 1,
                     title = "The Wizard of Oz",
                     watchState = WatchState.PENDING,
@@ -188,7 +189,7 @@ class MovieDatabaseTest {
     fun `fetch single movie by id`() =
         runTest {
             // Given a database with a single movie
-            val movie = Movie(id = 11, title = "The Searchers")
+            val movie = DbMovie(id = 11, title = "The Searchers")
             dao.insertMovie(movie)
 
             // When fetching the movie by id
@@ -206,9 +207,9 @@ class MovieDatabaseTest {
             // Given a database with three movies, but one has a duplicated title
             val movies =
                 listOf(
-                    Movie(id = 1, title = "The Godfather"),
-                    Movie(id = 2, title = "The Godfather II"),
-                    Movie(id = 3, title = "The Godfather II"),
+                    DbMovie(id = 1, title = "The Godfather"),
+                    DbMovie(id = 2, title = "The Godfather II"),
+                    DbMovie(id = 3, title = "The Godfather II"),
                 )
             dao.insertMovies(movies)
 
@@ -227,7 +228,7 @@ class MovieDatabaseTest {
     fun `fetch movies by title is case insensitive`() =
         runTest {
             // Given a database with a single movie
-            val movie = Movie(id = 1, title = "AbCd")
+            val movie = DbMovie(id = 1, title = "AbCd")
             dao.insertMovie(movie)
 
             // When fetching the movies by title with different case
@@ -245,7 +246,7 @@ class MovieDatabaseTest {
     fun `restore archived movies`() =
         runTest {
             // Given a database with an archived movie
-            val movie = Movie(id = 1, title = "The Rum Diary")
+            val movie = DbMovie(id = 1, title = "The Rum Diary")
             dao.insertMovie(movie)
             dao.archive(movie.id)
 
@@ -261,7 +262,7 @@ class MovieDatabaseTest {
     fun `delete archived movies`() =
         runTest {
             // Given a database with an archived movie
-            val movie = Movie(id = 1, title = "The Rum Diary")
+            val movie = DbMovie(id = 1, title = "The Rum Diary")
             dao.insertMovie(movie)
             dao.archive(movie.id)
 

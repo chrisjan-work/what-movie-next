@@ -16,40 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.database
+package com.lairofpixies.whatmovienext.models.database.data
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
 
-interface MovieRepository {
-    // read
-    val movies: Flow<AsyncMovieInfo>
-
-    val archivedMovies: Flow<AsyncMovieInfo>
-
-    fun singleMovie(movieId: Long): StateFlow<AsyncMovieInfo>
-
-    suspend fun fetchMovieById(movieId: Long): Movie?
-
-    suspend fun fetchMoviesByTitle(movieTitle: String): List<Movie>
-
-    // write
-    suspend fun addMovie(movie: Movie): Long
-
-    suspend fun updateMovie(movie: Movie): Long
-
-    suspend fun setWatchState(
-        movieId: Long,
-        watchState: WatchState,
-    )
-
-    // delete
-    suspend fun archiveMovie(movieId: Long)
-
-    suspend fun restoreMovie(movieId: Long)
-
-    suspend fun deleteMovie(movieId: Long)
-}
+@Entity
+data class DbMovie(
+    @PrimaryKey(autoGenerate = true) val id: Long = Movie.NEW_ID,
+    val title: String,
+    val tmdbId: Long? = null,
+    val imdbId: Long? = null,
+    val originalTitle: String = "",
+    val year: Int? = null,
+    val thumbnailUrl: String = "",
+    val coverUrl: String = "",
+    val summary: String = "",
+    val watchState: WatchState = WatchState.PENDING,
+    val isArchived: Boolean = false,
+)

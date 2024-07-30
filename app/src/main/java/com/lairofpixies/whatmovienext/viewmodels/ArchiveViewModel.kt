@@ -71,7 +71,7 @@ class ArchiveViewModel
                 PopupInfo.ConfirmDeletion {
                     viewModelScope.launch {
                         selection.value.forEach {
-                            repo.deleteMovie(it)
+                            repo.deleteMovie(it.id)
                         }
                     }
                     _selection.value = emptySet()

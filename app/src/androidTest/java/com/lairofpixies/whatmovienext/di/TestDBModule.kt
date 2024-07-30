@@ -26,6 +26,7 @@ import com.lairofpixies.whatmovienext.models.database.MovieDao
 import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.MovieRepositoryImpl
+import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferencesImpl
 import com.lairofpixies.whatmovienext.models.preferences.TestDataStore
@@ -34,6 +35,7 @@ import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
@@ -43,7 +45,10 @@ import javax.inject.Singleton
 )
 object TestDBModule {
     @Provides
-    fun provideMovieRepository(movieDao: MovieDao): MovieRepository = MovieRepositoryImpl(movieDao)
+    fun provideMovieRepository(
+        movieDao: MovieDao,
+        dbMapper: DbMapper,
+    ): MovieRepository = MovieRepositoryImpl(movieDao, dbMapper, ioDispatcher = Dispatchers.IO)
 
     @Provides
     @Singleton
