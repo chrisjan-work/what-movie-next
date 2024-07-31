@@ -16,16 +16,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.database
+package com.lairofpixies.whatmovienext.models.database.data
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
-import com.lairofpixies.whatmovienext.models.database.data.DbMovie
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Database(entities = [DbMovie::class, DbGenre::class], version = 1, exportSchema = false)
-abstract class MovieDatabase : RoomDatabase() {
-    abstract fun movieDao(): MovieDao
-
-    abstract fun genreDao(): GenreDao
+@Entity
+data class DbGenre(
+    @PrimaryKey(autoGenerate = false)
+    val name: String,
+    val tmdbId: Long,
+) {
+    companion object {
+        const val UNKNOWN_ID = -1L
+    }
 }
