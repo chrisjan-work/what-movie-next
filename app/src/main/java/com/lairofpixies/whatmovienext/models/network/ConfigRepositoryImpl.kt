@@ -19,89 +19,29 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
-import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.lairofpixies.whatmovienext.util.toCanonicalUrl
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class ConfigRepositoryImpl(
     private val appPreferences: AppPreferences,
-    private val tmdbApi: TmdbApi,
-    private val connectivityTracker: ConnectivityTracker,
-    private val cacheExpirationTimeMillis: Long,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ConfigRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
     private var imagePaths: ImagePaths = ImagePaths("", "", "")
 
-    override fun initializeConfiguration() {
+    override fun trackConfiguration() {
         repositoryScope.launch {
             appPreferences.imagePaths().collect { storedPaths ->
                 storedPaths?.let { imagePaths = storedPaths }
             }
         }
-
-        repositoryScope.launch {
-            connectivityTracker.isOnline().collect { isOnline ->
-                if (isOnline) checkNow()
-            }
-        }
     }
-
-    override fun checkNow() {
-        repositoryScope.launch {
-            val lastImagePaths = appPreferences.imagePaths().firstOrNull()
-            val lastCheckDateMillis = appPreferences.lastCheckedDateMillis(0L).firstOrNull() ?: 0L
-            val dateThreshold = System.currentTimeMillis() - cacheExpirationTimeMillis
-            if (lastImagePaths == null || lastCheckDateMillis < dateThreshold) {
-                updatePaths()
-            }
-        }
-    }
-
-    private suspend fun updatePaths() {
-        parseConfiguration(tmdbApi.getConfiguration())?.let { fetched ->
-            appPreferences.updateLastCheckedDateMillis(System.currentTimeMillis())
-            appPreferences.updateImagePaths(fetched)
-        }
-    }
-
-    private fun parseConfiguration(configuration: TmdbConfiguration?): ImagePaths? =
-        configuration?.let {
-            with(it.images) {
-                val small: String
-                val big: String
-                when (sizes.size) {
-                    0 -> return@let null
-                    1 -> {
-                        small = sizes.first()
-                        big = sizes.first()
-                    }
-
-                    in 2..3 -> {
-                        small = sizes.first()
-                        big = sizes.last()
-                    }
-
-                    else -> {
-                        small = sizes[1]
-                        big = sizes[sizes.size - 2]
-                    }
-                }
-
-                ImagePaths(
-                    baseUrl = url,
-                    thumbnailPath = small,
-                    coverPath = big,
-                )
-            }
-        }
 
     override fun getThumbnailUrl(posterPath: String?): String =
         if (!posterPath.isNullOrBlank()) {

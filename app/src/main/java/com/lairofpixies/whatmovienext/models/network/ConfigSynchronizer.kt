@@ -18,10 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-interface ConfigRepository {
-    fun trackConfiguration()
+interface ConfigSynchronizer {
+    fun syncConfig()
 
-    fun getThumbnailUrl(posterPath: String?): String
-
-    fun getCoverUrl(posterPath: String?): String
+    fun checkNow()
 }
