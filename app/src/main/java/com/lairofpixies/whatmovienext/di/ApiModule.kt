@@ -24,6 +24,8 @@ import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import com.lairofpixies.whatmovienext.models.network.ConfigRepositoryImpl
+import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizer
+import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizerImpl
 import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
 import com.lairofpixies.whatmovienext.models.network.RequestHeaderInterceptor
 import com.lairofpixies.whatmovienext.models.network.TmdbApi
@@ -82,12 +84,20 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideConfigRepository(
+    fun provideConfigRepository(appPreferences: AppPreferences): ConfigRepository =
+        ConfigRepositoryImpl(
+            appPreferences = appPreferences,
+            ioDispatcher = Dispatchers.IO,
+        )
+
+    @Provides
+    @Singleton
+    fun provideConfigSynchronizer(
         appPreferences: AppPreferences,
         tmdbApi: TmdbApi,
         connectivityTracker: ConnectivityTracker,
-    ): ConfigRepository =
-        ConfigRepositoryImpl(
+    ): ConfigSynchronizer =
+        ConfigSynchronizerImpl(
             appPreferences = appPreferences,
             tmdbApi = tmdbApi,
             connectivityTracker = connectivityTracker,
