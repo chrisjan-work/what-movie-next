@@ -36,6 +36,7 @@ class GenreRepositoryImpl(
 ) : GenreRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
+    // Using a map in memory to avoid having to query the database for every movie
     private val inMemDb: StateFlow<Map<Long, String>> =
         genreDao
             .getAllGenres()

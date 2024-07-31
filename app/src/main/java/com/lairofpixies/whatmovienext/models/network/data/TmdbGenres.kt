@@ -16,23 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.network
+package com.lairofpixies.whatmovienext.models.network.data
 
-import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
-import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
-import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
-import retrofit2.http.GET
-import retrofit2.http.Query
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-interface TmdbApi {
-    @GET("search/movie")
-    suspend fun findMoviesByTitle(
-        @Query("query") escapedTitle: String,
-    ): TmdbSearchResults
-
-    @GET("configuration")
-    suspend fun getConfiguration(): TmdbConfiguration
-
-    @GET("genre/movie/list")
-    suspend fun getGenres(): TmdbGenres
+@JsonClass(generateAdapter = true)
+data class TmdbGenres(
+    @Json(name = "genres")
+    val genres: List<TmdbGenre>,
+) {
+    data class TmdbGenre(
+        @Json(name = "id")
+        val tmdbId: Long,
+        @Json(name = "name")
+        val name: String,
+    )
 }

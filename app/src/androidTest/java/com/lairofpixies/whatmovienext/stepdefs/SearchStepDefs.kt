@@ -46,12 +46,12 @@ class SearchStepDefs(
 
     @Given("the online repo is empty")
     fun theOnlineRepoIsEmpty() {
-        testContext.movieApi.clearFakeResponse()
+        testContext.movieApi.clearFakeMovies()
     }
 
     @Given("the online repo returns an entry with title {string}")
     fun theOnlineRepoReturnsAnEntryWithTitle(title: String) {
-        testContext.movieApi.appendToFakeResponse(
+        testContext.movieApi.appendToFakeMovies(
             TmdbMovieBasic(tmdbId = 1, title = title),
         )
     }
@@ -62,7 +62,7 @@ class SearchStepDefs(
         year: String,
         poster: String,
     ) {
-        testContext.movieApi.appendToFakeResponse(
+        testContext.movieApi.appendToFakeMovies(
             TmdbMovieBasic(
                 tmdbId = 1,
                 title = title,
@@ -75,7 +75,7 @@ class SearchStepDefs(
 
     @Given("the online repo throws an error")
     fun theOnlineRepoThrowsAnError() {
-        testContext.movieApi.replaceFakeResponse {
+        testContext.movieApi.replaceFakeMovies {
             throw Exception("Fake error")
         }
     }
