@@ -23,6 +23,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
 import com.lairofpixies.whatmovienext.models.database.GenreDao
+import com.lairofpixies.whatmovienext.models.database.GenreRepository
+import com.lairofpixies.whatmovienext.models.database.GenreRepositoryImpl
 import com.lairofpixies.whatmovienext.models.database.MovieDao
 import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -50,6 +52,13 @@ object TestDBModule {
         movieDao: MovieDao,
         dbMapper: DbMapper,
     ): MovieRepository = MovieRepositoryImpl(movieDao, dbMapper, ioDispatcher = Dispatchers.IO)
+
+    @Provides
+    fun provideGenreRepository(genreDao: GenreDao): GenreRepository =
+        GenreRepositoryImpl(
+            genreDao = genreDao,
+            ioDispatcher = Dispatchers.IO,
+        )
 
     @Provides
     @Singleton

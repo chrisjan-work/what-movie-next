@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
@@ -39,6 +40,7 @@ import retrofit2.Response
 class ApiRepositoryImplTest {
     private lateinit var tmdbApi: TmdbApi
     private lateinit var configRepo: ConfigRepository
+    private lateinit var genreRepository: GenreRepository
     private lateinit var remoteMapper: RemoteMapper
     private lateinit var sut: ApiRepository
 
@@ -46,6 +48,7 @@ class ApiRepositoryImplTest {
     fun setUp() {
         tmdbApi = mockk(relaxed = true)
         configRepo = mockk(relaxed = true)
+        genreRepository = mockk(relaxed = true)
         remoteMapper = RemoteMapper(configRepo)
         sut = ApiRepositoryImpl(tmdbApi, remoteMapper, UnconfinedTestDispatcher())
     }
