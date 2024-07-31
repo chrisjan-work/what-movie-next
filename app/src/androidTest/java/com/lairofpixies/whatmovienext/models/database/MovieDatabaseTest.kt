@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -41,7 +42,10 @@ class MovieDatabaseTest {
     lateinit var db: MovieDatabase
 
     @Inject
-    lateinit var dao: MovieDao
+    lateinit var movieDao: MovieDao
+
+    @Inject
+    lateinit var genreDao: GenreDao
 
     @Before
     fun setUp() {
@@ -57,7 +61,7 @@ class MovieDatabaseTest {
     fun `create and read entry`() =
         runTest {
             // Given an empty database
-            assert(dao.getAllMovies().first().isEmpty())
+            assert(movieDao.getAllMovies().first().isEmpty())
 
             // When we insert a movie
             val movie =
@@ -66,17 +70,17 @@ class MovieDatabaseTest {
                     title = "Casino",
                     watchState = WatchState.PENDING,
                 )
-            dao.insertMovie(movie)
+            movieDao.insertMovie(movie)
 
             // Then the movie is in the database
-            assertEquals(movie, dao.getMovie(10).first())
+            assertEquals(movie, movieDao.getMovie(10).first())
         }
 
     @Test
     fun `create and read several entries at a time`() =
         runTest {
             // Given an empty database
-            assert(dao.getAllMovies().first().isEmpty())
+            assert(movieDao.getAllMovies().first().isEmpty())
 
             // When we insert some movies
             val movies =
@@ -98,25 +102,25 @@ class MovieDatabaseTest {
                     ),
                 )
 
-            dao.insertMovies(movies)
+            movieDao.insertMovies(movies)
 
             // Then the movie is in the database
-            assertEquals(movies, dao.getAllMovies().first())
+            assertEquals(movies, movieDao.getAllMovies().first())
         }
 
     @Test
     fun `create and delete entry`() =
         runTest {
             // Given a database with a single movie
-            assert(dao.getAllMovies().first().isEmpty())
+            assert(movieDao.getAllMovies().first().isEmpty())
             val movie = DbMovie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
-            dao.insertMovie(movie)
+            movieDao.insertMovie(movie)
 
             // When we remove it
-            dao.delete(movie)
+            movieDao.delete(movie)
 
             // Then the movie is in the database
-            assertEquals(emptyList<Movie>(), dao.getAllMovies().first())
+            assertEquals(emptyList<Movie>(), movieDao.getAllMovies().first())
         }
 
     @Test
@@ -124,15 +128,15 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             val movie = DbMovie(id = 9, title = "Stargate", watchState = WatchState.PENDING)
-            dao.insertMovie(movie)
+            movieDao.insertMovie(movie)
 
             // When updating the movie details
-            dao.updateMovie(movie.copy(title = "Stargate: Atlantis"))
+            movieDao.updateMovie(movie.copy(title = "Stargate: Atlantis"))
 
             // Then the movie details are updated
             assertEquals(
                 "Stargate: Atlantis",
-                dao
+                movieDao
                     .getMovie(9)
                     .first()
                     ?.title,
@@ -143,17 +147,17 @@ class MovieDatabaseTest {
     fun `set movie watch state`() =
         runTest {
             // Given a database with a single movie
-            assert(dao.getAllMovies().first().isEmpty())
+            assert(movieDao.getAllMovies().first().isEmpty())
             val movie = DbMovie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
-            dao.insertMovie(movie)
+            movieDao.insertMovie(movie)
 
             // When setting the movie to watched
-            dao.updateWatchState(movie.id, WatchState.WATCHED)
+            movieDao.updateWatchState(movie.id, WatchState.WATCHED)
 
             // Then the movie is watched
             assertEquals(
                 WatchState.WATCHED,
-                dao
+                movieDao
                     .getMovie(1)
                     .first()
                     ?.watchState,
@@ -164,7 +168,7 @@ class MovieDatabaseTest {
     fun `archive movie`() =
         runTest {
             // Given a database with a single movie
-            assert(dao.getAllMovies().first().isEmpty())
+            assert(movieDao.getAllMovies().first().isEmpty())
             val movie =
                 DbMovie(
                     id = 1,
@@ -172,16 +176,16 @@ class MovieDatabaseTest {
                     watchState = WatchState.PENDING,
                     isArchived = false,
                 )
-            dao.insertMovie(movie)
+            movieDao.insertMovie(movie)
 
             // When setting the movie to archived
-            dao.archive(movie.id)
+            movieDao.archive(movie.id)
 
             // Then the movie is removed from the view list and moved to the archive
-            assert(dao.getAllMovies().first().isEmpty())
+            assert(movieDao.getAllMovies().first().isEmpty())
             assertEquals(
                 listOf(movie.copy(isArchived = true)),
-                dao.getArchivedMovies().first(),
+                movieDao.getArchivedMovies().first(),
             )
         }
 
@@ -190,11 +194,11 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             val movie = DbMovie(id = 11, title = "The Searchers")
-            dao.insertMovie(movie)
+            movieDao.insertMovie(movie)
 
             // When fetching the movie by id
-            val shouldBeMovie = dao.fetchMovieById(11)
-            val shouldBeNull = dao.fetchMovieById(12)
+            val shouldBeMovie = movieDao.fetchMovieById(11)
+            val shouldBeNull = movieDao.fetchMovieById(12)
 
             // Then the movie is returned or not
             assertEquals(movie, shouldBeMovie)
@@ -211,12 +215,12 @@ class MovieDatabaseTest {
                     DbMovie(id = 2, title = "The Godfather II"),
                     DbMovie(id = 3, title = "The Godfather II"),
                 )
-            dao.insertMovies(movies)
+            movieDao.insertMovies(movies)
 
             // When fetching the movies by title
-            val duplicated = dao.fetchMoviesByTitle("The Godfather II")
-            val single = dao.fetchMoviesByTitle("The Godfather")
-            val none = dao.fetchMoviesByTitle("The Godfather III")
+            val duplicated = movieDao.fetchMoviesByTitle("The Godfather II")
+            val single = movieDao.fetchMoviesByTitle("The Godfather")
+            val none = movieDao.fetchMoviesByTitle("The Godfather III")
 
             // Then the movies are returned
             assertEquals(2, duplicated.size)
@@ -229,12 +233,12 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             val movie = DbMovie(id = 1, title = "AbCd")
-            dao.insertMovie(movie)
+            movieDao.insertMovie(movie)
 
             // When fetching the movies by title with different case
-            val lowerCase = dao.fetchMoviesByTitle("abcd")
-            val upperCase = dao.fetchMoviesByTitle("ABCD")
-            val none = dao.fetchMoviesByTitle("abcd123")
+            val lowerCase = movieDao.fetchMoviesByTitle("abcd")
+            val upperCase = movieDao.fetchMoviesByTitle("ABCD")
+            val none = movieDao.fetchMoviesByTitle("abcd123")
 
             // Then the movies are returned
             assertEquals(movie, lowerCase.first())
@@ -247,15 +251,15 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with an archived movie
             val movie = DbMovie(id = 1, title = "The Rum Diary")
-            dao.insertMovie(movie)
-            dao.archive(movie.id)
+            movieDao.insertMovie(movie)
+            movieDao.archive(movie.id)
 
             // When restored
-            dao.restore(movie.id)
+            movieDao.restore(movie.id)
 
             // Then
-            assertEquals(emptyList<Movie>(), dao.getArchivedMovies().first())
-            assertEquals(listOf(movie), dao.getAllMovies().first())
+            assertEquals(emptyList<Movie>(), movieDao.getArchivedMovies().first())
+            assertEquals(listOf(movie), movieDao.getAllMovies().first())
         }
 
     @Test
@@ -263,14 +267,41 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with an archived movie
             val movie = DbMovie(id = 1, title = "The Rum Diary")
-            dao.insertMovie(movie)
-            dao.archive(movie.id)
+            movieDao.insertMovie(movie)
+            movieDao.archive(movie.id)
 
             // When restored
-            dao.delete(movie.copy(isArchived = true))
+            movieDao.delete(movie.copy(isArchived = true))
 
             // Then
-            assertEquals(emptyList<Movie>(), dao.getArchivedMovies().first())
-            assertEquals(emptyList<Movie>(), dao.getAllMovies().first())
+            assertEquals(emptyList<Movie>(), movieDao.getArchivedMovies().first())
+            assertEquals(emptyList<Movie>(), movieDao.getAllMovies().first())
+        }
+
+    @Test
+    fun `genres CRUD`() =
+        runTest {
+            // Given
+            val exampleGenres =
+                listOf(
+                    DbGenre(name = "Action", tmdbId = 100),
+                    DbGenre(name = "Adventure", tmdbId = 101),
+                    DbGenre(name = "Comedy", tmdbId = 105),
+                )
+
+            // When
+            genreDao.insert(exampleGenres)
+            genreDao.update(listOf(DbGenre(tmdbId = 88, name = "Action")))
+            genreDao.delete(listOf(exampleGenres[1]))
+            val result = genreDao.getAllGenres().first()
+
+            // Then
+            assertEquals(
+                listOf(
+                    DbGenre(name = "Action", tmdbId = 88),
+                    DbGenre(name = "Comedy", tmdbId = 105),
+                ),
+                result,
+            )
         }
 }

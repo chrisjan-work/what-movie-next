@@ -22,6 +22,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.room.Room
+import com.lairofpixies.whatmovienext.models.database.GenreDao
 import com.lairofpixies.whatmovienext.models.database.MovieDao
 import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -59,6 +60,10 @@ object TestDBModule {
     @Singleton
     @Provides
     fun provideMovieDao(db: MovieDatabase): MovieDao = db.movieDao()
+
+    @Singleton
+    @Provides
+    fun provideGenreDao(db: MovieDatabase): GenreDao = db.genreDao()
 
     @Singleton
     @Provides

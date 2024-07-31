@@ -18,14 +18,25 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
-import com.lairofpixies.whatmovienext.models.database.data.DbMovie
+import kotlinx.coroutines.flow.Flow
 
-@Database(entities = [DbMovie::class, DbGenre::class], version = 1, exportSchema = false)
-abstract class MovieDatabase : RoomDatabase() {
-    abstract fun movieDao(): MovieDao
+@Dao
+interface GenreDao {
+    @Query("SELECT * FROM dbgenre")
+    fun getAllGenres(): Flow<List<DbGenre>>
 
-    abstract fun genreDao(): GenreDao
+    @Insert
+    suspend fun insert(genres: List<DbGenre>)
+
+    @Update
+    suspend fun update(genres: List<DbGenre>)
+
+    @Delete
+    suspend fun delete(genres: List<DbGenre>)
 }

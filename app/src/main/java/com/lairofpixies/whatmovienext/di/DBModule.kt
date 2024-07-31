@@ -65,6 +65,10 @@ object DBModule {
 
     @Singleton
     @Provides
+    fun provideGenreDao(db: MovieDatabase) = db.genreDao()
+
+    @Singleton
+    @Provides
     fun provideDataStore(
         @ApplicationContext context: Context,
     ): DataStore<Preferences> =
