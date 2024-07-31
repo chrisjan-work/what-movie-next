@@ -113,4 +113,20 @@ class DbMapperTest {
         val expectedDbMovie = generateDbMovie()
         assertEquals(expectedDbMovie, dbMovie)
     }
+
+    @Test
+    fun toGenres() {
+        // When
+        val result = dbMapper.toGenres("Character Study,Musical")
+        // Then
+        assertEquals(listOf("Character Study", "Musical"), result)
+    }
+
+    @Test
+    fun toDbGenres() {
+        // When
+        val result = dbMapper.toDbGenres(listOf("Character Study", "Musical"))
+        // Then
+        assertEquals("Character Study,Musical", result)
+    }
 }

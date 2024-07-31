@@ -61,6 +61,11 @@ class TestTmdbApi
             fakeGenres = { newList }
         }
 
+        fun mapGenreIds(requestedGenres: List<String>): List<Long> {
+            val mapped = fakeGenres().associate { genre -> genre.name to genre.tmdbId }
+            return requestedGenres.mapNotNull { name -> mapped[name] }
+        }
+
         override suspend fun findMoviesByTitle(escapedTitle: String): TmdbSearchResults = TmdbSearchResults(results = fakeMoviesBasic())
 
         override suspend fun getConfiguration(): TmdbConfiguration =
