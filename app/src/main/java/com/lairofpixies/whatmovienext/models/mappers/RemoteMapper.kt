@@ -44,6 +44,7 @@ class RemoteMapper
                     year = extractYear(releaseDate),
                     thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
                     coverUrl = configRepo.getCoverUrl(posterPath),
+                    genres = toGenreNames(genreIds),
                 )
             }
 
@@ -69,9 +70,9 @@ fun extractYear(releaseDate: String?): Int? =
                 ?.groupValues
                 ?.get(1)
                 ?.toInt()
-        } catch (e: StringIndexOutOfBoundsException) {
+        } catch (_: StringIndexOutOfBoundsException) {
             null
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             null
         }
     } else {

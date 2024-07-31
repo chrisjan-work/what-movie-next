@@ -34,5 +34,5 @@ data class TmdbMovieBasic(
     @Json(name = "poster_path")
     val posterPath: String? = null,
     @Json(name = "genre_ids")
-    val genreIds: List<Int> = emptyList(),
+    val genreIds: List<Long> = emptyList(),
 )

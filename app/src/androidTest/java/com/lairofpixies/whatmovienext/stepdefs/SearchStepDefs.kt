@@ -20,10 +20,15 @@ package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.filterToOne
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
@@ -34,6 +39,7 @@ import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
+import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class SearchStepDefs(
@@ -69,6 +75,35 @@ class SearchStepDefs(
                 originalTitle = title,
                 releaseDate = "$year-01-01", // month and day don't matter
                 posterPath = poster,
+            ),
+        )
+    }
+
+    @Given("the configuration contains the genre {string} with id {string}")
+    fun theConfigurationContainsTheGenreWithId(
+        name: String,
+        id: String,
+    ) = runBlocking {
+        testContext.appDatabase.genreDao().insert(
+            listOf(
+                DbGenre(
+                    tmdbId = id.toLong(),
+                    name = name,
+                ),
+            ),
+        )
+    }
+
+    @Given("the online repo returns an entry with title {string} and genre id {string}")
+    fun theOnlineRepoReturnsAnEntryWithTitleAndGenreId(
+        title: String,
+        genreId: String,
+    ) {
+        testContext.movieApi.appendToFakeMovies(
+            TmdbMovieBasic(
+                tmdbId = 10,
+                title = title,
+                genreIds = listOf(genreId.toLong()),
             ),
         )
     }
@@ -137,8 +172,21 @@ class SearchStepDefs(
         year: String,
     ) = composeRule.composeStep {
         onNodeWithTextUnderTag(title, UiTags.Screens.SEARCH_RESULTS)
+            .onParent()
+            .onChildren()
+            .filterToOne(hasText(year))
             .assertIsDisplayed()
-        onNodeWithTextUnderTag(year, UiTags.Screens.SEARCH_RESULTS)
+    }
+
+    @Then("the search results contains an entry with title {string} and genre {string}")
+    fun theSearchResultsContainsAnEntryWithTitleAndGenre(
+        title: String,
+        genre: String,
+    ) = composeRule.composeStep {
+        onNodeWithTextUnderTag(title, UiTags.Screens.SEARCH_RESULTS)
+            .onParent()
+            .onChildren()
+            .filterToOne(hasText(genre))
             .assertIsDisplayed()
     }
 }

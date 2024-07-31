@@ -34,6 +34,7 @@ data class DbMovie(
     val thumbnailUrl: String = "",
     val coverUrl: String = "",
     val summary: String = "",
+    val genres: String = "",
     val watchState: WatchState = WatchState.PENDING,
     val isArchived: Boolean = false,
 )

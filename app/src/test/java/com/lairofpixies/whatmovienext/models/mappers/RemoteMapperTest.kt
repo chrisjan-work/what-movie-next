@@ -104,7 +104,7 @@ class RemoteMapperTest {
     }
 
     @Test
-    fun `get genres from api to db`() {
+    fun `map genres from api to db`() {
         // Given
         val tmdbGenres =
             TmdbGenres(
@@ -128,7 +128,7 @@ class RemoteMapperTest {
     }
 
     @Test
-    fun `get genre names from ids stored in db`() {
+    fun `map genre names out of ids stored in db`() {
         // Given
         val knownGenres =
             mapOf(
@@ -145,5 +145,28 @@ class RemoteMapperTest {
 
         // Then
         assertEquals(listOf("Comedy", "Action", "Comedy"), result)
+    }
+
+    @Test
+    fun `map genres in movie`() {
+        // Given
+        val knownGenres =
+            mapOf(
+                1L to "Action",
+                2L to "Comedy",
+            )
+        every { genreRepository.genreNamesByTmdbIds(any()) } answers {
+            val queryIds = firstArg<List<Long>>()
+            queryIds.mapNotNull { knownGenres[it] }
+        }
+
+        val tmdbMovieBasic =
+            TmdbMovieBasic(tmdbId = 1, title = "Anything", genreIds = listOf(2))
+
+        // When
+        val movie = remoteMapper.toMovie(tmdbMovieBasic)
+
+        // Then
+        assertEquals(listOf("Comedy"), movie.genres)
     }
 }

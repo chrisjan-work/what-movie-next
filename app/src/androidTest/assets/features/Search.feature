@@ -74,7 +74,15 @@ Feature: Search Online
   Given the online repo returns an entry with title "Man of Steel" from "2013" and poster "image.png"
   Given the online repo returns an entry with title "Batman vs Superman" from "2016" and poster "image.png"
   When the user searches for the title "Man"
-  And the search results contains an entry with title "Man of Steel" and year "2013"
+  Then the search results contains an entry with title "Man of Steel" and year "2013"
+
+  Scenario: search results contain genre
+    Given the configuration contains the genre "Comedy" with id "100"
+    And the configuration contains the genre "Drama" with id "200"
+    Given the online repo returns an entry with title "Dream Scenario" and genre id "100"
+    Given the online repo returns an entry with title "Requiem for a Dream" and genre id "200"
+    When the user searches for the title "Dream"
+    Then the search results contains an entry with title "Dream Scenario" and genre "Comedy"
 
   # TODO populate edit card with details
 

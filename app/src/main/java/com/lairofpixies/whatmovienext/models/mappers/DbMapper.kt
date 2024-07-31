@@ -21,6 +21,8 @@ package com.lairofpixies.whatmovienext.models.mappers
 import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
+import com.lairofpixies.whatmovienext.util.decodeToList
+import com.lairofpixies.whatmovienext.util.encodeToString
 import javax.inject.Inject
 
 class DbMapper
@@ -37,6 +39,7 @@ class DbMapper
                     thumbnailUrl = thumbnailUrl,
                     coverUrl = coverUrl,
                     summary = summary,
+                    genres = toGenres(genres),
                     watchState = watchState,
                     isArchived = isArchived,
                 )
@@ -57,8 +60,13 @@ class DbMapper
                     thumbnailUrl = thumbnailUrl,
                     coverUrl = coverUrl,
                     summary = summary,
+                    genres = toDbGenres(genres),
                     watchState = watchState,
                     isArchived = isArchived,
                 )
             }
+
+        fun toGenres(dbGenres: String): List<String> = dbGenres.decodeToList()
+
+        fun toDbGenres(genres: List<String>): String = genres.encodeToString()
     }

@@ -21,7 +21,7 @@ package com.lairofpixies.whatmovienext.util
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class UrlUtilKtTest {
+class StringUtilKtTest {
     @Test
     fun `untouched url`() {
         assertEquals(
@@ -44,5 +44,33 @@ class UrlUtilKtTest {
             "https://myhost/otherpath/myfile.txt",
             "https://myhost/mypath/../otherpath/myfile.txt".toCanonicalUrl(),
         )
+    }
+
+    @Test
+    fun `split and rejoin list of strings`() {
+        // Given
+        val originalList =
+            listOf(
+                "Hello, World!",
+                "This is a test.",
+                "\"Quotes\" and, commas.",
+                "Backslash: \\",
+                "",
+                "String with \\ and , inside",
+            )
+        // When
+        val encodedString = originalList.encodeToString()
+        val decodedList = encodedString.decodeToList()
+
+        // Then
+        assertEquals(originalList, decodedList)
+    }
+
+    @Test
+    fun `manage encoding and decoding of empty list`() {
+        val encodedString = emptyList<String>().encodeToString()
+        val decodedList = encodedString.decodeToList()
+
+        assertEquals(emptyList<String>(), decodedList)
     }
 }
