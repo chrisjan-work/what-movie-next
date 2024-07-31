@@ -19,6 +19,8 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
+import com.lairofpixies.whatmovienext.models.database.GenreRepository
+import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import io.mockk.clearMocks
@@ -38,6 +40,8 @@ import org.junit.Test
 class ConfigSynchronizerImplTest {
     private lateinit var appPreferences: AppPreferences
     private lateinit var tmdbApi: TmdbApi
+    private lateinit var genreRepository: GenreRepository
+    private lateinit var remoteMapper: RemoteMapper
     private lateinit var connectivityTracker: ConnectivityTracker
     private lateinit var configSynchronizer: ConfigSynchronizer
 
@@ -46,11 +50,15 @@ class ConfigSynchronizerImplTest {
         tmdbApi = mockk(relaxed = true)
         appPreferences = mockk(relaxed = true)
         connectivityTracker = mockk(relaxed = true)
+        genreRepository = mockk(relaxed = true)
+        remoteMapper = mockk(relaxed = true)
 
         configSynchronizer =
             ConfigSynchronizerImpl(
                 appPreferences = appPreferences,
                 tmdbApi = tmdbApi,
+                genreRepository = genreRepository,
+                remoteMapper = remoteMapper,
                 connectivityTracker = connectivityTracker,
                 cacheExpirationTimeMillis = 1000L,
                 ioDispatcher = UnconfinedTestDispatcher(),
@@ -159,7 +167,20 @@ class ConfigSynchronizerImplTest {
         }
 
     @Test
-    fun `genre upd`() {
-        // TODO()
-    }
+    fun `if genres are missing, fetch genres from api and update the internal genre db`() =
+        runTest {
+            // Given
+            clearMocks(tmdbApi, genreRepository)
+            every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(System.currentTimeMillis())
+            coEvery { genreRepository.isEmpty() } returns true
+
+            // When
+            configSynchronizer.syncConfig()
+
+            // Then
+            coVerify {
+                tmdbApi.getGenres()
+                genreRepository.appendGenres(any())
+            }
+        }
 }
