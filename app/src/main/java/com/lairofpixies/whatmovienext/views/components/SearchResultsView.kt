@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,12 +37,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 
@@ -82,6 +87,7 @@ fun SearchResultItem(
     movie: Movie,
     onClick: () -> Unit,
 ) {
+    val missingThumbnailColor = Color(LocalContext.current.getColor(R.color.missing_image))
     Row(
         modifier =
             Modifier
@@ -97,14 +103,27 @@ fun SearchResultItem(
                     shape = RoundedCornerShape(8.dp),
                 ).padding(6.dp),
     ) {
-        AsyncImage(
-            model = movie.thumbnailUrl,
-            contentDescription = null,
-            modifier = Modifier.size(100.dp),
-        )
+        if (movie.thumbnailUrl.isNotBlank()) {
+            AsyncImage(
+                model = movie.thumbnailUrl,
+                contentDescription = null,
+                modifier =
+                    Modifier
+                        .size(width = 68.dp, height = 102.dp)
+                        .align(Alignment.CenterVertically),
+            )
+        } else {
+            Spacer(
+                modifier =
+                    Modifier
+                        .size(width = 68.dp, height = 102.dp)
+                        .align(Alignment.CenterVertically)
+                        .background(missingThumbnailColor),
+            )
+        }
         Spacer(modifier = Modifier.size(16.dp))
         Column(
-            modifier = Modifier.height(100.dp),
+            modifier = Modifier.heightIn(min = 100.dp),
         ) {
             Text(
                 text = movie.title,
