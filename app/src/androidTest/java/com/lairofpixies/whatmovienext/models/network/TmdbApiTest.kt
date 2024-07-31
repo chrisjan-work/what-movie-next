@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
+import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -95,5 +96,33 @@ class TmdbApiTest {
             val expectedSizes = listOf("w92", "w154", "w780")
             assertEquals("example.com", result.images.url)
             assertEquals(expectedSizes, result.images.sizes)
+        }
+
+    @Test
+    fun `retrieve genres`() =
+        runTest {
+            // Given
+            val mockResponse =
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody(
+                        """{ "genres" : [
+                            { "id": 188, "name": "Radio Gugu" },
+                            { "id": 288, "name": "Radio Blabla" }
+                            ]}
+                        """.trimMargin(),
+                    )
+            mockWebServer.enqueue(mockResponse)
+
+            // When
+            val result = tmdbApi.getGenres()
+
+            // Then
+            val expectedGenres =
+                listOf(
+                    TmdbGenres.TmdbGenre(tmdbId = 188, name = "Radio Gugu"),
+                    TmdbGenres.TmdbGenre(tmdbId = 288, name = "Radio Blabla"),
+                )
+            assertEquals(expectedGenres, result.genres)
         }
 }

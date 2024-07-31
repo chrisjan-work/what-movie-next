@@ -49,7 +49,7 @@ class ApiRepositoryImplTest {
         tmdbApi = mockk(relaxed = true)
         configRepo = mockk(relaxed = true)
         genreRepository = mockk(relaxed = true)
-        remoteMapper = RemoteMapper(configRepo)
+        remoteMapper = RemoteMapper(configRepo, genreRepository)
         sut = ApiRepositoryImpl(tmdbApi, remoteMapper, UnconfinedTestDispatcher())
     }
 

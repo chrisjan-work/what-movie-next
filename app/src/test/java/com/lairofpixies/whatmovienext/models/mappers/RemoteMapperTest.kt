@@ -19,7 +19,10 @@
 package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.database.GenreRepository
+import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
+import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import io.mockk.every
 import io.mockk.mockk
@@ -29,12 +32,14 @@ import org.junit.Test
 
 class RemoteMapperTest {
     private lateinit var configRepo: ConfigRepository
+    private lateinit var genreRepository: GenreRepository
     private lateinit var remoteMapper: RemoteMapper
 
     @Before
     fun setUp() {
         configRepo = mockk(relaxed = true)
-        remoteMapper = RemoteMapper(configRepo)
+        genreRepository = mockk(relaxed = true)
+        remoteMapper = RemoteMapper(configRepo, genreRepository)
     }
 
     @Test
@@ -96,5 +101,49 @@ class RemoteMapperTest {
         // Then
         assertEquals("localhost/thumb/abcd", movie.thumbnailUrl)
         assertEquals("localhost/cover/abcd", movie.coverUrl)
+    }
+
+    @Test
+    fun `get genres from api to db`() {
+        // Given
+        val tmdbGenres =
+            TmdbGenres(
+                genres =
+                    listOf(
+                        TmdbGenres.TmdbGenre(tmdbId = 1, name = "Action"),
+                        TmdbGenres.TmdbGenre(tmdbId = 2, name = "Comedy"),
+                    ),
+            )
+        // When
+        val result = remoteMapper.toDbGenres(tmdbGenres)
+
+        // Then
+        assertEquals(
+            listOf(
+                DbGenre("Action", 1),
+                DbGenre("Comedy", 2),
+            ),
+            result,
+        )
+    }
+
+    @Test
+    fun `get genre names from ids stored in db`() {
+        // Given
+        val knownGenres =
+            mapOf(
+                1L to "Action",
+                2L to "Comedy",
+            )
+        every { genreRepository.genreNamesByTmdbIds(any()) } answers {
+            val queryIds = firstArg<List<Long>>()
+            queryIds.mapNotNull { knownGenres[it] }
+        }
+
+        // When
+        val result = remoteMapper.toGenreNames(listOf(2, 1, 2))
+
+        // Then
+        assertEquals(listOf("Comedy", "Action", "Comedy"), result)
     }
 }

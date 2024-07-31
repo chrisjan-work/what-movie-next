@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
+import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
 import javax.inject.Inject
@@ -26,41 +27,41 @@ import javax.inject.Inject
 class TestTmdbApi
     @Inject
     constructor() : TmdbApi {
-        private lateinit var fakeResponse: () -> List<TmdbMovieBasic>
+        private lateinit var fakeMoviesBasic: () -> List<TmdbMovieBasic>
+        private lateinit var fakeGenres: () -> List<TmdbGenres.TmdbGenre>
 
         init {
-            clearFakeResponse()
+            clearFakeMovies()
+            clearFakeGenres()
         }
 
-        fun clearFakeResponse() {
-            fakeResponse = { emptyList() }
+        fun clearFakeMovies() {
+            fakeMoviesBasic = { emptyList() }
         }
 
-        fun replaceFakeResponse(newFakeResponse: () -> List<TmdbMovieBasic>) {
-            fakeResponse = newFakeResponse
+        fun replaceFakeMovies(newFakeMovies: () -> List<TmdbMovieBasic>) {
+            fakeMoviesBasic = newFakeMovies
         }
 
-        fun appendToFakeResponse(vararg movie: TmdbMovieBasic) {
-            val newList = fakeResponse() + movie
-            fakeResponse = { newList }
+        fun appendToFakeMovies(vararg movie: TmdbMovieBasic) {
+            val newList = fakeMoviesBasic() + movie
+            fakeMoviesBasic = { newList }
         }
 
-        enum class FakeResponse(
-            val getIt: () -> List<TmdbMovieBasic>,
-        ) {
-            Single({ listOf(TmdbMovieBasic(tmdbId = 1, title = "Fake Movie")) }),
-            Multiple({
-                listOf(
-                    TmdbMovieBasic(tmdbId = 1, title = "Fake Movie 1"),
-                    TmdbMovieBasic(tmdbId = 2, title = "Fake Movie 2"),
-                    TmdbMovieBasic(tmdbId = 3, title = "Fake Movie 3"),
-                )
-            }),
-            Empty({ emptyList() }),
-            Error({ throw Exception() }),
+        fun clearFakeGenres() {
+            fakeGenres = { emptyList() }
         }
 
-        override suspend fun findMoviesByTitle(escapedTitle: String): TmdbSearchResults = TmdbSearchResults(results = fakeResponse())
+        fun replaceFakeGenres(newFakeGenres: () -> List<TmdbGenres.TmdbGenre>) {
+            fakeGenres = newFakeGenres
+        }
+
+        fun appendToFakeGenres(vararg genre: TmdbGenres.TmdbGenre) {
+            val newList = fakeGenres() + genre
+            fakeGenres = { newList }
+        }
+
+        override suspend fun findMoviesByTitle(escapedTitle: String): TmdbSearchResults = TmdbSearchResults(results = fakeMoviesBasic())
 
         override suspend fun getConfiguration(): TmdbConfiguration =
             TmdbConfiguration(
@@ -70,4 +71,6 @@ class TestTmdbApi
                         sizes = listOf("microscopic", "unremarkable", "humongous"),
                     ),
             )
+
+        override suspend fun getGenres(): TmdbGenres = TmdbGenres(genres = fakeGenres())
     }
