@@ -22,9 +22,9 @@ import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.lairofpixies.whatmovienext.MainActivity
 import io.cucumber.junit.WithJunitRule
@@ -69,5 +69,7 @@ fun ComposeRule.composeStep(
 fun ComposeRule.onNodeWithTextUnderTag(
     text: String,
     tag: String,
-) = onAllNodesWithText(text)
+    acceptSubstring: Boolean = false,
+    caseSensitive: Boolean = false,
+) = onAllNodes(hasText(text, substring = acceptSubstring, ignoreCase = !caseSensitive))
     .filterToOne(hasAnyAncestor(hasTestTag(tag)))

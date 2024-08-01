@@ -54,3 +54,13 @@ fun Movie.hasQuietSaveableChangesSince(lastSavedMovie: Movie?): Boolean =
     }
 
 fun Movie.isNew(): Boolean = id == Movie.NEW_ID
+
+fun Movie.printableRuntime(
+    pre: String = "",
+    pos: String = "",
+): String =
+    when (runtimeMinutes) {
+        0 -> ""
+        in 1..59 -> "$pre$runtimeMinutes min$pos"
+        else -> "$pre${runtimeMinutes / 60}h ${runtimeMinutes % 60}min$pos"
+    }

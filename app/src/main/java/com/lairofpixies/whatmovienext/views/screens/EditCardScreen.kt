@@ -98,7 +98,7 @@ fun EditCardScreen(
             editViewModel.startSearch()
         },
         onSearchResultSelected = {
-            editViewModel.updateMovieEdits { it }
+            editViewModel.fetchFromRemote(it)
             editViewModel.clearSearchResults()
         },
         onCloseKeyboard = onCloseKeyboard,

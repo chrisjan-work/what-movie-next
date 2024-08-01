@@ -53,7 +53,7 @@ class SearchStepDefs(
 
     @Given("the online repo is empty")
     fun theOnlineRepoIsEmpty() {
-        testContext.movieApi.clearFakeMovies()
+        testContext.movieApi.clearFakeResponses()
     }
 
     @Given("the online repo returns an entry with title {string}")
@@ -61,7 +61,7 @@ class SearchStepDefs(
         testContext.movieApi.appendToFakeMovies(
             TmdbMovieBasic(tmdbId = 1, title = title),
         )
-        testContext.movieApi.replaceFakeMovieExtended {
+        testContext.movieApi.fakeMovieExtended = {
             TmdbMovieExtended(tmdbId = 1, title = title)
         }
     }
@@ -114,8 +114,15 @@ class SearchStepDefs(
 
     @Given("the online repo throws an error")
     fun theOnlineRepoThrowsAnError() {
-        testContext.movieApi.replaceFakeMovies {
-            throw Exception("Fake error")
+        val exception = Exception("Fake error")
+        testContext.movieApi.fakeMoviesBasic = {
+            throw exception
+        }
+        testContext.movieApi.fakeMovieExtended = {
+            throw exception
+        }
+        testContext.movieApi.fakeGenres = {
+            throw exception
         }
     }
 
@@ -192,5 +199,12 @@ class SearchStepDefs(
             .onChildren()
             .filterToOne(hasText(genre))
             .assertIsDisplayed()
+    }
+
+    @And("the online repo returns details for an entry with title {string}")
+    fun theOnlineRepoReturnsDetailsForAnEntryWithTitle(title: String) {
+        testContext.movieApi.fakeMovieExtended = {
+            TmdbMovieExtended(tmdbId = 1, title = title)
+        }
     }
 }
