@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.models.network
 import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
 import javax.inject.Inject
 
@@ -28,10 +29,12 @@ class TestTmdbApi
     @Inject
     constructor() : TmdbApi {
         private lateinit var fakeMoviesBasic: () -> List<TmdbMovieBasic>
+        private lateinit var fakeMovieExtended: () -> TmdbMovieExtended
         private lateinit var fakeGenres: () -> List<TmdbGenres.TmdbGenre>
 
         init {
             clearFakeMovies()
+            clearFakeMovieExtended()
             clearFakeGenres()
         }
 
@@ -66,6 +69,14 @@ class TestTmdbApi
             return requestedGenres.mapNotNull { name -> mapped[name] }
         }
 
+        fun clearFakeMovieExtended() {
+            fakeMovieExtended = { TmdbMovieExtended(success = false) }
+        }
+
+        fun replaceFakeMovieExtended(newFakeMovieExtended: () -> TmdbMovieExtended) {
+            fakeMovieExtended = newFakeMovieExtended
+        }
+
         override suspend fun findMoviesByTitle(escapedTitle: String): TmdbSearchResults = TmdbSearchResults(results = fakeMoviesBasic())
 
         override suspend fun getConfiguration(): TmdbConfiguration =
@@ -78,4 +89,6 @@ class TestTmdbApi
             )
 
         override suspend fun getGenres(): TmdbGenres = TmdbGenres(genres = fakeGenres())
+
+        override suspend fun getMovieDetails(tmdbId: Long): TmdbMovieExtended = fakeMovieExtended()
     }
