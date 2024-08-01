@@ -485,9 +485,10 @@ class EditCardViewModelTest {
     fun `update edit movie when search delivers a single result`() =
         runTest {
             // Given
-            val movie = Movie(id = 1007, title = "From Russia with Love")
-            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                MutableStateFlow(AsyncMovieInfo.Single(movie)).asStateFlow()
+            val movie = Movie(id = 1007, tmdbId = 1007, title = "From Russia with Love")
+            val movieFlow = MutableStateFlow(AsyncMovieInfo.Single(movie)).asStateFlow()
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns movieFlow
+            coEvery { apiRepoMock.getMovieDetails(any()) } returns movieFlow
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
 
             // When
@@ -542,5 +543,40 @@ class EditCardViewModelTest {
 
             // Then
             assertEquals(AsyncMovieInfo.Empty, editViewModel.searchResults.value)
+        }
+
+    @Test
+    fun `fetch movie details`() =
+        runTest {
+            // Given
+            val movie = Movie(id = 1007, tmdbId = 1007, title = "From Russia with Love")
+            val movieFlow = MutableStateFlow(AsyncMovieInfo.Single(movie)).asStateFlow()
+            coEvery { apiRepoMock.getMovieDetails(any()) } returns movieFlow
+
+            // When
+            editViewModel.fetchFromRemote(movie)
+
+            // Then
+            assertEquals(movie, editViewModel.currentMovie.value)
+        }
+
+    @Test
+    fun `error on fetch movie details`() =
+        runTest {
+            // Given
+
+            val failedFlow = MutableStateFlow(AsyncMovieInfo.Failed(Exception())).asStateFlow()
+            coEvery { apiRepoMock.getMovieDetails(any()) } returns failedFlow
+            val spy = spyk(editViewModel)
+            val currentMovie = Movie(id = 1, title = "nothing")
+            spy.updateMovieEdits { currentMovie }
+
+            // When
+            val fetchableMovie = Movie(id = 1007, tmdbId = 1007, title = "From Russia with Love")
+            spy.fetchFromRemote(fetchableMovie)
+
+            // Then
+            verify { spy.showPopup(any<PopupInfo.ConnectionFailed>()) }
+            assertEquals(currentMovie, editViewModel.currentMovie.value)
         }
 }

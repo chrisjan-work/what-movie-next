@@ -30,6 +30,7 @@ import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
@@ -60,6 +61,9 @@ class SearchStepDefs(
         testContext.movieApi.appendToFakeMovies(
             TmdbMovieBasic(tmdbId = 1, title = title),
         )
+        testContext.movieApi.replaceFakeMovieExtended {
+            TmdbMovieExtended(tmdbId = 1, title = title)
+        }
     }
 
     @Given("the online repo returns an entry with title {string} from {string} and poster {string}")

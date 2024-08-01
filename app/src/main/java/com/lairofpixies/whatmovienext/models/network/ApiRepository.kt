@@ -23,4 +23,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface ApiRepository {
     fun findMoviesByTitle(title: String): StateFlow<AsyncMovieInfo>
+
+    fun getMovieDetails(tmdbId: Long): StateFlow<AsyncMovieInfo>
 }

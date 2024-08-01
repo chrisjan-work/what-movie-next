@@ -25,6 +25,7 @@ import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
@@ -45,6 +46,24 @@ class RemoteMapper
                     thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
                     coverUrl = configRepo.getCoverUrl(posterPath),
                     genres = toGenreNames(genreIds),
+                )
+            }
+
+        fun toMovie(tmdbMovieExtended: TmdbMovieExtended): Movie =
+            with(tmdbMovieExtended) {
+                Movie(
+                    id = NEW_ID,
+                    tmdbId = tmdbId,
+                    imdbId = imdbId,
+                    title = title ?: "",
+                    originalTitle = originalTitle ?: "",
+                    year = extractYear(releaseDate),
+                    thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
+                    coverUrl = configRepo.getCoverUrl(posterPath),
+                    genres = toGenreNames(genres?.map { it.tmdbId }),
+                    tagline = tagline ?: "",
+                    summary = summary ?: "",
+                    runtimeMinutes = runtime ?: 0,
                 )
             }
 

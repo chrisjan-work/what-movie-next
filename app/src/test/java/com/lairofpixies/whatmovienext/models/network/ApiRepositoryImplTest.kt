@@ -22,9 +22,13 @@ import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
+import com.lairofpixies.whatmovienext.models.mappers.testLocalMovieExtended
+import com.lairofpixies.whatmovienext.models.mappers.testTmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -144,5 +148,37 @@ class ApiRepositoryImplTest {
 
             // Then
             assertEquals(AsyncMovieInfo.Failed(http404), result)
+        }
+
+    @Test
+    fun `get movie details`() =
+        runTest {
+            // Given
+            coEvery { tmdbApi.getMovieDetails(any()) } returns testTmdbMovieExtended()
+            remoteMapper =
+                mockk(relaxed = true) {
+                    every { toMovie(any<TmdbMovieExtended>()) } returns testLocalMovieExtended()
+                }
+            initializeSut()
+
+            // When
+            val result = apiRepository.getMovieDetails(99).value
+
+            // Then
+            assertEquals(AsyncMovieInfo.Single(testLocalMovieExtended()), result)
+        }
+
+    @Test
+    fun `get movie details, server error`() =
+        runTest {
+            // Given
+            coEvery { tmdbApi.getMovieDetails(any()) } returns TmdbMovieExtended(success = false)
+            initializeSut()
+
+            // When
+            val result = apiRepository.getMovieDetails(99).value
+
+            // Then
+            assertEquals(AsyncMovieInfo.Failed::class, result::class)
         }
 }

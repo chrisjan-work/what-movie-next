@@ -208,7 +208,7 @@ class EditCardViewModel
                             }
 
                             is AsyncMovieInfo.Single -> {
-                                _currentMovie.value = results.movie
+                                fetchFromRemote(results.movie)
                                 clearSearchResults()
                             }
 
@@ -239,5 +239,27 @@ class EditCardViewModel
 
         fun clearSearchResults() {
             _searchResults.value = AsyncMovieInfo.Empty
+        }
+
+        fun fetchFromRemote(selected: Movie) {
+            if (selected.tmdbId == null) {
+                showPopup(PopupInfo.SearchEmpty)
+                return
+            }
+            viewModelScope.launch {
+                apiRepo.getMovieDetails(selected.tmdbId).collect { asyncMovie ->
+                    when (asyncMovie) {
+                        // TODO: show loading state
+                        // is AsyncMovieInfo.Loading
+                        is AsyncMovieInfo.Failed -> {
+                            showPopup(PopupInfo.ConnectionFailed)
+                            Timber.e("Connection error: ${asyncMovie.trowable}")
+                        }
+
+                        is AsyncMovieInfo.Single -> _currentMovie.value = asyncMovie.movie
+                        else -> {}
+                    }
+                }
+            }
         }
     }
