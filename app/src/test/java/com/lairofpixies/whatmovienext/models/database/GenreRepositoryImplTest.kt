@@ -25,6 +25,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -42,12 +43,15 @@ class GenreRepositoryImplTest {
     @Before
     fun setUp() {
         genreDao = mockk(relaxed = true)
+    }
 
+    private fun TestScope.initializeSut() {
         genreRepository =
             GenreRepositoryImpl(
                 genreDao = genreDao,
-                ioDispatcher = UnconfinedTestDispatcher(),
+                ioDispatcher = UnconfinedTestDispatcher(testScheduler),
             )
+        advanceUntilIdle()
     }
 
     private fun genreFlow() =
@@ -63,6 +67,7 @@ class GenreRepositoryImplTest {
         runTest {
             // Given
             every { genreDao.getAllGenres() } returns emptyFlow()
+            initializeSut()
 
             // When
             val result = genreRepository.isEmpty()
@@ -76,6 +81,7 @@ class GenreRepositoryImplTest {
         runTest {
             // Given
             every { genreDao.getAllGenres() } returns genreFlow()
+            initializeSut()
 
             // When
             val result = genreRepository.isEmpty()
@@ -114,11 +120,7 @@ class GenreRepositoryImplTest {
 
             // Load existing genres
             coEvery { genreDao.getAllGenres() } returns flowOf(virtualGenreList)
-            genreRepository =
-                GenreRepositoryImpl(
-                    genreDao = genreDao,
-                    ioDispatcher = UnconfinedTestDispatcher(),
-                )
+            initializeSut()
             advanceUntilIdle()
 
             // When
@@ -158,10 +160,7 @@ class GenreRepositoryImplTest {
         runTest {
             // Given
             every { genreDao.getAllGenres() } returns genreFlow()
-
-            // repopulate in-mem db
-            genreRepository = GenreRepositoryImpl(genreDao = genreDao)
-            advanceUntilIdle()
+            initializeSut()
 
             // When
             val result = genreRepository.genreNamesByTmdbIds(listOf(1127))

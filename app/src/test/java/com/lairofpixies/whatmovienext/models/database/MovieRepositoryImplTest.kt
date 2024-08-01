@@ -33,7 +33,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -43,12 +45,22 @@ import org.junit.Test
 class MovieRepositoryImplTest {
     private lateinit var movieDao: MovieDao
     private lateinit var dbMapper: DbMapper
-    private lateinit var sut: MovieRepository
+    private lateinit var movieRepository: MovieRepository
 
     @Before
     fun setUp() {
         movieDao = mockk(relaxed = true)
         dbMapper = DbMapper()
+    }
+
+    private fun TestScope.initializeSut() {
+        movieRepository =
+            MovieRepositoryImpl(
+                movieDao,
+                dbMapper,
+                ioDispatcher = UnconfinedTestDispatcher(testScheduler),
+            )
+        advanceUntilIdle()
     }
 
     @Test
@@ -63,8 +75,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.getAllMovies() } returns flowOf(dbMovies)
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            val result = sut.movies.first()
+            initializeSut()
+            val result = movieRepository.movies.first()
 
             // Then
             val asyncMovies =
@@ -78,53 +90,56 @@ class MovieRepositoryImplTest {
         }
 
     @Test
-    fun `single movie`() {
-        // Given
-        coEvery { movieDao.getMovie(1) } returns
-            flowOf(
-                DbMovie(
-                    1,
-                    "first",
-                    watchState = WatchState.WATCHED,
-                ),
+    fun `single movie`() =
+        runTest {
+            // Given
+            coEvery { movieDao.getMovie(1) } returns
+                flowOf(
+                    DbMovie(
+                        1,
+                        "first",
+                        watchState = WatchState.WATCHED,
+                    ),
+                )
+
+            // When
+            initializeSut()
+            val result = movieRepository.singleMovie(1).value
+
+            // Then
+            assertEquals(
+                AsyncMovieInfo.Single(Movie(1, "first", watchState = WatchState.WATCHED)),
+                result,
             )
-
-        // When
-        sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-        val result = sut.singleMovie(1).value
-
-        // Then
-        assertEquals(
-            AsyncMovieInfo.Single(Movie(1, "first", watchState = WatchState.WATCHED)),
-            result,
-        )
-    }
+        }
 
     @Test
-    fun `single movie, loading`() {
-        // Given
-        coEvery { movieDao.getMovie(1) } returns emptyFlow()
+    fun `single movie, loading`() =
+        runTest {
+            // Given
+            coEvery { movieDao.getMovie(1) } returns emptyFlow()
 
-        // When
-        sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-        val result = sut.singleMovie(1).value
+            // When
+            initializeSut()
+            val result = movieRepository.singleMovie(1).value
 
-        // Then
-        assertEquals(AsyncMovieInfo.Loading, result)
-    }
+            // Then
+            assertEquals(AsyncMovieInfo.Loading, result)
+        }
 
     @Test
-    fun `single movie, not found`() {
-        // Given
-        coEvery { movieDao.getMovie(1) } returns flowOf(null)
+    fun `single movie, not found`() =
+        runTest {
+            // Given
+            coEvery { movieDao.getMovie(1) } returns flowOf(null)
 
-        // When
-        sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-        val result = sut.singleMovie(1).value
+            // When
+            initializeSut()
+            val result = movieRepository.singleMovie(1).value
 
-        // Then
-        assertEquals(AsyncMovieInfo.Empty, result)
-    }
+            // Then
+            assertEquals(AsyncMovieInfo.Empty, result)
+        }
 
     @Test
     fun fetchMovieById() =
@@ -134,8 +149,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.fetchMovieById(7) } returns dbMovie
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            val result = sut.fetchMovieById(7)
+            initializeSut()
+            val result = movieRepository.fetchMovieById(7)
 
             // Then
             val movie = dbMapper.toMovie(dbMovie)
@@ -149,8 +164,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.fetchMovieById(0) } returns mockk()
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            val result = sut.fetchMovieById(0)
+            initializeSut()
+            val result = movieRepository.fetchMovieById(0)
 
             // Then
             assertEquals(null, result)
@@ -164,8 +179,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.fetchMoviesByTitle("gotByTitle") } returns listOf(dbMovie)
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            val result = sut.fetchMoviesByTitle("gotByTitle")
+            initializeSut()
+            val result = movieRepository.fetchMoviesByTitle("gotByTitle")
 
             // Then
             val movie = dbMapper.toMovie(dbMovie)
@@ -180,8 +195,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.insertMovie(capture(dbMovie)) } returns 1L
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            sut.addMovie(Movie(title = "first"))
+            initializeSut()
+            movieRepository.addMovie(Movie(title = "first"))
 
             // Then
             coVerify { movieDao.insertMovie(any()) }
@@ -199,8 +214,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.updateMovie(capture(dbMovie)) } just runs
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            val updatedId = sut.updateMovie(Movie(id = 11, title = "first"))
+            initializeSut()
+            val updatedId = movieRepository.updateMovie(Movie(id = 11, title = "first"))
 
             // Then
             coVerify { movieDao.updateMovie(any()) }
@@ -218,8 +233,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.updateWatchState(any(), any()) } just runs
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            sut.setWatchState(11, WatchState.WATCHED)
+            initializeSut()
+            movieRepository.setWatchState(11, WatchState.WATCHED)
 
             // Then
             coVerify { movieDao.updateWatchState(11, WatchState.WATCHED) }
@@ -235,8 +250,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.delete(capture(requestedMovie)) } just runs
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            sut.archiveMovie(movieToArchive.id)
+            initializeSut()
+            movieRepository.archiveMovie(movieToArchive.id)
 
             // Then
             coVerify { movieDao.archive(movieToArchive.id) }
@@ -252,8 +267,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.restore(capture(requestedMovieId)) } just runs
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            sut.restoreMovie(movieToRestore.id)
+            initializeSut()
+            movieRepository.restoreMovie(movieToRestore.id)
 
             // Then
             coVerify { movieDao.restore(movieToRestore.id) }
@@ -270,8 +285,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.fetchMovieById(1) } returns movieToDelete
 
             // When
-            sut = MovieRepositoryImpl(movieDao, dbMapper, UnconfinedTestDispatcher())
-            sut.deleteMovie(movieToDelete.id)
+            initializeSut()
+            movieRepository.deleteMovie(movieToDelete.id)
 
             // Then
             coVerify { movieDao.delete(movieToDelete) }

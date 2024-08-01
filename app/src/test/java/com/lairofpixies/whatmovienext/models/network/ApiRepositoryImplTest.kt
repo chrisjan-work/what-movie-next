@@ -28,7 +28,9 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Before
@@ -42,7 +44,7 @@ class ApiRepositoryImplTest {
     private lateinit var configRepo: ConfigRepository
     private lateinit var genreRepository: GenreRepository
     private lateinit var remoteMapper: RemoteMapper
-    private lateinit var sut: ApiRepository
+    private lateinit var apiRepository: ApiRepository
 
     @Before
     fun setUp() {
@@ -50,7 +52,16 @@ class ApiRepositoryImplTest {
         configRepo = mockk(relaxed = true)
         genreRepository = mockk(relaxed = true)
         remoteMapper = RemoteMapper(configRepo, genreRepository)
-        sut = ApiRepositoryImpl(tmdbApi, remoteMapper, UnconfinedTestDispatcher())
+    }
+
+    private fun TestScope.initializeSut() {
+        apiRepository =
+            ApiRepositoryImpl(
+                tmdbApi,
+                remoteMapper,
+                ioDispatcher = UnconfinedTestDispatcher(testScheduler),
+            )
+        advanceUntilIdle()
     }
 
     @Test
@@ -58,9 +69,10 @@ class ApiRepositoryImplTest {
         runTest {
             // Given
             coEvery { tmdbApi.findMoviesByTitle(any()) } returns TmdbSearchResults(results = emptyList())
+            initializeSut()
 
             // When
-            val result = sut.findMoviesByTitle("test").value
+            val result = apiRepository.findMoviesByTitle("test").value
 
             // Then
             assertEquals(AsyncMovieInfo.Empty, result)
@@ -77,9 +89,10 @@ class ApiRepositoryImplTest {
                             TmdbMovieBasic(tmdbId = 1, title = "test"),
                         ),
                 )
+            initializeSut()
 
             // When
-            val result = sut.findMoviesByTitle("test").value
+            val result = apiRepository.findMoviesByTitle("test").value
 
             // Then
             assertEquals(AsyncMovieInfo.Single(Movie(tmdbId = 1, title = "test")), result)
@@ -97,9 +110,10 @@ class ApiRepositoryImplTest {
                 )
             coEvery { tmdbApi.findMoviesByTitle(any()) } returns
                 TmdbSearchResults(results = receivedMovies)
+            initializeSut()
 
             // When
-            val result = sut.findMoviesByTitle("test").value
+            val result = apiRepository.findMoviesByTitle("test").value
 
             // Then
             val expectedMovies =
@@ -123,9 +137,10 @@ class ApiRepositoryImplTest {
                     ),
                 )
             coEvery { tmdbApi.findMoviesByTitle(any()) } throws http404
+            initializeSut()
 
             // When
-            val result = sut.findMoviesByTitle("test").value
+            val result = apiRepository.findMoviesByTitle("test").value
 
             // Then
             assertEquals(AsyncMovieInfo.Failed(http404), result)

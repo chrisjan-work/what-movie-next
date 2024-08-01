@@ -24,7 +24,9 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -48,17 +50,22 @@ class ConfigRepositoryImplTest {
                         ),
                     )
             }
+    }
+
+    private fun TestScope.initializeSut() {
         configRepository =
             ConfigRepositoryImpl(
                 appPreferences,
-                UnconfinedTestDispatcher(),
+                UnconfinedTestDispatcher(testScheduler),
             )
         configRepository.trackConfiguration()
+        advanceUntilIdle()
     }
 
     @Test
     fun getThumbnailUrl() =
         runTest {
+            initializeSut()
             val url = configRepository.getThumbnailUrl("/test")
             assertEquals("https://image.tmdb.org/t/p/w154/test", url)
         }
@@ -66,6 +73,7 @@ class ConfigRepositoryImplTest {
     @Test
     fun getCoverUrl() =
         runTest {
+            initializeSut()
             val url = configRepository.getCoverUrl("/test")
             assertEquals("https://image.tmdb.org/t/p/w500/test", url)
         }
