@@ -31,7 +31,9 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
@@ -53,6 +55,13 @@ class ConfigSynchronizerImplTest {
         genreRepository = mockk(relaxed = true)
         remoteMapper = mockk(relaxed = true)
 
+        // Feed valid paths by default
+        coEvery { tmdbApi.getConfiguration() } returns testConfiguration()
+        every { appPreferences.imagePaths() } returns flowOf(testStoredPaths())
+        every { connectivityTracker.isOnline() } returns flowOf(true)
+    }
+
+    private fun TestScope.initializeSut() {
         configSynchronizer =
             ConfigSynchronizerImpl(
                 appPreferences = appPreferences,
@@ -61,13 +70,10 @@ class ConfigSynchronizerImplTest {
                 remoteMapper = remoteMapper,
                 connectivityTracker = connectivityTracker,
                 cacheExpirationTimeMillis = 1000L,
-                ioDispatcher = UnconfinedTestDispatcher(),
+                ioDispatcher = UnconfinedTestDispatcher(testScheduler),
             )
-        // Feed valid paths by default
-        coEvery { tmdbApi.getConfiguration() } returns testConfiguration()
-        every { appPreferences.imagePaths() } returns flowOf(testStoredPaths())
-        every { connectivityTracker.isOnline() } returns flowOf(true)
         configSynchronizer.syncConfig()
+        advanceUntilIdle()
     }
 
     private fun testConfiguration() =
@@ -92,8 +98,11 @@ class ConfigSynchronizerImplTest {
             // Given
             every { appPreferences.imagePaths() } returns flowOf(null)
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(System.currentTimeMillis())
+            initializeSut()
+
             // When
             configSynchronizer.checkNow()
+
             // Then
             coVerify {
                 appPreferences.updateLastCheckedDateMillis(any())
@@ -106,9 +115,11 @@ class ConfigSynchronizerImplTest {
         runTest {
             // Given
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(0L)
+            initializeSut()
 
             // When
             configSynchronizer.checkNow()
+
             // Then
             coVerify {
                 appPreferences.updateLastCheckedDateMillis(any())
@@ -122,9 +133,11 @@ class ConfigSynchronizerImplTest {
             clearMocks(appPreferences)
             // Given
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(System.currentTimeMillis())
+            initializeSut()
 
             // When
             configSynchronizer.checkNow()
+
             // Then
             coVerify {
                 appPreferences.updateLastCheckedDateMillis(any())
@@ -139,9 +152,9 @@ class ConfigSynchronizerImplTest {
             clearMocks(appPreferences)
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(0L)
             every { connectivityTracker.isOnline() } returns flowOf(false)
+            initializeSut()
 
             // When
-            configSynchronizer.syncConfig()
 
             // Then
             coVerify(exactly = 0) { appPreferences.updateImagePaths(any()) }
@@ -155,8 +168,7 @@ class ConfigSynchronizerImplTest {
             every { appPreferences.lastCheckedDateMillis(any()) } returns flowOf(0L)
             val connection = MutableStateFlow(false)
             every { connectivityTracker.isOnline() } returns connection
-
-            configSynchronizer.syncConfig()
+            initializeSut()
             coVerify(exactly = 0) { appPreferences.updateImagePaths(any()) }
 
             // When
@@ -175,7 +187,7 @@ class ConfigSynchronizerImplTest {
             coEvery { genreRepository.isEmpty() } returns true
 
             // When
-            configSynchronizer.syncConfig()
+            initializeSut()
 
             // Then
             coVerify {
