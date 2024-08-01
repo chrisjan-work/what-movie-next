@@ -38,6 +38,7 @@ Feature: Search Online
     Given the online repo returns an entry with title "The City of Lost Children"
     And the online repo returns an entry with title "Dark City"
     And the online repo returns an entry with title "City of Angels"
+    And the online repo returns details for an entry with title "Dark City"
     When the user searches for the title "City"
     Then the search results contains an entry with title "Dark City"
     When the user selects the search result "Dark City"

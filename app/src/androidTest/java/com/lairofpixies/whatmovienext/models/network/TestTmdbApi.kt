@@ -28,53 +28,23 @@ import javax.inject.Inject
 class TestTmdbApi
     @Inject
     constructor() : TmdbApi {
-        private lateinit var fakeMoviesBasic: () -> List<TmdbMovieBasic>
-        private lateinit var fakeMovieExtended: () -> TmdbMovieExtended
-        private lateinit var fakeGenres: () -> List<TmdbGenres.TmdbGenre>
+        lateinit var fakeMoviesBasic: () -> List<TmdbMovieBasic>
+        lateinit var fakeMovieExtended: () -> TmdbMovieExtended
+        lateinit var fakeGenres: () -> List<TmdbGenres.TmdbGenre>
 
         init {
-            clearFakeMovies()
-            clearFakeMovieExtended()
-            clearFakeGenres()
+            clearFakeResponses()
         }
 
-        fun clearFakeMovies() {
+        fun clearFakeResponses() {
             fakeMoviesBasic = { emptyList() }
-        }
-
-        fun replaceFakeMovies(newFakeMovies: () -> List<TmdbMovieBasic>) {
-            fakeMoviesBasic = newFakeMovies
+            fakeGenres = { emptyList() }
+            fakeMovieExtended = { TmdbMovieExtended(success = false) }
         }
 
         fun appendToFakeMovies(vararg movie: TmdbMovieBasic) {
             val newList = fakeMoviesBasic() + movie
             fakeMoviesBasic = { newList }
-        }
-
-        fun clearFakeGenres() {
-            fakeGenres = { emptyList() }
-        }
-
-        fun replaceFakeGenres(newFakeGenres: () -> List<TmdbGenres.TmdbGenre>) {
-            fakeGenres = newFakeGenres
-        }
-
-        fun appendToFakeGenres(vararg genre: TmdbGenres.TmdbGenre) {
-            val newList = fakeGenres() + genre
-            fakeGenres = { newList }
-        }
-
-        fun mapGenreIds(requestedGenres: List<String>): List<Long> {
-            val mapped = fakeGenres().associate { genre -> genre.name to genre.tmdbId }
-            return requestedGenres.mapNotNull { name -> mapped[name] }
-        }
-
-        fun clearFakeMovieExtended() {
-            fakeMovieExtended = { TmdbMovieExtended(success = false) }
-        }
-
-        fun replaceFakeMovieExtended(newFakeMovieExtended: () -> TmdbMovieExtended) {
-            fakeMovieExtended = newFakeMovieExtended
         }
 
         override suspend fun findMoviesByTitle(escapedTitle: String): TmdbSearchResults = TmdbSearchResults(results = fakeMoviesBasic())

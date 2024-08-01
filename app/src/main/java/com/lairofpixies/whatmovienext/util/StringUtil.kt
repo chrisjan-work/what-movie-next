@@ -18,6 +18,13 @@
  */
 package com.lairofpixies.whatmovienext.util
 
+import android.text.Html
+import android.text.style.URLSpan
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
 import java.net.URI
 
 private const val DELIMITER = ','
@@ -43,6 +50,7 @@ fun String.decodeToList(): List<String> {
             }
 
             char == ESCAPE_CHAR -> escaped = true
+
             char == DELIMITER -> {
                 result.add(current.toString())
                 current.clear()
@@ -60,3 +68,29 @@ fun String.decodeToList(): List<String> {
 }
 
 fun String.toCanonicalUrl(): String = URI(this).normalize().toString()
+
+fun String.toAnnotatedString(linkColor: Color = Color.Blue): AnnotatedString {
+    val html = Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
+    return buildAnnotatedString {
+        append(html.toString())
+        html.getSpans(0, html.length, URLSpan::class.java).forEach { span ->
+            val start = html.getSpanStart(span)
+            val end = html.getSpanEnd(span)
+            addStringAnnotation(
+                tag = "URL",
+                annotation = span.url,
+                start = start,
+                end = end,
+            )
+            addStyle(
+                style =
+                    SpanStyle(
+                        color = linkColor,
+                        textDecoration = TextDecoration.Underline,
+                    ),
+                start = start,
+                end = end,
+            )
+        }
+    }
+}
