@@ -43,5 +43,5 @@ sealed class PopupInfo {
 
     data object SearchEmpty : PopupInfo()
 
-    data object SearchFailed : PopupInfo()
+    data object ConnectionFailed : PopupInfo()
 }

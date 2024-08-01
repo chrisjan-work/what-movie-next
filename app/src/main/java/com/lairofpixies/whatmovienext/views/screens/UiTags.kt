@@ -38,6 +38,6 @@ object UiTags {
         const val CONFIRM_DELETION = "ConfirmDeletion"
         const val SEARCHING = "Searching"
         const val SEARCH_EMPTY = "SearchReturnedNothing"
-        const val SEARCH_FAILED = "OnlineConnectionError"
+        const val CONNECTION_FAILED = "OnlineConnectionError"
     }
 }

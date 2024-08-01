@@ -197,7 +197,7 @@ class EditCardViewModel
 
                             is AsyncMovieInfo.Failed -> {
                                 clearSearchResults()
-                                showPopup(PopupInfo.SearchFailed)
+                                showPopup(PopupInfo.ConnectionFailed)
                                 // TODO: log error remotely
                                 Timber.e("Connection error: ${results.trowable}")
                             }
