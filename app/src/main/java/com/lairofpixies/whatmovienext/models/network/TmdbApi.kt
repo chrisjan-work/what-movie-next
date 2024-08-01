@@ -20,8 +20,10 @@ package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TmdbApi {
@@ -35,4 +37,9 @@ interface TmdbApi {
 
     @GET("genre/movie/list")
     suspend fun getGenres(): TmdbGenres
+
+    @GET("movie/{tmdbId}?append_to_response=credits")
+    suspend fun getMovieDetails(
+        @Path("tmdbId") tmdbId: Long,
+    ): TmdbMovieExtended
 }
