@@ -141,7 +141,7 @@ class SearchStepDefs(
     @Then("a pop-up is shown informing that an error occurred")
     fun aPopUpIsShownInformingThatAnErrorOccurred() =
         composeRule.composeStep {
-            onNodeWithTag(UiTags.Popups.SEARCH_FAILED)
+            onNodeWithTag(UiTags.Popups.CONNECTION_FAILED)
                 .isDisplayed()
         }
 

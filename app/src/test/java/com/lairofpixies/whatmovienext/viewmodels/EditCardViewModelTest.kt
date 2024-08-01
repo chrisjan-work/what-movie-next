@@ -463,7 +463,7 @@ class EditCardViewModelTest {
             editViewModel.startSearch()
 
             // Then
-            coVerify { mainViewModelMock.showPopup(any<PopupInfo.SearchFailed>()) }
+            coVerify { mainViewModelMock.showPopup(any<PopupInfo.ConnectionFailed>()) }
         }
 
     @Test

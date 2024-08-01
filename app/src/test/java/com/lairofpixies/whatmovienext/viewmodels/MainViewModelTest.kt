@@ -86,22 +86,22 @@ class MainViewModelTest {
     @Test
     fun `attempt to close popup that was not open because there is a different popup`() {
         // Given
-        mainViewModel.showPopup(PopupInfo.SearchFailed)
+        mainViewModel.showPopup(PopupInfo.ConnectionFailed)
 
         // When
         mainViewModel.closePopupOfType(PopupInfo.DuplicatedTitle::class)
 
         // Then
-        assertEquals(PopupInfo.SearchFailed, mainViewModel.popupInfo.value)
+        assertEquals(PopupInfo.ConnectionFailed, mainViewModel.popupInfo.value)
     }
 
     @Test
     fun `close popup of a given type`() {
         // Given
-        mainViewModel.showPopup(PopupInfo.SearchFailed)
+        mainViewModel.showPopup(PopupInfo.ConnectionFailed)
 
         // When
-        mainViewModel.closePopupOfType(PopupInfo.SearchFailed::class)
+        mainViewModel.closePopupOfType(PopupInfo.ConnectionFailed::class)
 
         // Then
         assertEquals(PopupInfo.None, mainViewModel.popupInfo.value)

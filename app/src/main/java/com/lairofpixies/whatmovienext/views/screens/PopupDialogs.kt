@@ -103,10 +103,10 @@ fun PopupDialogs(
                 onDismiss = onDismiss,
             )
 
-        is PopupInfo.SearchFailed ->
+        is PopupInfo.ConnectionFailed ->
             SingleButtonDialog(
-                modifier = modifier.testTag(UiTags.Popups.SEARCH_FAILED),
-                contentRes = R.string.search_failed_explanation,
+                modifier = modifier.testTag(UiTags.Popups.CONNECTION_FAILED),
+                contentRes = R.string.connection_failed_explanation,
                 onDismiss = onDismiss,
             )
     }
