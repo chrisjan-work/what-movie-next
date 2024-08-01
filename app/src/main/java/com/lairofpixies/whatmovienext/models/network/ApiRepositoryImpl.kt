@@ -66,4 +66,25 @@ class ApiRepositoryImpl(
         )
 
     private fun escapeForQuery(title: String) = title.trim().replace(" ", "+")
+
+    override fun getMovieDetails(tmdbId: Long): StateFlow<AsyncMovieInfo> =
+        flow {
+            try {
+                val remoteMovie = tmdbApi.getMovieDetails(tmdbId)
+                if (remoteMovie.success == false) {
+                    emit(AsyncMovieInfo.Failed(Exception("Failed to get movie details")))
+                    return@flow
+                }
+                val movie = remoteMapper.toMovie(remoteMovie)
+                emit(AsyncMovieInfo.Single(movie))
+            } catch (httpException: HttpException) {
+                emit(AsyncMovieInfo.Failed(httpException))
+            } catch (exception: Exception) {
+                emit(AsyncMovieInfo.Failed(exception))
+            }
+        }.stateIn(
+            repositoryScope,
+            SharingStarted.Eagerly,
+            initialValue = AsyncMovieInfo.Loading,
+        )
 }

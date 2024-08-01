@@ -38,12 +38,16 @@ class DbMapperTest {
         DbMovie(
             id = 22,
             tmdbId = 333,
+            imdbId = "aaaa",
             title = "Something",
             originalTitle = "Etwas",
             year = 2020,
             thumbnailUrl = "thumbnailUrl",
             coverUrl = "coverUrl",
+            tagline = "tagline",
             summary = "summary",
+            genres = "Drama,Mystery",
+            runtimeMinutes = 111,
             watchState = WatchState.WATCHED,
             isArchived = false,
         )
@@ -52,12 +56,16 @@ class DbMapperTest {
         Movie(
             id = 22,
             tmdbId = 333,
+            imdbId = "aaaa",
             title = "Something",
             originalTitle = "Etwas",
             year = 2020,
             thumbnailUrl = "thumbnailUrl",
             coverUrl = "coverUrl",
+            tagline = "tagline",
             summary = "summary",
+            genres = listOf("Drama", "Mystery"),
+            runtimeMinutes = 111,
             watchState = WatchState.WATCHED,
             isArchived = false,
         )

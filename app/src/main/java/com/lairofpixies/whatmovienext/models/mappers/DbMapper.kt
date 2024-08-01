@@ -33,13 +33,16 @@ class DbMapper
                 Movie(
                     id = id,
                     tmdbId = tmdbId,
+                    imdbId = imdbId,
                     title = title,
                     originalTitle = originalTitle,
                     year = year,
                     thumbnailUrl = thumbnailUrl,
                     coverUrl = coverUrl,
+                    tagline = tagline,
                     summary = summary,
                     genres = toGenres(genres),
+                    runtimeMinutes = runtimeMinutes,
                     watchState = watchState,
                     isArchived = isArchived,
                 )
@@ -54,13 +57,16 @@ class DbMapper
                 DbMovie(
                     id = id,
                     tmdbId = tmdbId,
+                    imdbId = imdbId,
                     title = title,
                     originalTitle = originalTitle,
                     year = year,
                     thumbnailUrl = thumbnailUrl,
                     coverUrl = coverUrl,
+                    tagline = tagline,
                     summary = summary,
                     genres = toDbGenres(genres),
+                    runtimeMinutes = runtimeMinutes,
                     watchState = watchState,
                     isArchived = isArchived,
                 )

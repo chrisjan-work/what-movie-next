@@ -169,4 +169,18 @@ class RemoteMapperTest {
         // Then
         assertEquals(listOf("Comedy"), movie.genres)
     }
+
+    @Test
+    fun `extended tmdb movie to local movie`() {
+        // Given
+        every { configRepo.getCoverUrl("/terminator2.jpg") } returns "cover.jpg"
+        every { configRepo.getThumbnailUrl("/terminator2.jpg") } returns "thumbnail.jpg"
+        every { genreRepository.genreNamesByTmdbIds(listOf(188)) } returns listOf("Action")
+
+        // When
+        val result = remoteMapper.toMovie(testTmdbMovieExtended())
+
+        // Then
+        assertEquals(testLocalMovieExtended(), result)
+    }
 }
