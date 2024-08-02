@@ -30,8 +30,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 
@@ -119,15 +119,14 @@ fun SingleButtonDialog(
     modifier: Modifier = Modifier,
     @StringRes titleRes: Int? = null,
 ) {
-    val context = LocalContext.current
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
-        title = { Text(context.getString(titleRes ?: R.string.error_title)) },
-        text = { Text(context.getString(contentRes)) },
+        title = { Text(stringResource(titleRes ?: R.string.error_title)) },
+        text = { Text(stringResource(contentRes)) },
         confirmButton = {
             Button(onClick = onDismiss) {
-                Text(context.getString(R.string.close))
+                Text(stringResource(R.string.close))
             }
         },
     )
@@ -140,7 +139,6 @@ fun ProgressDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     BasicAlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
@@ -149,10 +147,10 @@ fun ProgressDialog(
             Column {
                 Row {
                     CircularProgressIndicator()
-                    Text(context.getString(contentRes))
+                    Text(stringResource(contentRes))
                 }
                 Button(onClick = onDismiss) {
-                    Text(context.getString(R.string.cancel))
+                    Text(stringResource(R.string.cancel))
                 }
             }
         }
@@ -169,23 +167,22 @@ fun TwoButtonDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
-        title = { Text(context.getString(titleRes)) },
-        text = { Text(context.getString(contentRes)) },
+        title = { Text(stringResource(titleRes)) },
+        text = { Text(stringResource(contentRes)) },
         confirmButton = {
             Button(onClick = {
                 onConfirm()
                 onDismiss()
             }) {
-                Text(context.getString(confirmRes))
+                Text(stringResource(confirmRes))
             }
         },
         dismissButton = {
             Button(onClick = onDismiss) {
-                Text(context.getString(dismissRes))
+                Text(stringResource(dismissRes))
             }
         },
     )
@@ -203,29 +200,28 @@ fun ThreeButtonDialog(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     BasicAlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
     ) {
         Box {
             Column {
-                Text(context.getString(contentRes))
+                Text(stringResource(contentRes))
                 Row {
                     Button(onClick = {
                         onSave()
                         onDismiss()
                     }) {
-                        Text(context.getString(saveLabelRes))
+                        Text(stringResource(saveLabelRes))
                     }
                     Button(onClick = {
                         onDiscard()
                         onDismiss()
                     }) {
-                        Text(context.getString(discardLabelRes))
+                        Text(stringResource(discardLabelRes))
                     }
                     Button(onClick = onDismiss) {
-                        Text(context.getString(dismissLabelRes))
+                        Text(stringResource(dismissLabelRes))
                     }
                 }
             }

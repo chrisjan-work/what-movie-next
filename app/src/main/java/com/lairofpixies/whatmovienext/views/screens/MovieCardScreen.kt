@@ -49,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -192,7 +193,7 @@ fun MovieCard(
                 Spacer(modifier = Modifier.height(36.dp))
                 Spacer(modifier = Modifier.weight(1f))
                 CreditsLink(
-                    text = LocalContext.current.getString(R.string.tmdbCredits),
+                    text = stringResource(R.string.tmdbCredits),
                     modifier =
                         Modifier
                             .align(Alignment.End)
