@@ -23,7 +23,8 @@ import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,7 +34,21 @@ class MovieCardViewModel
     constructor(
         private val repo: MovieRepository,
     ) : ScreenViewModel() {
-        fun getMovie(movieId: Long): StateFlow<AsyncMovieInfo> = repo.singleMovie(movieId)
+        private val _currentMovie = MutableStateFlow<AsyncMovieInfo>(AsyncMovieInfo.Loading)
+        val currentMovie = _currentMovie.asStateFlow()
+
+        fun startFetchingMovie(movieId: Long?) {
+            if (movieId == null) {
+                _currentMovie.value = AsyncMovieInfo.Empty
+                return
+            }
+
+            viewModelScope.launch {
+                repo.singleMovie(movieId).collect {
+                    _currentMovie.value = it
+                }
+            }
+        }
 
         fun updateMovieWatched(
             movieId: Long,

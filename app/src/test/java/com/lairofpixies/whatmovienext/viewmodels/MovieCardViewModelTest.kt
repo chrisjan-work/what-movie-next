@@ -58,6 +58,18 @@ class MovieCardViewModelTest {
     }
 
     @Test
+    fun `no movie`() {
+        // Given
+
+        // When
+        cardViewModel.startFetchingMovie(null)
+        val result = cardViewModel.currentMovie.value
+
+        // Then
+        assertEquals(AsyncMovieInfo.Empty, result)
+    }
+
+    @Test
     fun `get single movie`() {
         // Given
         val partialMovie =
@@ -68,7 +80,8 @@ class MovieCardViewModelTest {
             MutableStateFlow(partialMovie).asStateFlow()
 
         // When
-        val result = cardViewModel.getMovie(10).value
+        cardViewModel.startFetchingMovie(10)
+        val result = cardViewModel.currentMovie.value
 
         // Then
         assertEquals(partialMovie, result)

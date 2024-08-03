@@ -73,16 +73,18 @@ fun MovieCardScreen(
     movieId: Long?,
     cardViewModel: MovieCardViewModel,
 ) {
-    val context = LocalContext.current
-    val partialMovie = movieId?.let { cardViewModel.getMovie(it).collectAsState().value }
+    val partialMovie = cardViewModel.currentMovie.collectAsState().value
 
-    LaunchedEffect(partialMovie) {
-        if (partialMovie.isMissing()) {
-            Toast
-                .makeText(context, context.getString(R.string.movie_not_found), Toast.LENGTH_SHORT)
-                .show()
-            cardViewModel.onCancelAction()
-        }
+    LaunchedEffect(movieId) {
+        cardViewModel.startFetchingMovie(movieId)
+    }
+
+    if (partialMovie.isMissing()) {
+        val context = LocalContext.current
+        Toast
+            .makeText(context, context.getString(R.string.movie_not_found), Toast.LENGTH_SHORT)
+            .show()
+        cardViewModel.onCancelAction()
     }
 
     if (partialMovie is AsyncMovieInfo.Single) {
