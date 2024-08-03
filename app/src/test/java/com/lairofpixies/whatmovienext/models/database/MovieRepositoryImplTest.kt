@@ -30,7 +30,6 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
@@ -104,27 +103,13 @@ class MovieRepositoryImplTest {
 
             // When
             initializeSut()
-            val result = movieRepository.singleMovie(1).value
+            val result = movieRepository.singleMovie(1).first()
 
             // Then
             assertEquals(
                 AsyncMovieInfo.Single(Movie(1, "first", watchState = WatchState.WATCHED)),
                 result,
             )
-        }
-
-    @Test
-    fun `single movie, loading`() =
-        runTest {
-            // Given
-            coEvery { movieDao.getMovie(1) } returns emptyFlow()
-
-            // When
-            initializeSut()
-            val result = movieRepository.singleMovie(1).value
-
-            // Then
-            assertEquals(AsyncMovieInfo.Loading, result)
         }
 
     @Test
@@ -135,7 +120,7 @@ class MovieRepositoryImplTest {
 
             // When
             initializeSut()
-            val result = movieRepository.singleMovie(1).value
+            val result = movieRepository.singleMovie(1).first()
 
             // Then
             assertEquals(AsyncMovieInfo.Empty, result)

@@ -28,17 +28,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MovieRepositoryImpl(
     private val dao: MovieDao,
     private val dbMapper: DbMapper,
-    ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : MovieRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
@@ -56,7 +53,7 @@ class MovieRepositoryImpl(
                 dbMapper.toAsyncMovies(dbMovies)
             }.flowOn(ioDispatcher)
 
-    override fun singleMovie(movieId: Long): StateFlow<AsyncMovieInfo> =
+    override fun singleMovie(movieId: Long): Flow<AsyncMovieInfo> =
         dao
             .getMovie(movieId)
             .map { maybeMovie ->
@@ -64,11 +61,7 @@ class MovieRepositoryImpl(
                     ?.let { dbMapper.toMovie(it) }
                     ?.let { AsyncMovieInfo.Single(it) }
                     ?: AsyncMovieInfo.Empty
-            }.stateIn(
-                repositoryScope,
-                SharingStarted.Eagerly,
-                initialValue = AsyncMovieInfo.Loading,
-            )
+            }.flowOn(ioDispatcher)
 
     override suspend fun fetchMovieById(movieId: Long): Movie? =
         repositoryScope
