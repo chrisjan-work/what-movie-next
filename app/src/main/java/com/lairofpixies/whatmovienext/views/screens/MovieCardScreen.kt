@@ -58,8 +58,6 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.AMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.util.printableRuntime
@@ -89,86 +87,29 @@ fun MovieCardScreen(
         cardViewModel.onLeaveAction()
     }
 
-    if (partialMovie is LoadingMovie.Single) {
+    val loadedMovie = partialMovie.singleMovieOrNull<AMovie.ForCard>()
+    if (loadedMovie != null) {
+        val bottomItems =
+            bottomItemsForMovieCard(
+                loadedMovie,
+                onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
+                onArchiveAction = {
+                    cardViewModel.archiveCurrentMovie()
+                    cardViewModel.onLeaveAction()
+                },
+                onUpdateAction = { id, watchState ->
+                    cardViewModel.updateMovieWatched(
+                        id,
+                        watchState,
+                    )
+                },
+            )
+
         MovieCard(
-            movie = partialMovie.movie,
-            onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
-            onArchiveAction = {
-                cardViewModel.archiveCurrentMovie()
-                cardViewModel.onLeaveAction()
-            },
-            onUpdateAction = { id, watchState -> cardViewModel.updateMovieWatched(id, watchState) },
+            movie = loadedMovie,
+            bottomItems = bottomItems,
             modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
         )
-    }
-}
-
-@Composable
-fun MovieCard(
-    movie: Movie,
-    onHomeAction: () -> Unit,
-    onArchiveAction: () -> Unit,
-    onUpdateAction: (Long, WatchState) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Scaffold(
-        modifier = modifier,
-        bottomBar = {
-            CustomBottomBar(
-                items =
-                    bottomItemsForMovieCard(
-                        movie,
-                        onHomeAction = onHomeAction,
-                        onArchiveAction = onArchiveAction,
-                        onUpdateAction = onUpdateAction,
-                    ),
-            )
-        },
-    ) { innerPadding ->
-        BoxWithConstraints(
-            modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                    ),
-        ) {
-            val parentHeight = maxHeight
-
-            Column(
-                modifier =
-                    Modifier
-                        .padding(6.dp)
-                        .fillMaxWidth()
-                        .heightIn(min = parentHeight)
-                        .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.SpaceBetween,
-            ) {
-                CoverImage(
-                    coverUrl = movie.coverUrl,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                TitlesDisplay(title = movie.title, originalTitle = movie.originalTitle)
-                YearDisplay(year = movie.year)
-                Spacer(modifier = Modifier.height(8.dp))
-                RuntimeAndGenresDisplay(runtime = movie.runtimeMinutes, genres = movie.genres)
-                Spacer(modifier = Modifier.height(16.dp))
-                TaglineDisplay(tagline = movie.tagline)
-                Spacer(modifier = Modifier.height(4.dp))
-                PlotDisplay(plot = movie.summary)
-                Spacer(modifier = Modifier.height(36.dp))
-                Spacer(modifier = Modifier.weight(1f))
-                CreditsLink(
-                    text = stringResource(R.string.tmdbCredits),
-                    modifier =
-                        Modifier
-                            .align(Alignment.End)
-                            .alpha(0.4f),
-                )
-            }
-        }
     }
 }
 
@@ -388,20 +329,20 @@ fun CreditsLink(
 }
 
 fun bottomItemsForMovieCard(
-    movie: Movie,
+    movie: AMovie.ForCard,
     onHomeAction: () -> Unit,
     onArchiveAction: () -> Unit,
     onUpdateAction: (Long, WatchState) -> Unit,
 ): List<CustomBarItem> =
     listOf(
         CustomBarItem(ButtonSpec.MoviesShortcut, onHomeAction),
-        if (movie.watchState == WatchState.PENDING) {
+        if (movie.appData.watchState == WatchState.PENDING) {
             CustomBarItem(ButtonSpec.PendingMovieState) {
-                onUpdateAction(movie.id, WatchState.WATCHED)
+                onUpdateAction(movie.appData.id, WatchState.WATCHED)
             }
         } else {
             CustomBarItem(ButtonSpec.WatchedMovieState) {
-                onUpdateAction(movie.id, WatchState.PENDING)
+                onUpdateAction(movie.appData.id, WatchState.PENDING)
             }
         },
         CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction),

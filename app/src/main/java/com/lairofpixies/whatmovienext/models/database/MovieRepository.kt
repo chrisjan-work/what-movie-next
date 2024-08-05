@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
@@ -31,7 +32,7 @@ interface MovieRepository {
 
     val archivedMovies: Flow<LoadingMovie>
 
-    fun singleMovie(movieId: Long): Flow<LoadingMovie>
+    fun singleCardMovie(movieId: Long): Flow<LoadingAMovie>
 
     // write
     suspend fun addMovie(movie: Movie): Long

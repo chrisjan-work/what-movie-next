@@ -160,7 +160,7 @@ class RemoteMapperTest {
 
         // Then
         assertEquals(
-            testLocalMovieExtended().removeCreationTime(),
+            testCardMovieExtended().removeCreationTime(),
             result.removeCreationTime(),
         )
     }

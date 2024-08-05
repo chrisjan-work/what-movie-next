@@ -65,7 +65,7 @@ fun testTmdbMovieExtended(): TmdbMovieExtended =
             ),
     )
 
-fun testLocalMovieExtended(): AMovie.ForCard =
+fun testCardMovieExtended(): AMovie.ForCard =
     AMovie.ForCard(
         appData =
             MovieData.AppData(
@@ -97,6 +97,7 @@ fun testLocalMovieExtended(): AMovie.ForCard =
 fun testDbMovieExtended(): DbMovie =
     DbMovie(
         id = NEW_ID,
+        creationTime = 0,
         tmdbId = 99,
         imdbId = "tt100",
         title = "Terminator 2",

@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
@@ -54,14 +55,14 @@ class MovieRepositoryImpl(
                 dbMapper.toLoadingMovies(dbMovies)
             }.flowOn(ioDispatcher)
 
-    override fun singleMovie(movieId: Long): Flow<LoadingMovie> =
+    override fun singleCardMovie(movieId: Long): Flow<LoadingAMovie> =
         dao
             .getMovie(movieId)
             .map { maybeMovie ->
                 maybeMovie
-                    ?.let { dbMapper.toMovie(it) }
-                    ?.let { LoadingMovie.Single(it) }
-                    ?: LoadingMovie.Empty
+                    ?.let { dbMapper.toCardMovie(it) }
+                    ?.let { LoadingAMovie.Single(it) }
+                    ?: LoadingAMovie.Empty
             }.flowOn(ioDispatcher)
 
     override suspend fun addMovie(movie: Movie): Long =

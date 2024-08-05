@@ -18,8 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import io.mockk.coVerify
@@ -28,8 +28,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -60,26 +59,27 @@ class MovieCardViewModelTest {
     }
 
     @Test
-    fun `no movie`() {
-        // Given
+    fun `no movie`() =
+        runTest {
+            // Given
 
-        // When
-        cardViewModel.startFetchingMovie(null)
-        val result = cardViewModel.currentMovie.value
+            // When
+            cardViewModel.startFetchingMovie(null)
+            val result = cardViewModel.currentMovie.value
 
-        // Then
-        assertEquals(LoadingMovie.Empty, result)
-    }
+            // Then
+            assertEquals(LoadingAMovie.Empty, result)
+        }
 
     @Test
     fun `get single movie`() {
         // Given
         val partialMovie =
-            LoadingMovie.Single(
-                Movie(id = 10, title = "single movie"),
+            LoadingAMovie.Single(
+                forCard(id = 10, title = "single movie"),
             )
-        every { repo.singleMovie(10) } returns
-            MutableStateFlow(partialMovie).asStateFlow()
+        every { repo.singleCardMovie(10) } returns
+            flowOf(partialMovie)
 
         // When
         cardViewModel.startFetchingMovie(10)
@@ -108,11 +108,11 @@ class MovieCardViewModelTest {
             // Given
             // Given
             val partialMovie =
-                LoadingMovie.Single(
-                    Movie(id = 10, title = "single movie"),
+                LoadingAMovie.Single(
+                    forCard(id = 10, title = "single movie"),
                 )
-            every { repo.singleMovie(10) } returns
-                MutableStateFlow(partialMovie).asStateFlow()
+            every { repo.singleCardMovie(10) } returns
+                flowOf(partialMovie)
             cardViewModel.startFetchingMovie(10)
 
             // When
