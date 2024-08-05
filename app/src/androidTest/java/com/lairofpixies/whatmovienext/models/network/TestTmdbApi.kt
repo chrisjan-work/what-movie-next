@@ -54,7 +54,8 @@ class TestTmdbApi
                 images =
                     TmdbConfiguration.Images(
                         url = "localhost",
-                        sizes = listOf("microscopic", "unremarkable", "humongous"),
+                        posterSizes = listOf("microscopic", "unremarkable", "humongous"),
+                        profileSizes = listOf("ant", "whale"),
                     ),
             )
 

@@ -90,28 +90,32 @@ class ConfigSynchronizerImpl(
             with(it.images) {
                 val small: String
                 val big: String
-                when (sizes.size) {
+                when (posterSizes.size) {
                     0 -> return@let null
                     1 -> {
-                        small = sizes.first()
-                        big = sizes.first()
+                        small = posterSizes.first()
+                        big = posterSizes.first()
                     }
 
                     in 2..3 -> {
-                        small = sizes.first()
-                        big = sizes.last()
+                        small = posterSizes.first()
+                        big = posterSizes.last()
                     }
 
                     else -> {
-                        small = sizes[1]
-                        big = sizes[sizes.size - 2]
+                        small = posterSizes[1]
+                        big = posterSizes[posterSizes.size - 2]
                     }
                 }
+
+                // take second in list, or fallback to first
+                val profile = profileSizes.getOrNull(1) ?: profileSizes.firstOrNull() ?: ""
 
                 ImagePaths(
                     baseUrl = url,
                     thumbnailPath = small,
                     coverPath = big,
+                    facePath = profile,
                 )
             }
         }

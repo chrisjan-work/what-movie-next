@@ -86,7 +86,7 @@ class TmdbApiTest {
                 MockResponse()
                     .setResponseCode(200)
                     .setBody(
-                        """{ "images" : { "secure_base_url": "example.com", "poster_sizes": ["w92", "w154", "w780"] } }""",
+                        """{ "images" : { "secure_base_url": "example.com", "poster_sizes": ["w92", "w154", "w780"], "profile_sizes": ["w45", "w185"] } }""",
                     )
             mockWebServer.enqueue(mockResponse)
 
@@ -94,9 +94,9 @@ class TmdbApiTest {
             val result = tmdbApi.getConfiguration()
 
             // Then
-            val expectedSizes = listOf("w92", "w154", "w780")
             assertEquals("example.com", result.images.url)
-            assertEquals(expectedSizes, result.images.sizes)
+            assertEquals(listOf("w92", "w154", "w780"), result.images.posterSizes)
+            assertEquals(listOf("w45", "w185"), result.images.profileSizes)
         }
 
     @Test

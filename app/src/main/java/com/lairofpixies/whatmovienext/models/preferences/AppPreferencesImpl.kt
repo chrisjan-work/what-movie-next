@@ -53,6 +53,7 @@ class AppPreferencesImpl(
                     baseUrl = preferences[KEY_IMAGES_BASE_URL] ?: return@map null,
                     thumbnailPath = preferences[KEY_IMAGES_SMALL_OPTION] ?: return@map null,
                     coverPath = preferences[KEY_IMAGES_BIG_OPTION] ?: return@map null,
+                    facePath = preferences[KEY_IMAGES_PROFILE_OPTION] ?: return@map null,
                 )
             }
 
@@ -61,6 +62,7 @@ class AppPreferencesImpl(
             preferences[KEY_IMAGES_BASE_URL] = config.baseUrl
             preferences[KEY_IMAGES_SMALL_OPTION] = config.thumbnailPath
             preferences[KEY_IMAGES_BIG_OPTION] = config.coverPath
+            preferences[KEY_IMAGES_PROFILE_OPTION] = config.facePath
         }
     }
 
@@ -69,5 +71,6 @@ class AppPreferencesImpl(
         val KEY_IMAGES_BASE_URL = stringPreferencesKey("images_base_url")
         val KEY_IMAGES_SMALL_OPTION = stringPreferencesKey("images_small_option")
         val KEY_IMAGES_BIG_OPTION = stringPreferencesKey("images_big_option")
+        val KEY_IMAGES_PROFILE_OPTION = stringPreferencesKey("images_profile_option")
     }
 }
