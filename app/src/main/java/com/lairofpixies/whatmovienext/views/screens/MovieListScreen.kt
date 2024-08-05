@@ -32,7 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
@@ -84,7 +84,7 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
 
 @Composable
 fun MovieList(
-    filteredMovies: List<Movie>,
+    filteredMovies: List<AMovie.ForList>,
     onMovieClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -96,7 +96,7 @@ fun MovieList(
             modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
         ) {
             items(filteredMovies) { movie ->
-                MovieListItem(movie) { onMovieClicked(movie.id) }
+                MovieListItem(movie) { onMovieClicked(movie.appData.id) }
             }
         }
     }
@@ -104,22 +104,22 @@ fun MovieList(
 
 @Composable
 fun MovieListItem(
-    movie: Movie,
+    movie: AMovie.ForList,
     onItemClicked: () -> Unit = {},
 ) {
     val backgroundColor =
-        when (movie.watchState) {
+        when (movie.appData.watchState) {
             WatchState.PENDING -> Color.White
             WatchState.WATCHED -> Color.LightGray
         }
     val foregroundColor =
-        when (movie.watchState) {
+        when (movie.appData.watchState) {
             WatchState.PENDING -> Color.DarkGray
             WatchState.WATCHED -> Color.Black
         }
 
     Text(
-        text = movie.title,
+        text = movie.searchData.title,
         modifier =
             Modifier
                 .background(backgroundColor)

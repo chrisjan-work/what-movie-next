@@ -88,6 +88,36 @@ class DbMapper
                 )
             }
 
+        fun toListMovie(dbMovie: DbMovie): AMovie.ForList =
+            with(dbMovie) {
+                AMovie.ForList(
+                    appData =
+                        MovieData.AppData(
+                            id = id,
+                            creationTime = creationTime,
+                            watchState = watchState,
+                            isArchived = isArchived,
+                        ),
+                    searchData =
+                        MovieData.SearchData(
+                            tmdbId = tmdbId,
+                            title = title,
+                            originalTitle = originalTitle,
+                            year = year,
+                            thumbnailUrl = thumbnailUrl,
+                            coverUrl = coverUrl,
+                            genres = toGenres(genres),
+                        ),
+                    detailData =
+                        MovieData.DetailData(
+                            imdbId = imdbId,
+                            tagline = tagline,
+                            plot = plot,
+                            runtimeMinutes = runtimeMinutes,
+                        ),
+                )
+            }
+
         fun toDbMovie(movie: Movie): DbMovie =
             with(movie) {
                 DbMovie(

@@ -94,6 +94,34 @@ fun testCardMovieExtended(): AMovie.ForCard =
         staffData = MovieData.StaffData(),
     )
 
+fun testListMovieExtended(): AMovie.ForList =
+    AMovie.ForList(
+        appData =
+            MovieData.AppData(
+                id = NEW_ID,
+                creationTime = 0,
+                watchState = WatchState.PENDING,
+                isArchived = false,
+            ),
+        searchData =
+            MovieData.SearchData(
+                tmdbId = 99,
+                title = "Terminator 2",
+                originalTitle = "Terminator 2",
+                year = 1991,
+                thumbnailUrl = "thumbnail.jpg",
+                coverUrl = "cover.jpg",
+                genres = listOf("Action"),
+            ),
+        detailData =
+            MovieData.DetailData(
+                imdbId = "tt100",
+                tagline = "Hasta la vista, baby.",
+                plot = "robots from the future",
+                runtimeMinutes = 137,
+            ),
+    )
+
 fun testDbMovieExtended(): DbMovie =
     DbMovie(
         id = NEW_ID,
