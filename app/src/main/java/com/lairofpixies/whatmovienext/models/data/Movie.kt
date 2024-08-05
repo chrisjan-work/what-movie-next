@@ -21,7 +21,7 @@ package com.lairofpixies.whatmovienext.models.data
 data class Movie(
     val id: Long = NEW_ID,
     val title: String,
-    val tmdbId: Long? = null,
+    val tmdbId: Long = UNKNOWN_ID,
     val imdbId: String? = null,
     val originalTitle: String = "",
     val year: Int? = null,
@@ -36,6 +36,7 @@ data class Movie(
 ) {
     companion object {
         const val NEW_ID = 0L
+        const val UNKNOWN_ID = -1L
     }
 }
 

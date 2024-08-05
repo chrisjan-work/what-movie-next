@@ -27,7 +27,7 @@ import com.lairofpixies.whatmovienext.models.data.WatchState
 data class DbMovie(
     @PrimaryKey(autoGenerate = true) val id: Long = Movie.NEW_ID,
     val title: String,
-    val tmdbId: Long? = null,
+    val tmdbId: Long = Movie.UNKNOWN_ID,
     val imdbId: String? = null,
     val originalTitle: String = "",
     val year: Int? = null,

@@ -53,7 +53,7 @@ class RemoteMapper
             with(tmdbMovieExtended) {
                 Movie(
                     id = NEW_ID,
-                    tmdbId = tmdbId,
+                    tmdbId = tmdbId ?: Movie.UNKNOWN_ID,
                     imdbId = imdbId,
                     title = title ?: "",
                     originalTitle = originalTitle ?: "",

@@ -26,8 +26,4 @@ data class DbGenre(
     @PrimaryKey(autoGenerate = false)
     val name: String,
     val tmdbId: Long,
-) {
-    companion object {
-        const val UNKNOWN_ID = -1L
-    }
-}
+)
