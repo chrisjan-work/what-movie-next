@@ -20,11 +20,12 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.models.mappers.MovieMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -252,12 +253,17 @@ class EditCardViewModel
                     when (loadingMovie) {
                         // TODO: show loading state
                         // is LoadingMovie.Loading
-                        is LoadingMovie.Failed -> {
+                        is LoadingAMovie.Failed -> {
                             showPopup(PopupInfo.ConnectionFailed)
                             Timber.e("Connection error: ${loadingMovie.trowable}")
                         }
 
-                        is LoadingMovie.Single -> _currentMovie.value = loadingMovie.movie
+                        is LoadingAMovie.Single -> {
+                            // TODO: should not need to map it
+                            _currentMovie.value =
+                                MovieMapper().toMovie(loadingMovie.movie as AMovie.ForCard)
+                        }
+
                         else -> {}
                     }
                 }

@@ -41,4 +41,46 @@ object TestAMovie {
                 genres = genres,
             ),
     )
+
+    fun forCard(
+        id: Long = 1,
+        watchState: WatchState = WatchState.PENDING,
+        isArchived: Boolean = false,
+        tmdbId: Long = 1,
+        title: String = "",
+        originalTitle: String = "",
+        year: Int = 0,
+        thumbnailUrl: String = "",
+        coverUrl: String = "",
+        genres: List<String> = emptyList(),
+        imdbId: String = "",
+        tagline: String = "",
+        plot: String = "",
+        runtimeMinutes: Int = 0,
+    ) = AMovie.ForCard(
+        appData =
+            MovieData.AppData(
+                id = id,
+                watchState = watchState,
+                isArchived = isArchived,
+            ),
+        searchData =
+            MovieData.SearchData(
+                tmdbId = tmdbId,
+                title = title,
+                originalTitle = originalTitle,
+                year = year,
+                thumbnailUrl = thumbnailUrl,
+                coverUrl = coverUrl,
+                genres = genres,
+            ),
+        detailData =
+            MovieData.DetailData(
+                imdbId = imdbId,
+                tagline = tagline,
+                plot = plot,
+                runtimeMinutes = runtimeMinutes,
+            ),
+        staffData = MovieData.StaffData(),
+    )
 }

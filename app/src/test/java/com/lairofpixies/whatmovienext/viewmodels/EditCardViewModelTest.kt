@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
@@ -39,8 +38,6 @@ import io.mockk.spyk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -489,7 +486,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val foundMovie = TestAMovie.forSearch(tmdbId = 1007, title = "From Russia with Love")
-            val movieWithDetails = Movie(tmdbId = 1007, title = "From Russia with Love")
+            val detailMovie = TestAMovie.forCard(tmdbId = 1007, title = "From Russia with Love")
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
                 flowOf(
                     LoadingAMovie.Single(
@@ -497,14 +494,32 @@ class EditCardViewModelTest {
                     ),
                 )
             coEvery { apiRepoMock.getMovieDetails(any()) } returns
-                MutableStateFlow(LoadingMovie.Single(movieWithDetails))
+                flowOf(LoadingAMovie.Single(detailMovie))
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
 
             // When
             editViewModel.startSearch()
 
             // Then
-            assertEquals(movieWithDetails, editViewModel.currentMovie.value)
+            val expectedMovie =
+                Movie(
+                    id = 1,
+                    title = "From Russia with Love",
+                    tmdbId = 1007,
+                    imdbId = "",
+                    originalTitle = "",
+                    year = 0,
+                    thumbnailUrl = "",
+                    coverUrl = "",
+                    tagline = "",
+                    summary = "",
+                    genres = emptyList(),
+                    runtimeMinutes = 0,
+                    watchState = WatchState.PENDING,
+                    isArchived = false,
+                )
+
+            assertEquals(expectedMovie, editViewModel.currentMovie.value)
         }
 
     @Test
@@ -558,15 +573,44 @@ class EditCardViewModelTest {
     fun `fetch movie details`() =
         runTest {
             // Given
-            val movie = Movie(id = 1007, tmdbId = 1007, title = "From Russia with Love")
-            val movieFlow = MutableStateFlow(LoadingMovie.Single(movie)).asStateFlow()
-            coEvery { apiRepoMock.getMovieDetails(any()) } returns movieFlow
+            val movie =
+                TestAMovie.forCard(
+                    id = 1007,
+                    tmdbId = 1007,
+                    title = "From Russia with Love",
+                    originalTitle = "Shaken, not stirred",
+                    year = 1963,
+                    thumbnailUrl = "bond.jpg",
+                    coverUrl = "james.jpg",
+                    genres = listOf("action"),
+                    imdbId = "tt007",
+                    tagline = "with license to...",
+                    plot = "Cold War Shenanigans",
+                    runtimeMinutes = 115,
+                )
+            coEvery { apiRepoMock.getMovieDetails(any()) } returns
+                flowOf(LoadingAMovie.Single(movie))
 
             // When
-            editViewModel.fetchFromRemote(movie.tmdbId)
+            editViewModel.fetchFromRemote(movie.searchData.tmdbId)
 
             // Then
-            assertEquals(movie, editViewModel.currentMovie.value)
+            val expectedMovie =
+                Movie(
+                    id = 1007,
+                    tmdbId = 1007,
+                    title = "From Russia with Love",
+                    originalTitle = "Shaken, not stirred",
+                    year = 1963,
+                    thumbnailUrl = "bond.jpg",
+                    coverUrl = "james.jpg",
+                    genres = listOf("action"),
+                    imdbId = "tt007",
+                    tagline = "with license to...",
+                    summary = "Cold War Shenanigans",
+                    runtimeMinutes = 115,
+                )
+            assertEquals(expectedMovie, editViewModel.currentMovie.value)
         }
 
     @Test
@@ -574,8 +618,8 @@ class EditCardViewModelTest {
         runTest {
             // Given
 
-            val failedFlow = MutableStateFlow(LoadingMovie.Failed(Exception())).asStateFlow()
-            coEvery { apiRepoMock.getMovieDetails(any()) } returns failedFlow
+            coEvery { apiRepoMock.getMovieDetails(any()) } returns
+                flowOf(LoadingAMovie.Failed(Exception()))
             val spy = spyk(editViewModel)
             val currentMovie = Movie(id = 1, title = "nothing")
             spy.updateMovieEdits { currentMovie }
