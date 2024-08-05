@@ -71,11 +71,11 @@ object DBModule {
 
     @Singleton
     @Provides
-    fun provideMovieDao(db: MovieDatabase) = db.movieDao()
+    fun provideMovieDao(db: MovieDatabase): MovieDao = db.movieDao()
 
     @Singleton
     @Provides
-    fun provideGenreDao(db: MovieDatabase) = db.genreDao()
+    fun provideGenreDao(db: MovieDatabase): GenreDao = db.genreDao()
 
     @Singleton
     @Provides
