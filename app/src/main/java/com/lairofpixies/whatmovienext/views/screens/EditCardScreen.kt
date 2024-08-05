@@ -46,6 +46,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.viewmodels.EditCardViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
@@ -83,7 +84,7 @@ fun EditCardScreen(
 
     EditCard(
         currentMovie = currentMovie.value,
-        searchResults = searchResults.value.toList(),
+        searchResults = searchResults.value.toList<AMovie.ForSearch>(),
         onUpdateEdits = { editViewModel.updateMovieEdits { it } },
         onCancelAction = { editViewModel.onCancelAction() },
         onSaveAction = { editViewModel.onSaveAction() },
@@ -107,13 +108,13 @@ fun EditCardScreen(
 @Composable
 fun EditCard(
     currentMovie: Movie,
-    searchResults: List<Movie>,
+    searchResults: List<AMovie.ForSearch>,
     onUpdateEdits: (Movie) -> Unit,
     onCancelAction: () -> Unit,
     onSaveAction: () -> Unit,
     onArchiveAction: () -> Unit,
     onSearchAction: () -> Unit,
-    onSearchResultSelected: (Movie) -> Unit,
+    onSearchResultSelected: (Long) -> Unit,
     onCloseKeyboard: () -> Unit,
     focusRequester: FocusRequester,
 ) {

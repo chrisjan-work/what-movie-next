@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import kotlinx.coroutines.CoroutineDispatcher
@@ -25,8 +26,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import retrofit2.HttpException
@@ -38,32 +41,25 @@ class ApiRepositoryImpl(
 ) : ApiRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    override fun findMoviesByTitle(title: String): StateFlow<LoadingMovie> =
+    override fun findMoviesByTitle(title: String): Flow<LoadingAMovie> =
         flow {
-            try {
-                val remoteMovies =
-                    repositoryScope
-                        .async {
-                            tmdbApi.findMoviesByTitle(escapeForQuery(title))
-                        }.await()
+            emit(LoadingAMovie.Loading)
+            val remoteMovies =
+                repositoryScope
+                    .async {
+                        tmdbApi.findMoviesByTitle(escapeForQuery(title))
+                    }.await()
 
-                val loadingMovie =
-                    LoadingMovie.fromList(
-                        remoteMovies.results.map { remoteMovie ->
-                            remoteMapper.toMovie(remoteMovie)
-                        },
-                    )
-                emit(loadingMovie)
-            } catch (httpException: HttpException) {
-                emit(LoadingMovie.Failed(httpException))
-            } catch (exception: Exception) {
-                emit(LoadingMovie.Failed(exception))
-            }
-        }.stateIn(
-            repositoryScope,
-            SharingStarted.Eagerly,
-            initialValue = LoadingMovie.Loading,
-        )
+            val loadingMovie =
+                LoadingAMovie.fromList(
+                    remoteMovies.results.map { remoteMovie ->
+                        remoteMapper.toSearchMovie(remoteMovie)
+                    },
+                )
+            emit(loadingMovie)
+        }.catch { exception: Throwable ->
+            emit(LoadingAMovie.Failed(exception))
+        }
 
     private fun escapeForQuery(title: String) = title.trim().replace(" ", "+")
 

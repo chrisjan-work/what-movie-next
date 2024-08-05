@@ -18,8 +18,10 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Movie.Companion.NEW_ID
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
@@ -35,17 +37,19 @@ class RemoteMapper
         private val configRepo: ConfigRepository,
         private val genreRepository: GenreRepository,
     ) {
-        fun toMovie(tmdbMovieBasic: TmdbMovieBasic): Movie =
+        fun toSearchMovie(tmdbMovieBasic: TmdbMovieBasic): AMovie.ForSearch =
             with(tmdbMovieBasic) {
-                Movie(
-                    id = NEW_ID,
-                    tmdbId = tmdbId,
-                    title = title,
-                    originalTitle = originalTitle,
-                    year = toYear(releaseDate),
-                    thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
-                    coverUrl = configRepo.getCoverUrl(posterPath),
-                    genres = toGenreNames(genreIds),
+                AMovie.ForSearch(
+                    searchData =
+                        MovieData.SearchData(
+                            tmdbId = tmdbId,
+                            title = title,
+                            originalTitle = originalTitle,
+                            year = toYear(releaseDate),
+                            thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
+                            coverUrl = configRepo.getCoverUrl(posterPath),
+                            genres = toGenreNames(genreIds),
+                        ),
                 )
             }
 

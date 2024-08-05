@@ -18,25 +18,25 @@
  */
 package com.lairofpixies.whatmovienext.models.data
 
-sealed class LoadingMovie {
-    data object Loading : LoadingMovie()
+sealed class LoadingAMovie {
+    data object Loading : LoadingAMovie()
 
     data class Failed(
         val trowable: Throwable,
-    ) : LoadingMovie()
+    ) : LoadingAMovie()
 
-    data object Empty : LoadingMovie()
+    data object Empty : LoadingAMovie()
 
     data class Single(
-        val movie: Movie,
-    ) : LoadingMovie()
+        val movie: AMovie,
+    ) : LoadingAMovie()
 
     data class Multiple(
-        val movies: List<Movie>,
-    ) : LoadingMovie()
+        val movies: List<AMovie>,
+    ) : LoadingAMovie()
 
     companion object {
-        fun fromList(movies: List<Movie>): LoadingMovie =
+        fun <T : AMovie> fromList(movies: List<T>): LoadingAMovie =
             when (movies.size) {
                 0 -> Empty
                 1 -> Single(movies.first())
@@ -44,14 +44,14 @@ sealed class LoadingMovie {
             }
     }
 
-    fun toList(): List<Movie> =
+    inline fun <reified T : AMovie> toList(): List<T> =
         when (this) {
-            is Single -> listOf(movie)
-            is Multiple -> movies
+            is Single -> (movie as? T)?.let { listOf(it) } ?: emptyList()
+            is Multiple -> movies.filterIsInstance<T>()
             else -> emptyList()
         }
 
-    fun filter(sieve: (Movie) -> Boolean): LoadingMovie =
+    fun filter(sieve: (AMovie) -> Boolean): LoadingAMovie =
         when (this) {
             is Single -> if (sieve(movie)) this else Empty
             is Multiple -> {
@@ -62,14 +62,14 @@ sealed class LoadingMovie {
         }
 }
 
-fun LoadingMovie?.isMissing(): Boolean =
+fun LoadingAMovie?.isMissing(): Boolean =
     this == null ||
-        this == LoadingMovie.Empty ||
-        this is LoadingMovie.Failed
+        this == LoadingAMovie.Empty ||
+        this is LoadingAMovie.Failed
 
-fun LoadingMovie?.hasMovie(): Boolean =
+fun LoadingAMovie?.hasMovie(): Boolean =
     this != null &&
         (
-            this is LoadingMovie.Single ||
-                this is LoadingMovie.Multiple
+            this is LoadingAMovie.Single ||
+                this is LoadingAMovie.Multiple
         )

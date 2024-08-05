@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.hasMovie
@@ -50,13 +51,13 @@ class EditCardViewModel
         private val _currentMovie = MutableStateFlow(Movie(id = Movie.NEW_ID, title = ""))
         val currentMovie: StateFlow<Movie> = _currentMovie.asStateFlow()
 
-        private val _searchResults: MutableStateFlow<LoadingMovie> =
-            MutableStateFlow(LoadingMovie.Empty)
-        val searchResults: StateFlow<LoadingMovie> = _searchResults.asStateFlow()
+        private val _searchResults: MutableStateFlow<LoadingAMovie> =
+            MutableStateFlow(LoadingAMovie.Empty)
+        val searchResults: StateFlow<LoadingAMovie> = _searchResults.asStateFlow()
         private var searchJob: Job? = null
         private val shouldShowSearchPopup: Flow<Boolean> =
             searchResults.map {
-                it is LoadingMovie.Loading
+                it is LoadingAMovie.Loading
             }
 
         override fun attachMainViewModel(mainViewModel: MainViewModel) {
@@ -190,27 +191,28 @@ class EditCardViewModel
 
                     apiRepo.findMoviesByTitle(title = currentMovie.value.title).collect { results ->
                         when (results) {
-                            is LoadingMovie.Loading ->
-                                _searchResults.value = LoadingMovie.Loading
+                            is LoadingAMovie.Loading -> {
+                                _searchResults.value = LoadingAMovie.Loading
+                            }
 
-                            is LoadingMovie.Failed -> {
+                            is LoadingAMovie.Failed -> {
                                 clearSearchResults()
                                 showPopup(PopupInfo.ConnectionFailed)
                                 // TODO: log error remotely
                                 Timber.e("Connection error: ${results.trowable}")
                             }
 
-                            is LoadingMovie.Empty -> {
+                            is LoadingAMovie.Empty -> {
                                 clearSearchResults()
                                 showPopup(PopupInfo.SearchEmpty)
                             }
 
-                            is LoadingMovie.Single -> {
-                                fetchFromRemote(results.movie)
+                            is LoadingAMovie.Single -> {
+                                fetchFromRemote(results.movie.searchData?.tmdbId)
                                 clearSearchResults()
                             }
 
-                            is LoadingMovie.Multiple -> _searchResults.value = results
+                            is LoadingAMovie.Multiple -> _searchResults.value = results
                         }
                     }
                 }
@@ -236,16 +238,17 @@ class EditCardViewModel
         }
 
         fun clearSearchResults() {
-            _searchResults.value = LoadingMovie.Empty
+            _searchResults.value = LoadingAMovie.Empty
         }
 
-        fun fetchFromRemote(selected: Movie) {
-            if (selected.tmdbId == null) {
+        fun fetchFromRemote(tmdbId: Long?) {
+            if (tmdbId == null) {
                 showPopup(PopupInfo.SearchEmpty)
                 return
             }
+
             viewModelScope.launch {
-                apiRepo.getMovieDetails(selected.tmdbId).collect { loadingMovie ->
+                apiRepo.getMovieDetails(tmdbId).collect { loadingMovie ->
                     when (loadingMovie) {
                         // TODO: show loading state
                         // is LoadingMovie.Loading

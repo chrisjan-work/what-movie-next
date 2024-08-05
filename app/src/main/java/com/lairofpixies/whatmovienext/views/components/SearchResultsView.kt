@@ -46,13 +46,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 
 @Composable
 fun SearchResultsPicker(
-    searchResults: List<Movie>,
-    onResultSelected: (Movie) -> Unit,
+    searchResults: List<AMovie.ForSearch>,
+    onResultSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (searchResults.isEmpty()) {
@@ -71,9 +72,9 @@ fun SearchResultsPicker(
         ) {
             items(searchResults) { movie ->
                 SearchResultItem(
-                    movie,
+                    movie.searchData,
                     onClick = {
-                        onResultSelected(movie)
+                        onResultSelected(movie.searchData.tmdbId)
                     },
                 )
             }
@@ -83,7 +84,7 @@ fun SearchResultsPicker(
 
 @Composable
 fun SearchResultItem(
-    movie: Movie,
+    data: MovieData.SearchData,
     onClick: () -> Unit,
 ) {
     val missingThumbnailColor = colorResource(R.color.missing_image)
@@ -102,9 +103,9 @@ fun SearchResultItem(
                     shape = RoundedCornerShape(8.dp),
                 ).padding(6.dp),
     ) {
-        if (movie.thumbnailUrl.isNotBlank()) {
+        if (data.thumbnailUrl.isNotBlank()) {
             AsyncImage(
-                model = movie.thumbnailUrl,
+                model = data.thumbnailUrl,
                 contentDescription = null,
                 modifier =
                     Modifier
@@ -125,27 +126,27 @@ fun SearchResultItem(
             modifier = Modifier.heightIn(min = 100.dp),
         ) {
             Text(
-                text = movie.title,
+                text = data.title,
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            if (movie.originalTitle.isNotBlank() && movie.originalTitle != movie.title) {
+            if (data.originalTitle.isNotBlank() && data.originalTitle != data.title) {
                 Text(
-                    text = movie.originalTitle,
+                    text = data.originalTitle,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 )
             }
-            movie.year?.let { year ->
+            data.year?.let { year ->
                 Text(
                     text = year.toString(),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
-            if (movie.genres.isNotEmpty()) {
+            if (data.genres.isNotEmpty()) {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = movie.genres.joinToString(" / "),
+                    text = data.genres.joinToString(" / "),
                     style = MaterialTheme.typography.bodySmall,
                     fontStyle = FontStyle.Italic,
                 )
