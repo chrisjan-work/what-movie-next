@@ -232,7 +232,7 @@ class MovieRepositoryImplTest {
             val movieToArchive =
                 Movie(1, "toArchive", watchState = WatchState.WATCHED, isArchived = false)
             val requestedMovie = slot<DbMovie>()
-            coEvery { movieDao.delete(capture(requestedMovie)) } just runs
+            coEvery { movieDao.deleteMovie(capture(requestedMovie)) } just runs
 
             // When
             initializeSut()
@@ -266,7 +266,7 @@ class MovieRepositoryImplTest {
             val movieToDelete =
                 DbMovie(1, "isArchived", watchState = WatchState.WATCHED, isArchived = true)
             val archivedMovie = slot<DbMovie>()
-            coEvery { movieDao.delete(capture(archivedMovie)) } just runs
+            coEvery { movieDao.deleteMovie(capture(archivedMovie)) } just runs
             coEvery { movieDao.fetchMovieById(1) } returns movieToDelete
 
             // When
@@ -274,6 +274,6 @@ class MovieRepositoryImplTest {
             movieRepository.deleteMovie(movieToDelete.id)
 
             // Then
-            coVerify { movieDao.delete(movieToDelete) }
+            coVerify { movieDao.deleteMovie(movieToDelete) }
         }
 }
