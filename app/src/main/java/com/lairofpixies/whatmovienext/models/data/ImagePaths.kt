@@ -22,4 +22,5 @@ data class ImagePaths(
     val baseUrl: String,
     val thumbnailPath: String,
     val coverPath: String,
+    val facePath: String,
 )

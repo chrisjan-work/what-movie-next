@@ -31,6 +31,8 @@ data class TmdbConfiguration(
         @Json(name = "secure_base_url")
         val url: String,
         @Json(name = "poster_sizes")
-        val sizes: List<String>,
+        val posterSizes: List<String>,
+        @Json(name = "profile_sizes")
+        val profileSizes: List<String>,
     )
 }

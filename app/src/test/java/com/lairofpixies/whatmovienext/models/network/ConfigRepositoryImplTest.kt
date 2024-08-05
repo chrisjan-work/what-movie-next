@@ -47,6 +47,7 @@ class ConfigRepositoryImplTest {
                             baseUrl = "https://image.tmdb.org/t/p/",
                             thumbnailPath = "w154",
                             coverPath = "w500",
+                            facePath = "w185",
                         ),
                     )
             }
@@ -76,5 +77,13 @@ class ConfigRepositoryImplTest {
             initializeSut()
             val url = configRepository.getCoverUrl("/test")
             assertEquals("https://image.tmdb.org/t/p/w500/test", url)
+        }
+
+    @Test
+    fun getFaceUrl() =
+        runTest {
+            initializeSut()
+            val url = configRepository.getFaceUrl("/test")
+            assertEquals("https://image.tmdb.org/t/p/w185/test", url)
         }
 }

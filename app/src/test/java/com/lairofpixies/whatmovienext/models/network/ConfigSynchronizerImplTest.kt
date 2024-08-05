@@ -81,15 +81,17 @@ class ConfigSynchronizerImplTest {
             images =
                 TmdbConfiguration.Images(
                     url = "somewhere",
-                    sizes = listOf("fixed"),
+                    posterSizes = listOf("fixed"),
+                    profileSizes = listOf("fixed"),
                 ),
         )
 
     private fun testStoredPaths() =
         ImagePaths(
-            "https://image.tmdb.org/t/p/",
-            "w154",
-            "w500",
+            baseUrl = "https://image.tmdb.org/t/p/",
+            thumbnailPath = "w154",
+            coverPath = "w500",
+            facePath = "w185",
         )
 
     @Test

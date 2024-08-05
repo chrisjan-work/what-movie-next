@@ -33,7 +33,7 @@ class ConfigRepositoryImpl(
 ) : ConfigRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    private var imagePaths: ImagePaths = ImagePaths("", "", "")
+    private var imagePaths: ImagePaths = ImagePaths("", "", "", "")
 
     override fun trackConfiguration() {
         repositoryScope.launch {
@@ -53,6 +53,13 @@ class ConfigRepositoryImpl(
     override fun getCoverUrl(posterPath: String?): String =
         if (!posterPath.isNullOrBlank()) {
             "${imagePaths.baseUrl}/${imagePaths.coverPath}/$posterPath".toCanonicalUrl()
+        } else {
+            ""
+        }
+
+    override fun getFaceUrl(profilePath: String?): String =
+        if (!profilePath.isNullOrBlank()) {
+            "${imagePaths.baseUrl}/${imagePaths.facePath}/$profilePath".toCanonicalUrl()
         } else {
             ""
         }

@@ -24,4 +24,6 @@ interface ConfigRepository {
     fun getThumbnailUrl(posterPath: String?): String
 
     fun getCoverUrl(posterPath: String?): String
+
+    fun getFaceUrl(profilePath: String?): String
 }

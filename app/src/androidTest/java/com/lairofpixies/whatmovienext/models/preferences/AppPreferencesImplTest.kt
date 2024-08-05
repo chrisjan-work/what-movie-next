@@ -94,6 +94,7 @@ class AppPreferencesImplTest {
                 ImagePaths(
                     "https://images.net",
                     "thumb",
+                    "cover",
                     "face",
                 )
             appPreferences.updateImagePaths(imagePaths)
