@@ -42,7 +42,7 @@ class RemoteMapper
                     tmdbId = tmdbId,
                     title = title,
                     originalTitle = originalTitle,
-                    year = extractYear(releaseDate),
+                    year = toYear(releaseDate),
                     thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
                     coverUrl = configRepo.getCoverUrl(posterPath),
                     genres = toGenreNames(genreIds),
@@ -57,7 +57,7 @@ class RemoteMapper
                     imdbId = imdbId,
                     title = title ?: "",
                     originalTitle = originalTitle ?: "",
-                    year = extractYear(releaseDate),
+                    year = toYear(releaseDate),
                     thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
                     coverUrl = configRepo.getCoverUrl(posterPath),
                     genres = toGenreNames(genres?.map { it.tmdbId }),
@@ -79,21 +79,21 @@ class RemoteMapper
 
         fun toGenreNames(genreIds: List<Long>?): List<String> =
             genreIds?.let { genreRepository.genreNamesByTmdbIds(genreIds) } ?: emptyList()
-    }
 
-fun extractYear(releaseDate: String?): Int? =
-    if (!releaseDate.isNullOrBlank()) {
-        try {
-            Regex("(\\d{4})-\\d{2}-\\d{2}")
-                .find(releaseDate)
-                ?.groupValues
-                ?.get(1)
-                ?.toInt()
-        } catch (_: StringIndexOutOfBoundsException) {
-            null
-        } catch (_: NumberFormatException) {
-            null
-        }
-    } else {
-        null
+        fun toYear(releaseDate: String?): Int? =
+            if (!releaseDate.isNullOrBlank()) {
+                try {
+                    Regex("(\\d{4})-\\d{2}-\\d{2}")
+                        .find(releaseDate)
+                        ?.groupValues
+                        ?.get(1)
+                        ?.toInt()
+                } catch (_: StringIndexOutOfBoundsException) {
+                    null
+                } catch (_: NumberFormatException) {
+                    null
+                }
+            } else {
+                null
+            }
     }
