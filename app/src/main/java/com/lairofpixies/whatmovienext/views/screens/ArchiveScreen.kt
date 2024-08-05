@@ -32,8 +32,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
@@ -44,7 +44,7 @@ import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 @Composable
 fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
-    val archivedMovies: LoadingMovie = archiveViewModel.archivedMovies.collectAsState().value
+    val archivedMovies: LoadingAMovie = archiveViewModel.archivedMovies.collectAsState().value
     val selection = archiveViewModel.selection.collectAsState().value
 
     if (archivedMovies.isMissing()) {
@@ -80,10 +80,10 @@ fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
 
 @Composable
 fun Archive(
-    archivedMovies: List<Movie>,
-    selection: Set<Movie>,
-    append: (Movie) -> Unit,
-    remove: (Movie) -> Unit,
+    archivedMovies: List<AMovie.ForList>,
+    selection: Set<AMovie.ForList>,
+    append: (AMovie.ForList) -> Unit,
+    remove: (AMovie.ForList) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -109,7 +109,7 @@ fun Archive(
 
 @Composable
 fun ArchivedMovieListItem(
-    movie: Movie,
+    movie: AMovie.ForList,
     isSelected: Boolean,
     onSelectionChanged: (Boolean) -> Unit,
 ) {
@@ -135,12 +135,12 @@ fun ArchivedMovieListItem(
                     onSelectionChanged(!isSelected)
                 },
         color = selectedColor,
-        text = movie.title,
+        text = movie.searchData.title,
     )
 }
 
 fun bottomItemsForArchive(
-    selection: Set<Movie>,
+    selection: Set<AMovie.ForList>,
     onNavigateToMovieList: () -> Unit,
     onRestoreSelectedMovies: () -> Unit,
     onDeleteSelectedMovies: () -> Unit,

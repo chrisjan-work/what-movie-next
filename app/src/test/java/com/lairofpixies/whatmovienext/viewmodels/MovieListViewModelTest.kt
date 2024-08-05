@@ -20,8 +20,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forList
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -76,8 +74,6 @@ class MovieListViewModelTest {
     }
 
     private fun packMoviesToFlow(vararg movies: AMovie.ForList) = flowOf(LoadingAMovie.fromList(movies.toList()))
-
-    private fun packMoviesToFlowOld(vararg movies: Movie) = flowOf(LoadingMovie.fromList(movies.toList()))
 
     @Test
     fun `forward movie list with all movies filter`() =
@@ -173,7 +169,7 @@ class MovieListViewModelTest {
     fun `detect if the archive is empty`() {
         // Given
         every { repo.archivedMovies } returns
-            packMoviesToFlowOld()
+            packMoviesToFlow()
 
         // When
         rerunConstructor()
@@ -187,7 +183,7 @@ class MovieListViewModelTest {
     fun `detect if there are archived movies`() {
         // Given
         every { repo.archivedMovies } returns
-            packMoviesToFlowOld(Movie(title = "archived movie", isArchived = true))
+            packMoviesToFlow(forList(title = "archived movie", isArchived = true))
 
         // When
         rerunConstructor()

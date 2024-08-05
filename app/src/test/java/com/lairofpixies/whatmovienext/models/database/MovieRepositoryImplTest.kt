@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
@@ -123,16 +122,14 @@ class MovieRepositoryImplTest {
             // Given
             val dbMovies =
                 listOf(
-                    DbMovie(
-                        id = 1,
+                    testDbMovieExtended().copy(
+                        tmdbId = 222,
                         title = "first",
-                        watchState = WatchState.WATCHED,
                         isArchived = true,
                     ),
-                    DbMovie(
-                        id = 2,
+                    testDbMovieExtended().copy(
+                        tmdbId = 313,
                         title = "second",
-                        watchState = WatchState.WATCHED,
                         isArchived = true,
                     ),
                 )
@@ -144,20 +141,34 @@ class MovieRepositoryImplTest {
 
             // Then
             val loadingMovies =
-                LoadingMovie.Multiple(
+                LoadingAMovie.Multiple(
                     listOf(
-                        Movie(
-                            id = 1,
-                            title = "first",
-                            watchState = WatchState.WATCHED,
-                            isArchived = true,
-                        ),
-                        Movie(
-                            id = 2,
-                            title = "second",
-                            watchState = WatchState.WATCHED,
-                            isArchived = true,
-                        ),
+                        testListMovieExtended().run {
+                            copy(
+                                searchData =
+                                    searchData.copy(
+                                        tmdbId = 222,
+                                        title = "first",
+                                    ),
+                                appData =
+                                    appData.copy(
+                                        isArchived = true,
+                                    ),
+                            )
+                        },
+                        testListMovieExtended().run {
+                            copy(
+                                searchData =
+                                    searchData.copy(
+                                        tmdbId = 313,
+                                        title = "second",
+                                    ),
+                                appData =
+                                    appData.copy(
+                                        isArchived = true,
+                                    ),
+                            )
+                        },
                     ),
                 )
             assertEquals(loadingMovies, result)
