@@ -22,6 +22,7 @@ import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
@@ -32,6 +33,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -99,4 +101,24 @@ class MovieCardViewModelTest {
             repo.setWatchState(31, WatchState.PENDING)
         }
     }
+
+    @Test
+    fun `archive currently viewed movie`() =
+        runTest {
+            // Given
+            // Given
+            val partialMovie =
+                LoadingMovie.Single(
+                    Movie(id = 10, title = "single movie"),
+                )
+            every { repo.singleMovie(10) } returns
+                MutableStateFlow(partialMovie).asStateFlow()
+            cardViewModel.startFetchingMovie(10)
+
+            // When
+            cardViewModel.archiveCurrentMovie()
+
+            // Then
+            coVerify { repo.archiveMovie(10) }
+        }
 }

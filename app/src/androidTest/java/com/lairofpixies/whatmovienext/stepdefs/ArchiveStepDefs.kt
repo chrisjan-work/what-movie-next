@@ -41,7 +41,7 @@ class ArchiveStepDefs(
         get() = testContext.composeRuleHolder.composeRule
 
     private val movieListStepDefs = MovieListStepDefs(testContext)
-    private val editCardStepDefs = EditCardStepDefs(testContext)
+    private val movieCardStepDefs = MovieCardStepDefs(testContext)
 
     @Then("the entry {string} is visible in the archive")
     fun theEntryIsVisibleInTheArchive(movieTitle: String) =
@@ -54,8 +54,7 @@ class ArchiveStepDefs(
     fun theUserArchivesTheEntry(movieTitle: String) {
         with(movieListStepDefs) {
             theUserOpensTheEntry(movieTitle)
-            theUserStartsEditingTheEntry()
-            editCardStepDefs.theUserArchivesTheCurrentEntry()
+            movieCardStepDefs.theUserArchivesTheCurrentEntry()
             theEntryIsNotVisible(movieTitle)
         }
     }

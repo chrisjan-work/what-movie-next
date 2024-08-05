@@ -100,11 +100,6 @@ class EditCardViewModel
                     movieRepo.updateMovie(movie)
                 }.await()
 
-        fun archiveCurrentMovie() =
-            viewModelScope.launch {
-                movieRepo.archiveMovie(currentMovie.value.id)
-            }
-
         // save currently edited movie in DB
         fun onSaveAction() {
             viewModelScope.launch {

@@ -19,6 +19,8 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
@@ -28,6 +30,8 @@ import com.lairofpixies.whatmovienext.views.screens.UiTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
+import io.cucumber.java.en.Given
+import io.cucumber.java.en.When
 import kotlinx.coroutines.test.runTest
 
 @HiltAndroidTest
@@ -54,7 +58,7 @@ class MovieCardStepDefs(
         }
     }
 
-    @And("the db entry {string} has {string} set as {string}")
+    @Given("the db entry {string} has {string} set as {string}")
     fun theDbEntryHasSetAs(
         title: String,
         field: String,
@@ -99,4 +103,12 @@ class MovieCardStepDefs(
             }
         testContext.movieApi.fakeMovieExtended = { updated }
     }
+
+    @When("the user archives the current entry")
+    fun theUserArchivesTheCurrentEntry() =
+        composeRule.composeStep {
+            val archiveLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
+            onNodeWithText(archiveLabel)
+                .performClick()
+        }
 }

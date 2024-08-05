@@ -138,19 +138,6 @@ class EditCardViewModelTest {
         }
 
     @Test
-    fun `archive currently edited movie`() =
-        runTest {
-            // Given
-            editViewModel.updateMovieEdits { copy(id = 2) }
-
-            // When
-            editViewModel.archiveCurrentMovie()
-
-            // Then
-            coVerify { dbRepoMock.archiveMovie(2) }
-        }
-
-    @Test
     fun `back button pass through when there are no saveable edits`() {
         // Given
         val movie = Movie(id = 89, title = "The Bourne Identity", watchState = WatchState.PENDING)

@@ -88,10 +88,6 @@ fun EditCardScreen(
         onUpdateEdits = { editViewModel.updateMovieEdits { it } },
         onCancelAction = { editViewModel.onCancelAction() },
         onSaveAction = { editViewModel.onSaveAction() },
-        onArchiveAction = {
-            editViewModel.archiveCurrentMovie()
-            editViewModel.onCancelAction()
-        },
         onSearchAction = {
             onCloseKeyboard()
             editViewModel.startSearch()
@@ -112,13 +108,11 @@ fun EditCard(
     onUpdateEdits: (Movie) -> Unit,
     onCancelAction: () -> Unit,
     onSaveAction: () -> Unit,
-    onArchiveAction: () -> Unit,
     onSearchAction: () -> Unit,
     onSearchResultSelected: (Long) -> Unit,
     onCloseKeyboard: () -> Unit,
     focusRequester: FocusRequester,
 ) {
-    val creating = currentMovie.isNew()
     Box {
         Scaffold(
             modifier = Modifier.testTag(UiTags.Screens.EDIT_CARD),
@@ -126,11 +120,9 @@ fun EditCard(
                 CustomBottomBar(
                     items =
                         bottomItemsForEditCard(
-                            creating,
                             searchEnabled = currentMovie.title.isNotBlank(),
                             onCancelAction = onCancelAction,
                             onSaveAction = onSaveAction,
-                            onArchiveAction = onArchiveAction,
                             onSearchAction = onSearchAction,
                         ),
                 )
@@ -205,19 +197,13 @@ fun EditableTitleField(
 }
 
 fun bottomItemsForEditCard(
-    creating: Boolean,
     searchEnabled: Boolean,
     onCancelAction: () -> Unit,
-    onArchiveAction: () -> Unit,
     onSaveAction: () -> Unit,
     onSearchAction: () -> Unit,
 ): List<CustomBarItem> =
     listOf(
-        if (creating) {
-            CustomBarItem(ButtonSpec.CancelAction, onCancelAction)
-        } else {
-            CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction)
-        },
+        CustomBarItem(ButtonSpec.CancelAction, onCancelAction),
         CustomBarItem(ButtonSpec.SearchAction, searchEnabled, onClick = onSearchAction),
         CustomBarItem(ButtonSpec.SaveAction, onSaveAction),
     )

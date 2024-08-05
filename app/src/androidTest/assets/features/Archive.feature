@@ -22,7 +22,6 @@ Feature: Archive
   Scenario: Archive entry
     Given a list with an entry "Gone with the Wind"
     When the user opens the entry "Gone with the Wind"
-    And the user starts editing the entry
     And the user archives the current entry
     Then the entry "Gone with the Wind" is not available
     And the user navigates to the archive
