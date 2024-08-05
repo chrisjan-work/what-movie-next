@@ -19,9 +19,10 @@
 package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.Movie.Companion.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.MovieData
+import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
+import com.lairofpixies.whatmovienext.models.data.MovieData.UNKNOWN_ID
+import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
@@ -53,21 +54,36 @@ class RemoteMapper
                 )
             }
 
-        fun toMovie(tmdbMovieExtended: TmdbMovieExtended): Movie =
+        fun toCardMovie(tmdbMovieExtended: TmdbMovieExtended): AMovie.ForCard =
             with(tmdbMovieExtended) {
-                Movie(
-                    id = NEW_ID,
-                    tmdbId = tmdbId ?: Movie.UNKNOWN_ID,
-                    imdbId = imdbId,
-                    title = title ?: "",
-                    originalTitle = originalTitle ?: "",
-                    year = toYear(releaseDate),
-                    thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
-                    coverUrl = configRepo.getCoverUrl(posterPath),
-                    genres = toGenreNames(genres?.map { it.tmdbId }),
-                    tagline = tagline ?: "",
-                    summary = summary ?: "",
-                    runtimeMinutes = runtime ?: 0,
+                AMovie.ForCard(
+                    appData =
+                        MovieData.AppData(
+                            id = NEW_ID,
+                            watchState = WatchState.PENDING,
+                            isArchived = false,
+                        ),
+                    searchData =
+                        MovieData.SearchData(
+                            tmdbId = tmdbId ?: UNKNOWN_ID,
+                            title = title ?: "",
+                            originalTitle = originalTitle ?: "",
+                            year = toYear(releaseDate),
+                            thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
+                            coverUrl = configRepo.getCoverUrl(posterPath),
+                            genres = toGenreNames(genres?.map { it.tmdbId }),
+                        ),
+                    detailData =
+                        MovieData.DetailData(
+                            imdbId = imdbId,
+                            tagline = tagline ?: "",
+                            plot = summary ?: "",
+                            runtimeMinutes = runtime ?: 0,
+                        ),
+                    staffData =
+                        MovieData.StaffData(
+                            // TODO
+                        ),
                 )
             }
 

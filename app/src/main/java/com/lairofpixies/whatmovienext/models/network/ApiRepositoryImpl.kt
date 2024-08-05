@@ -19,7 +19,6 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -27,12 +26,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
-import retrofit2.HttpException
 
 class ApiRepositoryImpl(
     private val tmdbApi: TmdbApi,
@@ -63,24 +58,18 @@ class ApiRepositoryImpl(
 
     private fun escapeForQuery(title: String) = title.trim().replace(" ", "+")
 
-    override fun getMovieDetails(tmdbId: Long): StateFlow<LoadingMovie> =
+    override fun getMovieDetails(tmdbId: Long): Flow<LoadingAMovie> =
         flow {
-            try {
-                val remoteMovie = tmdbApi.getMovieDetails(tmdbId)
-                if (remoteMovie.success == false) {
-                    emit(LoadingMovie.Failed(Exception("Failed to get movie details")))
-                    return@flow
-                }
-                val movie = remoteMapper.toMovie(remoteMovie)
-                emit(LoadingMovie.Single(movie))
-            } catch (httpException: HttpException) {
-                emit(LoadingMovie.Failed(httpException))
-            } catch (exception: Exception) {
-                emit(LoadingMovie.Failed(exception))
+            emit(LoadingAMovie.Loading)
+
+            val remoteMovie = tmdbApi.getMovieDetails(tmdbId)
+            if (remoteMovie.success == false) {
+                emit(LoadingAMovie.Failed(Exception("Failed to get movie details")))
+                return@flow
             }
-        }.stateIn(
-            repositoryScope,
-            SharingStarted.Eagerly,
-            initialValue = LoadingMovie.Loading,
-        )
+            val movie = remoteMapper.toCardMovie(remoteMovie)
+            emit(LoadingAMovie.Single(movie))
+        }.catch { exception: Throwable ->
+            emit(LoadingAMovie.Failed(exception))
+        }
 }

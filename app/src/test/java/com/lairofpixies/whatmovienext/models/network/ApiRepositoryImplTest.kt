@@ -19,7 +19,6 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
@@ -161,15 +160,15 @@ class ApiRepositoryImplTest {
             coEvery { tmdbApi.getMovieDetails(any()) } returns testTmdbMovieExtended()
             remoteMapper =
                 mockk(relaxed = true) {
-                    every { toMovie(any<TmdbMovieExtended>()) } returns testLocalMovieExtended()
+                    every { toCardMovie(any<TmdbMovieExtended>()) } returns testLocalMovieExtended()
                 }
             initializeSut()
 
             // When
-            val result = apiRepository.getMovieDetails(99).value
+            val result = apiRepository.getMovieDetails(99).last()
 
             // Then
-            assertEquals(LoadingMovie.Single(testLocalMovieExtended()), result)
+            assertEquals(LoadingAMovie.Single(testLocalMovieExtended()), result)
         }
 
     @Test
@@ -180,9 +179,9 @@ class ApiRepositoryImplTest {
             initializeSut()
 
             // When
-            val result = apiRepository.getMovieDetails(99).value
+            val result = apiRepository.getMovieDetails(99).last()
 
             // Then
-            assertEquals(LoadingMovie.Failed::class, result::class)
+            assertEquals(LoadingAMovie.Failed::class, result::class)
         }
 }

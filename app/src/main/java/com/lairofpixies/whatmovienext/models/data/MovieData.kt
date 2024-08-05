@@ -38,7 +38,7 @@ object MovieData {
     data class DetailData(
         val imdbId: String? = null,
         val tagline: String = "",
-        val summary: String = "",
+        val plot: String = "",
         val runtimeMinutes: Int = 0,
     )
 

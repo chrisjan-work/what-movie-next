@@ -18,8 +18,10 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.Movie.Companion.NEW_ID
+import com.lairofpixies.whatmovienext.models.data.MovieData
+import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
@@ -63,20 +65,32 @@ fun testTmdbMovieExtended(): TmdbMovieExtended =
             ),
     )
 
-fun testLocalMovieExtended(): Movie =
-    Movie(
-        id = NEW_ID,
-        tmdbId = 99,
-        imdbId = "tt100",
-        title = "Terminator 2",
-        originalTitle = "Terminator 2",
-        year = 1991,
-        thumbnailUrl = "thumbnail.jpg",
-        coverUrl = "cover.jpg",
-        genres = listOf("Action"),
-        tagline = "Hasta la vista, baby.",
-        summary = "robots from the future",
-        runtimeMinutes = 137,
+fun testLocalMovieExtended(): AMovie.ForCard =
+    AMovie.ForCard(
+        appData =
+            MovieData.AppData(
+                id = NEW_ID,
+                watchState = WatchState.PENDING,
+                isArchived = false,
+            ),
+        searchData =
+            MovieData.SearchData(
+                tmdbId = 99,
+                title = "Terminator 2",
+                originalTitle = "Terminator 2",
+                year = 1991,
+                thumbnailUrl = "thumbnail.jpg",
+                coverUrl = "cover.jpg",
+                genres = listOf("Action"),
+            ),
+        detailData =
+            MovieData.DetailData(
+                imdbId = "tt100",
+                tagline = "Hasta la vista, baby.",
+                plot = "robots from the future",
+                runtimeMinutes = 137,
+            ),
+        staffData = MovieData.StaffData(),
     )
 
 fun testDbMovieExtended(): DbMovie =

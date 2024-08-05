@@ -18,13 +18,11 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
-import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -41,13 +39,6 @@ class RemoteMapperTest {
         configRepo = mockk(relaxed = true)
         genreRepository = mockk(relaxed = true)
         remoteMapper = RemoteMapper(configRepo, genreRepository)
-    }
-
-    @Test
-    fun `always new id`() {
-        val tmdbMovieExtended = TmdbMovieExtended(tmdbId = 1, title = "Anything")
-        val movie = remoteMapper.toMovie(tmdbMovieExtended)
-        assertEquals(movie.id, Movie.NEW_ID)
     }
 
     @Test
@@ -165,7 +156,7 @@ class RemoteMapperTest {
         every { genreRepository.genreNamesByTmdbIds(listOf(188)) } returns listOf("Action")
 
         // When
-        val result = remoteMapper.toMovie(testTmdbMovieExtended())
+        val result = remoteMapper.toCardMovie(testTmdbMovieExtended())
 
         // Then
         assertEquals(testLocalMovieExtended(), result)

@@ -18,35 +18,53 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.database.GenreRepository
-import com.lairofpixies.whatmovienext.models.network.ConfigRepository
+import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import javax.inject.Inject
 
 class MovieMapper
     @Inject
     constructor(
-        private val configRepo: ConfigRepository,
-        private val genreRepository: GenreRepository,
+//        private val configRepo: ConfigRepository,
+//        private val genreRepository: GenreRepository,
     ) {
-        // TODO: de-duplicate
-        fun toGenreNames(genreIds: List<Long>?): List<String> =
-            genreIds?.let { genreRepository.genreNamesByTmdbIds(genreIds) } ?: emptyList()
-
-        // TODO: de-duplicate
-        fun toYear(releaseDate: String?): Int? =
-            if (!releaseDate.isNullOrBlank()) {
-                try {
-                    Regex("(\\d{4})-\\d{2}-\\d{2}")
-                        .find(releaseDate)
-                        ?.groupValues
-                        ?.get(1)
-                        ?.toInt()
-                } catch (_: StringIndexOutOfBoundsException) {
-                    null
-                } catch (_: NumberFormatException) {
-                    null
-                }
-            } else {
-                null
+        fun toMovie(cardMovie: AMovie.ForCard): Movie =
+            with(cardMovie) {
+                Movie(
+                    id = appData.id,
+                    tmdbId = searchData.tmdbId,
+                    imdbId = detailData.imdbId,
+                    title = searchData.title,
+                    originalTitle = searchData.originalTitle,
+                    year = searchData.year,
+                    thumbnailUrl = searchData.thumbnailUrl,
+                    coverUrl = searchData.coverUrl,
+                    genres = searchData.genres,
+                    tagline = detailData.tagline,
+                    summary = detailData.plot,
+                    runtimeMinutes = detailData.runtimeMinutes,
+                )
             }
+
+//        // TODO: de-duplicate
+//        fun toGenreNames(genreIds: List<Long>?): List<String> =
+//            genreIds?.let { genreRepository.genreNamesByTmdbIds(genreIds) } ?: emptyList()
+//
+//        // TODO: de-duplicate
+//        fun toYear(releaseDate: String?): Int? =
+//            if (!releaseDate.isNullOrBlank()) {
+//                try {
+//                    Regex("(\\d{4})-\\d{2}-\\d{2}")
+//                        .find(releaseDate)
+//                        ?.groupValues
+//                        ?.get(1)
+//                        ?.toInt()
+//                } catch (_: StringIndexOutOfBoundsException) {
+//                    null
+//                } catch (_: NumberFormatException) {
+//                    null
+//                }
+//            } else {
+//                null
+//            }
     }
