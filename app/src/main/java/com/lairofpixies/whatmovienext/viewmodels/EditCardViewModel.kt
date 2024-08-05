@@ -23,8 +23,6 @@ import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.hasMovie
-import com.lairofpixies.whatmovienext.models.data.hasQuietSaveableChangesSince
-import com.lairofpixies.whatmovienext.models.data.hasSaveableChangesSince
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo

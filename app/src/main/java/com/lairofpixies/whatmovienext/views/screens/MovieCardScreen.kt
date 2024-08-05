@@ -60,7 +60,6 @@ import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
-import com.lairofpixies.whatmovienext.models.data.printableRuntime
 import com.lairofpixies.whatmovienext.util.toAnnotatedString
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
