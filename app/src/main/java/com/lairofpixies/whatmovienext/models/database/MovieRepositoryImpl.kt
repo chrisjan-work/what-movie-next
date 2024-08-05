@@ -41,11 +41,15 @@ class MovieRepositoryImpl(
 ) : MovieRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    override val movies: Flow<LoadingMovie> =
+    override val listedMovies: Flow<LoadingAMovie> =
         dao
             .getAllMovies()
             .map { dbMovies ->
-                dbMapper.toLoadingMovies(dbMovies)
+                LoadingAMovie.fromList(
+                    dbMovies.map { dbMovie ->
+                        dbMapper.toListMovie(dbMovie)
+                    },
+                )
             }.flowOn(ioDispatcher)
 
     override val archivedMovies: Flow<LoadingMovie> =

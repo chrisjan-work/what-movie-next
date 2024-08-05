@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
     // read
-    val movies: Flow<LoadingMovie>
+    val listedMovies: Flow<LoadingAMovie>
 
     val archivedMovies: Flow<LoadingMovie>
 

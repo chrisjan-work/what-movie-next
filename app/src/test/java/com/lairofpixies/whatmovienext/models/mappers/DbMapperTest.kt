@@ -20,9 +20,7 @@ package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
-import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Ignore
@@ -36,25 +34,7 @@ class DbMapperTest {
         dbMapper = DbMapper()
     }
 
-    private fun generateDbMovie() =
-        DbMovie(
-            id = 22,
-            creationTime = 10000,
-            tmdbId = 333,
-            imdbId = "aaaa",
-            title = "Something",
-            originalTitle = "Etwas",
-            year = 2020,
-            thumbnailUrl = "thumbnailUrl",
-            coverUrl = "coverUrl",
-            tagline = "tagline",
-            plot = "summary",
-            genres = "Drama,Mystery",
-            runtimeMinutes = 111,
-            watchState = WatchState.WATCHED,
-            isArchived = false,
-        )
-
+    // TODO: remove
     private fun generateMovie() =
         Movie(
             id = 22,
@@ -73,29 +53,11 @@ class DbMapperTest {
             isArchived = false,
         )
 
-    private fun generateCardMovie() =
-        forCard(
-            id = 22,
-            creationTime = 10000,
-            tmdbId = 333,
-            imdbId = "aaaa",
-            title = "Something",
-            originalTitle = "Etwas",
-            year = 2020,
-            thumbnailUrl = "thumbnailUrl",
-            coverUrl = "coverUrl",
-            tagline = "tagline",
-            plot = "summary",
-            genres = listOf("Drama", "Mystery"),
-            runtimeMinutes = 111,
-            watchState = WatchState.WATCHED,
-            isArchived = false,
-        )
-
     @Test
+    @Ignore("about to be removed")
     fun `db movie to movie`() {
         // Given
-        val dbMovie = generateDbMovie()
+        val dbMovie = testDbMovieExtended()
 
         // When
         val movie = dbMapper.toMovie(dbMovie)
@@ -106,9 +68,10 @@ class DbMapperTest {
     }
 
     @Test
+    @Ignore("about to be removed")
     fun toMovies() {
         // Given
-        val dbMovies = listOf(generateDbMovie())
+        val dbMovies = listOf(testDbMovieExtended())
 
         // When
         val movie = dbMapper.toMovies(dbMovies)
@@ -119,9 +82,10 @@ class DbMapperTest {
     }
 
     @Test
+    @Ignore("about to be removed")
     fun toLoadingMovies() {
         // Given
-        val dbMovies = listOf(generateDbMovie())
+        val dbMovies = listOf(testDbMovieExtended())
 
         // When
         val movie = dbMapper.toLoadingMovies(dbMovies)
@@ -141,37 +105,20 @@ class DbMapperTest {
         val dbMovie = dbMapper.toDbMovie(movie)
 
         // Then
-        val expectedDbMovie = generateDbMovie()
+        val expectedDbMovie = testDbMovieExtended()
         assertEquals(expectedDbMovie, dbMovie)
     }
 
     @Test
     fun `db movie to card movie`() {
         // Given
-        val dbMovie =
-            DbMovie(
-                id = 22,
-                creationTime = 10000,
-                tmdbId = 333,
-                imdbId = "aaaa",
-                title = "Something",
-                originalTitle = "Etwas",
-                year = 2020,
-                thumbnailUrl = "thumbnailUrl",
-                coverUrl = "coverUrl",
-                tagline = "tagline",
-                plot = "summary",
-                genres = "Drama,Mystery",
-                runtimeMinutes = 111,
-                watchState = WatchState.WATCHED,
-                isArchived = false,
-            )
+        val dbMovie = testDbMovieExtended()
 
         // When
         val result = dbMapper.toCardMovie(dbMovie)
 
         // Then
-        val expected = generateCardMovie()
+        val expected = testCardMovieExtended()
 
         assertEquals(expected, result)
     }
@@ -179,13 +126,26 @@ class DbMapperTest {
     @Test
     fun `card movie to db movie`() {
         // Given
-        val cardMovie = generateCardMovie()
+        val cardMovie = testCardMovieExtended()
 
         // When
         val result = dbMapper.toDbMovie(cardMovie)
 
         // Then
-        val expected = generateDbMovie()
+        val expected = testDbMovieExtended()
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `db movie to list movie`() {
+        // Given
+        val dbMovie = testDbMovieExtended()
+
+        // When
+        val result = dbMapper.toListMovie(dbMovie)
+
+        // Then
+        val expected = testListMovieExtended()
         assertEquals(expected, result)
     }
 

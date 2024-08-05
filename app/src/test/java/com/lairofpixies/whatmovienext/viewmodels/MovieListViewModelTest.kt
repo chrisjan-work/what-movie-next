@@ -18,8 +18,11 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
+import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.TestAMovie.forList
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.ListMode
@@ -29,8 +32,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -73,20 +75,19 @@ class MovieListViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun packMoviesToStateFlow(vararg movies: Movie): StateFlow<LoadingMovie> =
-        MutableStateFlow(
-            LoadingMovie.fromList(movies.toList()),
-        ).asStateFlow()
+    private fun packMoviesToFlow(vararg movies: AMovie.ForList) = flowOf(LoadingAMovie.fromList(movies.toList()))
+
+    private fun packMoviesToFlowOld(vararg movies: Movie) = flowOf(LoadingMovie.fromList(movies.toList()))
 
     @Test
     fun `forward movie list with all movies filter`() =
         runTest {
             // Given
-            val seenMovie = Movie(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
+            val seenMovie = forList(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
             val unseenMovie =
-                Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
-            every { repo.movies } returns
-                packMoviesToStateFlow(unseenMovie, seenMovie)
+                forList(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
+            every { repo.listedMovies } returns
+                packMoviesToFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.movieListDisplayState } returns
                 MutableStateFlow(
                     MovieListDisplayState(
@@ -99,18 +100,18 @@ class MovieListViewModelTest {
 
             // Then
             val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(LoadingMovie.Multiple(listOf(unseenMovie, seenMovie)), forwardedMovies)
+            assertEquals(LoadingAMovie.Multiple(listOf(unseenMovie, seenMovie)), forwardedMovies)
         }
 
     @Test
     fun `forward movie list with only unseen movies`() =
         runTest {
             // Given
-            val seenMovie = Movie(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
+            val seenMovie = forList(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
             val unseenMovie =
-                Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
-            every { repo.movies } returns
-                packMoviesToStateFlow(unseenMovie, seenMovie)
+                forList(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
+            every { repo.listedMovies } returns
+                packMoviesToFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.movieListDisplayState } returns
                 MutableStateFlow(
                     MovieListDisplayState(
@@ -123,18 +124,18 @@ class MovieListViewModelTest {
 
             // Then
             val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(LoadingMovie.Single(unseenMovie), forwardedMovies)
+            assertEquals(LoadingAMovie.Single(unseenMovie), forwardedMovies)
         }
 
     @Test
     fun `forward movie list with only seen movies`() =
         runTest {
             // Given
-            val seenMovie = Movie(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
+            val seenMovie = forList(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
             val unseenMovie =
-                Movie(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
-            every { repo.movies } returns
-                packMoviesToStateFlow(unseenMovie, seenMovie)
+                forList(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
+            every { repo.listedMovies } returns
+                packMoviesToFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.movieListDisplayState } returns
                 MutableStateFlow(
                     MovieListDisplayState(
@@ -147,7 +148,7 @@ class MovieListViewModelTest {
 
             // Then
             val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(LoadingMovie.Single(seenMovie), forwardedMovies)
+            assertEquals(LoadingAMovie.Single(seenMovie), forwardedMovies)
         }
 
     @Test
@@ -172,7 +173,7 @@ class MovieListViewModelTest {
     fun `detect if the archive is empty`() {
         // Given
         every { repo.archivedMovies } returns
-            packMoviesToStateFlow()
+            packMoviesToFlowOld()
 
         // When
         rerunConstructor()
@@ -186,7 +187,7 @@ class MovieListViewModelTest {
     fun `detect if there are archived movies`() {
         // Given
         every { repo.archivedMovies } returns
-            packMoviesToStateFlow(Movie(title = "archived movie", isArchived = true))
+            packMoviesToFlowOld(Movie(title = "archived movie", isArchived = true))
 
         // When
         rerunConstructor()
