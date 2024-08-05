@@ -22,7 +22,7 @@ import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
-import com.lairofpixies.whatmovienext.models.mappers.testLocalMovieExtended
+import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testTmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
@@ -160,7 +160,7 @@ class ApiRepositoryImplTest {
             coEvery { tmdbApi.getMovieDetails(any()) } returns testTmdbMovieExtended()
             remoteMapper =
                 mockk(relaxed = true) {
-                    every { toCardMovie(any<TmdbMovieExtended>()) } returns testLocalMovieExtended()
+                    every { toCardMovie(any<TmdbMovieExtended>()) } returns testCardMovieExtended()
                 }
             initializeSut()
 
@@ -168,7 +168,7 @@ class ApiRepositoryImplTest {
             val result = apiRepository.getMovieDetails(99).last()
 
             // Then
-            assertEquals(LoadingAMovie.Single(testLocalMovieExtended()), result)
+            assertEquals(LoadingAMovie.Single(testCardMovieExtended()), result)
         }
 
     @Test

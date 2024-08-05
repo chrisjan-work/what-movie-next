@@ -18,12 +18,16 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
+import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
+import com.lairofpixies.whatmovienext.models.mappers.testDbMovieExtended
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just
@@ -141,23 +145,18 @@ class MovieRepositoryImplTest {
         runTest {
             // Given
             coEvery { movieDao.getMovie(1) } returns
-                flowOf(
-                    DbMovie(
-                        id = 1,
-                        title = "first",
-                        watchState = WatchState.WATCHED,
-                    ),
-                )
+                flowOf(testDbMovieExtended())
 
             // When
             initializeSut()
-            val result = movieRepository.singleMovie(1).first()
+            val result =
+                movieRepository
+                    .singleCardMovie(1)
+                    .last()
+                    .singleMovieOrNull<AMovie.ForCard>()
 
             // Then
-            assertEquals(
-                LoadingMovie.Single(Movie(1, "first", watchState = WatchState.WATCHED)),
-                result,
-            )
+            assertEquals(testCardMovieExtended(), result)
         }
 
     @Test
@@ -168,10 +167,10 @@ class MovieRepositoryImplTest {
 
             // When
             initializeSut()
-            val result = movieRepository.singleMovie(1).first()
+            val result = movieRepository.singleCardMovie(1).first()
 
             // Then
-            assertEquals(LoadingMovie.Empty, result)
+            assertEquals(LoadingAMovie.Empty, result)
         }
 
     @Test

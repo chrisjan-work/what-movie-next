@@ -19,7 +19,8 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
+import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,17 +35,19 @@ class MovieCardViewModel
     constructor(
         private val repo: MovieRepository,
     ) : ScreenViewModel() {
-        private val _currentMovie = MutableStateFlow<LoadingMovie>(LoadingMovie.Loading)
+        private val _currentMovie = MutableStateFlow<LoadingAMovie>(LoadingAMovie.Loading)
         val currentMovie = _currentMovie.asStateFlow()
 
         fun startFetchingMovie(movieId: Long?) {
             if (movieId == null) {
-                _currentMovie.value = LoadingMovie.Empty
+                _currentMovie.value = LoadingAMovie.Empty
                 return
+            } else {
+                _currentMovie.value = LoadingAMovie.Loading
             }
 
             viewModelScope.launch {
-                repo.singleMovie(movieId).collect {
+                repo.singleCardMovie(movieId).collect {
                     _currentMovie.value = it
                 }
             }
@@ -57,7 +60,11 @@ class MovieCardViewModel
 
         fun archiveCurrentMovie() =
             viewModelScope.launch {
-                val movieId = (currentMovie.value as? LoadingMovie.Single)?.movie?.id ?: return@launch
+                val movieId =
+                    currentMovie.value
+                        .singleMovieOrNull<AMovie.ForCard>()
+                        ?.appData
+                        ?.id ?: return@launch
                 repo.archiveMovie(movieId)
             }
     }
