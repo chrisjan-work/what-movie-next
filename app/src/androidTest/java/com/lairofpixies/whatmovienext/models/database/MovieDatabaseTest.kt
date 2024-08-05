@@ -117,7 +117,7 @@ class MovieDatabaseTest {
             movieDao.insertMovie(movie)
 
             // When we remove it
-            movieDao.delete(movie)
+            movieDao.deleteMovie(movie)
 
             // Then the movie is in the database
             assertEquals(emptyList<Movie>(), movieDao.getAllMovies().first())
@@ -271,7 +271,7 @@ class MovieDatabaseTest {
             movieDao.archive(movie.id)
 
             // When restored
-            movieDao.delete(movie.copy(isArchived = true))
+            movieDao.deleteMovie(movie.copy(isArchived = true))
 
             // Then
             assertEquals(emptyList<Movie>(), movieDao.getArchivedMovies().first())

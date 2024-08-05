@@ -51,7 +51,7 @@ interface MovieDao {
     suspend fun insertMovies(movies: List<DbMovie>)
 
     @Delete
-    suspend fun delete(movie: DbMovie)
+    suspend fun deleteMovie(movie: DbMovie)
 
     @Update
     suspend fun updateMovie(movie: DbMovie)

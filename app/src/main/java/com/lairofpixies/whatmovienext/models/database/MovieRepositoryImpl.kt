@@ -123,7 +123,7 @@ class MovieRepositoryImpl(
         repositoryScope
             .launch {
                 val dbMovie = dao.fetchMovieById(movieId)
-                dbMovie?.let { dao.delete(dbMovie) }
+                dbMovie?.let { dao.deleteMovie(dbMovie) }
             }
     }
 }
