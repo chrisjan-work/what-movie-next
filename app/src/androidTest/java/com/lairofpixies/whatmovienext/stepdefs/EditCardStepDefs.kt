@@ -149,16 +149,17 @@ class EditCardStepDefs(
     @And("the user selects the overwrite option {string}")
     fun theUserSelectsTheOverwriteOption(overwriteOption: String) {
         composeRule.composeStep {
-            val label =
-                when (overwriteOption) {
-                    "Overwrite" -> activity.getString(R.string.overwrite)
-                    "Discard" -> activity.getString(R.string.discard_changes)
-                    "Ignore" -> activity.getString(R.string.continue_editing)
-                    else -> throw PendingException("Unknown option: $overwriteOption")
-                }
-
-            onNodeWithTextUnderTag(label, UiTags.Popups.DUPLICATED_TITLE)
-                .performClick()
+            // TODO: clean up (always overwrite)
+//            val label =
+//                when (overwriteOption) {
+//                    "Overwrite" -> activity.getString(R.string.overwrite)
+//                    "Discard" -> activity.getString(R.string.discard_changes)
+//                    "Ignore" -> activity.getString(R.string.continue_editing)
+//                    else -> throw PendingException("Unknown option: $overwriteOption")
+//                }
+//
+//            onNodeWithTextUnderTag(label, UiTags.Popups.DUPLICATED_TITLE)
+//                .performClick()
         }
     }
 

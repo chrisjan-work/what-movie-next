@@ -38,6 +38,9 @@ interface MovieDao {
     @Query("SELECT * FROM dbmovie WHERE id = :id")
     suspend fun fetchMovieById(id: Long): DbMovie?
 
+    @Query("SELECT * FROM dbmovie WHERE tmdbId = :tmdbId")
+    suspend fun fetchMovieByTmdbId(tmdbId: Long): DbMovie?
+
     @Query("SELECT * FROM dbmovie WHERE UPPER(title) = UPPER(:title)")
     suspend fun fetchMoviesByTitle(title: String): List<DbMovie>
 

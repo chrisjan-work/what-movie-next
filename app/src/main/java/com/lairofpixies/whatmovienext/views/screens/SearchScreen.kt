@@ -47,22 +47,17 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.AMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.viewmodels.EditCardViewModel
+import com.lairofpixies.whatmovienext.models.data.SearchQuery
+import com.lairofpixies.whatmovienext.viewmodels.SearchViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
 import com.lairofpixies.whatmovienext.views.components.SearchResultsPicker
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
+import com.lairofpixies.whatmovienext.views.state.SearchState
 
 @Composable
-fun EditCardScreen(
-    movieId: Long?,
-    editViewModel: EditCardViewModel,
-) {
-    val currentMovie = editViewModel.currentMovie.collectAsState()
-    val searchResults = editViewModel.searchResults.collectAsState()
-
+fun SearchScreen(searchViewModel: SearchViewModel) {
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
@@ -72,44 +67,62 @@ fun EditCardScreen(
         focusRequester.freeFocus()
     }
 
-    LaunchedEffect(movieId) {
-        movieId?.let {
-            editViewModel.loadMovieForEdit(movieId)
+    BackHandler(true) {
+        searchViewModel.handleBackButton()
+    }
+
+    when (searchViewModel.searchState.collectAsState().value) {
+        SearchState.ENTRY -> {
+            SearchEditor(
+                query = searchViewModel.currentQuery.collectAsState().value,
+                onUpdateQuery = { searchQuery ->
+                    searchViewModel.updateSearchQuery(searchQuery)
+                },
+                onSearchAction = { searchViewModel.startSearch() },
+                onSaveQueryAction = { searchViewModel.onSaveQueryAction() },
+                onCancelAction = { searchViewModel.onLeaveAction() },
+                onCloseKeyboard = onCloseKeyboard,
+                focusRequester = focusRequester,
+            )
+        }
+
+        SearchState.RESULTS -> {
+            val searchResults = searchViewModel.searchResults.collectAsState().value
+            SearchResultsPicker(
+                searchResults = searchResults.toList<AMovie.ForSearch>(),
+                onResultSelected = { selectedId ->
+                    searchViewModel.fetchFromRemote(selectedId)
+                },
+            )
+        }
+
+        SearchState.CHOICE -> {
+            val selectedMovie = searchViewModel.selectedMovie.collectAsState().value
+            selectedMovie.singleMovieOrNull<AMovie.ForCard>()?.let { movie ->
+                MovieCard(
+                    movie = movie,
+                    bottomItems =
+                        bottomItemsForChoiceView(
+                            onCancelAction = { searchViewModel.onLeaveAction() },
+                            onEditSearchAction = { searchViewModel.switchToSearchEntry() },
+                            onShowResultsAction = { searchViewModel.switchToSearchResults() },
+                            onSaveMovieAction = { searchViewModel.onSaveMovieAction() },
+                        ),
+                )
+            } ?: {
+                searchViewModel.switchToSearchEntry()
+            }
         }
     }
-
-    BackHandler(true) {
-        editViewModel.handleBackButton()
-    }
-
-    EditCard(
-        currentMovie = currentMovie.value,
-        searchResults = searchResults.value.toList<AMovie.ForSearch>(),
-        onUpdateEdits = { editViewModel.updateMovieEdits { it } },
-        onCancelAction = { editViewModel.onCancelAction() },
-        onSaveAction = { editViewModel.onSaveAction() },
-        onSearchAction = {
-            onCloseKeyboard()
-            editViewModel.startSearch()
-        },
-        onSearchResultSelected = {
-            editViewModel.fetchFromRemote(it)
-            editViewModel.clearSearchResults()
-        },
-        onCloseKeyboard = onCloseKeyboard,
-        focusRequester = focusRequester,
-    )
 }
 
 @Composable
-fun EditCard(
-    currentMovie: Movie,
-    searchResults: List<AMovie.ForSearch>,
-    onUpdateEdits: (Movie) -> Unit,
-    onCancelAction: () -> Unit,
-    onSaveAction: () -> Unit,
+fun SearchEditor(
+    query: SearchQuery,
+    onUpdateQuery: (SearchQuery) -> Unit,
     onSearchAction: () -> Unit,
-    onSearchResultSelected: (Long) -> Unit,
+    onSaveQueryAction: () -> Unit,
+    onCancelAction: () -> Unit,
     onCloseKeyboard: () -> Unit,
     focusRequester: FocusRequester,
 ) {
@@ -119,10 +132,10 @@ fun EditCard(
             bottomBar = {
                 CustomBottomBar(
                     items =
-                        bottomItemsForEditCard(
-                            searchEnabled = currentMovie.title.isNotBlank(),
+                        bottomItemsForSearchEditor(
+                            searchEnabled = query.title.isNotBlank(),
                             onCancelAction = onCancelAction,
-                            onSaveAction = onSaveAction,
+                            onSaveAction = onSaveQueryAction,
                             onSearchAction = onSearchAction,
                         ),
                 )
@@ -137,19 +150,14 @@ fun EditCard(
             ) {
                 DebugTitle("Edit Movie")
                 EditableTitleField(
-                    currentMovie.title,
-                    onTitleChanged = { onUpdateEdits(currentMovie.copy(title = it)) },
+                    query.title,
+                    onTitleChanged = { onUpdateQuery(query.copy(title = it)) },
+                    onSearchAction = onSearchAction,
                     onCloseKeyboard = onCloseKeyboard,
                     focusRequester = focusRequester,
                 )
             }
         }
-
-        // should overlap editor, including bottom bar
-        SearchResultsPicker(
-            searchResults,
-            onSearchResultSelected,
-        )
     }
 }
 
@@ -157,6 +165,7 @@ fun EditCard(
 fun EditableTitleField(
     title: String,
     onTitleChanged: (String) -> Unit,
+    onSearchAction: () -> Unit,
     onCloseKeyboard: () -> Unit,
     focusRequester: FocusRequester,
 ) {
@@ -191,12 +200,17 @@ fun EditableTitleField(
             ),
         keyboardActions =
             KeyboardActions(
-                onDone = { onCloseKeyboard() },
+                onDone = {
+                    onCloseKeyboard()
+                    if (title.isNotBlank()) {
+                        onSearchAction()
+                    }
+                },
             ),
     )
 }
 
-fun bottomItemsForEditCard(
+fun bottomItemsForSearchEditor(
     searchEnabled: Boolean,
     onCancelAction: () -> Unit,
     onSaveAction: () -> Unit,
@@ -204,6 +218,19 @@ fun bottomItemsForEditCard(
 ): List<CustomBarItem> =
     listOf(
         CustomBarItem(ButtonSpec.CancelAction, onCancelAction),
+        CustomBarItem(ButtonSpec.SaveAction, enabled = false, onClick = onSaveAction),
         CustomBarItem(ButtonSpec.SearchAction, searchEnabled, onClick = onSearchAction),
-        CustomBarItem(ButtonSpec.SaveAction, onSaveAction),
+    )
+
+fun bottomItemsForChoiceView(
+    onCancelAction: () -> Unit,
+    onEditSearchAction: () -> Unit,
+    onShowResultsAction: () -> Unit,
+    onSaveMovieAction: () -> Unit,
+): List<CustomBarItem> =
+    listOf(
+        CustomBarItem(ButtonSpec.CancelAction, onCancelAction),
+        CustomBarItem(ButtonSpec.EditShortcut, onEditSearchAction),
+        CustomBarItem(ButtonSpec.SearchAction, onShowResultsAction),
+        CustomBarItem(ButtonSpec.SaveAction, onSaveMovieAction),
     )

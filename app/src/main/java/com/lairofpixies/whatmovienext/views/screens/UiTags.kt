@@ -34,7 +34,6 @@ object UiTags {
     object Popups {
         const val EMPTY_TITLE = "EmptyTitle"
         const val UNSAVED_CHANGES = "UnsavedChanges"
-        const val DUPLICATED_TITLE = "DuplicatedTitle"
         const val CONFIRM_DELETION = "ConfirmDeletion"
         const val SEARCHING = "Searching"
         const val SEARCH_EMPTY = "SearchReturnedNothing"

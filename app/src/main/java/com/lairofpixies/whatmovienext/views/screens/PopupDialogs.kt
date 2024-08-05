@@ -62,18 +62,6 @@ fun PopupDialogs(
                 onDismiss = onDismiss,
             )
 
-        is PopupInfo.DuplicatedTitle ->
-            ThreeButtonDialog(
-                modifier = modifier.testTag(UiTags.Popups.DUPLICATED_TITLE),
-                contentRes = R.string.error_title_already_exists,
-                saveLabelRes = R.string.overwrite,
-                onSave = popupInfo.onSave,
-                discardLabelRes = R.string.discard_changes,
-                onDiscard = popupInfo.onDiscard,
-                dismissLabelRes = R.string.continue_editing,
-                onDismiss = onDismiss,
-            )
-
         is PopupInfo.ConfirmDeletion ->
             TwoButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.CONFIRM_DELETION),

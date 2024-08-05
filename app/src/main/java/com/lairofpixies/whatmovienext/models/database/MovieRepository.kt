@@ -18,9 +18,11 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
@@ -31,14 +33,12 @@ interface MovieRepository {
 
     fun singleMovie(movieId: Long): Flow<LoadingMovie>
 
-    suspend fun fetchMovieById(movieId: Long): Movie?
-
-    suspend fun fetchMoviesByTitle(movieTitle: String): List<Movie>
-
     // write
     suspend fun addMovie(movie: Movie): Long
 
     suspend fun updateMovie(movie: Movie): Long
+
+    suspend fun storeMovie(movie: AMovie.ForCard): Job
 
     suspend fun setWatchState(
         movieId: Long,

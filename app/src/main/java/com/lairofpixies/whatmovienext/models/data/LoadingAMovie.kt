@@ -51,6 +51,8 @@ sealed class LoadingAMovie {
             else -> emptyList()
         }
 
+    inline fun <reified T : AMovie> singleMovieOrNull(): T? = (this as? Single)?.movie as? T
+
     fun filter(sieve: (AMovie) -> Boolean): LoadingAMovie =
         when (this) {
             is Single -> if (sieve(movie)) this else Empty

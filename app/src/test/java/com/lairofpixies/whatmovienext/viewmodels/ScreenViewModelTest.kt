@@ -80,7 +80,7 @@ class ScreenViewModelTest {
     fun `onCancelAction navigates to the home route`() =
         runTest {
             // When
-            screenViewModel.onCancelAction()
+            screenViewModel.onLeaveAction()
 
             // Then
             coVerify {

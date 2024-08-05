@@ -71,7 +71,7 @@ class MovieCardStepDefs(
                 "runtime" -> copy(runtimeMinutes = value.toInt())
                 "genres" -> copy(genres = value)
                 "tagline" -> copy(tagline = value)
-                "plot" -> copy(summary = value)
+                "plot" -> copy(plot = value)
                 else -> throw PendingException("Unknown field \"$field\"")
             }
         }

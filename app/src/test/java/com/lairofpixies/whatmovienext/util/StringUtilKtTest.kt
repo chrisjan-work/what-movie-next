@@ -73,4 +73,33 @@ class StringUtilKtTest {
 
         assertEquals(emptyList<String>(), decodedList)
     }
+
+    @Test
+    fun `printable running times`() {
+        // empty
+        assertEquals(
+            "",
+            printableRuntime(0),
+        )
+        // minutes
+        assertEquals(
+            "23 min",
+            printableRuntime(23),
+        )
+        // hours
+        assertEquals(
+            "2h 3min",
+            printableRuntime(123),
+        )
+        // pre+min+pos
+        assertEquals(
+            "abcd-2 min-efg",
+            printableRuntime(2, "abcd-", "-efg"),
+        )
+        // pre+hour+pos
+        assertEquals(
+            "abcd-1h 0min-efg",
+            printableRuntime(60, "abcd-", "-efg"),
+        )
+    }
 }

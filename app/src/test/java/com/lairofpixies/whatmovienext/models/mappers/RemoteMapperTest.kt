@@ -159,6 +159,9 @@ class RemoteMapperTest {
         val result = remoteMapper.toCardMovie(testTmdbMovieExtended())
 
         // Then
-        assertEquals(testLocalMovieExtended(), result)
+        assertEquals(
+            testLocalMovieExtended().removeCreationTime(),
+            result.removeCreationTime(),
+        )
     }
 }

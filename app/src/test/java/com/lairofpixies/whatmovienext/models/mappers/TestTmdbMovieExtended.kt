@@ -70,6 +70,7 @@ fun testLocalMovieExtended(): AMovie.ForCard =
         appData =
             MovieData.AppData(
                 id = NEW_ID,
+                creationTime = 0,
                 watchState = WatchState.PENDING,
                 isArchived = false,
             ),
@@ -105,6 +106,8 @@ fun testDbMovieExtended(): DbMovie =
         coverUrl = "cover.jpg",
         genres = "Action",
         tagline = "Hasta la vista, baby.",
-        summary = "robots from the future",
+        plot = "robots from the future",
         runtimeMinutes = 137,
     )
+
+fun AMovie.ForCard.removeCreationTime(): AMovie.ForCard = this.copy(appData = appData.copy(creationTime = 0))

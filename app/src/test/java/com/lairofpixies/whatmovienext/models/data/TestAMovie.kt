@@ -44,6 +44,7 @@ object TestAMovie {
 
     fun forCard(
         id: Long = 1,
+        creationTime: Long = 0,
         watchState: WatchState = WatchState.PENDING,
         isArchived: Boolean = false,
         tmdbId: Long = 1,
@@ -61,6 +62,7 @@ object TestAMovie {
         appData =
             MovieData.AppData(
                 id = id,
+                creationTime = creationTime,
                 watchState = watchState,
                 isArchived = isArchived,
             ),
