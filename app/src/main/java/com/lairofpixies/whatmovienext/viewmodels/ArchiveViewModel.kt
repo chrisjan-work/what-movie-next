@@ -19,8 +19,8 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,11 +36,11 @@ class ArchiveViewModel
     constructor(
         private val repo: MovieRepository,
     ) : ScreenViewModel() {
-        private val _archivedMovies = MutableStateFlow<LoadingMovie>(LoadingMovie.Loading)
-        val archivedMovies: StateFlow<LoadingMovie> = _archivedMovies.asStateFlow()
+        private val _archivedMovies = MutableStateFlow<LoadingAMovie>(LoadingAMovie.Loading)
+        val archivedMovies: StateFlow<LoadingAMovie> = _archivedMovies.asStateFlow()
 
-        private val _selection = MutableStateFlow(emptySet<Movie>())
-        val selection: StateFlow<Set<Movie>> = _selection.asStateFlow()
+        private val _selection = MutableStateFlow(emptySet<AMovie.ForList>())
+        val selection: StateFlow<Set<AMovie.ForList>> = _selection.asStateFlow()
 
         init {
             viewModelScope.launch {
@@ -50,18 +50,18 @@ class ArchiveViewModel
             }
         }
 
-        fun select(movie: Movie) {
+        fun select(movie: AMovie.ForList) {
             _selection.value = selection.value + movie
         }
 
-        fun deselect(movie: Movie) {
+        fun deselect(movie: AMovie.ForList) {
             _selection.value = selection.value - movie
         }
 
         fun restoreSelectedMovies() =
             viewModelScope.launch {
                 selection.value.forEach {
-                    repo.restoreMovie(it.id)
+                    repo.restoreMovie(it.appData.id)
                 }
                 _selection.value = emptySet()
             }
@@ -71,7 +71,7 @@ class ArchiveViewModel
                 PopupInfo.ConfirmDeletion {
                     viewModelScope.launch {
                         selection.value.forEach {
-                            repo.deleteMovie(it.id)
+                            repo.deleteMovie(it.appData.id)
                         }
                     }
                     _selection.value = emptySet()

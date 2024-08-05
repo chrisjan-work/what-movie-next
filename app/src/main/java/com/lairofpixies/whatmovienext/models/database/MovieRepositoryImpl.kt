@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
@@ -52,11 +51,15 @@ class MovieRepositoryImpl(
                 )
             }.flowOn(ioDispatcher)
 
-    override val archivedMovies: Flow<LoadingMovie> =
+    override val archivedMovies: Flow<LoadingAMovie> =
         dao
             .getArchivedMovies()
             .map { dbMovies ->
-                dbMapper.toLoadingMovies(dbMovies)
+                LoadingAMovie.fromList(
+                    dbMovies.map { dbMovie ->
+                        dbMapper.toListMovie(dbMovie)
+                    },
+                )
             }.flowOn(ioDispatcher)
 
     override fun singleCardMovie(movieId: Long): Flow<LoadingAMovie> =

@@ -18,8 +18,9 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.TestAMovie.forList
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import io.mockk.coVerify
@@ -30,8 +31,7 @@ import io.mockk.runs
 import io.mockk.slot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -64,26 +64,24 @@ class ArchiveViewModelTest {
     @Test
     fun getArchivedMovies() {
         // Given
-        val movie = Movie(title = "example movie", isArchived = true)
+        val movie = LoadingAMovie.Single(forList(title = "example movie", isArchived = true))
         every { repo.archivedMovies } returns
-            MutableStateFlow(
-                LoadingMovie.Single(movie),
-            ).asStateFlow()
+            flowOf(movie)
 
         // When
         archiveViewModel = ArchiveViewModel(repo)
 
         // Then
         val archivedMovies = archiveViewModel.archivedMovies.value
-        assertEquals(listOf(movie), archivedMovies.toList())
+        assertEquals(movie, archivedMovies)
     }
 
     @Test
     fun `select and deselect`() {
-        val movie1 = Movie(id = 1, title = "first movie")
-        val movie2 = Movie(id = 2, title = "second movie")
+        val movie1 = forList(id = 1, title = "first movie")
+        val movie2 = forList(id = 2, title = "second movie")
 
-        assertEquals(emptySet<Movie>(), archiveViewModel.selection.value)
+        assertEquals(emptySet<AMovie.ForList>(), archiveViewModel.selection.value)
 
         // select
         archiveViewModel.select(movie1)
@@ -101,8 +99,8 @@ class ArchiveViewModelTest {
         runTest {
             // Given
             listOf(
-                Movie(id = 71, title = "archived movie"),
-                Movie(id = 77, title = "another archived movie"),
+                forList(id = 71, title = "archived movie"),
+                forList(id = 77, title = "another archived movie"),
             ).forEach { archiveViewModel.select(it) }
 
             // When
@@ -126,8 +124,8 @@ class ArchiveViewModelTest {
 
             val moviesToDelete =
                 listOf(
-                    Movie(id = 91, title = "archived movie"),
-                    Movie(id = 97, title = "another archived movie"),
+                    forList(id = 91, title = "archived movie"),
+                    forList(id = 97, title = "another archived movie"),
                 )
             moviesToDelete.forEach {
                 archiveViewModel.select(it)
@@ -139,8 +137,8 @@ class ArchiveViewModelTest {
 
             // Then
             coVerify {
-                repo.deleteMovie(moviesToDelete[0].id)
-                repo.deleteMovie(moviesToDelete[1].id)
+                repo.deleteMovie(moviesToDelete[0].appData.id)
+                repo.deleteMovie(moviesToDelete[1].appData.id)
             }
         }
 }
