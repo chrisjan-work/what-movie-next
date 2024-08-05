@@ -16,26 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.data
+package com.lairofpixies.whatmovienext.views.state
 
-data class Movie(
-    val id: Long = NEW_ID,
-    val title: String,
-    val tmdbId: Long = UNKNOWN_ID,
-    val imdbId: String? = null,
-    val originalTitle: String = "",
-    val year: Int? = null,
-    val thumbnailUrl: String = "",
-    val coverUrl: String = "",
-    val tagline: String = "",
-    val summary: String = "",
-    val genres: List<String> = emptyList(),
-    val runtimeMinutes: Int = 0,
-    val watchState: WatchState = WatchState.PENDING,
-    val isArchived: Boolean = false,
-) {
-    companion object {
-        const val NEW_ID = 0L
-        const val UNKNOWN_ID = -1L
-    }
+enum class SearchState {
+    ENTRY, // when entering search query
+    RESULTS, // when displaying search results
+    CHOICE, // when confirming a chosen result
 }

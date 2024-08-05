@@ -67,7 +67,7 @@ class ArchiveViewModel
             }
 
         fun deleteSelectedMovies() {
-            mainViewModel.showPopup(
+            showPopup(
                 PopupInfo.ConfirmDeletion {
                     viewModelScope.launch {
                         selection.value.forEach {

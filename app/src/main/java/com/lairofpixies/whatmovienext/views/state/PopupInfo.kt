@@ -28,11 +28,6 @@ sealed class PopupInfo {
         val onDiscard: () -> Unit,
     ) : PopupInfo()
 
-    data class DuplicatedTitle(
-        val onSave: () -> Unit,
-        val onDiscard: () -> Unit,
-    ) : PopupInfo()
-
     data class ConfirmDeletion(
         val onConfirm: () -> Unit,
     ) : PopupInfo()

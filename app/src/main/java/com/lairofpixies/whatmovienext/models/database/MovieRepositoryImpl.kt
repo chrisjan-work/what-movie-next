@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
@@ -63,24 +64,6 @@ class MovieRepositoryImpl(
                     ?: LoadingMovie.Empty
             }.flowOn(ioDispatcher)
 
-    override suspend fun fetchMovieById(movieId: Long): Movie? =
-        repositoryScope
-            .async {
-                if (movieId != Movie.NEW_ID) {
-                    dao.fetchMovieById(movieId)?.let {
-                        dbMapper.toMovie(it)
-                    }
-                } else {
-                    null
-                }
-            }.await()
-
-    override suspend fun fetchMoviesByTitle(movieTitle: String): List<Movie> =
-        repositoryScope
-            .async {
-                dbMapper.toMovies(dao.fetchMoviesByTitle(movieTitle))
-            }.await()
-
     override suspend fun addMovie(movie: Movie): Long =
         repositoryScope
             .async {
@@ -94,6 +77,27 @@ class MovieRepositoryImpl(
             }.join()
         return movie.id
     }
+
+    override suspend fun storeMovie(movie: AMovie.ForCard) =
+        repositoryScope.launch {
+            val oldMovie = dao.fetchMovieByTmdbId(movie.searchData.tmdbId)
+            if (oldMovie != null) {
+                // if movie was already saved
+                // update it while keeping the old app data
+                // but unarchive it if it was archived
+                val mappedOldMovie: AMovie.ForCard = dbMapper.toCardMovie(oldMovie)
+                val movieToSave =
+                    dbMapper.toDbMovie(
+                        movie.copy(
+                            appData =
+                                mappedOldMovie.appData.copy(isArchived = false),
+                        ),
+                    )
+                dao.updateMovie(movieToSave)
+            } else {
+                dao.insertMovie(dbMapper.toDbMovie(movie))
+            }
+        }
 
     override suspend fun setWatchState(
         movieId: Long,

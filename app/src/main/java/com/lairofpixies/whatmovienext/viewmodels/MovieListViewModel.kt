@@ -72,7 +72,7 @@ class MovieListViewModel
         }
 
         fun setListMode(listMode: ListMode) {
-            mainViewModel.setListMode(listMode)
+            mainViewModel?.setListMode(listMode)
         }
 
         private fun filterMovies(

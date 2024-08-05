@@ -40,32 +40,4 @@ sealed class AMovie {
         override val detailData: MovieData.DetailData,
         override val staffData: MovieData.StaffData,
     ) : AMovie()
-
-    fun hasSaveableChangesSince(lastSavedMovie: AMovie?): Boolean =
-        when {
-            searchData?.title.isNullOrBlank() -> false
-            lastSavedMovie == null -> true
-            else -> searchData != lastSavedMovie.searchData
-        }
-
-    fun hasQuietSaveableChangesSince(lastSavedMovie: AMovie?): Boolean =
-        when {
-            searchData?.title.isNullOrBlank() -> false
-            lastSavedMovie == null -> true
-            else -> appData != lastSavedMovie.appData
-        }
-
-    fun isNew(): Boolean = appData?.id == MovieData.NEW_ID
-
-    fun printableRuntime(
-        pre: String = "",
-        pos: String = "",
-    ): String =
-        detailData?.runtimeMinutes?.let { mins ->
-            when (mins) {
-                0 -> ""
-                in 1..59 -> "$pre$mins min$pos"
-                else -> "$pre${mins / 60}h ${mins % 60}min$pos"
-            }
-        } ?: ""
 }

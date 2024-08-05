@@ -26,15 +26,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
-import com.lairofpixies.whatmovienext.viewmodels.EditCardViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.viewmodels.ScreenViewModel
+import com.lairofpixies.whatmovienext.viewmodels.SearchViewModel
 import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
-import com.lairofpixies.whatmovienext.views.screens.EditCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieCardScreen
 import com.lairofpixies.whatmovienext.views.screens.MovieListScreen
+import com.lairofpixies.whatmovienext.views.screens.SearchScreen
 
 @Composable
 fun NavigationHost(
@@ -71,25 +71,9 @@ fun NavigationHost(
             )
         }
         composable(Routes.CreateMovieView.route) {
-            val createViewModel = hiltViewModel<EditCardViewModel>().connect()
-            EditCardScreen(
-                movieId = null,
-                editViewModel = createViewModel,
-            )
-        }
-        composable(
-            route = Routes.EditMovieView.route,
-            arguments =
-                listOf(
-                    navArgument(Routes.EditMovieView.argumentOrEmpty) {
-                        type = NavType.LongType
-                    },
-                ),
-        ) { entry ->
-            val editViewModel = hiltViewModel<EditCardViewModel>().connect()
-            EditCardScreen(
-                movieId = entry.arguments?.getLong(Routes.EditMovieView.argumentOrEmpty),
-                editViewModel = editViewModel,
+            val createViewModel = hiltViewModel<SearchViewModel>().connect()
+            SearchScreen(
+                searchViewModel = createViewModel,
             )
         }
         composable(Routes.ArchiveView.route) {

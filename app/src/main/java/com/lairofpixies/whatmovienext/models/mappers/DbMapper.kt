@@ -18,8 +18,10 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.util.decodeToList
 import com.lairofpixies.whatmovienext.util.encodeToString
@@ -40,7 +42,7 @@ class DbMapper
                     thumbnailUrl = thumbnailUrl,
                     coverUrl = coverUrl,
                     tagline = tagline,
-                    summary = summary,
+                    summary = plot,
                     genres = toGenres(genres),
                     runtimeMinutes = runtimeMinutes,
                     watchState = watchState,
@@ -51,6 +53,40 @@ class DbMapper
         fun toMovies(dbMovies: List<DbMovie>): List<Movie> = dbMovies.map { toMovie(it) }
 
         fun toLoadingMovies(dbMovies: List<DbMovie>): LoadingMovie = LoadingMovie.fromList(toMovies(dbMovies))
+
+        fun toCardMovie(dbMovie: DbMovie): AMovie.ForCard =
+            with(dbMovie) {
+                AMovie.ForCard(
+                    appData =
+                        MovieData.AppData(
+                            id = id,
+                            creationTime = creationTime,
+                            watchState = watchState,
+                            isArchived = isArchived,
+                        ),
+                    searchData =
+                        MovieData.SearchData(
+                            tmdbId = tmdbId,
+                            title = title,
+                            originalTitle = originalTitle,
+                            year = year,
+                            thumbnailUrl = thumbnailUrl,
+                            coverUrl = coverUrl,
+                            genres = toGenres(genres),
+                        ),
+                    detailData =
+                        MovieData.DetailData(
+                            imdbId = imdbId,
+                            tagline = tagline,
+                            plot = plot,
+                            runtimeMinutes = runtimeMinutes,
+                        ),
+                    staffData =
+                        MovieData.StaffData(
+                            // TODO
+                        ),
+                )
+            }
 
         fun toDbMovie(movie: Movie): DbMovie =
             with(movie) {
@@ -64,11 +100,32 @@ class DbMapper
                     thumbnailUrl = thumbnailUrl,
                     coverUrl = coverUrl,
                     tagline = tagline,
-                    summary = summary,
+                    plot = summary,
                     genres = toDbGenres(genres),
                     runtimeMinutes = runtimeMinutes,
                     watchState = watchState,
                     isArchived = isArchived,
+                )
+            }
+
+        fun toDbMovie(cardMovie: AMovie.ForCard): DbMovie =
+            with(cardMovie) {
+                DbMovie(
+                    id = appData.id,
+                    creationTime = appData.creationTime,
+                    tmdbId = searchData.tmdbId,
+                    imdbId = detailData.imdbId,
+                    title = searchData.title,
+                    originalTitle = searchData.originalTitle,
+                    year = searchData.year,
+                    thumbnailUrl = searchData.thumbnailUrl,
+                    coverUrl = searchData.coverUrl,
+                    tagline = detailData.tagline,
+                    plot = detailData.plot,
+                    genres = toDbGenres(searchData.genres),
+                    runtimeMinutes = detailData.runtimeMinutes,
+                    watchState = appData.watchState,
+                    isArchived = appData.isArchived,
                 )
             }
 

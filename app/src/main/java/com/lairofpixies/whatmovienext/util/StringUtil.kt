@@ -94,3 +94,14 @@ fun String.toAnnotatedString(linkColor: Color = Color.Blue): AnnotatedString {
         }
     }
 }
+
+fun printableRuntime(
+    runtimeMinutes: Int,
+    pre: String = "",
+    pos: String = "",
+): String =
+    when (runtimeMinutes) {
+        0 -> ""
+        in 1..59 -> "$pre$runtimeMinutes min$pos"
+        else -> "$pre${runtimeMinutes / 60}h ${runtimeMinutes % 60}min$pos"
+    }

@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -56,10 +57,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
+import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.toAnnotatedString
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
@@ -83,7 +86,7 @@ fun MovieCardScreen(
         Toast
             .makeText(context, context.getString(R.string.movie_not_found), Toast.LENGTH_SHORT)
             .show()
-        cardViewModel.onCancelAction()
+        cardViewModel.onLeaveAction()
     }
 
     if (partialMovie is LoadingMovie.Single) {
@@ -92,7 +95,7 @@ fun MovieCardScreen(
             onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
             onArchiveAction = {
                 cardViewModel.archiveCurrentMovie()
-                cardViewModel.onCancelAction()
+                cardViewModel.onLeaveAction()
             },
             onUpdateAction = { id, watchState -> cardViewModel.updateMovieWatched(id, watchState) },
         )
@@ -140,60 +143,19 @@ fun MovieCard(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                AsyncImage(
-                    model = movie.coverUrl,
-                    contentDescription = null,
-                    modifier =
-                        Modifier
-                            .padding(2.dp)
-                            .width(720.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .align(Alignment.CenterHorizontally),
+                CoverImage(
+                    coverUrl = movie.coverUrl,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
-
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = movie.title,
-                    fontWeight = FontWeight.SemiBold,
-                    style = MaterialTheme.typography.titleLarge,
-                )
-                if (movie.originalTitle.isNotBlank() && movie.originalTitle != movie.title) {
-                    Text(
-                        text = movie.originalTitle,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                    )
-                }
-                Text(
-                    text = movie.year.toString(),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
+                TitlesDisplay(title = movie.title, originalTitle = movie.originalTitle)
+                YearDisplay(year = movie.year)
                 Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text =
-                        movie.printableRuntime(pos = "  •  ") +
-                            movie.genres.joinToString(" / "),
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                RuntimeAndGenresDisplay(runtime = movie.runtimeMinutes, genres = movie.genres)
                 Spacer(modifier = Modifier.height(16.dp))
-                if (movie.tagline.isNotBlank()) {
-                    Text(
-                        text = movie.tagline,
-                        fontWeight = FontWeight.Medium,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
+                TaglineDisplay(tagline = movie.tagline)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = movie.summary,
-                    textAlign = TextAlign.Start,
-                    fontStyle = FontStyle.Italic,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                )
+                PlotDisplay(plot = movie.summary)
                 Spacer(modifier = Modifier.height(36.dp))
                 Spacer(modifier = Modifier.weight(1f))
                 CreditsLink(
@@ -206,6 +168,194 @@ fun MovieCard(
             }
         }
     }
+}
+
+@Composable
+fun MovieCard(
+    movie: AMovie.ForCard,
+    bottomItems: List<CustomBarItem>,
+) {
+    Scaffold(
+        modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
+        bottomBar = {
+            CustomBottomBar(
+                items = bottomItems,
+            )
+        },
+    ) { innerPadding ->
+        BoxWithConstraints(
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                    ),
+        ) {
+            val parentHeight = maxHeight
+
+            Column(
+                modifier =
+                    Modifier
+                        .padding(6.dp)
+                        .fillMaxWidth()
+                        .heightIn(min = parentHeight)
+                        .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                CoverImage(
+                    coverUrl = movie.searchData.coverUrl,
+                    Modifier
+                        .align(Alignment.CenterHorizontally),
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TitlesDisplay(
+                    title = movie.searchData.title,
+                    originalTitle = movie.searchData.originalTitle,
+                )
+                YearDisplay(movie.searchData.year)
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                RuntimeAndGenresDisplay(
+                    runtime = movie.detailData.runtimeMinutes,
+                    genres = movie.searchData.genres,
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TaglineDisplay(movie.detailData.tagline)
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                PlotDisplay(movie.detailData.plot)
+
+                Spacer(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .padding(top = 36.dp),
+                )
+
+                CreditsLink(
+                    text = stringResource(R.string.tmdbCredits),
+                    modifier =
+                        Modifier
+                            .align(Alignment.End)
+                            .alpha(0.4f),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CoverImage(
+    coverUrl: String,
+    modifier: Modifier = Modifier,
+) {
+    if (coverUrl.isNotBlank()) {
+        AsyncImage(
+            model = coverUrl,
+            contentDescription = null,
+            modifier =
+                modifier
+                    .padding(2.dp)
+                    .width(720.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+        )
+    } else {
+        Box(
+            modifier
+                .padding(2.dp)
+                .background(colorResource(id = R.color.missing_image))
+                .width(720.dp)
+                .clip(RoundedCornerShape(8.dp)),
+        )
+    }
+}
+
+@Composable
+fun TitlesDisplay(
+    title: String,
+    originalTitle: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = title,
+        fontWeight = FontWeight.SemiBold,
+        style = MaterialTheme.typography.titleLarge,
+    )
+    if (originalTitle.isNotBlank() && originalTitle != title) {
+        Text(
+            text = originalTitle,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+fun YearDisplay(
+    year: Int?,
+    modifier: Modifier = Modifier,
+) {
+    if (year != null) {
+        Text(
+            text = year.toString(),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+fun RuntimeAndGenresDisplay(
+    runtime: Int,
+    genres: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        modifier = modifier,
+        text =
+            printableRuntime(runtimeMinutes = runtime, pos = "  •  ") +
+                genres.joinToString(" / "),
+        fontStyle = FontStyle.Italic,
+        style = MaterialTheme.typography.bodySmall,
+    )
+}
+
+@Composable
+fun TaglineDisplay(
+    tagline: String,
+    modifier: Modifier = Modifier,
+) {
+    if (tagline.isNotBlank()) {
+        Text(
+            text = tagline,
+            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = modifier,
+        )
+    }
+}
+
+@Composable
+fun PlotDisplay(
+    plot: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        modifier = modifier,
+        text = plot,
+        textAlign = TextAlign.Start,
+        fontStyle = FontStyle.Italic,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+    )
 }
 
 @Composable

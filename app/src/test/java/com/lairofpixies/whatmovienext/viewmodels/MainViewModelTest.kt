@@ -89,7 +89,7 @@ class MainViewModelTest {
         mainViewModel.showPopup(PopupInfo.ConnectionFailed)
 
         // When
-        mainViewModel.closePopupOfType(PopupInfo.DuplicatedTitle::class)
+        mainViewModel.closePopupOfType(PopupInfo.SearchEmpty::class)
 
         // Then
         assertEquals(PopupInfo.ConnectionFailed, mainViewModel.popupInfo.value)

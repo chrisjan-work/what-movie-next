@@ -30,7 +30,7 @@ import kotlin.reflect.KClass
 
 open class ScreenViewModel protected constructor() : ViewModel() {
     private lateinit var navHostController: NavHostController
-    protected lateinit var mainViewModel: MainViewModel
+    protected var mainViewModel: MainViewModel? = null
         private set
 
     open fun attachNavHostController(navHostController: NavHostController) {
@@ -41,7 +41,7 @@ open class ScreenViewModel protected constructor() : ViewModel() {
         this.mainViewModel = mainViewModel
     }
 
-    fun onCancelAction() =
+    fun onLeaveAction() =
         CoroutineScope(Dispatchers.Main).launch {
             navHostController.navigate(Routes.HOME.route) {
                 popUpTo(Routes.HOME.route) {
@@ -73,9 +73,9 @@ open class ScreenViewModel protected constructor() : ViewModel() {
         navHostController.navigate(destination.route(parameter))
     }
 
-    fun showPopup(popupInfo: PopupInfo) = mainViewModel.showPopup(popupInfo)
+    fun showPopup(popupInfo: PopupInfo) = mainViewModel?.showPopup(popupInfo)
 
-    fun closePopup() = mainViewModel.closePopup()
+    fun closePopup() = mainViewModel?.closePopup()
 
-    fun closePopupOfType(popupType: KClass<out PopupInfo>) = mainViewModel.closePopupOfType(popupType)
+    fun closePopupOfType(popupType: KClass<out PopupInfo>) = mainViewModel?.closePopupOfType(popupType)
 }

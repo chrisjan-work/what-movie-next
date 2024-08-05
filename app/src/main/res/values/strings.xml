@@ -30,8 +30,6 @@
     <string name="discard">Discard</string>
     <string name="continue_editing">Continue editing</string>
     <string name="error_title_already_exists">A movie with this title already exists</string>
-    <string name="overwrite">Overwrite</string>
-    <string name="discard_changes">Discard changes</string>
     <string name="movies">Movies</string>
     <string name="cancel">Cancel</string>
     <string name="to_watch">To watch</string>

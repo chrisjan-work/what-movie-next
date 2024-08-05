@@ -48,7 +48,7 @@ fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
     val selection = archiveViewModel.selection.collectAsState().value
 
     if (archivedMovies.isMissing()) {
-        archiveViewModel.onCancelAction()
+        archiveViewModel.onLeaveAction()
     }
 
     Scaffold(

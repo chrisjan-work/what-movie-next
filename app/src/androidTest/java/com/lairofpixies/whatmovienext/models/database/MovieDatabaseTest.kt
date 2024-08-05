@@ -247,6 +247,22 @@ class MovieDatabaseTest {
         }
 
     @Test
+    fun `fetch movie by tmdbid`() =
+        runTest {
+            // Given a database with a single movie
+            val movie = DbMovie(id = 11, tmdbId = 121, title = "The Searchers")
+            movieDao.insertMovie(movie)
+
+            // When fetching the movie by id
+            val shouldBeMovie = movieDao.fetchMovieByTmdbId(121)
+            val shouldBeNull = movieDao.fetchMovieByTmdbId(212)
+
+            // Then the movie is returned or not
+            assertEquals(movie, shouldBeMovie)
+            assertEquals(null, shouldBeNull)
+        }
+
+    @Test
     fun `restore archived movies`() =
         runTest {
             // Given a database with an archived movie

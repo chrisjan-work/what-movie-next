@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
@@ -32,6 +33,7 @@ import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -68,21 +70,67 @@ class MovieRepositoryImplTest {
             // Given
             val dbMovies =
                 listOf(
-                    DbMovie(1, "first", watchState = WatchState.WATCHED),
-                    DbMovie(2, "second", watchState = WatchState.WATCHED),
+                    DbMovie(id = 1, title = "first", watchState = WatchState.WATCHED),
+                    DbMovie(id = 2, title = "second", watchState = WatchState.WATCHED),
                 )
             coEvery { movieDao.getAllMovies() } returns flowOf(dbMovies)
 
             // When
             initializeSut()
-            val result = movieRepository.movies.first()
+            val result = movieRepository.movies.last()
 
             // Then
             val loadingMovies =
                 LoadingMovie.Multiple(
                     listOf(
-                        Movie(1, "first", watchState = WatchState.WATCHED),
-                        Movie(2, "second", watchState = WatchState.WATCHED),
+                        Movie(id = 1, title = "first", watchState = WatchState.WATCHED),
+                        Movie(id = 2, title = "second", watchState = WatchState.WATCHED),
+                    ),
+                )
+            assertEquals(loadingMovies, result)
+        }
+
+    @Test
+    fun getArchivedMovies() =
+        runTest {
+            // Given
+            val dbMovies =
+                listOf(
+                    DbMovie(
+                        id = 1,
+                        title = "first",
+                        watchState = WatchState.WATCHED,
+                        isArchived = true,
+                    ),
+                    DbMovie(
+                        id = 2,
+                        title = "second",
+                        watchState = WatchState.WATCHED,
+                        isArchived = true,
+                    ),
+                )
+            coEvery { movieDao.getArchivedMovies() } returns flowOf(dbMovies)
+
+            // When
+            initializeSut()
+            val result = movieRepository.archivedMovies.last()
+
+            // Then
+            val loadingMovies =
+                LoadingMovie.Multiple(
+                    listOf(
+                        Movie(
+                            id = 1,
+                            title = "first",
+                            watchState = WatchState.WATCHED,
+                            isArchived = true,
+                        ),
+                        Movie(
+                            id = 2,
+                            title = "second",
+                            watchState = WatchState.WATCHED,
+                            isArchived = true,
+                        ),
                     ),
                 )
             assertEquals(loadingMovies, result)
@@ -95,8 +143,8 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.getMovie(1) } returns
                 flowOf(
                     DbMovie(
-                        1,
-                        "first",
+                        id = 1,
+                        title = "first",
                         watchState = WatchState.WATCHED,
                     ),
                 )
@@ -124,52 +172,6 @@ class MovieRepositoryImplTest {
 
             // Then
             assertEquals(LoadingMovie.Empty, result)
-        }
-
-    @Test
-    fun fetchMovieById() =
-        runTest {
-            // Given
-            val dbMovie = DbMovie(7, "gotById", watchState = WatchState.WATCHED)
-            coEvery { movieDao.fetchMovieById(7) } returns dbMovie
-
-            // When
-            initializeSut()
-            val result = movieRepository.fetchMovieById(7)
-
-            // Then
-            val movie = dbMapper.toMovie(dbMovie)
-            assertEquals(movie, result)
-        }
-
-    @Test
-    fun `fetch movie by id always returns null for 0`() =
-        runTest {
-            // Given
-            coEvery { movieDao.fetchMovieById(0) } returns mockk()
-
-            // When
-            initializeSut()
-            val result = movieRepository.fetchMovieById(0)
-
-            // Then
-            assertEquals(null, result)
-        }
-
-    @Test
-    fun fetchMoviesByTitle() =
-        runTest {
-            // Given
-            val dbMovie = DbMovie(12, "gotByTitle", watchState = WatchState.WATCHED)
-            coEvery { movieDao.fetchMoviesByTitle("gotByTitle") } returns listOf(dbMovie)
-
-            // When
-            initializeSut()
-            val result = movieRepository.fetchMoviesByTitle("gotByTitle")
-
-            // Then
-            val movie = dbMapper.toMovie(dbMovie)
-            assertEquals(listOf(movie), result)
         }
 
     @Test
@@ -209,6 +211,63 @@ class MovieRepositoryImplTest {
                 dbMovie.captured.title,
             )
             assertEquals(11, updatedId)
+        }
+
+    @Test
+    fun `storeMovie just add a new movie`() =
+        runTest {
+            // Given
+            val dbMovie = slot<DbMovie>()
+            coEvery { movieDao.insertMovie(capture(dbMovie)) } returns 1L
+            coEvery { movieDao.fetchMovieByTmdbId(any()) } returns null
+
+            // When
+            initializeSut()
+            movieRepository.storeMovie(forCard(title = "first"))
+
+            // Then
+            coVerify { movieDao.insertMovie(any()) }
+            assertEquals(
+                "first",
+                dbMovie.captured.title,
+            )
+        }
+
+    @Test
+    fun `storeMovie update existing movie`() =
+        runTest {
+            // Given
+            val dbMovie = slot<DbMovie>()
+            coEvery { movieDao.updateMovie(capture(dbMovie)) } just runs
+            coEvery { movieDao.fetchMovieByTmdbId(any()) } returns
+                DbMovie(
+                    id = 1,
+                    title = "oldTitle",
+                    watchState = WatchState.WATCHED,
+                    isArchived = true,
+                )
+
+            // When
+            initializeSut()
+            movieRepository.storeMovie(
+                forCard(
+                    title = "newTitle",
+                    watchState = WatchState.PENDING,
+                    isArchived = false,
+                ),
+            )
+
+            // Then
+            coVerify(exactly = 0) { movieDao.insertMovie(any()) }
+            coVerify { movieDao.updateMovie(any()) }
+
+            // the title is updated (new data from the backend)
+            assertEquals("newTitle", dbMovie.captured.title)
+            // the watch state remains untouched (local data in the app)
+            assertEquals(WatchState.WATCHED, dbMovie.captured.watchState)
+            // the movie is automatically unarchieved
+            // (user might have archived it in the past, forgot about it, and wants to re-add)
+            assertEquals(false, dbMovie.captured.isArchived)
         }
 
     @Test
@@ -264,7 +323,12 @@ class MovieRepositoryImplTest {
         runTest {
             // Given
             val movieToDelete =
-                DbMovie(1, "isArchived", watchState = WatchState.WATCHED, isArchived = true)
+                DbMovie(
+                    id = 1,
+                    title = "isArchived",
+                    watchState = WatchState.WATCHED,
+                    isArchived = true,
+                )
             val archivedMovie = slot<DbMovie>()
             coEvery { movieDao.deleteMovie(capture(archivedMovie)) } just runs
             coEvery { movieDao.fetchMovieById(1) } returns movieToDelete

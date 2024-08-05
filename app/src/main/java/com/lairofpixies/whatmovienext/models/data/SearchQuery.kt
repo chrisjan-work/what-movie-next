@@ -16,28 +16,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.database.data
+package com.lairofpixies.whatmovienext.models.data
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.WatchState
-
-@Entity
-data class DbMovie(
-    @PrimaryKey(autoGenerate = true) val id: Long = Movie.NEW_ID,
+data class SearchQuery(
     val title: String,
     val creationTime: Long = System.currentTimeMillis(),
-    val tmdbId: Long = Movie.UNKNOWN_ID,
-    val imdbId: String? = null,
-    val originalTitle: String = "",
-    val year: Int? = null,
-    val thumbnailUrl: String = "",
-    val coverUrl: String = "",
-    val tagline: String = "",
-    val plot: String = "",
-    val genres: String = "",
-    val runtimeMinutes: Int = 0,
-    val watchState: WatchState = WatchState.PENDING,
-    val isArchived: Boolean = false,
 )
