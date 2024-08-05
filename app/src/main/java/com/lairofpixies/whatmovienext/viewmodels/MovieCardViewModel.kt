@@ -54,4 +54,10 @@ class MovieCardViewModel
             movieId: Long,
             watchState: WatchState,
         ) = viewModelScope.launch { repo.setWatchState(movieId, watchState) }
+
+        fun archiveCurrentMovie() =
+            viewModelScope.launch {
+                val movieId = (currentMovie.value as? LoadingMovie.Single)?.movie?.id ?: return@launch
+                repo.archiveMovie(movieId)
+            }
     }

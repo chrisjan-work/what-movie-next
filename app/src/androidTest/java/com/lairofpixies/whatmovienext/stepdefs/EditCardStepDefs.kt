@@ -276,14 +276,6 @@ class EditCardStepDefs(
         }
     }
 
-    @When("the user archives the current entry")
-    fun theUserArchivesTheCurrentEntry() =
-        composeRule.composeStep {
-            val archiveLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
-            onNodeWithText(archiveLabel)
-                .performClick()
-        }
-
     @When("the user clicks on the find button")
     fun theUserClicksOnTheFindButton() =
         composeRule.composeStep {

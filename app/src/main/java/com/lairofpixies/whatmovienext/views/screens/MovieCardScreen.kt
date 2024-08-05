@@ -90,7 +90,10 @@ fun MovieCardScreen(
         MovieCard(
             movie = partialMovie.movie,
             onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
-            onEditAction = { id -> cardViewModel.onNavigateWithParam(Routes.EditMovieView, id) },
+            onArchiveAction = {
+                cardViewModel.archiveCurrentMovie()
+                cardViewModel.onCancelAction()
+            },
             onUpdateAction = { id, watchState -> cardViewModel.updateMovieWatched(id, watchState) },
         )
     }
@@ -100,7 +103,7 @@ fun MovieCardScreen(
 fun MovieCard(
     movie: Movie,
     onHomeAction: () -> Unit,
-    onEditAction: (Long) -> Unit,
+    onArchiveAction: () -> Unit,
     onUpdateAction: (Long, WatchState) -> Unit,
 ) {
     Scaffold(
@@ -111,7 +114,7 @@ fun MovieCard(
                     bottomItemsForMovieCard(
                         movie,
                         onHomeAction = onHomeAction,
-                        onEditAction = onEditAction,
+                        onArchiveAction = onArchiveAction,
                         onUpdateAction = onUpdateAction,
                     ),
             )
@@ -234,7 +237,7 @@ fun CreditsLink(
 fun bottomItemsForMovieCard(
     movie: Movie,
     onHomeAction: () -> Unit,
-    onEditAction: (Long) -> Unit,
+    onArchiveAction: () -> Unit,
     onUpdateAction: (Long, WatchState) -> Unit,
 ): List<CustomBarItem> =
     listOf(
@@ -248,5 +251,5 @@ fun bottomItemsForMovieCard(
                 onUpdateAction(movie.id, WatchState.PENDING)
             }
         },
-        CustomBarItem(ButtonSpec.EditShortcut) { onEditAction(movie.id) },
+        CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction),
     )
