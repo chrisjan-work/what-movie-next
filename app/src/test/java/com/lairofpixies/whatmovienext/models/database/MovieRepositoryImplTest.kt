@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -78,14 +78,14 @@ class MovieRepositoryImplTest {
             val result = movieRepository.movies.first()
 
             // Then
-            val asyncMovies =
-                AsyncMovieInfo.Multiple(
+            val loadingMovies =
+                LoadingMovie.Multiple(
                     listOf(
                         Movie(1, "first", watchState = WatchState.WATCHED),
                         Movie(2, "second", watchState = WatchState.WATCHED),
                     ),
                 )
-            assertEquals(asyncMovies, result)
+            assertEquals(loadingMovies, result)
         }
 
     @Test
@@ -107,7 +107,7 @@ class MovieRepositoryImplTest {
 
             // Then
             assertEquals(
-                AsyncMovieInfo.Single(Movie(1, "first", watchState = WatchState.WATCHED)),
+                LoadingMovie.Single(Movie(1, "first", watchState = WatchState.WATCHED)),
                 result,
             )
         }
@@ -123,7 +123,7 @@ class MovieRepositoryImplTest {
             val result = movieRepository.singleMovie(1).first()
 
             // Then
-            assertEquals(AsyncMovieInfo.Empty, result)
+            assertEquals(LoadingMovie.Empty, result)
         }
 
     @Test

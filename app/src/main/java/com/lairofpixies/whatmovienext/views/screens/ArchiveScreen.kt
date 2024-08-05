@@ -32,10 +32,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isMissing
-import com.lairofpixies.whatmovienext.models.data.toList
 import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
@@ -45,7 +44,7 @@ import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 @Composable
 fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
-    val archivedMovies: AsyncMovieInfo = archiveViewModel.archivedMovies.collectAsState().value
+    val archivedMovies: LoadingMovie = archiveViewModel.archivedMovies.collectAsState().value
     val selection = archiveViewModel.selection.collectAsState().value
 
     if (archivedMovies.isMissing()) {

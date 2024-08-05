@@ -22,13 +22,13 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
-class AsyncMovieInfoTest {
+class LoadingMovieTest {
     @Test
     fun `from list when list is empty`() {
-        val asyncMovieInfo = AsyncMovieInfo.fromList(emptyList())
+        val loadingMovie = LoadingMovie.fromList(emptyList())
         assertEquals(
-            AsyncMovieInfo.Empty,
-            asyncMovieInfo,
+            LoadingMovie.Empty,
+            loadingMovie,
         )
     }
 
@@ -38,12 +38,12 @@ class AsyncMovieInfoTest {
         val movie = Movie(title = "average movie")
 
         // When
-        val asyncMovieInfo = AsyncMovieInfo.fromList(listOf(movie))
+        val loadingMovie = LoadingMovie.fromList(listOf(movie))
 
         // Then
         assertEquals(
-            AsyncMovieInfo.Single(movie),
-            asyncMovieInfo,
+            LoadingMovie.Single(movie),
+            loadingMovie,
         )
     }
 
@@ -57,25 +57,25 @@ class AsyncMovieInfoTest {
             )
 
         // When
-        val asyncMovieInfo = AsyncMovieInfo.fromList(movies)
+        val loadingMovie = LoadingMovie.fromList(movies)
 
         // Then
         assertEquals(
-            AsyncMovieInfo.Multiple(movies),
-            asyncMovieInfo,
+            LoadingMovie.Multiple(movies),
+            loadingMovie,
         )
     }
 
     @Test
     fun `is missing table`() {
-        val isMissingPairs: List<Pair<AsyncMovieInfo?, Boolean>> =
+        val isMissingPairs: List<Pair<LoadingMovie?, Boolean>> =
             listOf(
                 null to true,
-                AsyncMovieInfo.Loading to false,
-                AsyncMovieInfo.Failed(mockk()) to true,
-                AsyncMovieInfo.Empty to true,
-                AsyncMovieInfo.Single(mockk()) to false,
-                AsyncMovieInfo.Multiple(emptyList()) to false,
+                LoadingMovie.Loading to false,
+                LoadingMovie.Failed(mockk()) to true,
+                LoadingMovie.Empty to true,
+                LoadingMovie.Single(mockk()) to false,
+                LoadingMovie.Multiple(emptyList()) to false,
             )
 
         isMissingPairs.forEach { (assyncMovieInfo, expectedResult) ->
@@ -88,14 +88,14 @@ class AsyncMovieInfoTest {
 
     @Test
     fun `has movie table`() {
-        val hasMoviePairs: List<Pair<AsyncMovieInfo?, Boolean>> =
+        val hasMoviePairs: List<Pair<LoadingMovie?, Boolean>> =
             listOf(
                 null to false,
-                AsyncMovieInfo.Loading to false,
-                AsyncMovieInfo.Failed(mockk()) to false,
-                AsyncMovieInfo.Empty to false,
-                AsyncMovieInfo.Single(mockk()) to true,
-                AsyncMovieInfo.Multiple(emptyList()) to true,
+                LoadingMovie.Loading to false,
+                LoadingMovie.Failed(mockk()) to false,
+                LoadingMovie.Empty to false,
+                LoadingMovie.Single(mockk()) to true,
+                LoadingMovie.Multiple(emptyList()) to true,
             )
 
         hasMoviePairs.forEach { (assyncMovieInfo, expectedResult) ->
@@ -112,7 +112,7 @@ class AsyncMovieInfoTest {
         val movie = Movie(title = "Romantic night")
 
         // When
-        val movieList = AsyncMovieInfo.Single(movie).toList()
+        val movieList = LoadingMovie.Single(movie).toList()
 
         // Then
         assertEquals(listOf(movie), movieList)
@@ -128,7 +128,7 @@ class AsyncMovieInfoTest {
             )
 
         // When
-        val movieList = AsyncMovieInfo.Multiple(movies).toList()
+        val movieList = LoadingMovie.Multiple(movies).toList()
 
         // Then
         assertEquals(movies, movieList)
@@ -136,7 +136,7 @@ class AsyncMovieInfoTest {
 
     @Test
     fun `empty list`() {
-        val movieList = AsyncMovieInfo.Empty.toList()
+        val movieList = LoadingMovie.Empty.toList()
 
         assertEquals(emptyList<Movie>(), movieList)
     }
@@ -144,7 +144,7 @@ class AsyncMovieInfoTest {
     @Test
     fun `filter list - filter to empty`() {
         val filtered =
-            AsyncMovieInfo
+            LoadingMovie
                 .Multiple(
                     listOf(
                         Movie(title = "The Thin Red Line"),
@@ -153,13 +153,13 @@ class AsyncMovieInfoTest {
                     ),
                 ).filter { it.title.contains("wild") }
 
-        assertEquals(AsyncMovieInfo.Empty, filtered)
+        assertEquals(LoadingMovie.Empty, filtered)
     }
 
     @Test
     fun `filter list - filter to one`() {
         val filtered =
-            AsyncMovieInfo
+            LoadingMovie
                 .Multiple(
                     listOf(
                         Movie(title = "The Thin Red Line"),
@@ -168,13 +168,13 @@ class AsyncMovieInfoTest {
                     ),
                 ).filter { it.title.contains("Red") }
 
-        assertEquals(AsyncMovieInfo.Single(Movie(title = "The Thin Red Line")), filtered)
+        assertEquals(LoadingMovie.Single(Movie(title = "The Thin Red Line")), filtered)
     }
 
     @Test
     fun `filter list - filter to multiple`() {
         val filtered =
-            AsyncMovieInfo
+            LoadingMovie
                 .Multiple(
                     listOf(
                         Movie(title = "The Thin Red Line"),
@@ -183,7 +183,7 @@ class AsyncMovieInfoTest {
                     ),
                 ).filter { it.title.contains("i") }
         assertEquals(
-            AsyncMovieInfo.Multiple(
+            LoadingMovie.Multiple(
                 listOf(
                     Movie(title = "The Thin Red Line"),
                     Movie(title = "Knight of Cups"),
@@ -195,18 +195,18 @@ class AsyncMovieInfoTest {
 
     @Test
     fun `filter list - empty stays empty`() {
-        val filtered = AsyncMovieInfo.Empty.filter { true }
-        assertEquals(AsyncMovieInfo.Empty, filtered)
+        val filtered = LoadingMovie.Empty.filter { true }
+        assertEquals(LoadingMovie.Empty, filtered)
     }
 
     @Test
     fun `filter list - single input stays`() {
         val filtered =
-            AsyncMovieInfo
+            LoadingMovie
                 .Single(Movie(title = "Forrest Gump"))
                 .filter { true }
         assertEquals(
-            AsyncMovieInfo
+            LoadingMovie
                 .Single(Movie(title = "Forrest Gump")),
             filtered,
         )
@@ -215,9 +215,9 @@ class AsyncMovieInfoTest {
     @Test
     fun `filter list - single input goes`() {
         val filtered =
-            AsyncMovieInfo
+            LoadingMovie
                 .Single(Movie(title = "Forrest Gump"))
                 .filter { false }
-        assertEquals(AsyncMovieInfo.Empty, filtered)
+        assertEquals(LoadingMovie.Empty, filtered)
     }
 }

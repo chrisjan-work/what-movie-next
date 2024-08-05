@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.util.decodeToList
@@ -50,7 +50,7 @@ class DbMapper
 
         fun toMovies(dbMovies: List<DbMovie>): List<Movie> = dbMovies.map { toMovie(it) }
 
-        fun toAsyncMovies(dbMovies: List<DbMovie>): AsyncMovieInfo = AsyncMovieInfo.fromList(toMovies(dbMovies))
+        fun toLoadingMovies(dbMovies: List<DbMovie>): LoadingMovie = LoadingMovie.fromList(toMovies(dbMovies))
 
         fun toDbMovie(movie: Movie): DbMovie =
             with(movie) {

@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
@@ -79,7 +79,7 @@ class ApiRepositoryImplTest {
             val result = apiRepository.findMoviesByTitle("test").value
 
             // Then
-            assertEquals(AsyncMovieInfo.Empty, result)
+            assertEquals(LoadingMovie.Empty, result)
         }
 
     @Test
@@ -99,7 +99,7 @@ class ApiRepositoryImplTest {
             val result = apiRepository.findMoviesByTitle("test").value
 
             // Then
-            assertEquals(AsyncMovieInfo.Single(Movie(tmdbId = 1, title = "test")), result)
+            assertEquals(LoadingMovie.Single(Movie(tmdbId = 1, title = "test")), result)
         }
 
     @Test
@@ -126,7 +126,7 @@ class ApiRepositoryImplTest {
                     Movie(tmdbId = 2, title = "movie2"),
                     Movie(tmdbId = 3, title = "movie3"),
                 )
-            assertEquals(AsyncMovieInfo.Multiple(expectedMovies), result)
+            assertEquals(LoadingMovie.Multiple(expectedMovies), result)
         }
 
     @Test
@@ -147,7 +147,7 @@ class ApiRepositoryImplTest {
             val result = apiRepository.findMoviesByTitle("test").value
 
             // Then
-            assertEquals(AsyncMovieInfo.Failed(http404), result)
+            assertEquals(LoadingMovie.Failed(http404), result)
         }
 
     @Test
@@ -165,7 +165,7 @@ class ApiRepositoryImplTest {
             val result = apiRepository.getMovieDetails(99).value
 
             // Then
-            assertEquals(AsyncMovieInfo.Single(testLocalMovieExtended()), result)
+            assertEquals(LoadingMovie.Single(testLocalMovieExtended()), result)
         }
 
     @Test
@@ -179,6 +179,6 @@ class ApiRepositoryImplTest {
             val result = apiRepository.getMovieDetails(99).value
 
             // Then
-            assertEquals(AsyncMovieInfo.Failed::class, result::class)
+            assertEquals(LoadingMovie.Failed::class, result::class)
         }
 }

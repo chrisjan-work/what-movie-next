@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +38,7 @@ class ApiRepositoryImpl(
 ) : ApiRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    override fun findMoviesByTitle(title: String): StateFlow<AsyncMovieInfo> =
+    override fun findMoviesByTitle(title: String): StateFlow<LoadingMovie> =
         flow {
             try {
                 val remoteMovies =
@@ -47,44 +47,44 @@ class ApiRepositoryImpl(
                             tmdbApi.findMoviesByTitle(escapeForQuery(title))
                         }.await()
 
-                val asyncMovieInfo =
-                    AsyncMovieInfo.fromList(
+                val loadingMovie =
+                    LoadingMovie.fromList(
                         remoteMovies.results.map { remoteMovie ->
                             remoteMapper.toMovie(remoteMovie)
                         },
                     )
-                emit(asyncMovieInfo)
+                emit(loadingMovie)
             } catch (httpException: HttpException) {
-                emit(AsyncMovieInfo.Failed(httpException))
+                emit(LoadingMovie.Failed(httpException))
             } catch (exception: Exception) {
-                emit(AsyncMovieInfo.Failed(exception))
+                emit(LoadingMovie.Failed(exception))
             }
         }.stateIn(
             repositoryScope,
             SharingStarted.Eagerly,
-            initialValue = AsyncMovieInfo.Loading,
+            initialValue = LoadingMovie.Loading,
         )
 
     private fun escapeForQuery(title: String) = title.trim().replace(" ", "+")
 
-    override fun getMovieDetails(tmdbId: Long): StateFlow<AsyncMovieInfo> =
+    override fun getMovieDetails(tmdbId: Long): StateFlow<LoadingMovie> =
         flow {
             try {
                 val remoteMovie = tmdbApi.getMovieDetails(tmdbId)
                 if (remoteMovie.success == false) {
-                    emit(AsyncMovieInfo.Failed(Exception("Failed to get movie details")))
+                    emit(LoadingMovie.Failed(Exception("Failed to get movie details")))
                     return@flow
                 }
                 val movie = remoteMapper.toMovie(remoteMovie)
-                emit(AsyncMovieInfo.Single(movie))
+                emit(LoadingMovie.Single(movie))
             } catch (httpException: HttpException) {
-                emit(AsyncMovieInfo.Failed(httpException))
+                emit(LoadingMovie.Failed(httpException))
             } catch (exception: Exception) {
-                emit(AsyncMovieInfo.Failed(exception))
+                emit(LoadingMovie.Failed(exception))
             }
         }.stateIn(
             repositoryScope,
             SharingStarted.Eagerly,
-            initialValue = AsyncMovieInfo.Loading,
+            initialValue = LoadingMovie.Loading,
         )
 }

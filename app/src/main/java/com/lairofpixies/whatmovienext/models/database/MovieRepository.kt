@@ -18,18 +18,18 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
     // read
-    val movies: Flow<AsyncMovieInfo>
+    val movies: Flow<LoadingMovie>
 
-    val archivedMovies: Flow<AsyncMovieInfo>
+    val archivedMovies: Flow<LoadingMovie>
 
-    fun singleMovie(movieId: Long): Flow<AsyncMovieInfo>
+    fun singleMovie(movieId: Long): Flow<LoadingMovie>
 
     suspend fun fetchMovieById(movieId: Long): Movie?
 

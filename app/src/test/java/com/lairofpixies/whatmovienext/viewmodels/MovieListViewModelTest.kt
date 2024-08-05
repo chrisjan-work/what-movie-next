@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -73,9 +73,9 @@ class MovieListViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun packMoviesToStateFlow(vararg movies: Movie): StateFlow<AsyncMovieInfo> =
+    private fun packMoviesToStateFlow(vararg movies: Movie): StateFlow<LoadingMovie> =
         MutableStateFlow(
-            AsyncMovieInfo.fromList(movies.toList()),
+            LoadingMovie.fromList(movies.toList()),
         ).asStateFlow()
 
     @Test
@@ -99,7 +99,7 @@ class MovieListViewModelTest {
 
             // Then
             val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(AsyncMovieInfo.Multiple(listOf(unseenMovie, seenMovie)), forwardedMovies)
+            assertEquals(LoadingMovie.Multiple(listOf(unseenMovie, seenMovie)), forwardedMovies)
         }
 
     @Test
@@ -123,7 +123,7 @@ class MovieListViewModelTest {
 
             // Then
             val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(AsyncMovieInfo.Single(unseenMovie), forwardedMovies)
+            assertEquals(LoadingMovie.Single(unseenMovie), forwardedMovies)
         }
 
     @Test
@@ -147,7 +147,7 @@ class MovieListViewModelTest {
 
             // Then
             val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(AsyncMovieInfo.Single(seenMovie), forwardedMovies)
+            assertEquals(LoadingMovie.Single(seenMovie), forwardedMovies)
         }
 
     @Test
