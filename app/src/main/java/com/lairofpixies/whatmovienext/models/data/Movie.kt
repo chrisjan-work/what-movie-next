@@ -38,30 +38,30 @@ data class Movie(
         const val NEW_ID = 0L
         const val UNKNOWN_ID = -1L
     }
+
+    fun hasSaveableChangesSince(lastSavedMovie: Movie?): Boolean =
+        when {
+            title.isBlank() -> false
+            lastSavedMovie == null -> true
+            else -> title != lastSavedMovie.title
+        }
+
+    fun hasQuietSaveableChangesSince(lastSavedMovie: Movie?): Boolean =
+        when {
+            title.isBlank() -> false
+            lastSavedMovie == null -> true
+            else -> watchState != lastSavedMovie.watchState
+        }
+
+    fun isNew(): Boolean = id == Movie.NEW_ID
+
+    fun printableRuntime(
+        pre: String = "",
+        pos: String = "",
+    ): String =
+        when (runtimeMinutes) {
+            0 -> ""
+            in 1..59 -> "$pre$runtimeMinutes min$pos"
+            else -> "$pre${runtimeMinutes / 60}h ${runtimeMinutes % 60}min$pos"
+        }
 }
-
-fun Movie.hasSaveableChangesSince(lastSavedMovie: Movie?): Boolean =
-    when {
-        title.isBlank() -> false
-        lastSavedMovie == null -> true
-        else -> title != lastSavedMovie.title
-    }
-
-fun Movie.hasQuietSaveableChangesSince(lastSavedMovie: Movie?): Boolean =
-    when {
-        title.isBlank() -> false
-        lastSavedMovie == null -> true
-        else -> watchState != lastSavedMovie.watchState
-    }
-
-fun Movie.isNew(): Boolean = id == Movie.NEW_ID
-
-fun Movie.printableRuntime(
-    pre: String = "",
-    pos: String = "",
-): String =
-    when (runtimeMinutes) {
-        0 -> ""
-        in 1..59 -> "$pre$runtimeMinutes min$pos"
-        else -> "$pre${runtimeMinutes / 60}h ${runtimeMinutes % 60}min$pos"
-    }
