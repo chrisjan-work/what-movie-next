@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.data.hasQuietSaveableChangesSince
@@ -52,13 +52,13 @@ class EditCardViewModel
         private val _currentMovie = MutableStateFlow(Movie(id = Movie.NEW_ID, title = ""))
         val currentMovie: StateFlow<Movie> = _currentMovie.asStateFlow()
 
-        private val _searchResults: MutableStateFlow<AsyncMovieInfo> =
-            MutableStateFlow(AsyncMovieInfo.Empty)
-        val searchResults: StateFlow<AsyncMovieInfo> = _searchResults.asStateFlow()
+        private val _searchResults: MutableStateFlow<LoadingMovie> =
+            MutableStateFlow(LoadingMovie.Empty)
+        val searchResults: StateFlow<LoadingMovie> = _searchResults.asStateFlow()
         private var searchJob: Job? = null
         private val shouldShowSearchPopup: Flow<Boolean> =
             searchResults.map {
-                it is AsyncMovieInfo.Loading
+                it is LoadingMovie.Loading
             }
 
         override fun attachMainViewModel(mainViewModel: MainViewModel) {
@@ -192,27 +192,27 @@ class EditCardViewModel
 
                     apiRepo.findMoviesByTitle(title = currentMovie.value.title).collect { results ->
                         when (results) {
-                            is AsyncMovieInfo.Loading ->
-                                _searchResults.value = AsyncMovieInfo.Loading
+                            is LoadingMovie.Loading ->
+                                _searchResults.value = LoadingMovie.Loading
 
-                            is AsyncMovieInfo.Failed -> {
+                            is LoadingMovie.Failed -> {
                                 clearSearchResults()
                                 showPopup(PopupInfo.ConnectionFailed)
                                 // TODO: log error remotely
                                 Timber.e("Connection error: ${results.trowable}")
                             }
 
-                            is AsyncMovieInfo.Empty -> {
+                            is LoadingMovie.Empty -> {
                                 clearSearchResults()
                                 showPopup(PopupInfo.SearchEmpty)
                             }
 
-                            is AsyncMovieInfo.Single -> {
+                            is LoadingMovie.Single -> {
                                 fetchFromRemote(results.movie)
                                 clearSearchResults()
                             }
 
-                            is AsyncMovieInfo.Multiple -> _searchResults.value = results
+                            is LoadingMovie.Multiple -> _searchResults.value = results
                         }
                     }
                 }
@@ -238,7 +238,7 @@ class EditCardViewModel
         }
 
         fun clearSearchResults() {
-            _searchResults.value = AsyncMovieInfo.Empty
+            _searchResults.value = LoadingMovie.Empty
         }
 
         fun fetchFromRemote(selected: Movie) {
@@ -247,16 +247,16 @@ class EditCardViewModel
                 return
             }
             viewModelScope.launch {
-                apiRepo.getMovieDetails(selected.tmdbId).collect { asyncMovie ->
-                    when (asyncMovie) {
+                apiRepo.getMovieDetails(selected.tmdbId).collect { loadingMovie ->
+                    when (loadingMovie) {
                         // TODO: show loading state
-                        // is AsyncMovieInfo.Loading
-                        is AsyncMovieInfo.Failed -> {
+                        // is LoadingMovie.Loading
+                        is LoadingMovie.Failed -> {
                             showPopup(PopupInfo.ConnectionFailed)
-                            Timber.e("Connection error: ${asyncMovie.trowable}")
+                            Timber.e("Connection error: ${loadingMovie.trowable}")
                         }
 
-                        is AsyncMovieInfo.Single -> _currentMovie.value = asyncMovie.movie
+                        is LoadingMovie.Single -> _currentMovie.value = loadingMovie.movie
                         else -> {}
                     }
                 }

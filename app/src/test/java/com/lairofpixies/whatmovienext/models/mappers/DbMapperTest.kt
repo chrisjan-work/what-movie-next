@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -97,15 +97,15 @@ class DbMapperTest {
     }
 
     @Test
-    fun toAsyncMovies() {
+    fun toLoadingMovies() {
         // Given
         val dbMovies = listOf(generateDbMovie())
 
         // When
-        val movie = dbMapper.toAsyncMovies(dbMovies)
+        val movie = dbMapper.toLoadingMovies(dbMovies)
 
         // Then
-        val expectedMovies = AsyncMovieInfo.Single(generateMovie())
+        val expectedMovies = LoadingMovie.Single(generateMovie())
         assertEquals(expectedMovies, movie)
     }
 

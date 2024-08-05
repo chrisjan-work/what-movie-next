@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.navigation.NavHostController
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -424,7 +424,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                MutableStateFlow(AsyncMovieInfo.Loading).asStateFlow()
+                MutableStateFlow(LoadingMovie.Loading).asStateFlow()
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
 
             // When
@@ -439,7 +439,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                MutableStateFlow(AsyncMovieInfo.Loading).asStateFlow()
+                MutableStateFlow(LoadingMovie.Loading).asStateFlow()
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
             editViewModel.startSearch()
             clearMocks(mainViewModelMock)
@@ -456,7 +456,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                MutableStateFlow(AsyncMovieInfo.Failed(Exception())).asStateFlow()
+                MutableStateFlow(LoadingMovie.Failed(Exception())).asStateFlow()
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
 
             // When
@@ -471,7 +471,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                MutableStateFlow(AsyncMovieInfo.Empty).asStateFlow()
+                MutableStateFlow(LoadingMovie.Empty).asStateFlow()
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
 
             // When
@@ -486,7 +486,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val movie = Movie(id = 1007, tmdbId = 1007, title = "From Russia with Love")
-            val movieFlow = MutableStateFlow(AsyncMovieInfo.Single(movie)).asStateFlow()
+            val movieFlow = MutableStateFlow(LoadingMovie.Single(movie)).asStateFlow()
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns movieFlow
             coEvery { apiRepoMock.getMovieDetails(any()) } returns movieFlow
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
@@ -502,8 +502,8 @@ class EditCardViewModelTest {
     fun `load search results when search delivers more than one match`() =
         runTest {
             // Given
-            val asyncMovies =
-                AsyncMovieInfo.Multiple(
+            val loadingMovies =
+                LoadingMovie.Multiple(
                     listOf(
                         Movie(id = 2007, title = "Live and let die"),
                         Movie(id = 3007, title = "Moonraker"),
@@ -511,22 +511,22 @@ class EditCardViewModelTest {
                     ),
                 )
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                MutableStateFlow(asyncMovies).asStateFlow()
+                MutableStateFlow(loadingMovies).asStateFlow()
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
 
             // When
             editViewModel.startSearch()
 
             // Then
-            assertEquals(asyncMovies, editViewModel.searchResults.value)
+            assertEquals(loadingMovies, editViewModel.searchResults.value)
         }
 
     @Test
     fun `back button close search results`() =
         runTest {
             // Given
-            val asyncMovies =
-                AsyncMovieInfo.Multiple(
+            val loadingMovies =
+                LoadingMovie.Multiple(
                     listOf(
                         Movie(id = 2007, title = "Live and let die"),
                         Movie(id = 3007, title = "Moonraker"),
@@ -534,7 +534,7 @@ class EditCardViewModelTest {
                     ),
                 )
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                MutableStateFlow(asyncMovies).asStateFlow()
+                MutableStateFlow(loadingMovies).asStateFlow()
             editViewModel.updateMovieEdits { Movie(id = 1, title = "anything") }
             editViewModel.startSearch()
 
@@ -542,7 +542,7 @@ class EditCardViewModelTest {
             editViewModel.handleBackButton()
 
             // Then
-            assertEquals(AsyncMovieInfo.Empty, editViewModel.searchResults.value)
+            assertEquals(LoadingMovie.Empty, editViewModel.searchResults.value)
         }
 
     @Test
@@ -550,7 +550,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
             val movie = Movie(id = 1007, tmdbId = 1007, title = "From Russia with Love")
-            val movieFlow = MutableStateFlow(AsyncMovieInfo.Single(movie)).asStateFlow()
+            val movieFlow = MutableStateFlow(LoadingMovie.Single(movie)).asStateFlow()
             coEvery { apiRepoMock.getMovieDetails(any()) } returns movieFlow
 
             // When
@@ -565,7 +565,7 @@ class EditCardViewModelTest {
         runTest {
             // Given
 
-            val failedFlow = MutableStateFlow(AsyncMovieInfo.Failed(Exception())).asStateFlow()
+            val failedFlow = MutableStateFlow(LoadingMovie.Failed(Exception())).asStateFlow()
             coEvery { apiRepoMock.getMovieDetails(any()) } returns failedFlow
             val spy = spyk(editViewModel)
             val currentMovie = Movie(id = 1, title = "nothing")

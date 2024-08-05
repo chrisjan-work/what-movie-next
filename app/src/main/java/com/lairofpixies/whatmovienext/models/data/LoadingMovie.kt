@@ -18,58 +18,58 @@
  */
 package com.lairofpixies.whatmovienext.models.data
 
-sealed class AsyncMovieInfo {
-    data object Loading : AsyncMovieInfo()
+sealed class LoadingMovie {
+    data object Loading : LoadingMovie()
 
     data class Failed(
         val trowable: Throwable,
-    ) : AsyncMovieInfo()
+    ) : LoadingMovie()
 
-    data object Empty : AsyncMovieInfo()
+    data object Empty : LoadingMovie()
 
     data class Single(
         val movie: Movie,
-    ) : AsyncMovieInfo()
+    ) : LoadingMovie()
 
     data class Multiple(
         val movies: List<Movie>,
-    ) : AsyncMovieInfo()
+    ) : LoadingMovie()
 
     companion object {
-        fun fromList(movies: List<Movie>): AsyncMovieInfo =
+        fun fromList(movies: List<Movie>): LoadingMovie =
             when (movies.size) {
                 0 -> Empty
                 1 -> Single(movies.first())
                 else -> Multiple(movies)
             }
     }
-}
 
-fun AsyncMovieInfo?.isMissing(): Boolean =
-    this == null ||
-        this == AsyncMovieInfo.Empty ||
-        this is AsyncMovieInfo.Failed
-
-fun AsyncMovieInfo?.hasMovie(): Boolean =
-    this != null &&
-        (
-            this is AsyncMovieInfo.Single ||
-                this is AsyncMovieInfo.Multiple
-        )
-
-fun AsyncMovieInfo.toList(): List<Movie> =
-    when (this) {
-        is AsyncMovieInfo.Single -> listOf(movie)
-        is AsyncMovieInfo.Multiple -> movies
-        else -> emptyList()
-    }
-
-fun AsyncMovieInfo.filter(sieve: (Movie) -> Boolean): AsyncMovieInfo =
-    when (this) {
-        is AsyncMovieInfo.Single -> if (sieve(movie)) this else AsyncMovieInfo.Empty
-        is AsyncMovieInfo.Multiple -> {
-            AsyncMovieInfo.fromList(movies.filter(sieve))
+    fun toList(): List<Movie> =
+        when (this) {
+            is LoadingMovie.Single -> listOf(movie)
+            is LoadingMovie.Multiple -> movies
+            else -> emptyList()
         }
 
-        else -> this
-    }
+    fun filter(sieve: (Movie) -> Boolean): LoadingMovie =
+        when (this) {
+            is LoadingMovie.Single -> if (sieve(movie)) this else LoadingMovie.Empty
+            is LoadingMovie.Multiple -> {
+                LoadingMovie.fromList(movies.filter(sieve))
+            }
+
+            else -> this
+        }
+}
+
+fun LoadingMovie?.isMissing(): Boolean =
+    this == null ||
+        this == LoadingMovie.Empty ||
+        this is LoadingMovie.Failed
+
+fun LoadingMovie?.hasMovie(): Boolean =
+    this != null &&
+        (
+            this is LoadingMovie.Single ||
+                this is LoadingMovie.Multiple
+        )

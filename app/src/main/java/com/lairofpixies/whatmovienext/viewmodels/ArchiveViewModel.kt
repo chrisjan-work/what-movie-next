@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
@@ -36,8 +36,8 @@ class ArchiveViewModel
     constructor(
         private val repo: MovieRepository,
     ) : ScreenViewModel() {
-        private val _archivedMovies = MutableStateFlow<AsyncMovieInfo>(AsyncMovieInfo.Loading)
-        val archivedMovies: StateFlow<AsyncMovieInfo> = _archivedMovies.asStateFlow()
+        private val _archivedMovies = MutableStateFlow<LoadingMovie>(LoadingMovie.Loading)
+        val archivedMovies: StateFlow<LoadingMovie> = _archivedMovies.asStateFlow()
 
         private val _selection = MutableStateFlow(emptySet<Movie>())
         val selection: StateFlow<Set<Movie>> = _selection.asStateFlow()

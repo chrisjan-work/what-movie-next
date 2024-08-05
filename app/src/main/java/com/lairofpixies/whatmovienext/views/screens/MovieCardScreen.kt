@@ -56,7 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.AsyncMovieInfo
+import com.lairofpixies.whatmovienext.models.data.LoadingMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
@@ -87,7 +87,7 @@ fun MovieCardScreen(
         cardViewModel.onCancelAction()
     }
 
-    if (partialMovie is AsyncMovieInfo.Single) {
+    if (partialMovie is LoadingMovie.Single) {
         MovieCard(
             movie = partialMovie.movie,
             onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
