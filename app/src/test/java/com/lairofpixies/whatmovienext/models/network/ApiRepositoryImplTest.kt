@@ -18,8 +18,9 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
+import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.TestAMovie
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.mappers.testLocalMovieExtended
@@ -32,6 +33,7 @@ import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -76,10 +78,10 @@ class ApiRepositoryImplTest {
             initializeSut()
 
             // When
-            val result = apiRepository.findMoviesByTitle("test").value
+            val result = apiRepository.findMoviesByTitle("test").last()
 
             // Then
-            assertEquals(LoadingMovie.Empty, result)
+            assertEquals(LoadingAMovie.Empty, result)
         }
 
     @Test
@@ -96,10 +98,12 @@ class ApiRepositoryImplTest {
             initializeSut()
 
             // When
-            val result = apiRepository.findMoviesByTitle("test").value
+            val result = apiRepository.findMoviesByTitle("test").last()
 
             // Then
-            assertEquals(LoadingMovie.Single(Movie(tmdbId = 1, title = "test")), result)
+            val expectedMovie =
+                LoadingAMovie.Single(TestAMovie.forSearch(title = "test", tmdbId = 1))
+            assertEquals(expectedMovie, result)
         }
 
     @Test
@@ -117,16 +121,16 @@ class ApiRepositoryImplTest {
             initializeSut()
 
             // When
-            val result = apiRepository.findMoviesByTitle("test").value
+            val result = apiRepository.findMoviesByTitle("test").last()
 
             // Then
             val expectedMovies =
                 listOf(
-                    Movie(tmdbId = 1, title = "movie1"),
-                    Movie(tmdbId = 2, title = "movie2"),
-                    Movie(tmdbId = 3, title = "movie3"),
+                    TestAMovie.forSearch(tmdbId = 1, title = "movie1"),
+                    TestAMovie.forSearch(tmdbId = 2, title = "movie2"),
+                    TestAMovie.forSearch(tmdbId = 3, title = "movie3"),
                 )
-            assertEquals(LoadingMovie.Multiple(expectedMovies), result)
+            assertEquals(LoadingAMovie.Multiple(expectedMovies), result)
         }
 
     @Test
@@ -144,10 +148,10 @@ class ApiRepositoryImplTest {
             initializeSut()
 
             // When
-            val result = apiRepository.findMoviesByTitle("test").value
+            val result = apiRepository.findMoviesByTitle("test").last()
 
             // Then
-            assertEquals(LoadingMovie.Failed(http404), result)
+            assertEquals(LoadingAMovie.Failed(http404), result)
         }
 
     @Test
