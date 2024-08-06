@@ -20,14 +20,12 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -71,20 +69,6 @@ class MovieRepositoryImpl(
                     ?.let { LoadingAMovie.Single(it) }
                     ?: LoadingAMovie.Empty
             }.flowOn(ioDispatcher)
-
-    override suspend fun addMovie(movie: Movie): Long =
-        repositoryScope
-            .async {
-                dao.insertMovie(dbMapper.toDbMovie(movie))
-            }.await()
-
-    override suspend fun updateMovie(movie: Movie): Long {
-        repositoryScope
-            .launch {
-                dao.updateMovie(dbMapper.toDbMovie(movie))
-            }.join()
-        return movie.id
-    }
 
     override suspend fun storeMovie(movie: AMovie.ForCard) =
         repositoryScope.launch {

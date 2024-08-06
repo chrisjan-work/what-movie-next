@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import kotlinx.coroutines.CoroutineScope
@@ -49,18 +48,6 @@ open class ScreenViewModel protected constructor() : ViewModel() {
                 }
             }
         }
-
-    fun onCloseWithIdAction(id: Long) {
-        CoroutineScope(Dispatchers.Main).launch {
-            if (id == Movie.NEW_ID) {
-                navHostController.popBackStack()
-            } else {
-                navHostController.navigate(Routes.SingleMovieView.route(id)) {
-                    popUpTo(Routes.AllMoviesView.route) { inclusive = false }
-                }
-            }
-        }
-    }
 
     fun onNavigateTo(destination: Routes) {
         navHostController.navigate(destination.route)

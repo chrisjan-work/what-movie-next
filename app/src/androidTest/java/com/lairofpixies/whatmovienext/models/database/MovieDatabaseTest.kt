@@ -18,7 +18,6 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -64,16 +63,16 @@ class MovieDatabaseTest {
             assert(movieDao.getAllMovies().first().isEmpty())
 
             // When we insert a movie
-            val movie =
+            val dbMovie =
                 DbMovie(
                     id = 10,
                     title = "Casino",
                     watchState = WatchState.PENDING,
                 )
-            movieDao.insertMovie(movie)
+            movieDao.insertMovie(dbMovie)
 
             // Then the movie is in the database
-            assertEquals(movie, movieDao.getMovie(10).first())
+            assertEquals(dbMovie, movieDao.getMovie(10).first())
         }
 
     @Test
@@ -120,7 +119,7 @@ class MovieDatabaseTest {
             movieDao.deleteMovie(movie)
 
             // Then the movie is in the database
-            assertEquals(emptyList<Movie>(), movieDao.getAllMovies().first())
+            assertEquals(emptyList<DbMovie>(), movieDao.getAllMovies().first())
         }
 
     @Test
@@ -243,7 +242,7 @@ class MovieDatabaseTest {
             // Then the movies are returned
             assertEquals(movie, lowerCase.first())
             assertEquals(movie, upperCase.first())
-            assertEquals(emptyList<Movie>(), none)
+            assertEquals(emptyList<DbMovie>(), none)
         }
 
     @Test
@@ -274,7 +273,7 @@ class MovieDatabaseTest {
             movieDao.restore(movie.id)
 
             // Then
-            assertEquals(emptyList<Movie>(), movieDao.getArchivedMovies().first())
+            assertEquals(emptyList<DbMovie>(), movieDao.getArchivedMovies().first())
             assertEquals(listOf(movie), movieDao.getAllMovies().first())
         }
 
@@ -290,8 +289,8 @@ class MovieDatabaseTest {
             movieDao.deleteMovie(movie.copy(isArchived = true))
 
             // Then
-            assertEquals(emptyList<Movie>(), movieDao.getArchivedMovies().first())
-            assertEquals(emptyList<Movie>(), movieDao.getAllMovies().first())
+            assertEquals(emptyList<DbMovie>(), movieDao.getArchivedMovies().first())
+            assertEquals(emptyList<DbMovie>(), movieDao.getAllMovies().first())
         }
 
     @Test

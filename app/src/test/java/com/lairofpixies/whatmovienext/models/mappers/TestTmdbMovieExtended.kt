@@ -19,8 +19,8 @@
 package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
-import com.lairofpixies.whatmovienext.models.data.Movie.Companion.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.MovieData
+import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
