@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
-import com.lairofpixies.whatmovienext.models.data.TestAMovie
+import com.lairofpixies.whatmovienext.models.data.TestMovie
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
@@ -101,7 +101,7 @@ class ApiRepositoryImplTest {
 
             // Then
             val expectedMovie =
-                AsyncMovie.Single(TestAMovie.forSearch(title = "test", tmdbId = 1))
+                AsyncMovie.Single(TestMovie.forSearch(title = "test", tmdbId = 1))
             assertEquals(expectedMovie, result)
         }
 
@@ -125,9 +125,9 @@ class ApiRepositoryImplTest {
             // Then
             val expectedMovies =
                 listOf(
-                    TestAMovie.forSearch(tmdbId = 1, title = "movie1"),
-                    TestAMovie.forSearch(tmdbId = 2, title = "movie2"),
-                    TestAMovie.forSearch(tmdbId = 3, title = "movie3"),
+                    TestMovie.forSearch(tmdbId = 1, title = "movie1"),
+                    TestMovie.forSearch(tmdbId = 2, title = "movie2"),
+                    TestMovie.forSearch(tmdbId = 3, title = "movie3"),
                 )
             assertEquals(AsyncMovie.Multiple(expectedMovies), result)
         }

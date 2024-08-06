@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.TestAMovie.forList
+import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.ListMode

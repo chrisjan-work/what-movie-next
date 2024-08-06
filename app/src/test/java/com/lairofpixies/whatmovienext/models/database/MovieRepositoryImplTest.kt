@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
+import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
