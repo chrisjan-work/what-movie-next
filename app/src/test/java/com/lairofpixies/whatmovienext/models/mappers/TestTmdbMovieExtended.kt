@@ -24,6 +24,10 @@ import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
+import com.lairofpixies.whatmovienext.models.database.data.DbPerson
+import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import com.lairofpixies.whatmovienext.models.database.data.DbStaff
+import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 
@@ -66,11 +70,11 @@ fun testTmdbMovieExtended(): TmdbMovieExtended =
             ),
     )
 
-fun testCardMovieExtended(): Movie.ForCard =
+fun testCardMovieExtended(movieId: Long = NEW_ID): Movie.ForCard =
     Movie.ForCard(
         appData =
             MovieData.AppData(
-                movieId = NEW_ID,
+                movieId = movieId,
                 creationTime = 0,
                 watchState = WatchState.PENDING,
                 isArchived = false,
@@ -149,9 +153,9 @@ fun testListMovieExtended(): Movie.ForList =
             ),
     )
 
-fun testDbMovieExtended(): DbMovie =
+fun testDbMovieExtended(movieId: Long = NEW_ID): DbMovie =
     DbMovie(
-        movieId = NEW_ID,
+        movieId = movieId,
         creationTime = 0,
         tmdbId = 99,
         imdbId = "tt100",
@@ -164,6 +168,50 @@ fun testDbMovieExtended(): DbMovie =
         tagline = "Hasta la vista, baby.",
         plot = "robots from the future",
         runtimeMinutes = 137,
+    )
+
+fun testDbStaff(movieId: Long = NEW_ID): List<DbStaff> =
+    listOf(
+        DbStaff(
+            person =
+                DbPerson(
+                    personId = 2000,
+                    name = "Solsonegene",
+                    originalName = "Arnol Solsonegene",
+                    faceUrl = "/solsonesonegene.jpg",
+                ),
+            role =
+                DbRole(
+                    movieId = movieId,
+                    personId = 2000,
+                    credit = "the good terminator",
+                    dept = "acting",
+                    order = 1,
+                ),
+        ),
+        DbStaff(
+            person =
+                DbPerson(
+                    personId = 3000,
+                    name = "Cameron",
+                    originalName = "James Cameron",
+                    faceUrl = "/titanic.jpg",
+                ),
+            role =
+                DbRole(
+                    movieId = movieId,
+                    personId = 3000,
+                    credit = "director",
+                    dept = "directing",
+                    order = 1,
+                ),
+        ),
+    )
+
+fun testDbStaffedMovieExtended(movieId: Long = NEW_ID): DbStaffedMovie =
+    DbStaffedMovie(
+        movie = testDbMovieExtended(movieId),
+        staff = testDbStaff(movieId),
     )
 
 fun Movie.ForCard.removeCreationTime(): Movie.ForCard = this.copy(appData = appData.copy(creationTime = 0))

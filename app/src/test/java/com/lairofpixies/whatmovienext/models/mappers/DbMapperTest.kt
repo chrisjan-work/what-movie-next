@@ -18,7 +18,6 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
@@ -37,14 +36,13 @@ class DbMapperTest {
     @Test
     fun `db movie to card movie`() {
         // Given
-        val dbMovie = testDbMovieExtended()
+        val dbMovie = testDbStaffedMovieExtended()
 
         // When
         val result = dbMapper.toCardMovie(dbMovie)
 
         // Then
-        val expected = testCardMovieExtended().copy(staffData = MovieData.StaffData())
-
+        val expected = testCardMovieExtended()
         assertEquals(expected, result)
     }
 

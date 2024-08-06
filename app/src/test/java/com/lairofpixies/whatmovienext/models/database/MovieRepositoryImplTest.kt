@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
@@ -30,6 +29,7 @@ import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testDbMovieExtended
+import com.lairofpixies.whatmovienext.models.mappers.testDbStaffedMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testListMovieExtended
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -181,27 +181,26 @@ class MovieRepositoryImplTest {
     fun `single movie`() =
         runTest {
             // Given
-            coEvery { movieDao.getMovie(1) } returns
-                flowOf(testDbMovieExtended())
+            coEvery { movieDao.getStaffedMovie(678) } returns
+                flowOf(testDbStaffedMovieExtended(678))
 
             // When
             initializeSut()
             val result =
                 movieRepository
-                    .singleCardMovie(1)
+                    .singleCardMovie(678)
                     .last()
                     .singleMovieOrNull<Movie.ForCard>()
 
             // Then
-            val castNotThereYet = testCardMovieExtended().copy(staffData = MovieData.StaffData())
-            assertEquals(castNotThereYet, result)
+            assertEquals(testCardMovieExtended(678), result)
         }
 
     @Test
     fun `single movie, not found`() =
         runTest {
             // Given
-            coEvery { movieDao.getMovie(1) } returns flowOf(null)
+            coEvery { movieDao.getStaffedMovie(1) } returns flowOf(null)
 
             // When
             initializeSut()
@@ -300,13 +299,20 @@ class MovieRepositoryImplTest {
             // Given
             val dbMovie = slot<DbMovie>()
             coEvery { movieDao.updateMovie(capture(dbMovie)) } just runs
+            val storedMovie =
+                testDbStaffedMovieExtended().run {
+                    copy(
+                        movie =
+                            movie.copy(
+                                movieId = 1,
+                                title = "oldTitle",
+                                watchState = WatchState.WATCHED,
+                                isArchived = true,
+                            ),
+                    )
+                }
             coEvery { movieDao.fetchMovieByTmdbId(any()) } returns
-                DbMovie(
-                    movieId = 1,
-                    title = "oldTitle",
-                    watchState = WatchState.WATCHED,
-                    isArchived = true,
-                )
+                storedMovie
 
             // When
             initializeSut()
