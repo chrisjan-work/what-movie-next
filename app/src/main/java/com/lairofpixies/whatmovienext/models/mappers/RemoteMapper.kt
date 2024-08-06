@@ -18,10 +18,12 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
+import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.MovieData.UNKNOWN_ID
+import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
@@ -29,6 +31,8 @@ import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended.TmdbCastMember
+import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended.TmdbCrewMember
 import java.lang.NumberFormatException
 import javax.inject.Inject
 
@@ -82,10 +86,54 @@ class RemoteMapper
                         ),
                     staffData =
                         MovieData.StaffData(
-                            // TODO
+                            cast = toCast(credits?.cast),
+                            crew = toCrew(credits?.crew),
                         ),
                 )
             }
+
+        fun toCast(cast: List<TmdbCastMember>?): List<Staff> =
+            cast?.sortedBy { it.order }?.mapIndexed { index, tmdbPerson ->
+                with(tmdbPerson) {
+                    Staff(
+                        personId = tmdbId,
+                        roleId = NEW_ID,
+                        name = name,
+                        originalName = originalName ?: name,
+                        faceUrl = configRepo.getFaceUrl(profilePath),
+                        credit = character ?: "",
+                        dept = Departments.Actors.department,
+                        order = index + 1,
+                    )
+                }
+            } ?: emptyList()
+
+        private fun filterCrew(
+            crew: List<TmdbCrewMember>?,
+            where: Departments,
+        ) = crew
+            ?.filter { where.matcher(it.department, it.job) }
+            ?.map { it.copy(department = where.department) }
+            ?: emptyList()
+
+        fun toCrew(crew: List<TmdbCrewMember>?): List<Staff> {
+            val directors = filterCrew(crew, Departments.Directors)
+            val writers = filterCrew(crew, Departments.Writers)
+            return (directors + writers).mapIndexed { index, tmdbPerson ->
+                with(tmdbPerson) {
+                    Staff(
+                        personId = tmdbId,
+                        roleId = NEW_ID,
+                        name = name,
+                        originalName = originalName ?: name,
+                        faceUrl = configRepo.getFaceUrl(profilePath),
+                        credit = job ?: "",
+                        dept = department ?: "",
+                        order = index + 1,
+                    )
+                }
+            }
+        }
 
         fun toDbGenres(tmdbGenres: TmdbGenres): List<DbGenre> =
             tmdbGenres.genres.map { tmdbGenre ->

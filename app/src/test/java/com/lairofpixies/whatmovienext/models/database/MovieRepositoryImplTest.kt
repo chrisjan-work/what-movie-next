@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -189,7 +190,8 @@ class MovieRepositoryImplTest {
                     .singleMovieOrNull<Movie.ForCard>()
 
             // Then
-            assertEquals(testCardMovieExtended(), result)
+            val castNotThereYet = testCardMovieExtended().copy(staffData = MovieData.StaffData())
+            assertEquals(castNotThereYet, result)
         }
 
     @Test

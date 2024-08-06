@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.models.mappers
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
+import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
@@ -91,7 +92,33 @@ fun testCardMovieExtended(): Movie.ForCard =
                 plot = "robots from the future",
                 runtimeMinutes = 137,
             ),
-        staffData = MovieData.StaffData(),
+        staffData =
+            MovieData.StaffData(
+                cast =
+                    listOf(
+                        Staff(
+                            personId = 2000,
+                            name = "Solsonegene",
+                            originalName = "Arnol Solsonegene",
+                            faceUrl = "/solsonesonegene.jpg",
+                            credit = "the good terminator",
+                            dept = "acting",
+                            order = 1,
+                        ),
+                    ),
+                crew =
+                    listOf(
+                        Staff(
+                            personId = 3000,
+                            name = "Cameron",
+                            originalName = "James Cameron",
+                            faceUrl = "/titanic.jpg",
+                            credit = "director",
+                            dept = "directing",
+                            order = 1,
+                        ),
+                    ),
+            ),
     )
 
 fun testListMovieExtended(): Movie.ForList =
