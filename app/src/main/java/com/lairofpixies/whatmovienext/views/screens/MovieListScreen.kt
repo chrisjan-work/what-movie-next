@@ -96,7 +96,7 @@ fun MovieList(
             modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
         ) {
             items(filteredMovies) { movie ->
-                MovieListItem(movie) { onMovieClicked(movie.appData.id) }
+                MovieListItem(movie) { onMovieClicked(movie.appData.movieId) }
             }
         }
     }

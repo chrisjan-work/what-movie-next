@@ -137,8 +137,8 @@ class ArchiveViewModelTest {
 
             // Then
             coVerify {
-                repo.deleteMovie(moviesToDelete[0].appData.id)
-                repo.deleteMovie(moviesToDelete[1].appData.id)
+                repo.deleteMovie(moviesToDelete[0].appData.movieId)
+                repo.deleteMovie(moviesToDelete[1].appData.movieId)
             }
         }
 }

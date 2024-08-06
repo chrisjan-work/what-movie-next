@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.models.data
 
 object MovieData {
     data class AppData(
-        val id: Long = NEW_ID,
+        val movieId: Long = NEW_ID,
         val creationTime: Long = System.currentTimeMillis(),
         val watchState: WatchState = WatchState.PENDING,
         val isArchived: Boolean = false,

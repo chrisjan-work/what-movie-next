@@ -64,7 +64,7 @@ class MovieCardViewModel
                     currentMovie.value
                         .singleMovieOrNull<Movie.ForCard>()
                         ?.appData
-                        ?.id ?: return@launch
+                        ?.movieId ?: return@launch
                 repo.archiveMovie(movieId)
             }
     }

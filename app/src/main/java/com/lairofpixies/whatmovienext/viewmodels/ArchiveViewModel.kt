@@ -61,7 +61,7 @@ class ArchiveViewModel
         fun restoreSelectedMovies() =
             viewModelScope.launch {
                 selection.value.forEach {
-                    repo.restoreMovie(it.appData.id)
+                    repo.restoreMovie(it.appData.movieId)
                 }
                 _selection.value = emptySet()
             }
@@ -71,7 +71,7 @@ class ArchiveViewModel
                 PopupInfo.ConfirmDeletion {
                     viewModelScope.launch {
                         selection.value.forEach {
-                            repo.deleteMovie(it.appData.id)
+                            repo.deleteMovie(it.appData.movieId)
                         }
                     }
                     _selection.value = emptySet()

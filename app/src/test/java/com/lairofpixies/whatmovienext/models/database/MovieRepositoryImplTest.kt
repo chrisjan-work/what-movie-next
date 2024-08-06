@@ -234,7 +234,7 @@ class MovieRepositoryImplTest {
             coEvery { movieDao.updateMovie(capture(dbMovie)) } just runs
             coEvery { movieDao.fetchMovieByTmdbId(any()) } returns
                 DbMovie(
-                    id = 1,
+                    movieId = 1,
                     title = "oldTitle",
                     watchState = WatchState.WATCHED,
                     isArchived = true,
@@ -313,7 +313,7 @@ class MovieRepositoryImplTest {
             // Given
             val movieToDelete =
                 DbMovie(
-                    id = 1,
+                    movieId = 1,
                     title = "isArchived",
                     watchState = WatchState.WATCHED,
                     isArchived = true,
@@ -324,7 +324,7 @@ class MovieRepositoryImplTest {
 
             // When
             initializeSut()
-            movieRepository.deleteMovie(movieToDelete.id)
+            movieRepository.deleteMovie(movieToDelete.movieId)
 
             // Then
             coVerify { movieDao.deleteMovie(movieToDelete) }

@@ -33,7 +33,7 @@ class DbMapper
                 Movie.ForCard(
                     appData =
                         MovieData.AppData(
-                            id = id,
+                            movieId = movieId,
                             creationTime = creationTime,
                             watchState = watchState,
                             isArchived = isArchived,
@@ -67,7 +67,7 @@ class DbMapper
                 Movie.ForList(
                     appData =
                         MovieData.AppData(
-                            id = id,
+                            movieId = movieId,
                             creationTime = creationTime,
                             watchState = watchState,
                             isArchived = isArchived,
@@ -95,7 +95,7 @@ class DbMapper
         fun toDbMovie(cardMovie: Movie.ForCard): DbMovie =
             with(cardMovie) {
                 DbMovie(
-                    id = appData.id,
+                    movieId = appData.movieId,
                     creationTime = appData.creationTime,
                     tmdbId = searchData.tmdbId,
                     imdbId = detailData.imdbId,

@@ -64,9 +64,9 @@ fun MovieCardScreen(
                     cardViewModel.archiveCurrentMovie()
                     cardViewModel.onLeaveAction()
                 },
-                onUpdateAction = { id, watchState ->
+                onUpdateAction = { updateMovieId, watchState ->
                     cardViewModel.updateMovieWatched(
-                        id,
+                        updateMovieId,
                         watchState,
                     )
                 },
@@ -90,11 +90,11 @@ fun bottomItemsForMovieCard(
         CustomBarItem(ButtonSpec.MoviesShortcut, onHomeAction),
         if (movie.appData.watchState == WatchState.PENDING) {
             CustomBarItem(ButtonSpec.PendingMovieState) {
-                onUpdateAction(movie.appData.id, WatchState.WATCHED)
+                onUpdateAction(movie.appData.movieId, WatchState.WATCHED)
             }
         } else {
             CustomBarItem(ButtonSpec.WatchedMovieState) {
-                onUpdateAction(movie.appData.id, WatchState.PENDING)
+                onUpdateAction(movie.appData.movieId, WatchState.PENDING)
             }
         },
         CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction),

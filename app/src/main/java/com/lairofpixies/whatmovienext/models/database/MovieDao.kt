@@ -32,11 +32,11 @@ interface MovieDao {
     @Query("SELECT * FROM dbmovie WHERE isArchived = 0")
     fun getAllMovies(): Flow<List<DbMovie>>
 
-    @Query("SELECT * FROM dbmovie WHERE id = :id")
-    fun getMovie(id: Long): Flow<DbMovie?>
+    @Query("SELECT * FROM dbmovie WHERE movieId = :movieId")
+    fun getMovie(movieId: Long): Flow<DbMovie?>
 
-    @Query("SELECT * FROM dbmovie WHERE id = :id")
-    suspend fun fetchMovieById(id: Long): DbMovie?
+    @Query("SELECT * FROM dbmovie WHERE movieId = :movieId")
+    suspend fun fetchMovieById(movieId: Long): DbMovie?
 
     @Query("SELECT * FROM dbmovie WHERE tmdbId = :tmdbId")
     suspend fun fetchMovieByTmdbId(tmdbId: Long): DbMovie?
@@ -59,15 +59,15 @@ interface MovieDao {
     @Update
     suspend fun updateMovie(dbMovie: DbMovie)
 
-    @Query("UPDATE dbmovie SET watchState = :watchState WHERE id = :id")
+    @Query("UPDATE dbmovie SET watchState = :watchState WHERE movieId = :movieId")
     suspend fun updateWatchState(
-        id: Long,
+        movieId: Long,
         watchState: WatchState,
     )
 
-    @Query("UPDATE dbmovie SET isArchived = 1 WHERE id = :id")
-    suspend fun archive(id: Long)
+    @Query("UPDATE dbmovie SET isArchived = 1 WHERE movieId = :movieId")
+    suspend fun archive(movieId: Long)
 
-    @Query("UPDATE dbmovie SET isArchived = 0 WHERE id = :id")
-    suspend fun restore(id: Long)
+    @Query("UPDATE dbmovie SET isArchived = 0 WHERE movieId = :movieId")
+    suspend fun restore(movieId: Long)
 }
