@@ -39,7 +39,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -48,7 +47,6 @@ import coil.compose.AsyncImage
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.MovieData
-import com.lairofpixies.whatmovienext.views.screens.UiTags
 
 @Composable
 fun SearchResultsPicker(
@@ -62,7 +60,6 @@ fun SearchResultsPicker(
     Box(
         modifier =
             modifier
-                .testTag(UiTags.Screens.SEARCH_RESULTS)
                 .background(MaterialTheme.colorScheme.background)
                 .padding(4.dp)
                 .fillMaxSize(),

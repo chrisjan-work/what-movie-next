@@ -110,7 +110,7 @@ fun SingleButtonDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(titleRes ?: R.string.error_title)) },
+        title = { Text(stringResource(titleRes ?: R.string.alertdialog_title)) },
         text = { Text(stringResource(contentRes)) },
         confirmButton = {
             Button(onClick = onDismiss) {

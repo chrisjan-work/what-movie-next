@@ -26,6 +26,7 @@ import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
+import com.lairofpixies.whatmovienext.test.stringResource
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -71,8 +72,8 @@ class ArchiveStepDefs(
         composeRule.composeStep {
             val label =
                 when (action) {
-                    "Delete forever" -> activity.getString(R.string.delete_forever)
-                    "Restore" -> activity.getString(R.string.restore)
+                    "Delete forever" -> stringResource(R.string.delete_forever)
+                    "Restore" -> stringResource(R.string.restore)
                     else -> throw PendingException("Action $action is not supported")
                 }
 
@@ -99,8 +100,8 @@ class ArchiveStepDefs(
         composeRule.composeStep {
             val label =
                 when (deletionConfirmation) {
-                    "Confirm" -> activity.getString(R.string.confirm_deletion)
-                    "Cancel" -> activity.getString(R.string.cancel)
+                    "Confirm" -> stringResource(R.string.confirm_deletion)
+                    "Cancel" -> stringResource(R.string.cancel)
                     else -> throw PendingException("Unknown option: $deletionConfirmation")
                 }
 
@@ -112,7 +113,7 @@ class ArchiveStepDefs(
     @Then("the archive shortcut is not available")
     fun theArchiveShortcutIsNotAvailable() =
         composeRule.composeStep {
-            onNodeWithText(activity.getString(R.string.archive))
+            onNodeWithText(stringResource(R.string.archive))
                 .assertDoesNotExist()
         }
 }

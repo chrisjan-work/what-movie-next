@@ -83,6 +83,7 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
                 onCancelAction = { searchViewModel.onLeaveAction() },
                 onCloseKeyboard = onCloseKeyboard,
                 focusRequester = focusRequester,
+                modifier = Modifier.testTag(UiTags.Screens.QUERY_EDITOR),
             )
         }
 
@@ -93,6 +94,7 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
                 onResultSelected = { selectedId ->
                     searchViewModel.fetchFromRemote(selectedId)
                 },
+                modifier = Modifier.testTag(UiTags.Screens.SEARCH_RESULTS),
             )
         }
 
@@ -108,6 +110,7 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
                             onShowResultsAction = { searchViewModel.switchToSearchResults() },
                             onSaveMovieAction = { searchViewModel.onSaveMovieAction() },
                         ),
+                    modifier = Modifier.testTag(UiTags.Screens.SELECTION_VIEW),
                 )
             } ?: {
                 searchViewModel.switchToSearchEntry()
@@ -125,10 +128,11 @@ fun SearchEditor(
     onCancelAction: () -> Unit,
     onCloseKeyboard: () -> Unit,
     focusRequester: FocusRequester,
+    modifier: Modifier = Modifier,
 ) {
     Box {
         Scaffold(
-            modifier = Modifier.testTag(UiTags.Screens.EDIT_CARD),
+            modifier = modifier,
             bottomBar = {
                 CustomBottomBar(
                     items =

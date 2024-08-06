@@ -26,6 +26,7 @@ import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
+import com.lairofpixies.whatmovienext.test.stringResource
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -107,7 +108,7 @@ class MovieCardStepDefs(
     @When("the user archives the current entry")
     fun theUserArchivesTheCurrentEntry() =
         composeRule.composeStep {
-            val archiveLabel = activity.getString(com.lairofpixies.whatmovienext.R.string.archive)
+            val archiveLabel = stringResource(com.lairofpixies.whatmovienext.R.string.archive)
             onNodeWithText(archiveLabel)
                 .performClick()
         }

@@ -24,12 +24,11 @@
     <string name="edit">Edit</string>
     <string name="title">Title</string>
     <string name="error_title_is_required">Title is missing. Please provide one.</string>
-    <string name="error_title">Problem</string>
+    <string name="alertdialog_title">Problem</string>
     <string name="warning_changes_not_saved">There are unsaved changes in the movie description</string>
     <string name="save">Save</string>
     <string name="discard">Discard</string>
     <string name="continue_editing">Continue editing</string>
-    <string name="error_title_already_exists">A movie with this title already exists</string>
     <string name="movies">Movies</string>
     <string name="cancel">Cancel</string>
     <string name="to_watch">To watch</string>

@@ -47,8 +47,7 @@ Feature: Movie card
     And the extended entry "The Fisher King" has "tagline" set as "A Modern Day Retelling of the Arthurian Legend"
     And the extended entry "The Fisher King" has "plot" set as "Search for the Holy Grail"
     When the user searches for the title "Fisher"
-    And the user saves the entry
-    And the user navigates to the list
+    And the user clicks on the save button
     And the user opens the entry "The Fisher King"
     Then the card containing the information of "The Fisher King" should be visible
     And the card contains the text "King of Fishing"
