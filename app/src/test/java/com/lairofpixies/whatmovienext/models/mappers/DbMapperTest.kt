@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -39,7 +40,7 @@ class DbMapperTest {
         val result = dbMapper.toCardMovie(dbMovie)
 
         // Then
-        val expected = testCardMovieExtended()
+        val expected = testCardMovieExtended().copy(staffData = MovieData.StaffData())
 
         assertEquals(expected, result)
     }

@@ -149,10 +149,11 @@ class RemoteMapperTest {
     }
 
     @Test
-    fun `extended tmdb movie to local movie`() {
+    fun `extended tmdb movie to card movie`() {
         // Given
         every { configRepo.getCoverUrl("/terminator2.jpg") } returns "cover.jpg"
         every { configRepo.getThumbnailUrl("/terminator2.jpg") } returns "thumbnail.jpg"
+        every { configRepo.getFaceUrl(any()) } answers { firstArg() }
         every { genreRepository.genreNamesByTmdbIds(listOf(188)) } returns listOf("Action")
 
         // When

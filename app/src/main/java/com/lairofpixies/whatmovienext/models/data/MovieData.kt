@@ -44,7 +44,8 @@ object MovieData {
     )
 
     data class StaffData(
-        val staffNames: List<String> = emptyList(),
+        val cast: List<Staff> = emptyList(),
+        val crew: List<Staff> = emptyList(),
     )
 
     const val NEW_ID = 0L
