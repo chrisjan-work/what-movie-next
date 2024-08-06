@@ -18,25 +18,25 @@
  */
 package com.lairofpixies.whatmovienext.models.data
 
-sealed class LoadingAMovie {
-    data object Loading : LoadingAMovie()
+sealed class AsyncMovie {
+    data object Loading : AsyncMovie()
 
     data class Failed(
         val trowable: Throwable,
-    ) : LoadingAMovie()
+    ) : AsyncMovie()
 
-    data object Empty : LoadingAMovie()
+    data object Empty : AsyncMovie()
 
     data class Single(
         val movie: Movie,
-    ) : LoadingAMovie()
+    ) : AsyncMovie()
 
     data class Multiple(
         val movies: List<Movie>,
-    ) : LoadingAMovie()
+    ) : AsyncMovie()
 
     companion object {
-        fun <T : Movie> fromList(movies: List<T>): LoadingAMovie =
+        fun <T : Movie> fromList(movies: List<T>): AsyncMovie =
             when (movies.size) {
                 0 -> Empty
                 1 -> Single(movies.first())
@@ -53,7 +53,7 @@ sealed class LoadingAMovie {
 
     inline fun <reified T : Movie> singleMovieOrNull(): T? = (this as? Single)?.movie as? T
 
-    fun filter(sieve: (Movie) -> Boolean): LoadingAMovie =
+    fun filter(sieve: (Movie) -> Boolean): AsyncMovie =
         when (this) {
             is Single -> if (sieve(movie)) this else Empty
             is Multiple -> {
@@ -64,14 +64,14 @@ sealed class LoadingAMovie {
         }
 }
 
-fun LoadingAMovie?.isMissing(): Boolean =
+fun AsyncMovie?.isMissing(): Boolean =
     this == null ||
-        this == LoadingAMovie.Empty ||
-        this is LoadingAMovie.Failed
+        this == AsyncMovie.Empty ||
+        this is AsyncMovie.Failed
 
-fun LoadingAMovie?.hasMovie(): Boolean =
+fun AsyncMovie?.hasMovie(): Boolean =
     this != null &&
         (
-            this is LoadingAMovie.Single ||
-                this is LoadingAMovie.Multiple
+            this is AsyncMovie.Single ||
+                this is AsyncMovie.Multiple
         )

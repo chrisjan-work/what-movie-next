@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forList
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -64,7 +64,7 @@ class ArchiveViewModelTest {
     @Test
     fun getArchivedMovies() {
         // Given
-        val movie = LoadingAMovie.Single(forList(title = "example movie", isArchived = true))
+        val movie = AsyncMovie.Single(forList(title = "example movie", isArchived = true))
         every { repo.archivedMovies } returns
             flowOf(movie)
 

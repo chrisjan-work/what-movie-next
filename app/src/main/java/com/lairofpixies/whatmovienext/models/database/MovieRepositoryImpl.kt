@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
@@ -38,36 +38,36 @@ class MovieRepositoryImpl(
 ) : MovieRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    override val listedMovies: Flow<LoadingAMovie> =
+    override val listedMovies: Flow<AsyncMovie> =
         dao
             .getAllMovies()
             .map { dbMovies ->
-                LoadingAMovie.fromList(
+                AsyncMovie.fromList(
                     dbMovies.map { dbMovie ->
                         dbMapper.toListMovie(dbMovie)
                     },
                 )
             }.flowOn(ioDispatcher)
 
-    override val archivedMovies: Flow<LoadingAMovie> =
+    override val archivedMovies: Flow<AsyncMovie> =
         dao
             .getArchivedMovies()
             .map { dbMovies ->
-                LoadingAMovie.fromList(
+                AsyncMovie.fromList(
                     dbMovies.map { dbMovie ->
                         dbMapper.toListMovie(dbMovie)
                     },
                 )
             }.flowOn(ioDispatcher)
 
-    override fun singleCardMovie(movieId: Long): Flow<LoadingAMovie> =
+    override fun singleCardMovie(movieId: Long): Flow<AsyncMovie> =
         dao
             .getMovie(movieId)
             .map { maybeMovie ->
                 maybeMovie
                     ?.let { dbMapper.toCardMovie(it) }
-                    ?.let { LoadingAMovie.Single(it) }
-                    ?: LoadingAMovie.Empty
+                    ?.let { AsyncMovie.Single(it) }
+                    ?: AsyncMovie.Empty
             }.flowOn(ioDispatcher)
 
     override suspend fun storeMovie(movie: Movie.ForCard) =

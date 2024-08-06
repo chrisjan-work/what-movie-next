@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -68,14 +68,14 @@ class MovieCardViewModelTest {
             val result = cardViewModel.currentMovie.value
 
             // Then
-            assertEquals(LoadingAMovie.Empty, result)
+            assertEquals(AsyncMovie.Empty, result)
         }
 
     @Test
     fun `get single movie`() {
         // Given
         val partialMovie =
-            LoadingAMovie.Single(
+            AsyncMovie.Single(
                 forCard(id = 10, title = "single movie"),
             )
         every { repo.singleCardMovie(10) } returns
@@ -108,7 +108,7 @@ class MovieCardViewModelTest {
             // Given
             // Given
             val partialMovie =
-                LoadingAMovie.Single(
+                AsyncMovie.Single(
                     forCard(id = 10, title = "single movie"),
                 )
             every { repo.singleCardMovie(10) } returns

@@ -18,11 +18,11 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import kotlinx.coroutines.flow.Flow
 
 interface ApiRepository {
-    fun findMoviesByTitle(title: String): Flow<LoadingAMovie>
+    fun findMoviesByTitle(title: String): Flow<AsyncMovie>
 
-    fun getMovieDetails(tmdbId: Long): Flow<LoadingAMovie>
+    fun getMovieDetails(tmdbId: Long): Flow<AsyncMovie>
 }
