@@ -20,7 +20,10 @@ package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
+import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
+import com.lairofpixies.whatmovienext.models.database.data.DbPerson
+import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.util.decodeToList
 import com.lairofpixies.whatmovienext.util.encodeToString
 import javax.inject.Inject
@@ -111,6 +114,34 @@ class DbMapper
                     watchState = appData.watchState,
                     isArchived = appData.isArchived,
                 )
+            }
+
+        fun toDbPeople(people: List<Staff>): List<DbPerson> =
+            people.map { person ->
+                with(person) {
+                    DbPerson(
+                        personId = personId,
+                        name = name,
+                        originalName = originalName,
+                        faceUrl = faceUrl,
+                    )
+                }
+            }
+
+        fun toDbRoles(
+            movieId: Long,
+            people: List<Staff>,
+        ): List<DbRole> =
+            people.map { person ->
+                with(person) {
+                    DbRole(
+                        personId = personId,
+                        movieId = movieId,
+                        credit = credit,
+                        dept = dept,
+                        order = order,
+                    )
+                }
             }
 
         fun toGenres(dbGenres: String): List<String> = dbGenres.decodeToList()

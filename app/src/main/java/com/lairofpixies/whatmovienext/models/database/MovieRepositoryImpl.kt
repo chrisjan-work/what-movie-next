@@ -21,6 +21,8 @@ package com.lairofpixies.whatmovienext.models.database
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.database.data.DbPerson
+import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -73,22 +75,38 @@ class MovieRepositoryImpl(
     override suspend fun storeMovie(movie: Movie.ForCard) =
         repositoryScope.launch {
             val oldMovie = dao.fetchMovieByTmdbId(movie.searchData.tmdbId)
-            if (oldMovie != null) {
-                // if movie was already saved
-                // update it while keeping the old app data
-                // but unarchive it if it was archived
-                val mappedOldMovie: Movie.ForCard = dbMapper.toCardMovie(oldMovie)
-                val movieToSave =
-                    dbMapper.toDbMovie(
-                        movie.copy(
-                            appData =
-                                mappedOldMovie.appData.copy(isArchived = false),
-                        ),
-                    )
-                dao.updateMovie(movieToSave)
-            } else {
-                dao.insertMovie(dbMapper.toDbMovie(movie))
-            }
+            // first insert the movie itself
+            val movieId =
+                if (oldMovie != null) {
+                    // if movie was already saved
+                    // update it while keeping the old app data
+                    // but unarchive it if it was archived
+                    val mappedOldMovie: Movie.ForCard = dbMapper.toCardMovie(oldMovie)
+                    val movieToSave =
+                        dbMapper.toDbMovie(
+                            movie.copy(
+                                appData =
+                                    mappedOldMovie.appData.copy(isArchived = false),
+                            ),
+                        )
+                    dao.updateMovie(movieToSave)
+                    movieToSave.movieId
+                } else {
+                    dao.insertMovie(dbMapper.toDbMovie(movie))
+                }
+
+            // then insert the cast and crew
+            val staff = movie.staffData.cast + movie.staffData.crew
+            val people: List<DbPerson> = dbMapper.toDbPeople(staff)
+            val peopleIds = dao.insertPeople(people)
+            val savedStaff =
+                staff.mapIndexed { index, person ->
+                    person.copy(personId = peopleIds[index])
+                }
+
+            // finally insert the roles
+            val roles: List<DbRole> = dbMapper.toDbRoles(movieId, savedStaff)
+            dao.insertRoles(roles)
         }
 
     override suspend fun setWatchState(

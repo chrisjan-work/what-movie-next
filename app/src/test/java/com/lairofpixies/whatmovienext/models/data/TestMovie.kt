@@ -101,6 +101,8 @@ object TestMovie {
         tagline: String = "",
         plot: String = "",
         runtimeMinutes: Int = 0,
+        cast: List<Staff> = emptyList(),
+        crew: List<Staff> = emptyList(),
     ) = Movie.ForCard(
         appData =
             MovieData.AppData(
@@ -126,6 +128,10 @@ object TestMovie {
                 plot = plot,
                 runtimeMinutes = runtimeMinutes,
             ),
-        staffData = MovieData.StaffData(),
+        staffData =
+            MovieData.StaffData(
+                cast = cast,
+                crew = crew,
+            ),
     )
 }
