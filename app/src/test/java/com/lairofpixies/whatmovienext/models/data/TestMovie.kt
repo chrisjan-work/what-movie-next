@@ -61,7 +61,7 @@ object TestMovie {
     ) = Movie.ForList(
         appData =
             MovieData.AppData(
-                id = id,
+                movieId = id,
                 creationTime = creationTime,
                 watchState = watchState,
                 isArchived = isArchived,
@@ -104,7 +104,7 @@ object TestMovie {
     ) = Movie.ForCard(
         appData =
             MovieData.AppData(
-                id = id,
+                movieId = id,
                 creationTime = creationTime,
                 watchState = watchState,
                 isArchived = isArchived,

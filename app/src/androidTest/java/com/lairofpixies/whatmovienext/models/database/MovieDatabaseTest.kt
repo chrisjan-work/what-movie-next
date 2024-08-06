@@ -65,7 +65,7 @@ class MovieDatabaseTest {
             // When we insert a movie
             val dbMovie =
                 DbMovie(
-                    id = 10,
+                    movieId = 10,
                     title = "Casino",
                     watchState = WatchState.PENDING,
                 )
@@ -85,17 +85,17 @@ class MovieDatabaseTest {
             val movies =
                 listOf(
                     DbMovie(
-                        id = 1,
+                        movieId = 1,
                         title = "Someone flew over the cuckoo's nest",
                         watchState = WatchState.PENDING,
                     ),
                     DbMovie(
-                        id = 2,
+                        movieId = 2,
                         title = "Watchmen",
                         watchState = WatchState.PENDING,
                     ),
                     DbMovie(
-                        id = 3,
+                        movieId = 3,
                         title = "A Beautiful Mind",
                         watchState = WatchState.PENDING,
                     ),
@@ -112,7 +112,7 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             assert(movieDao.getAllMovies().first().isEmpty())
-            val movie = DbMovie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+            val movie = DbMovie(movieId = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
             movieDao.insertMovie(movie)
 
             // When we remove it
@@ -126,7 +126,7 @@ class MovieDatabaseTest {
     fun `update movie details`() =
         runTest {
             // Given a database with a single movie
-            val movie = DbMovie(id = 9, title = "Stargate", watchState = WatchState.PENDING)
+            val movie = DbMovie(movieId = 9, title = "Stargate", watchState = WatchState.PENDING)
             movieDao.insertMovie(movie)
 
             // When updating the movie details
@@ -147,11 +147,11 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             assert(movieDao.getAllMovies().first().isEmpty())
-            val movie = DbMovie(id = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+            val movie = DbMovie(movieId = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
             movieDao.insertMovie(movie)
 
             // When setting the movie to watched
-            movieDao.updateWatchState(movie.id, WatchState.WATCHED)
+            movieDao.updateWatchState(movie.movieId, WatchState.WATCHED)
 
             // Then the movie is watched
             assertEquals(
@@ -170,7 +170,7 @@ class MovieDatabaseTest {
             assert(movieDao.getAllMovies().first().isEmpty())
             val movie =
                 DbMovie(
-                    id = 1,
+                    movieId = 1,
                     title = "The Wizard of Oz",
                     watchState = WatchState.PENDING,
                     isArchived = false,
@@ -178,7 +178,7 @@ class MovieDatabaseTest {
             movieDao.insertMovie(movie)
 
             // When setting the movie to archived
-            movieDao.archive(movie.id)
+            movieDao.archive(movie.movieId)
 
             // Then the movie is removed from the view list and moved to the archive
             assert(movieDao.getAllMovies().first().isEmpty())
@@ -192,7 +192,7 @@ class MovieDatabaseTest {
     fun `fetch single movie by id`() =
         runTest {
             // Given a database with a single movie
-            val movie = DbMovie(id = 11, title = "The Searchers")
+            val movie = DbMovie(movieId = 11, title = "The Searchers")
             movieDao.insertMovie(movie)
 
             // When fetching the movie by id
@@ -210,9 +210,9 @@ class MovieDatabaseTest {
             // Given a database with three movies, but one has a duplicated title
             val movies =
                 listOf(
-                    DbMovie(id = 1, title = "The Godfather"),
-                    DbMovie(id = 2, title = "The Godfather II"),
-                    DbMovie(id = 3, title = "The Godfather II"),
+                    DbMovie(movieId = 1, title = "The Godfather"),
+                    DbMovie(movieId = 2, title = "The Godfather II"),
+                    DbMovie(movieId = 3, title = "The Godfather II"),
                 )
             movieDao.insertMovies(movies)
 
@@ -231,7 +231,7 @@ class MovieDatabaseTest {
     fun `fetch movies by title is case insensitive`() =
         runTest {
             // Given a database with a single movie
-            val movie = DbMovie(id = 1, title = "AbCd")
+            val movie = DbMovie(movieId = 1, title = "AbCd")
             movieDao.insertMovie(movie)
 
             // When fetching the movies by title with different case
@@ -249,7 +249,7 @@ class MovieDatabaseTest {
     fun `fetch movie by tmdbid`() =
         runTest {
             // Given a database with a single movie
-            val movie = DbMovie(id = 11, tmdbId = 121, title = "The Searchers")
+            val movie = DbMovie(movieId = 11, tmdbId = 121, title = "The Searchers")
             movieDao.insertMovie(movie)
 
             // When fetching the movie by id
@@ -265,12 +265,12 @@ class MovieDatabaseTest {
     fun `restore archived movies`() =
         runTest {
             // Given a database with an archived movie
-            val movie = DbMovie(id = 1, title = "The Rum Diary")
+            val movie = DbMovie(movieId = 1, title = "The Rum Diary")
             movieDao.insertMovie(movie)
-            movieDao.archive(movie.id)
+            movieDao.archive(movie.movieId)
 
             // When restored
-            movieDao.restore(movie.id)
+            movieDao.restore(movie.movieId)
 
             // Then
             assertEquals(emptyList<DbMovie>(), movieDao.getArchivedMovies().first())
@@ -281,9 +281,9 @@ class MovieDatabaseTest {
     fun `delete archived movies`() =
         runTest {
             // Given a database with an archived movie
-            val movie = DbMovie(id = 1, title = "The Rum Diary")
+            val movie = DbMovie(movieId = 1, title = "The Rum Diary")
             movieDao.insertMovie(movie)
-            movieDao.archive(movie.id)
+            movieDao.archive(movie.movieId)
 
             // When restored
             movieDao.deleteMovie(movie.copy(isArchived = true))

@@ -69,7 +69,7 @@ fun testCardMovieExtended(): Movie.ForCard =
     Movie.ForCard(
         appData =
             MovieData.AppData(
-                id = NEW_ID,
+                movieId = NEW_ID,
                 creationTime = 0,
                 watchState = WatchState.PENDING,
                 isArchived = false,
@@ -98,7 +98,7 @@ fun testListMovieExtended(): Movie.ForList =
     Movie.ForList(
         appData =
             MovieData.AppData(
-                id = NEW_ID,
+                movieId = NEW_ID,
                 creationTime = 0,
                 watchState = WatchState.PENDING,
                 isArchived = false,
@@ -124,7 +124,7 @@ fun testListMovieExtended(): Movie.ForList =
 
 fun testDbMovieExtended(): DbMovie =
     DbMovie(
-        id = NEW_ID,
+        movieId = NEW_ID,
         creationTime = 0,
         tmdbId = 99,
         imdbId = "tt100",

@@ -59,7 +59,7 @@ class RemoteMapper
                 Movie.ForCard(
                     appData =
                         MovieData.AppData(
-                            id = NEW_ID,
+                            movieId = NEW_ID,
                             watchState = WatchState.PENDING,
                             isArchived = false,
                         ),
