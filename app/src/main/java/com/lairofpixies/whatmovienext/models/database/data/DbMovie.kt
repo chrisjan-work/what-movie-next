@@ -18,8 +18,10 @@
  */
 package com.lairofpixies.whatmovienext.models.database.data
 
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.WatchState
 
@@ -40,4 +42,15 @@ data class DbMovie(
     val runtimeMinutes: Int = 0,
     val watchState: WatchState = WatchState.PENDING,
     val isArchived: Boolean = false,
+)
+
+// a movie with people doing roles
+data class DbStaffedMovie(
+    @Embedded val movie: DbMovie,
+    @Relation(
+        entity = DbRole::class,
+        parentColumn = "movieId",
+        entityColumn = "movieId",
+    )
+    val staff: List<DbStaff>,
 )

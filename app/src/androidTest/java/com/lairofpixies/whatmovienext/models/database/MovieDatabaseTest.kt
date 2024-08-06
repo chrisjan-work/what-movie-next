@@ -21,6 +21,10 @@ package com.lairofpixies.whatmovienext.models.database
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
+import com.lairofpixies.whatmovienext.models.database.data.DbPerson
+import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import com.lairofpixies.whatmovienext.models.database.data.DbStaff
+import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
@@ -112,7 +116,8 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             assert(movieDao.getAllMovies().first().isEmpty())
-            val movie = DbMovie(movieId = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+            val movie =
+                DbMovie(movieId = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
             movieDao.insertMovie(movie)
 
             // When we remove it
@@ -147,7 +152,8 @@ class MovieDatabaseTest {
         runTest {
             // Given a database with a single movie
             assert(movieDao.getAllMovies().first().isEmpty())
-            val movie = DbMovie(movieId = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+            val movie =
+                DbMovie(movieId = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
             movieDao.insertMovie(movie)
 
             // When setting the movie to watched
@@ -318,5 +324,110 @@ class MovieDatabaseTest {
                 ),
                 result,
             )
+        }
+
+    @Test
+    fun `people create and read`() =
+        runTest {
+            // Given
+            val examplePeople =
+                listOf(
+                    DbPerson(personId = 1, name = "Nic Cage", originalName = "Nicolas Coppola"),
+                    DbPerson(personId = 2, name = "Solsonegene", originalName = "Arnol Sol"),
+                )
+
+            // When
+            movieDao.insertPeople(examplePeople)
+            val result = movieDao.fetchAllPeople()
+
+            // Then
+            assertEquals(examplePeople, result)
+        }
+
+    @Test
+    fun `roles create and read`() =
+        runTest {
+            // Given
+            val movies =
+                listOf(
+                    DbMovie(movieId = 111, title = "hundred eleven"),
+                    DbMovie(movieId = 222, title = "two hundred twenty two"),
+                )
+            val insertedMovieIds = movieDao.insertMovies(movies)
+            val people =
+                listOf(
+                    DbPerson(personId = 11, name = "eleven"),
+                    DbPerson(personId = 22, name = "twentytwo"),
+                )
+            val insertedPeopleIds = movieDao.insertPeople(people)
+            val roles =
+                listOf(
+                    DbRole(
+                        roleId = 1,
+                        personId = insertedPeopleIds[1],
+                        movieId = insertedMovieIds[0],
+                        order = 1111,
+                        credit = "ones",
+                        dept = "acting",
+                    ),
+                    DbRole(
+                        roleId = 2,
+                        personId = insertedPeopleIds[0],
+                        movieId = insertedMovieIds[1],
+                        order = 2222,
+                        credit = "twos",
+                        dept = "directing",
+                    ),
+                )
+
+            // When
+            movieDao.insertRoles(roles)
+            val result = movieDao.fetchAllRoles()
+
+            // Then
+            assertEquals(roles, result)
+        }
+
+    @Test
+    fun `get staffed movie`() =
+        runTest {
+            // Given
+            val dbMovie =
+                DbMovie(
+                    movieId = 10,
+                    title = "Casino",
+                    watchState = WatchState.PENDING,
+                )
+            val dbStaff =
+                DbStaff(
+                    role =
+                        DbRole(
+                            roleId = 100,
+                            personId = 1000,
+                            movieId = 10,
+                            credit = "director",
+                            dept = "directing",
+                            order = 1,
+                        ),
+                    person =
+                        DbPerson(
+                            personId = 1000,
+                            name = "John Woo",
+                        ),
+                )
+            movieDao.insertMovie(dbMovie)
+            movieDao.insertPeople(listOf(dbStaff.person))
+            movieDao.insertRoles(listOf(dbStaff.role))
+
+            // When
+            val result = movieDao.getStaffedMovie(10).first()
+
+            // Then
+            val expected =
+                DbStaffedMovie(
+                    movie = dbMovie,
+                    staff = listOf(dbStaff),
+                )
+            assertEquals(expected, result)
         }
 }
