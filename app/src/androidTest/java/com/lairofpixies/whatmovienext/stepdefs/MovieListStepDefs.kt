@@ -31,6 +31,7 @@ import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
+import com.lairofpixies.whatmovienext.test.stringResource
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -80,6 +81,13 @@ class MovieListStepDefs(
                 .assertIsDisplayed()
         }
 
+    @Then("the entry {string} is absent")
+    fun theEntryIsAbsent(movieTitle: String) =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(movieTitle, UiTags.Screens.MOVIE_LIST)
+                .assertDoesNotExist()
+        }
+
     @When("the user opens the entry {string}")
     fun theUserOpensTheEntry(movieTitle: String) =
         composeRule.composeStep {
@@ -104,7 +112,7 @@ class MovieListStepDefs(
     @Then("the entry in the card view is marked as pending")
     fun theEntryInTheCardViewIsMarkedAsPending() =
         composeRule.composeStep {
-            val label = activity.getString(R.string.to_watch)
+            val label = stringResource(R.string.to_watch)
             onNodeWithText(label).assertIsDisplayed()
         }
 
@@ -133,7 +141,7 @@ class MovieListStepDefs(
     fun theUserMarksTheEntryAsWatched() =
         composeRule.composeStep {
             try {
-                val label = activity.getString(R.string.to_watch)
+                val label = stringResource(R.string.to_watch)
                 onNodeWithText(label).performClick()
             } catch (_: Throwable) {
                 // it was already on
@@ -143,7 +151,7 @@ class MovieListStepDefs(
     @And("the user navigates to the list")
     fun theUserNavigatesToTheList() =
         composeRule.composeStep {
-            val home = activity.getString(R.string.movies)
+            val home = stringResource(R.string.movies)
             onNodeWithText(home)
                 .performClick()
         }
@@ -152,7 +160,7 @@ class MovieListStepDefs(
     fun theUserMarksTheEntryAsPending() =
         composeRule.composeStep {
             try {
-                val label = activity.getString(R.string.seen)
+                val label = stringResource(R.string.seen)
                 onNodeWithText(label).performClick()
             } catch (_: Throwable) {
                 // it was already off
@@ -210,8 +218,23 @@ class MovieListStepDefs(
     @And("the user navigates to the archive")
     fun theUserNavigatesToTheArchive() =
         composeRule.composeStep {
-            val archiveLabel = activity.getString(R.string.archive)
+            val archiveLabel = stringResource(R.string.archive)
             onNodeWithText(archiveLabel)
                 .performClick()
+        }
+
+    @When("the user presses the back button")
+    fun theUserPressesTheBackButton() =
+        composeRule.composeStep {
+            activity.runOnUiThread {
+                activity.onBackPressedDispatcher.onBackPressed()
+            }
+        }
+
+    @Then("the list is visible")
+    fun theListIsVisible() =
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Screens.MOVIE_LIST)
+                .assertIsDisplayed()
         }
 }

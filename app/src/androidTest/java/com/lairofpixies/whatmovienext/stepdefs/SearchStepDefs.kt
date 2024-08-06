@@ -19,14 +19,22 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsNotFocused
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.onChildren
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
@@ -34,6 +42,7 @@ import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
+import com.lairofpixies.whatmovienext.test.stringResource
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
@@ -48,8 +57,6 @@ class SearchStepDefs(
 ) {
     private val composeRule
         get() = testContext.composeRuleHolder.composeRule
-
-    private val editCardStepDefs = EditCardStepDefs(testContext)
 
     @Given("the online repo is empty")
     fun theOnlineRepoIsEmpty() {
@@ -128,17 +135,15 @@ class SearchStepDefs(
 
     @When("the user searches for the title {string}")
     fun theUserSearchesForTheTitle(title: String) {
-        with(editCardStepDefs) {
-            theUserInitiatesANewEntry()
-            theUserEntersTheTitle(title)
-            theUserClicksOnTheFindButton()
-        }
+        theUserInitiatesANewQuery()
+        theUserEntersTheTitle(title)
+        theUserClicksOnTheFindButton()
     }
 
-    @Then("the edit card title is filled with {string}")
-    fun theEditCardTitleIsFilledWith(title: String) =
+    @Then("the input title is filled with {string}")
+    fun theInputTitleIsFilledWith(title: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(activity.getString(R.string.title), UiTags.Screens.EDIT_CARD)
+            onNodeWithTextUnderTag(stringResource(R.string.title), UiTags.Screens.QUERY_EDITOR)
                 .assertTextContains(title)
         }
 
@@ -206,5 +211,125 @@ class SearchStepDefs(
         testContext.movieApi.fakeMovieExtended = {
             TmdbMovieExtended(tmdbId = 1, title = title)
         }
+    }
+
+    @When("the user initiates a new query")
+    fun theUserInitiatesANewQuery() =
+        composeRule.composeStep {
+            onNodeWithContentDescription(stringResource(R.string.add_new_movie))
+                .performClick()
+        }
+
+    @Then("the query editor is open")
+    fun theQueryEditorIsOpen() =
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Screens.QUERY_EDITOR)
+                .isDisplayed()
+        }
+
+    @Then("the selected movie view is open")
+    fun theSelectedMovieViewIsOpen() =
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Screens.SELECTION_VIEW)
+                .isDisplayed()
+        }
+
+    @Then("the title input is focused")
+    fun theTitleInputIsFocused() =
+        composeRule.composeStep {
+            onNodeWithText(stringResource(R.string.title))
+                .assertIsFocused()
+        }
+
+    @Then("the title input is not focused")
+    fun theTitleInputIsNotFocused() =
+        composeRule.composeStep {
+            onNodeWithText(stringResource(R.string.title))
+                .assertIsNotFocused()
+        }
+
+    @When("the user enters the title {string}")
+    fun theUserEntersTheTitle(movieTitle: String) =
+        composeRule.composeStep {
+            onNodeWithText(stringResource(R.string.title))
+                .performTextClearance()
+
+            onNodeWithText(stringResource(R.string.title))
+                .performTextInput(movieTitle)
+        }
+
+    @And("the title input is empty")
+    fun theTitleInputIsEmpty() =
+        composeRule.composeStep {
+            onNodeWithText(stringResource(R.string.title)).apply {
+                performTextClearance()
+                performImeAction()
+            }
+        }
+
+    @And("the find button is disabled")
+    fun theFindButtonIsDisabled() {
+        composeRule.composeStep {
+            onNodeWithText(stringResource(R.string.lookup))
+                .assertIsNotEnabled()
+        }
+    }
+
+    @When("the user clicks on the find button")
+    fun theUserClicksOnTheFindButton() =
+        composeRule.composeStep {
+            onNodeWithText(stringResource(R.string.lookup))
+                .performClick()
+        }
+
+    @And("the selected movie view contains the title {string}")
+    fun theSelectedMovieViewContainsTheTitle(title: String) =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(title, UiTags.Screens.SELECTION_VIEW)
+                .assertIsDisplayed()
+        }
+
+    @Then("the selected movie view is not visible")
+    fun theSelectedMovieViewIsNotVisible() =
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Screens.SELECTION_VIEW)
+                .assertDoesNotExist()
+        }
+
+    @When("the user clicks on back to results button")
+    fun theUserClicksOnBackToResultsButton() =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(stringResource(R.string.lookup), UiTags.Screens.SELECTION_VIEW)
+                .performClick()
+        }
+
+    @When("the user clicks on edit button")
+    fun theUserClicksOnEditButton() =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(stringResource(R.string.edit), UiTags.Screens.SELECTION_VIEW)
+                .performClick()
+        }
+
+    @When("the user clicks on the save button")
+    fun theUserClicksOnTheSaveButton() =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(stringResource(R.string.save), UiTags.Screens.SELECTION_VIEW)
+                .performClick()
+        }
+
+    @When("the user clicks on the cancel button")
+    fun theUserClicksOnTheCancelButton() =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(stringResource(R.string.cancel), UiTags.Screens.SELECTION_VIEW)
+                .performClick()
+        }
+
+    @When("the user creates a new entry with the title {string}")
+    fun theUserCreatesANewEntryWithTheTitle(title: String) {
+        theOnlineRepoReturnsAnEntryWithTitle(title)
+        theUserInitiatesANewQuery()
+        theUserEntersTheTitle(title)
+        theUserClicksOnTheFindButton()
+        theUserClicksOnTheSaveButton()
     }
 }

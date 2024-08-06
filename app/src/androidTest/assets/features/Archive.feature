@@ -38,7 +38,7 @@ Feature: Archive
     Then a pop-up asks for confirmation for deleting the entry
     When the user selects "Confirm" in the deletion pop-up
     Then the entry "The Room" is not available in the archive
-    When the user navigates back
+    When the user presses the back button
     Then the entry "The Room" is not available
 
   Scenario: Attempt to delete entry but cancel
@@ -60,7 +60,7 @@ Feature: Archive
     And the user selects the entry "Hellraiser" in the archive
     And the user clicks on the archive action "Restore"
     Then the entry "Hellraiser" is not available in the archive
-    When the user navigates back
+    When the user presses the back button
     Then the entry "Hellraiser" is visible
 
   Scenario: archive should not be reachable when empty

@@ -22,9 +22,10 @@ object UiTags {
     object Screens {
         const val MOVIE_LIST = "MovieList"
         const val MOVIE_CARD = "MovieCard"
-        const val EDIT_CARD = "EditCard"
-        const val ARCHIVE = "Archive"
+        const val QUERY_EDITOR = "QueryEditor"
         const val SEARCH_RESULTS = "SearchResults"
+        const val SELECTION_VIEW = "SelectionView"
+        const val ARCHIVE = "Archive"
     }
 
     object Buttons {

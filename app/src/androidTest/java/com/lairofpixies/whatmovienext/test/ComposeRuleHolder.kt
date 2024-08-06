@@ -73,3 +73,5 @@ fun ComposeRule.onNodeWithTextUnderTag(
     caseSensitive: Boolean = false,
 ) = onAllNodes(hasText(text, substring = acceptSubstring, ignoreCase = !caseSensitive))
     .filterToOne(hasAnyAncestor(hasTestTag(tag)))
+
+fun ComposeRule.stringResource(resourceId: Int) = activity.resources.getString(resourceId)

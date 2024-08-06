@@ -98,6 +98,7 @@ fun MovieCardScreen(
                 cardViewModel.onLeaveAction()
             },
             onUpdateAction = { id, watchState -> cardViewModel.updateMovieWatched(id, watchState) },
+            modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
         )
     }
 }
@@ -108,9 +109,10 @@ fun MovieCard(
     onHomeAction: () -> Unit,
     onArchiveAction: () -> Unit,
     onUpdateAction: (Long, WatchState) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
-        modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
+        modifier = modifier,
         bottomBar = {
             CustomBottomBar(
                 items =
@@ -174,9 +176,10 @@ fun MovieCard(
 fun MovieCard(
     movie: AMovie.ForCard,
     bottomItems: List<CustomBarItem>,
+    modifier: Modifier = Modifier,
 ) {
     Scaffold(
-        modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
+        modifier = modifier,
         bottomBar = {
             CustomBottomBar(
                 items = bottomItems,
