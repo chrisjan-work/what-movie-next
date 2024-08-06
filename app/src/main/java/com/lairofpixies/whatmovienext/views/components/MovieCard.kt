@@ -32,7 +32,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -44,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -54,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.toAnnotatedString
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
@@ -122,11 +127,19 @@ fun MovieCard(
 
                 PlotDisplay(movie.detailData.plot)
 
+                if (movie.staffData.crew.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    DirectorsRooster(movie.staffData.crew)
+                }
+                if (movie.staffData.cast.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ActorsRooster(movie.staffData.cast)
+                }
+
+                Spacer(modifier = Modifier.padding(top = 36.dp))
+
                 Spacer(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(top = 36.dp),
+                    modifier = Modifier.weight(1f),
                 )
 
                 CreditsLink(
@@ -246,6 +259,113 @@ fun PlotDisplay(
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
     )
+}
+
+@Composable
+fun DirectorsRooster(
+    crew: List<Staff>,
+    modifier: Modifier = Modifier,
+) {
+    val combinedCrew = joinRoles(crew)
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.direction_and_writing),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        LazyRow {
+            items(combinedCrew) {
+                MiniProfile(it)
+            }
+        }
+    }
+}
+
+@Composable
+fun ActorsRooster(
+    cast: List<Staff>,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.cast),
+            style = MaterialTheme.typography.titleSmall,
+        )
+        LazyRow {
+            items(cast) {
+                MiniProfile(it)
+            }
+        }
+    }
+}
+
+// sometimes a movie is directed and written by the same person
+fun joinRoles(crew: List<Staff>): List<Staff> =
+    crew
+        .groupBy { it.personId }
+        .values
+        .mapNotNull { appearances ->
+            if (appearances.size > 1) {
+                appearances.first().copy(
+                    order = appearances.minOf { it.order },
+                    credit = appearances.joinToString(" / ") { it.credit },
+                )
+            } else {
+                appearances.firstOrNull()
+            }
+        }.sortedBy { it.order }
+
+@Composable
+fun MiniProfile(
+    person: Staff,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            modifier
+                .padding(2.dp)
+//                .border(
+//                    width = 1.dp,
+//                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
+//                    shape = RoundedCornerShape(4.dp),
+//                )
+                .width(100.dp)
+                .padding(2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        if (person.faceUrl.isNotBlank()) {
+            AsyncImage(
+                model = person.faceUrl,
+                contentDescription = "",
+                modifier =
+                    modifier
+                        .size(width = 64.dp, height = 80.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                contentScale = ContentScale.Crop,
+            )
+        } else {
+            Box(
+                modifier =
+                    modifier
+                        .size(width = 64.dp, height = 80.dp)
+                        .background(color = colorResource(R.color.missing_image))
+                        .clip(RoundedCornerShape(4.dp)),
+            )
+        }
+        Spacer(modifier = Modifier.height(6.dp))
+        Text(
+            text = person.name,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = person.credit,
+            style = MaterialTheme.typography.bodySmall,
+            fontStyle = FontStyle.Italic,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
+            textAlign = TextAlign.Center,
+        )
+    }
 }
 
 @Composable
