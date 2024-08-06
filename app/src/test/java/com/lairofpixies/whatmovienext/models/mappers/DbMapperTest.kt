@@ -19,6 +19,9 @@
 package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.MovieData
+import com.lairofpixies.whatmovienext.models.data.Staff
+import com.lairofpixies.whatmovienext.models.database.data.DbPerson
+import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -85,5 +88,72 @@ class DbMapperTest {
         val result = dbMapper.toDbGenres(listOf("Character Study", "Musical"))
         // Then
         assertEquals("Character Study,Musical", result)
+    }
+
+    @Test
+    fun toDbPeople() {
+        // Given
+        val people =
+            listOf(
+                Staff(
+                    personId = 1,
+                    roleId = 11,
+                    name = "Mandy",
+                    originalName = "Amanda",
+                    faceUrl = "/manda.jpg",
+                    credit = "her",
+                    dept = "acting",
+                    order = 1,
+                ),
+            )
+
+        // When
+        val result = dbMapper.toDbPeople(people)
+
+        // Then
+        val expected =
+            listOf(
+                DbPerson(
+                    personId = 1,
+                    name = "Mandy",
+                    originalName = "Amanda",
+                    faceUrl = "/manda.jpg",
+                ),
+            )
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun toDbRoles() {
+        // Given
+        val people =
+            listOf(
+                Staff(
+                    personId = 1,
+                    roleId = 11,
+                    name = "Mandy",
+                    originalName = "Amanda",
+                    faceUrl = "/manda.jpg",
+                    credit = "her",
+                    dept = "acting",
+                    order = 10,
+                ),
+            )
+
+        // When
+        val result = dbMapper.toDbRoles(99, people)
+
+        // Then
+        val expected =
+            listOf(
+                DbRole(
+                    personId = 1,
+                    movieId = 99,
+                    credit = "her",
+                    dept = "acting",
+                    order = 10,
+                ),
+            )
+        assertEquals(expected, result)
     }
 }

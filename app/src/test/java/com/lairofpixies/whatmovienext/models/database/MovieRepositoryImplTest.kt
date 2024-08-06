@@ -21,9 +21,12 @@ package com.lairofpixies.whatmovienext.models.database
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
+import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
+import com.lairofpixies.whatmovienext.models.database.data.DbPerson
+import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testDbMovieExtended
@@ -209,7 +212,7 @@ class MovieRepositoryImplTest {
         }
 
     @Test
-    fun `storeMovie just add a new movie`() =
+    fun `storeMovie insertion point`() =
         runTest {
             // Given
             val dbMovie = slot<DbMovie>()
@@ -225,6 +228,69 @@ class MovieRepositoryImplTest {
             assertEquals(
                 "first",
                 dbMovie.captured.title,
+            )
+        }
+
+    @Test
+    fun `storeMovie cast and crew included`() =
+        runTest {
+            // Given
+            val dbMovie = slot<DbMovie>()
+            coEvery { movieDao.insertMovie(capture(dbMovie)) } returns 1L
+            coEvery { movieDao.fetchMovieByTmdbId(any()) } returns null
+            val dbCast = slot<List<DbPerson>>()
+            coEvery { movieDao.insertPeople(capture(dbCast)) } returns
+                listOf(3, 4)
+            val dbRoles = slot<List<DbRole>>()
+            coEvery { movieDao.insertRoles(capture(dbRoles)) } just runs
+
+            // When
+            initializeSut()
+            movieRepository.storeMovie(
+                forCard(
+                    title = "first",
+                    cast =
+                        listOf(
+                            Staff(
+                                name = "pretty boy",
+                                credit = "boy",
+                                dept = "acting",
+                            ),
+                        ),
+                    crew =
+                        listOf(
+                            Staff(
+                                name = "rude boy",
+                                credit = "director",
+                                dept = "directing",
+                            ),
+                        ),
+                ),
+            )
+
+            // Then
+            coVerify { movieDao.insertMovie(any()) }
+            assertEquals(
+                "first",
+                dbMovie.captured.title,
+            )
+            coVerify { movieDao.insertPeople(any()) }
+            assertEquals(
+                "pretty boy",
+                dbCast.captured[0].name,
+            )
+            assertEquals(
+                "rude boy",
+                dbCast.captured[1].name,
+            )
+            coVerify { movieDao.insertRoles(any()) }
+            assertEquals(
+                "boy",
+                dbRoles.captured[0].credit,
+            )
+            assertEquals(
+                "director",
+                dbRoles.captured[1].credit,
             )
         }
 
