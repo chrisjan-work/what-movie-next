@@ -18,8 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forList
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -73,7 +73,7 @@ class MovieListViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun packMoviesToFlow(vararg movies: AMovie.ForList) = flowOf(LoadingAMovie.fromList(movies.toList()))
+    private fun packMoviesToFlow(vararg movies: Movie.ForList) = flowOf(LoadingAMovie.fromList(movies.toList()))
 
     @Test
     fun `forward movie list with all movies filter`() =

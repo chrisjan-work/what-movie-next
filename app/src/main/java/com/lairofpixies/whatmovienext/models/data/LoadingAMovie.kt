@@ -28,15 +28,15 @@ sealed class LoadingAMovie {
     data object Empty : LoadingAMovie()
 
     data class Single(
-        val movie: AMovie,
+        val movie: Movie,
     ) : LoadingAMovie()
 
     data class Multiple(
-        val movies: List<AMovie>,
+        val movies: List<Movie>,
     ) : LoadingAMovie()
 
     companion object {
-        fun <T : AMovie> fromList(movies: List<T>): LoadingAMovie =
+        fun <T : Movie> fromList(movies: List<T>): LoadingAMovie =
             when (movies.size) {
                 0 -> Empty
                 1 -> Single(movies.first())
@@ -44,16 +44,16 @@ sealed class LoadingAMovie {
             }
     }
 
-    inline fun <reified T : AMovie> toList(): List<T> =
+    inline fun <reified T : Movie> toList(): List<T> =
         when (this) {
             is Single -> (movie as? T)?.let { listOf(it) } ?: emptyList()
             is Multiple -> movies.filterIsInstance<T>()
             else -> emptyList()
         }
 
-    inline fun <reified T : AMovie> singleMovieOrNull(): T? = (this as? Single)?.movie as? T
+    inline fun <reified T : Movie> singleMovieOrNull(): T? = (this as? Single)?.movie as? T
 
-    fun filter(sieve: (AMovie) -> Boolean): LoadingAMovie =
+    fun filter(sieve: (Movie) -> Boolean): LoadingAMovie =
         when (this) {
             is Single -> if (sieve(movie)) this else Empty
             is Multiple -> {

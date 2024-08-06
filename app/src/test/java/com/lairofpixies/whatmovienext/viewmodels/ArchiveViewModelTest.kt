@@ -18,8 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forList
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
@@ -81,7 +81,7 @@ class ArchiveViewModelTest {
         val movie1 = forList(id = 1, title = "first movie")
         val movie2 = forList(id = 2, title = "second movie")
 
-        assertEquals(emptySet<AMovie.ForList>(), archiveViewModel.selection.value)
+        assertEquals(emptySet<Movie.ForList>(), archiveViewModel.selection.value)
 
         // select
         archiveViewModel.select(movie1)

@@ -46,7 +46,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
 import com.lairofpixies.whatmovienext.viewmodels.SearchViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
@@ -90,7 +90,7 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
         SearchState.RESULTS -> {
             val searchResults = searchViewModel.searchResults.collectAsState().value
             SearchResultsPicker(
-                searchResults = searchResults.toList<AMovie.ForSearch>(),
+                searchResults = searchResults.toList<Movie.ForSearch>(),
                 onResultSelected = { selectedId ->
                     searchViewModel.fetchFromRemote(selectedId)
                 },
@@ -100,7 +100,7 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
 
         SearchState.CHOICE -> {
             val selectedMovie = searchViewModel.selectedMovie.collectAsState().value
-            selectedMovie.singleMovieOrNull<AMovie.ForCard>()?.let { movie ->
+            selectedMovie.singleMovieOrNull<Movie.ForCard>()?.let { movie ->
                 MovieCard(
                     movie = movie,
                     bottomItems =

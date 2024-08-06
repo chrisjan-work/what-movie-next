@@ -32,7 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
@@ -84,7 +84,7 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
 
 @Composable
 fun MovieList(
-    filteredMovies: List<AMovie.ForList>,
+    filteredMovies: List<Movie.ForList>,
     onMovieClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -104,7 +104,7 @@ fun MovieList(
 
 @Composable
 fun MovieListItem(
-    movie: AMovie.ForList,
+    movie: Movie.ForList,
     onItemClicked: () -> Unit = {},
 ) {
     val backgroundColor =

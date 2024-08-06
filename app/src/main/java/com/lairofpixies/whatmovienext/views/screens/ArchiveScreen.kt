@@ -32,8 +32,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
@@ -80,10 +80,10 @@ fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
 
 @Composable
 fun Archive(
-    archivedMovies: List<AMovie.ForList>,
-    selection: Set<AMovie.ForList>,
-    append: (AMovie.ForList) -> Unit,
-    remove: (AMovie.ForList) -> Unit,
+    archivedMovies: List<Movie.ForList>,
+    selection: Set<Movie.ForList>,
+    append: (Movie.ForList) -> Unit,
+    remove: (Movie.ForList) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -109,7 +109,7 @@ fun Archive(
 
 @Composable
 fun ArchivedMovieListItem(
-    movie: AMovie.ForList,
+    movie: Movie.ForList,
     isSelected: Boolean,
     onSelectionChanged: (Boolean) -> Unit,
 ) {
@@ -140,7 +140,7 @@ fun ArchivedMovieListItem(
 }
 
 fun bottomItemsForArchive(
-    selection: Set<AMovie.ForList>,
+    selection: Set<Movie.ForList>,
     onNavigateToMovieList: () -> Unit,
     onRestoreSelectedMovies: () -> Unit,
     onDeleteSelectedMovies: () -> Unit,
