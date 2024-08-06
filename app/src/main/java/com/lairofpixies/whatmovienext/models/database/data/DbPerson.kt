@@ -16,27 +16,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.database
+package com.lairofpixies.whatmovienext.models.database.data
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
-import com.lairofpixies.whatmovienext.models.database.data.DbMovie
-import com.lairofpixies.whatmovienext.models.database.data.DbPerson
-import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.Relation
+import com.lairofpixies.whatmovienext.models.data.MovieData
 
-@Database(
-    entities = [
-        DbMovie::class,
-        DbGenre::class,
-        DbPerson::class,
-        DbRole::class,
-    ],
-    version = 1,
-    exportSchema = false,
+// a person is a director, actor or writer
+@Entity
+data class DbPerson(
+    @PrimaryKey(autoGenerate = false)
+    val personId: Long = MovieData.UNKNOWN_ID,
+    val name: String = "",
+    val originalName: String = "",
+    val faceUrl: String = "",
 )
-abstract class MovieDatabase : RoomDatabase() {
-    abstract fun movieDao(): MovieDao
 
-    abstract fun genreDao(): GenreDao
-}
+// staff are people with roles
+data class DbStaff(
+    @Embedded val role: DbRole,
+    @Relation(
+        parentColumn = "personId",
+        entityColumn = "personId",
+    )
+    val person: DbPerson,
+)

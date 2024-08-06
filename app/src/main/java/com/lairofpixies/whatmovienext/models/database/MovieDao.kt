@@ -21,14 +21,20 @@ package com.lairofpixies.whatmovienext.models.database
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
+import com.lairofpixies.whatmovienext.models.database.data.DbPerson
+import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
+    // Movies
     @Query("SELECT * FROM dbmovie WHERE isArchived = 0")
     fun getAllMovies(): Flow<List<DbMovie>>
 
@@ -51,7 +57,7 @@ interface MovieDao {
     suspend fun insertMovie(dbMovie: DbMovie): Long
 
     @Insert
-    suspend fun insertMovies(dbMovies: List<DbMovie>)
+    suspend fun insertMovies(dbMovies: List<DbMovie>): List<Long>
 
     @Delete
     suspend fun deleteMovie(dbMovie: DbMovie)
@@ -70,4 +76,21 @@ interface MovieDao {
 
     @Query("UPDATE dbmovie SET isArchived = 0 WHERE movieId = :movieId")
     suspend fun restore(movieId: Long)
+
+    // Cast & Crew
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPeople(dbPeople: List<DbPerson>): List<Long>
+
+    @Query("SELECT * FROM dbperson")
+    suspend fun fetchAllPeople(): List<DbPerson>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRoles(dbRoles: List<DbRole>)
+
+    @Query("SELECT * FROM dbrole")
+    suspend fun fetchAllRoles(): List<DbRole>
+
+    @Transaction
+    @Query("SELECT * FROM dbmovie WHERE movieId = :movieId")
+    fun getStaffedMovie(movieId: Long): Flow<DbStaffedMovie?>
 }
