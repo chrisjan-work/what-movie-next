@@ -22,8 +22,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
-import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
-import com.lairofpixies.whatmovienext.models.data.TestAMovie.forSearch
+import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
+import com.lairofpixies.whatmovienext.models.data.TestMovie.forSearch
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.views.navigation.Routes

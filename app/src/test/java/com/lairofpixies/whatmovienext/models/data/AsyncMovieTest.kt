@@ -35,7 +35,7 @@ class AsyncMovieTest {
     @Test
     fun `from list when list has one item`() {
         // Given
-        val movie = TestAMovie.forSearch(title = "average movie")
+        val movie = TestMovie.forSearch(title = "average movie")
 
         // When
         val asyncMovie = AsyncMovie.fromList(listOf(movie))
@@ -52,8 +52,8 @@ class AsyncMovieTest {
         // Given
         val movies =
             listOf(
-                TestAMovie.forSearch(title = "interesting movie"),
-                TestAMovie.forSearch(title = "boring movie"),
+                TestMovie.forSearch(title = "interesting movie"),
+                TestMovie.forSearch(title = "boring movie"),
             )
 
         // When
@@ -109,7 +109,7 @@ class AsyncMovieTest {
     @Test
     fun `single movie to list`() {
         // Given
-        val movie = TestAMovie.forSearch(title = "Romantic night")
+        val movie = TestMovie.forSearch(title = "Romantic night")
 
         // When
         val movieList = AsyncMovie.Single(movie).toList<Movie.ForSearch>()
@@ -123,8 +123,8 @@ class AsyncMovieTest {
         // Given
         val movies =
             listOf(
-                TestAMovie.forSearch(title = "The wild bunch"),
-                TestAMovie.forSearch(title = "Au Reservoir Les Oh Fun"),
+                TestMovie.forSearch(title = "The wild bunch"),
+                TestMovie.forSearch(title = "Au Reservoir Les Oh Fun"),
             )
 
         // When
@@ -147,9 +147,9 @@ class AsyncMovieTest {
             AsyncMovie
                 .Multiple(
                     listOf(
-                        TestAMovie.forSearch(title = "The Thin Red Line"),
-                        TestAMovie.forSearch(title = "Badlands"),
-                        TestAMovie.forSearch(title = "Knight of Cups"),
+                        TestMovie.forSearch(title = "The Thin Red Line"),
+                        TestMovie.forSearch(title = "Badlands"),
+                        TestMovie.forSearch(title = "Knight of Cups"),
                     ),
                 ).filter { it.searchData?.title?.contains("wild") == true }
 
@@ -162,14 +162,14 @@ class AsyncMovieTest {
             AsyncMovie
                 .Multiple(
                     listOf(
-                        TestAMovie.forSearch(title = "The Thin Red Line"),
-                        TestAMovie.forSearch(title = "Badlands"),
-                        TestAMovie.forSearch(title = "Knight of Cups"),
+                        TestMovie.forSearch(title = "The Thin Red Line"),
+                        TestMovie.forSearch(title = "Badlands"),
+                        TestMovie.forSearch(title = "Knight of Cups"),
                     ),
                 ).filter { it.searchData?.title?.contains("Red") == true }
 
         assertEquals(
-            AsyncMovie.Single(TestAMovie.forSearch(title = "The Thin Red Line")),
+            AsyncMovie.Single(TestMovie.forSearch(title = "The Thin Red Line")),
             filtered,
         )
     }
@@ -180,16 +180,16 @@ class AsyncMovieTest {
             AsyncMovie
                 .Multiple(
                     listOf(
-                        TestAMovie.forSearch(title = "The Thin Red Line"),
-                        TestAMovie.forSearch(title = "Badlands"),
-                        TestAMovie.forSearch(title = "Knight of Cups"),
+                        TestMovie.forSearch(title = "The Thin Red Line"),
+                        TestMovie.forSearch(title = "Badlands"),
+                        TestMovie.forSearch(title = "Knight of Cups"),
                     ),
                 ).filter { it.searchData?.title?.contains("i") == true }
         assertEquals(
             AsyncMovie.Multiple(
                 listOf(
-                    TestAMovie.forSearch(title = "The Thin Red Line"),
-                    TestAMovie.forSearch(title = "Knight of Cups"),
+                    TestMovie.forSearch(title = "The Thin Red Line"),
+                    TestMovie.forSearch(title = "Knight of Cups"),
                 ),
             ),
             filtered,
@@ -206,11 +206,11 @@ class AsyncMovieTest {
     fun `filter list - single input stays`() {
         val filtered =
             AsyncMovie
-                .Single(TestAMovie.forSearch(title = "Forrest Gump"))
+                .Single(TestMovie.forSearch(title = "Forrest Gump"))
                 .filter { true }
         assertEquals(
             AsyncMovie
-                .Single(TestAMovie.forSearch(title = "Forrest Gump")),
+                .Single(TestMovie.forSearch(title = "Forrest Gump")),
             filtered,
         )
     }
@@ -219,7 +219,7 @@ class AsyncMovieTest {
     fun `filter list - single input goes`() {
         val filtered =
             AsyncMovie
-                .Single(TestAMovie.forSearch(title = "Forrest Gump"))
+                .Single(TestMovie.forSearch(title = "Forrest Gump"))
                 .filter { false }
         assertEquals(AsyncMovie.Empty, filtered)
     }

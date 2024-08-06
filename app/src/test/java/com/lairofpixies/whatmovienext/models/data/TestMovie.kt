@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.models.data
 
 import com.lairofpixies.whatmovienext.models.data.MovieData.UNKNOWN_ID
 
-object TestAMovie {
+object TestMovie {
     fun forSearch(
         title: String,
         tmdbId: Long = UNKNOWN_ID,

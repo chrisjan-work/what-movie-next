@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
-import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
+import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import io.mockk.coVerify
