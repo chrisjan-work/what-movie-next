@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import io.mockk.coVerify
@@ -86,33 +85,6 @@ class ScreenViewModelTest {
             coVerify {
                 navHostControllerMock.navigate(
                     Routes.HOME.route,
-                    any<NavOptionsBuilder.() -> Unit>(),
-                )
-            }
-        }
-
-    @Test
-    fun `close edit card with new movie just navigates back one step in stack`() =
-        runTest {
-            // When
-            screenViewModel.onCloseWithIdAction(Movie.NEW_ID)
-
-            // Then
-            coVerify {
-                navHostControllerMock.popBackStack()
-            }
-        }
-
-    @Test
-    fun `close edit card of existing movie navigates to single movie view`() =
-        runTest {
-            // When
-            screenViewModel.onCloseWithIdAction(111)
-
-            // Then
-            coVerify {
-                navHostControllerMock.navigate(
-                    Routes.SingleMovieView.route(111),
                     any<NavOptionsBuilder.() -> Unit>(),
                 )
             }

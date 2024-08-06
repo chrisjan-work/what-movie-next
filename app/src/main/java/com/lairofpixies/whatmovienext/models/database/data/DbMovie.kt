@@ -20,15 +20,15 @@ package com.lairofpixies.whatmovienext.models.database.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.WatchState
 
 @Entity
 data class DbMovie(
-    @PrimaryKey(autoGenerate = true) val id: Long = Movie.NEW_ID,
+    @PrimaryKey(autoGenerate = true) val id: Long = MovieData.NEW_ID,
     val title: String,
     val creationTime: Long = System.currentTimeMillis(),
-    val tmdbId: Long = Movie.UNKNOWN_ID,
+    val tmdbId: Long = MovieData.UNKNOWN_ID,
     val imdbId: String? = null,
     val originalTitle: String = "",
     val year: Int? = null,

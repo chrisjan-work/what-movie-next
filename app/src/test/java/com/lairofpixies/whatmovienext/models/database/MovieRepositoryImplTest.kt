@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -208,45 +207,6 @@ class MovieRepositoryImplTest {
         }
 
     @Test
-    fun addMovie() =
-        runTest {
-            // Given
-            val dbMovie = slot<DbMovie>()
-            coEvery { movieDao.insertMovie(capture(dbMovie)) } returns 1L
-
-            // When
-            initializeSut()
-            movieRepository.addMovie(Movie(title = "first"))
-
-            // Then
-            coVerify { movieDao.insertMovie(any()) }
-            assertEquals(
-                "first",
-                dbMovie.captured.title,
-            )
-        }
-
-    @Test
-    fun updateMovie() =
-        runTest {
-            // Given
-            val dbMovie = slot<DbMovie>()
-            coEvery { movieDao.updateMovie(capture(dbMovie)) } just runs
-
-            // When
-            initializeSut()
-            val updatedId = movieRepository.updateMovie(Movie(id = 11, title = "first"))
-
-            // Then
-            coVerify { movieDao.updateMovie(any()) }
-            assertEquals(
-                "first",
-                dbMovie.captured.title,
-            )
-            assertEquals(11, updatedId)
-        }
-
-    @Test
     fun `storeMovie just add a new movie`() =
         runTest {
             // Given
@@ -321,34 +281,30 @@ class MovieRepositoryImplTest {
     fun archiveMovie() =
         runTest {
             // Given
-            val movieToArchive =
-                Movie(1, "toArchive", watchState = WatchState.WATCHED, isArchived = false)
             val requestedMovie = slot<DbMovie>()
             coEvery { movieDao.deleteMovie(capture(requestedMovie)) } just runs
 
             // When
             initializeSut()
-            movieRepository.archiveMovie(movieToArchive.id)
+            movieRepository.archiveMovie(1)
 
             // Then
-            coVerify { movieDao.archive(movieToArchive.id) }
+            coVerify { movieDao.archive(1) }
         }
 
     @Test
     fun restoreMovie() =
         runTest {
             // Given
-            val movieToRestore =
-                Movie(1, "isArchived", watchState = WatchState.WATCHED, isArchived = true)
             val requestedMovieId = slot<Long>()
             coEvery { movieDao.restore(capture(requestedMovieId)) } just runs
 
             // When
             initializeSut()
-            movieRepository.restoreMovie(movieToRestore.id)
+            movieRepository.restoreMovie(2)
 
             // Then
-            coVerify { movieDao.restore(movieToRestore.id) }
+            coVerify { movieDao.restore(2) }
         }
 
     @Test

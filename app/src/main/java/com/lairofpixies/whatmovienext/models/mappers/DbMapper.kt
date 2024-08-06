@@ -19,8 +19,6 @@
 package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.AMovie
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.util.decodeToList
@@ -30,30 +28,6 @@ import javax.inject.Inject
 class DbMapper
     @Inject
     constructor() {
-        fun toMovie(dbMovie: DbMovie): Movie =
-            with(dbMovie) {
-                Movie(
-                    id = id,
-                    tmdbId = tmdbId,
-                    imdbId = imdbId,
-                    title = title,
-                    originalTitle = originalTitle,
-                    year = year,
-                    thumbnailUrl = thumbnailUrl,
-                    coverUrl = coverUrl,
-                    tagline = tagline,
-                    summary = plot,
-                    genres = toGenres(genres),
-                    runtimeMinutes = runtimeMinutes,
-                    watchState = watchState,
-                    isArchived = isArchived,
-                )
-            }
-
-        fun toMovies(dbMovies: List<DbMovie>): List<Movie> = dbMovies.map { toMovie(it) }
-
-        fun toLoadingMovies(dbMovies: List<DbMovie>): LoadingMovie = LoadingMovie.fromList(toMovies(dbMovies))
-
         fun toCardMovie(dbMovie: DbMovie): AMovie.ForCard =
             with(dbMovie) {
                 AMovie.ForCard(
@@ -115,26 +89,6 @@ class DbMapper
                             plot = plot,
                             runtimeMinutes = runtimeMinutes,
                         ),
-                )
-            }
-
-        fun toDbMovie(movie: Movie): DbMovie =
-            with(movie) {
-                DbMovie(
-                    id = id,
-                    tmdbId = tmdbId,
-                    imdbId = imdbId,
-                    title = title,
-                    originalTitle = originalTitle,
-                    year = year,
-                    thumbnailUrl = thumbnailUrl,
-                    coverUrl = coverUrl,
-                    tagline = tagline,
-                    plot = summary,
-                    genres = toDbGenres(genres),
-                    runtimeMinutes = runtimeMinutes,
-                    watchState = watchState,
-                    isArchived = isArchived,
                 )
             }
 

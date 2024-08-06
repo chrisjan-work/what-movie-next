@@ -152,7 +152,7 @@ fun SearchEditor(
                         .padding(innerPadding)
                         .verticalScroll(rememberScrollState()),
             ) {
-                DebugTitle("Edit Movie")
+                DebugTitle("Search Movie")
                 EditableTitleField(
                     query.title,
                     onTitleChanged = { onUpdateQuery(query.copy(title = it)) },

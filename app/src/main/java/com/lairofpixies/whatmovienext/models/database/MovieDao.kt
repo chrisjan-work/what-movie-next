@@ -48,16 +48,16 @@ interface MovieDao {
     fun getArchivedMovies(): Flow<List<DbMovie>>
 
     @Insert
-    suspend fun insertMovie(movie: DbMovie): Long
+    suspend fun insertMovie(dbMovie: DbMovie): Long
 
     @Insert
-    suspend fun insertMovies(movies: List<DbMovie>)
+    suspend fun insertMovies(dbMovies: List<DbMovie>)
 
     @Delete
-    suspend fun deleteMovie(movie: DbMovie)
+    suspend fun deleteMovie(dbMovie: DbMovie)
 
     @Update
-    suspend fun updateMovie(movie: DbMovie)
+    suspend fun updateMovie(dbMovie: DbMovie)
 
     @Query("UPDATE dbmovie SET watchState = :watchState WHERE id = :id")
     suspend fun updateWatchState(

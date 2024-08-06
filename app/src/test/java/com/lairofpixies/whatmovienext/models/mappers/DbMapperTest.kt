@@ -18,12 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.LoadingMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 class DbMapperTest {
@@ -32,81 +28,6 @@ class DbMapperTest {
     @Before
     fun setUp() {
         dbMapper = DbMapper()
-    }
-
-    // TODO: remove
-    private fun generateMovie() =
-        Movie(
-            id = 22,
-            tmdbId = 333,
-            imdbId = "aaaa",
-            title = "Something",
-            originalTitle = "Etwas",
-            year = 2020,
-            thumbnailUrl = "thumbnailUrl",
-            coverUrl = "coverUrl",
-            tagline = "tagline",
-            summary = "summary",
-            genres = listOf("Drama", "Mystery"),
-            runtimeMinutes = 111,
-            watchState = WatchState.WATCHED,
-            isArchived = false,
-        )
-
-    @Test
-    @Ignore("about to be removed")
-    fun `db movie to movie`() {
-        // Given
-        val dbMovie = testDbMovieExtended()
-
-        // When
-        val movie = dbMapper.toMovie(dbMovie)
-
-        // Then
-        val expectedMovie = generateMovie()
-        assertEquals(expectedMovie, movie)
-    }
-
-    @Test
-    @Ignore("about to be removed")
-    fun toMovies() {
-        // Given
-        val dbMovies = listOf(testDbMovieExtended())
-
-        // When
-        val movie = dbMapper.toMovies(dbMovies)
-
-        // Then
-        val expectedMovies = listOf(generateMovie())
-        assertEquals(expectedMovies, movie)
-    }
-
-    @Test
-    @Ignore("about to be removed")
-    fun toLoadingMovies() {
-        // Given
-        val dbMovies = listOf(testDbMovieExtended())
-
-        // When
-        val movie = dbMapper.toLoadingMovies(dbMovies)
-
-        // Then
-        val expectedMovies = LoadingMovie.Single(generateMovie())
-        assertEquals(expectedMovies, movie)
-    }
-
-    @Test
-    @Ignore("about to delete soon, no need to fix")
-    fun `movie to db movie`() {
-        // Given
-        val movie = generateMovie()
-
-        // When
-        val dbMovie = dbMapper.toDbMovie(movie)
-
-        // Then
-        val expectedDbMovie = testDbMovieExtended()
-        assertEquals(expectedDbMovie, dbMovie)
     }
 
     @Test
