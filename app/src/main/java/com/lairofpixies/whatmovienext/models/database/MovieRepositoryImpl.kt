@@ -64,7 +64,7 @@ class MovieRepositoryImpl(
 
     override fun singleCardMovie(movieId: Long): Flow<AsyncMovie> =
         dao
-            .getMovie(movieId)
+            .getStaffedMovie(movieId)
             .map { maybeMovie ->
                 maybeMovie
                     ?.let { dbMapper.toCardMovie(it) }

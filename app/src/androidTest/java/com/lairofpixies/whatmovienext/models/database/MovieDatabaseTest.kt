@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -31,6 +32,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -69,14 +71,22 @@ class MovieDatabaseTest {
             // When we insert a movie
             val dbMovie =
                 DbMovie(
-                    movieId = 10,
+                    movieId = MovieData.NEW_ID,
+                    tmdbId = 22,
                     title = "Casino",
                     watchState = WatchState.PENDING,
                 )
-            movieDao.insertMovie(dbMovie)
+            val movieId = movieDao.insertMovie(dbMovie)
+            val result = movieDao.getStaffedMovie(movieId).first()
 
-            // Then the movie is in the database
-            assertEquals(dbMovie, movieDao.getMovie(10).first())
+            // Then
+            val expected =
+                DbStaffedMovie(
+                    movie = dbMovie.copy(movieId = movieId),
+                    staff = emptyList(),
+                )
+            assertNotEquals(MovieData.NEW_ID, movieId)
+            assertEquals(expected, result)
         }
 
     @Test
@@ -141,8 +151,9 @@ class MovieDatabaseTest {
             assertEquals(
                 "Stargate: Atlantis",
                 movieDao
-                    .getMovie(9)
+                    .getStaffedMovie(9)
                     .first()
+                    ?.movie
                     ?.title,
             )
         }
@@ -163,8 +174,9 @@ class MovieDatabaseTest {
             assertEquals(
                 WatchState.WATCHED,
                 movieDao
-                    .getMovie(1)
+                    .getStaffedMovie(1)
                     .first()
+                    ?.movie
                     ?.watchState,
             )
         }
@@ -263,7 +275,12 @@ class MovieDatabaseTest {
             val shouldBeNull = movieDao.fetchMovieByTmdbId(212)
 
             // Then the movie is returned or not
-            assertEquals(movie, shouldBeMovie)
+            val expectedMovie =
+                DbStaffedMovie(
+                    movie = movie,
+                    staff = emptyList(),
+                )
+            assertEquals(expectedMovie, shouldBeMovie)
             assertEquals(null, shouldBeNull)
         }
 

@@ -18,12 +18,15 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
+import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import com.lairofpixies.whatmovienext.models.database.data.DbStaff
+import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
 import com.lairofpixies.whatmovienext.util.decodeToList
 import com.lairofpixies.whatmovienext.util.encodeToString
 import javax.inject.Inject
@@ -31,8 +34,8 @@ import javax.inject.Inject
 class DbMapper
     @Inject
     constructor() {
-        fun toCardMovie(dbMovie: DbMovie): Movie.ForCard =
-            with(dbMovie) {
+        fun toCardMovie(staffedMovie: DbStaffedMovie): Movie.ForCard =
+            with(staffedMovie.movie) {
                 Movie.ForCard(
                     appData =
                         MovieData.AppData(
@@ -58,10 +61,37 @@ class DbMapper
                             plot = plot,
                             runtimeMinutes = runtimeMinutes,
                         ),
-                    staffData =
-                        MovieData.StaffData(
-                            // TODO
-                        ),
+                    staffData = toStaffData(staffedMovie.staff),
+                )
+            }
+
+        fun toStaffData(dbStaffers: List<DbStaff>): MovieData.StaffData {
+            val cast = mutableListOf<Staff>()
+            val crew = mutableListOf<Staff>()
+            dbStaffers.map { dbStaff -> toStaff(dbStaff) }.forEach { staff ->
+                if (staff.dept == Departments.Actors.department) {
+                    cast.add(staff)
+                } else {
+                    crew.add(staff)
+                }
+            }
+            return MovieData.StaffData(
+                cast = cast.sortedBy { it.order },
+                crew = crew.sortedBy { it.order },
+            )
+        }
+
+        fun toStaff(dbStaff: DbStaff): Staff =
+            with(dbStaff) {
+                Staff(
+                    personId = person.personId,
+                    roleId = role.roleId,
+                    name = person.name,
+                    originalName = person.originalName,
+                    faceUrl = person.faceUrl,
+                    credit = role.credit,
+                    dept = role.dept,
+                    order = role.order,
                 )
             }
 
