@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import kotlinx.coroutines.Job
@@ -26,11 +26,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
     // read
-    val listedMovies: Flow<LoadingAMovie>
+    val listedMovies: Flow<AsyncMovie>
 
-    val archivedMovies: Flow<LoadingAMovie>
+    val archivedMovies: Flow<AsyncMovie>
 
-    fun singleCardMovie(movieId: Long): Flow<LoadingAMovie>
+    fun singleCardMovie(movieId: Long): Flow<AsyncMovie>
 
     // write
     suspend fun storeMovie(movie: Movie.ForCard): Job

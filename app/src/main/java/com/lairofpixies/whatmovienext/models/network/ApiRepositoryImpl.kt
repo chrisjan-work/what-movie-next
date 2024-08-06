@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -36,40 +36,40 @@ class ApiRepositoryImpl(
 ) : ApiRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    override fun findMoviesByTitle(title: String): Flow<LoadingAMovie> =
+    override fun findMoviesByTitle(title: String): Flow<AsyncMovie> =
         flow {
-            emit(LoadingAMovie.Loading)
+            emit(AsyncMovie.Loading)
             val remoteMovies =
                 repositoryScope
                     .async {
                         tmdbApi.findMoviesByTitle(escapeForQuery(title))
                     }.await()
 
-            val loadingMovie =
-                LoadingAMovie.fromList(
+            val asyncMovie =
+                AsyncMovie.fromList(
                     remoteMovies.results.map { remoteMovie ->
                         remoteMapper.toSearchMovie(remoteMovie)
                     },
                 )
-            emit(loadingMovie)
+            emit(asyncMovie)
         }.catch { exception: Throwable ->
-            emit(LoadingAMovie.Failed(exception))
+            emit(AsyncMovie.Failed(exception))
         }
 
     private fun escapeForQuery(title: String) = title.trim().replace(" ", "+")
 
-    override fun getMovieDetails(tmdbId: Long): Flow<LoadingAMovie> =
+    override fun getMovieDetails(tmdbId: Long): Flow<AsyncMovie> =
         flow {
-            emit(LoadingAMovie.Loading)
+            emit(AsyncMovie.Loading)
 
             val remoteMovie = tmdbApi.getMovieDetails(tmdbId)
             if (remoteMovie.success == false) {
-                emit(LoadingAMovie.Failed(Exception("Failed to get movie details")))
+                emit(AsyncMovie.Failed(Exception("Failed to get movie details")))
                 return@flow
             }
             val movie = remoteMapper.toCardMovie(remoteMovie)
-            emit(LoadingAMovie.Single(movie))
+            emit(AsyncMovie.Single(movie))
         }.catch { exception: Throwable ->
-            emit(LoadingAMovie.Failed(exception))
+            emit(AsyncMovie.Failed(exception))
         }
 }

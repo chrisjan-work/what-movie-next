@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -49,12 +49,12 @@ class SearchViewModel
         private val _currentQuery = MutableStateFlow(SearchQuery(""))
         val currentQuery: StateFlow<SearchQuery> = _currentQuery.asStateFlow()
 
-        private val _selectedMovie = MutableStateFlow<LoadingAMovie>(LoadingAMovie.Empty)
+        private val _selectedMovie = MutableStateFlow<AsyncMovie>(AsyncMovie.Empty)
         val selectedMovie = _selectedMovie.asStateFlow()
 
-        private val _searchResults: MutableStateFlow<LoadingAMovie> =
-            MutableStateFlow(LoadingAMovie.Empty)
-        val searchResults: StateFlow<LoadingAMovie> = _searchResults.asStateFlow()
+        private val _searchResults: MutableStateFlow<AsyncMovie> =
+            MutableStateFlow(AsyncMovie.Empty)
+        val searchResults: StateFlow<AsyncMovie> = _searchResults.asStateFlow()
 
         private var searchJob: Job? = null
 
@@ -63,7 +63,7 @@ class SearchViewModel
         }
 
         fun switchToSearchResults() {
-            if (searchResults.value is LoadingAMovie.Multiple) {
+            if (searchResults.value is AsyncMovie.Multiple) {
                 _searchState.value = SearchState.RESULTS
             } else {
                 switchToSearchEntry()
@@ -99,22 +99,22 @@ class SearchViewModel
 
                     apiRepo.findMoviesByTitle(title = currentQuery.value.title).collect { results ->
                         when (results) {
-                            is LoadingAMovie.Loading -> {
+                            is AsyncMovie.Loading -> {
                                 updateBusyDisplay(true)
                             }
 
-                            is LoadingAMovie.Failed -> {
+                            is AsyncMovie.Failed -> {
                                 updateBusyDisplay(false)
                                 showPopup(PopupInfo.ConnectionFailed)
                                 Timber.e("Connection error: ${results.trowable}")
                             }
 
-                            is LoadingAMovie.Empty -> {
+                            is AsyncMovie.Empty -> {
                                 clearSearchResults()
                                 showPopup(PopupInfo.SearchEmpty)
                             }
 
-                            is LoadingAMovie.Single -> {
+                            is AsyncMovie.Single -> {
                                 clearSearchResults(false)
                                 results.singleMovieOrNull<Movie.ForSearch>()?.let { movie ->
                                     fetchFromRemote(movie.searchData.tmdbId)
@@ -124,7 +124,7 @@ class SearchViewModel
                                 }
                             }
 
-                            is LoadingAMovie.Multiple -> {
+                            is AsyncMovie.Multiple -> {
                                 _searchResults.value = results
                                 switchToSearchResults()
                             }
@@ -141,7 +141,7 @@ class SearchViewModel
         }
 
         private fun clearSearchResults(resetBusyDisplay: Boolean = true) {
-            _searchResults.value = LoadingAMovie.Empty
+            _searchResults.value = AsyncMovie.Empty
             if (resetBusyDisplay) {
                 updateBusyDisplay(false)
             }
@@ -149,31 +149,31 @@ class SearchViewModel
 
         fun fetchFromRemote(tmdbId: Long) {
             viewModelScope.launch {
-                apiRepo.getMovieDetails(tmdbId).collect { loadingMovie ->
-                    when (loadingMovie) {
-                        is LoadingAMovie.Loading -> {
+                apiRepo.getMovieDetails(tmdbId).collect { asyncMovie ->
+                    when (asyncMovie) {
+                        is AsyncMovie.Loading -> {
                             updateBusyDisplay(true)
                         }
 
-                        is LoadingAMovie.Failed -> {
+                        is AsyncMovie.Failed -> {
                             updateBusyDisplay(false)
                             switchToSearchEntry()
                             showPopup(PopupInfo.ConnectionFailed)
-                            Timber.e("Connection error: ${loadingMovie.trowable}")
+                            Timber.e("Connection error: ${asyncMovie.trowable}")
                         }
 
-                        is LoadingAMovie.Empty -> {
+                        is AsyncMovie.Empty -> {
                             updateBusyDisplay(false)
                             switchToSearchEntry()
                             showPopup(PopupInfo.SearchEmpty)
                         }
 
-                        is LoadingAMovie.Single -> {
-                            _selectedMovie.value = loadingMovie
+                        is AsyncMovie.Single -> {
+                            _selectedMovie.value = asyncMovie
                             switchToChoiceScreen()
                         }
 
-                        is LoadingAMovie.Multiple -> {
+                        is AsyncMovie.Multiple -> {
                             // should never happen:
                             // the api call always returns a single movie or nothing
                             // even though our wrapper can accept multiple movies
@@ -211,7 +211,7 @@ class SearchViewModel
                 SearchState.ENTRY -> onLeaveAction()
                 SearchState.RESULTS -> switchToSearchEntry()
                 SearchState.CHOICE -> {
-                    if (searchResults.value is LoadingAMovie.Multiple) {
+                    if (searchResults.value is AsyncMovie.Multiple) {
                         switchToSearchResults()
                     } else {
                         switchToSearchEntry()

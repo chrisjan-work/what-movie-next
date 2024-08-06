@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -39,8 +39,8 @@ class MovieListViewModel
     constructor(
         private val repo: MovieRepository,
     ) : ScreenViewModel() {
-        private val _listedMovies = MutableStateFlow<LoadingAMovie>(LoadingAMovie.Loading)
-        val listedMovies: StateFlow<LoadingAMovie> = _listedMovies.asStateFlow()
+        private val _listedMovies = MutableStateFlow<AsyncMovie>(AsyncMovie.Loading)
+        val listedMovies: StateFlow<AsyncMovie> = _listedMovies.asStateFlow()
 
         private val _hasArchivedMovies = MutableStateFlow(false)
         val hasArchivedMovies: StateFlow<Boolean> = _hasArchivedMovies.asStateFlow()
@@ -76,9 +76,9 @@ class MovieListViewModel
         }
 
         private fun filterMovies(
-            movies: LoadingAMovie,
+            movies: AsyncMovie,
             listMode: ListMode,
-        ): LoadingAMovie =
+        ): AsyncMovie =
             when (listMode) {
                 ListMode.ALL -> movies
                 ListMode.WATCHED -> movies.filter { it.appData?.watchState == WatchState.WATCHED }

@@ -19,7 +19,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -35,15 +35,15 @@ class MovieCardViewModel
     constructor(
         private val repo: MovieRepository,
     ) : ScreenViewModel() {
-        private val _currentMovie = MutableStateFlow<LoadingAMovie>(LoadingAMovie.Loading)
+        private val _currentMovie = MutableStateFlow<AsyncMovie>(AsyncMovie.Loading)
         val currentMovie = _currentMovie.asStateFlow()
 
         fun startFetchingMovie(movieId: Long?) {
             if (movieId == null) {
-                _currentMovie.value = LoadingAMovie.Empty
+                _currentMovie.value = AsyncMovie.Empty
                 return
             } else {
-                _currentMovie.value = LoadingAMovie.Loading
+                _currentMovie.value = AsyncMovie.Loading
             }
 
             viewModelScope.launch {
