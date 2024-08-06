@@ -22,7 +22,7 @@ import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
-class LoadingAMovieTest {
+class LoadingMovieTest {
     @Test
     fun `from list when list is empty`() {
         val loadingMovie = LoadingAMovie.fromList(emptyList())
@@ -74,8 +74,8 @@ class LoadingAMovieTest {
                 LoadingAMovie.Loading to false,
                 LoadingAMovie.Failed(mockk()) to true,
                 LoadingAMovie.Empty to true,
-                LoadingAMovie.Single(mockk<AMovie.ForSearch>()) to false,
-                LoadingAMovie.Multiple(emptyList<AMovie.ForSearch>()) to false,
+                LoadingAMovie.Single(mockk<Movie.ForSearch>()) to false,
+                LoadingAMovie.Multiple(emptyList<Movie.ForSearch>()) to false,
             )
 
         isMissingPairs.forEach { (assyncMovieInfo, expectedResult) ->
@@ -94,8 +94,8 @@ class LoadingAMovieTest {
                 LoadingAMovie.Loading to false,
                 LoadingAMovie.Failed(mockk()) to false,
                 LoadingAMovie.Empty to false,
-                LoadingAMovie.Single(mockk<AMovie.ForSearch>()) to true,
-                LoadingAMovie.Multiple(emptyList<AMovie.ForSearch>()) to true,
+                LoadingAMovie.Single(mockk<Movie.ForSearch>()) to true,
+                LoadingAMovie.Multiple(emptyList<Movie.ForSearch>()) to true,
             )
 
         hasMoviePairs.forEach { (loadingMovie, expectedResult) ->
@@ -112,7 +112,7 @@ class LoadingAMovieTest {
         val movie = TestAMovie.forSearch(title = "Romantic night")
 
         // When
-        val movieList = LoadingAMovie.Single(movie).toList<AMovie.ForSearch>()
+        val movieList = LoadingAMovie.Single(movie).toList<Movie.ForSearch>()
 
         // Then
         assertEquals(listOf(movie), movieList)
@@ -128,7 +128,7 @@ class LoadingAMovieTest {
             )
 
         // When
-        val movieList = LoadingAMovie.Multiple(movies).toList<AMovie.ForSearch>()
+        val movieList = LoadingAMovie.Multiple(movies).toList<Movie.ForSearch>()
 
         // Then
         assertEquals(movies, movieList)
@@ -136,9 +136,9 @@ class LoadingAMovieTest {
 
     @Test
     fun `empty list`() {
-        val movieList = LoadingAMovie.Empty.toList<AMovie>()
+        val movieList = LoadingAMovie.Empty.toList<Movie>()
 
-        assertEquals(emptyList<AMovie>(), movieList)
+        assertEquals(emptyList<Movie>(), movieList)
     }
 
     @Test

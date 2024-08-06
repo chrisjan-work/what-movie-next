@@ -18,8 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestAMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -186,7 +186,7 @@ class MovieRepositoryImplTest {
                 movieRepository
                     .singleCardMovie(1)
                     .last()
-                    .singleMovieOrNull<AMovie.ForCard>()
+                    .singleMovieOrNull<Movie.ForCard>()
 
             // Then
             assertEquals(testCardMovieExtended(), result)

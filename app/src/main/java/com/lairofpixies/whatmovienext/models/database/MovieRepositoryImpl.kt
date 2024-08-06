@@ -18,8 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import kotlinx.coroutines.CoroutineDispatcher
@@ -70,14 +70,14 @@ class MovieRepositoryImpl(
                     ?: LoadingAMovie.Empty
             }.flowOn(ioDispatcher)
 
-    override suspend fun storeMovie(movie: AMovie.ForCard) =
+    override suspend fun storeMovie(movie: Movie.ForCard) =
         repositoryScope.launch {
             val oldMovie = dao.fetchMovieByTmdbId(movie.searchData.tmdbId)
             if (oldMovie != null) {
                 // if movie was already saved
                 // update it while keeping the old app data
                 // but unarchive it if it was archived
-                val mappedOldMovie: AMovie.ForCard = dbMapper.toCardMovie(oldMovie)
+                val mappedOldMovie: Movie.ForCard = dbMapper.toCardMovie(oldMovie)
                 val movieToSave =
                     dbMapper.toDbMovie(
                         movie.copy(

@@ -20,8 +20,8 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
@@ -72,7 +72,7 @@ class SearchViewModel
         }
 
         fun switchToChoiceScreen() {
-            if (selectedMovie.value.singleMovieOrNull<AMovie.ForCard>() != null) {
+            if (selectedMovie.value.singleMovieOrNull<Movie.ForCard>() != null) {
                 _searchState.value = SearchState.CHOICE
             } else {
                 switchToSearchEntry()
@@ -116,7 +116,7 @@ class SearchViewModel
 
                             is LoadingAMovie.Single -> {
                                 clearSearchResults(false)
-                                results.singleMovieOrNull<AMovie.ForSearch>()?.let { movie ->
+                                results.singleMovieOrNull<Movie.ForSearch>()?.let { movie ->
                                     fetchFromRemote(movie.searchData.tmdbId)
                                 } ?: {
                                     updateBusyDisplay(false)
@@ -188,7 +188,7 @@ class SearchViewModel
 
         fun onSaveMovieAction() {
             viewModelScope.launch {
-                val movieToSave = selectedMovie.value.singleMovieOrNull<AMovie.ForCard>()
+                val movieToSave = selectedMovie.value.singleMovieOrNull<Movie.ForCard>()
                 if (movieToSave == null || movieToSave.searchData.tmdbId <= 0) {
                     Timber.e("Attempting to save empty movie")
                     return@launch

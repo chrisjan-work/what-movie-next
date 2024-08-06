@@ -45,12 +45,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 
 @Composable
 fun SearchResultsPicker(
-    searchResults: List<AMovie.ForSearch>,
+    searchResults: List<Movie.ForSearch>,
     onResultSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {

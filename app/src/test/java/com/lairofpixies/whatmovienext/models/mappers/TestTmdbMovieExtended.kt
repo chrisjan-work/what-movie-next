@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.WatchState
@@ -65,8 +65,8 @@ fun testTmdbMovieExtended(): TmdbMovieExtended =
             ),
     )
 
-fun testCardMovieExtended(): AMovie.ForCard =
-    AMovie.ForCard(
+fun testCardMovieExtended(): Movie.ForCard =
+    Movie.ForCard(
         appData =
             MovieData.AppData(
                 id = NEW_ID,
@@ -94,8 +94,8 @@ fun testCardMovieExtended(): AMovie.ForCard =
         staffData = MovieData.StaffData(),
     )
 
-fun testListMovieExtended(): AMovie.ForList =
-    AMovie.ForList(
+fun testListMovieExtended(): Movie.ForList =
+    Movie.ForList(
         appData =
             MovieData.AppData(
                 id = NEW_ID,
@@ -139,4 +139,4 @@ fun testDbMovieExtended(): DbMovie =
         runtimeMinutes = 137,
     )
 
-fun AMovie.ForCard.removeCreationTime(): AMovie.ForCard = this.copy(appData = appData.copy(creationTime = 0))
+fun Movie.ForCard.removeCreationTime(): Movie.ForCard = this.copy(appData = appData.copy(creationTime = 0))

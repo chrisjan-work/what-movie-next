@@ -57,7 +57,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.util.printableRuntime
@@ -87,7 +87,7 @@ fun MovieCardScreen(
         cardViewModel.onLeaveAction()
     }
 
-    val loadedMovie = partialMovie.singleMovieOrNull<AMovie.ForCard>()
+    val loadedMovie = partialMovie.singleMovieOrNull<Movie.ForCard>()
     if (loadedMovie != null) {
         val bottomItems =
             bottomItemsForMovieCard(
@@ -115,7 +115,7 @@ fun MovieCardScreen(
 
 @Composable
 fun MovieCard(
-    movie: AMovie.ForCard,
+    movie: Movie.ForCard,
     bottomItems: List<CustomBarItem>,
     modifier: Modifier = Modifier,
 ) {
@@ -329,7 +329,7 @@ fun CreditsLink(
 }
 
 fun bottomItemsForMovieCard(
-    movie: AMovie.ForCard,
+    movie: Movie.ForCard,
     onHomeAction: () -> Unit,
     onArchiveAction: () -> Unit,
     onUpdateAction: (Long, WatchState) -> Unit,

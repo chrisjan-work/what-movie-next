@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.data
 
-sealed class AMovie {
+sealed class Movie {
     open val appData: MovieData.AppData? = null
     open val searchData: MovieData.SearchData? = null
     open val detailData: MovieData.DetailData? = null
@@ -26,18 +26,18 @@ sealed class AMovie {
 
     data class ForSearch(
         override val searchData: MovieData.SearchData,
-    ) : AMovie()
+    ) : Movie()
 
     data class ForList(
         override val appData: MovieData.AppData,
         override val searchData: MovieData.SearchData,
         override val detailData: MovieData.DetailData,
-    ) : AMovie()
+    ) : Movie()
 
     data class ForCard(
         override val appData: MovieData.AppData,
         override val searchData: MovieData.SearchData,
         override val detailData: MovieData.DetailData,
         override val staffData: MovieData.StaffData,
-    ) : AMovie()
+    ) : Movie()
 }

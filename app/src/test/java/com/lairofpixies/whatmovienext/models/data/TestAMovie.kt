@@ -29,7 +29,7 @@ object TestAMovie {
         thumbnailUrl: String = "",
         coverUrl: String = "",
         genres: List<String> = emptyList(),
-    ) = AMovie.ForSearch(
+    ) = Movie.ForSearch(
         searchData =
             MovieData.SearchData(
                 title = title,
@@ -58,7 +58,7 @@ object TestAMovie {
         tagline: String = "",
         plot: String = "",
         runtimeMinutes: Int = 0,
-    ) = AMovie.ForList(
+    ) = Movie.ForList(
         appData =
             MovieData.AppData(
                 id = id,
@@ -101,7 +101,7 @@ object TestAMovie {
         tagline: String = "",
         plot: String = "",
         runtimeMinutes: Int = 0,
-    ) = AMovie.ForCard(
+    ) = Movie.ForCard(
         appData =
             MovieData.AppData(
                 id = id,

@@ -19,8 +19,8 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,8 +39,8 @@ class ArchiveViewModel
         private val _archivedMovies = MutableStateFlow<LoadingAMovie>(LoadingAMovie.Loading)
         val archivedMovies: StateFlow<LoadingAMovie> = _archivedMovies.asStateFlow()
 
-        private val _selection = MutableStateFlow(emptySet<AMovie.ForList>())
-        val selection: StateFlow<Set<AMovie.ForList>> = _selection.asStateFlow()
+        private val _selection = MutableStateFlow(emptySet<Movie.ForList>())
+        val selection: StateFlow<Set<Movie.ForList>> = _selection.asStateFlow()
 
         init {
             viewModelScope.launch {
@@ -50,11 +50,11 @@ class ArchiveViewModel
             }
         }
 
-        fun select(movie: AMovie.ForList) {
+        fun select(movie: Movie.ForList) {
             _selection.value = selection.value + movie
         }
 
-        fun deselect(movie: AMovie.ForList) {
+        fun deselect(movie: Movie.ForList) {
             _selection.value = selection.value - movie
         }
 

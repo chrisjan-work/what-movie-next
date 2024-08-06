@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.util.decodeToList
@@ -28,9 +28,9 @@ import javax.inject.Inject
 class DbMapper
     @Inject
     constructor() {
-        fun toCardMovie(dbMovie: DbMovie): AMovie.ForCard =
+        fun toCardMovie(dbMovie: DbMovie): Movie.ForCard =
             with(dbMovie) {
-                AMovie.ForCard(
+                Movie.ForCard(
                     appData =
                         MovieData.AppData(
                             id = id,
@@ -62,9 +62,9 @@ class DbMapper
                 )
             }
 
-        fun toListMovie(dbMovie: DbMovie): AMovie.ForList =
+        fun toListMovie(dbMovie: DbMovie): Movie.ForList =
             with(dbMovie) {
-                AMovie.ForList(
+                Movie.ForList(
                     appData =
                         MovieData.AppData(
                             id = id,
@@ -92,7 +92,7 @@ class DbMapper
                 )
             }
 
-        fun toDbMovie(cardMovie: AMovie.ForCard): DbMovie =
+        fun toDbMovie(cardMovie: Movie.ForCard): DbMovie =
             with(cardMovie) {
                 DbMovie(
                     id = appData.id,

@@ -19,8 +19,8 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
-import com.lairofpixies.whatmovienext.models.data.AMovie
 import com.lairofpixies.whatmovienext.models.data.LoadingAMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -62,7 +62,7 @@ class MovieCardViewModel
             viewModelScope.launch {
                 val movieId =
                     currentMovie.value
-                        .singleMovieOrNull<AMovie.ForCard>()
+                        .singleMovieOrNull<Movie.ForCard>()
                         ?.appData
                         ?.id ?: return@launch
                 repo.archiveMovie(movieId)

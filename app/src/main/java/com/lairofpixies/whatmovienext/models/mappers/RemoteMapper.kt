@@ -18,7 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
-import com.lairofpixies.whatmovienext.models.data.AMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.MovieData.UNKNOWN_ID
@@ -38,9 +38,9 @@ class RemoteMapper
         private val configRepo: ConfigRepository,
         private val genreRepository: GenreRepository,
     ) {
-        fun toSearchMovie(tmdbMovieBasic: TmdbMovieBasic): AMovie.ForSearch =
+        fun toSearchMovie(tmdbMovieBasic: TmdbMovieBasic): Movie.ForSearch =
             with(tmdbMovieBasic) {
-                AMovie.ForSearch(
+                Movie.ForSearch(
                     searchData =
                         MovieData.SearchData(
                             tmdbId = tmdbId,
@@ -54,9 +54,9 @@ class RemoteMapper
                 )
             }
 
-        fun toCardMovie(tmdbMovieExtended: TmdbMovieExtended): AMovie.ForCard =
+        fun toCardMovie(tmdbMovieExtended: TmdbMovieExtended): Movie.ForCard =
             with(tmdbMovieExtended) {
-                AMovie.ForCard(
+                Movie.ForCard(
                     appData =
                         MovieData.AppData(
                             id = NEW_ID,
