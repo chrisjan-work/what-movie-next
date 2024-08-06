@@ -50,6 +50,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
 import com.lairofpixies.whatmovienext.viewmodels.SearchViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
+import com.lairofpixies.whatmovienext.views.components.MovieCard
 import com.lairofpixies.whatmovienext.views.components.SearchResultsPicker
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
