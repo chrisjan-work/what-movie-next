@@ -47,4 +47,6 @@
     <string name="tmdbCredits"><![CDATA[Source: <a href=\"https://www.themoviedb.org/\">TMDB</a>]]></string>
     <string name="direction_and_writing">Direction and Writing</string>
     <string name="cast">Cast</string>
+    <string name="middle_dot">•</string>
+    <string name="directed_by_short">Dir.</string>
 </resources>

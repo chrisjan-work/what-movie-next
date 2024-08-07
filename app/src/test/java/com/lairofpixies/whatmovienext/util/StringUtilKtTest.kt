@@ -75,6 +75,35 @@ class StringUtilKtTest {
     }
 
     @Test
+    fun `printable year`() {
+        // empty
+        assertEquals(
+            "",
+            printableYear(null),
+        )
+        // year
+        assertEquals(
+            "1989",
+            printableYear(1989),
+        )
+        // pre+year
+        assertEquals(
+            "it is 1989",
+            printableYear(1989, pre = "it is "),
+        )
+        // pos+year
+        assertEquals(
+            "1989.",
+            printableYear(1989, pos = "."),
+        )
+        // pre+year+pos
+        assertEquals(
+            "->2002<-",
+            printableYear(2002, pre = "->", pos = "<-"),
+        )
+    }
+
+    @Test
     fun `printable running times`() {
         // empty
         assertEquals(

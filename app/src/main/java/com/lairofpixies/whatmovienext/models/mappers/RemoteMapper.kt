@@ -83,6 +83,7 @@ class RemoteMapper
                             tagline = tagline ?: "",
                             plot = summary ?: "",
                             runtimeMinutes = runtime ?: 0,
+                            directorNames = toDirectorNames(credits?.crew),
                         ),
                     staffData =
                         MovieData.StaffData(
@@ -134,6 +135,8 @@ class RemoteMapper
                 }
             }
         }
+
+        fun toDirectorNames(crew: List<TmdbCrewMember>?): List<String> = filterCrew(crew, Departments.Directors).map { it.name }
 
         fun toDbGenres(tmdbGenres: TmdbGenres): List<DbGenre> =
             tmdbGenres.genres.map { tmdbGenre ->

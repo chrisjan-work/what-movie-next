@@ -95,6 +95,7 @@ fun testCardMovieExtended(movieId: Long = NEW_ID): Movie.ForCard =
                 tagline = "Hasta la vista, baby.",
                 plot = "robots from the future",
                 runtimeMinutes = 137,
+                directorNames = listOf("Cameron"),
             ),
         staffData =
             MovieData.StaffData(
@@ -150,6 +151,7 @@ fun testListMovieExtended(): Movie.ForList =
                 tagline = "Hasta la vista, baby.",
                 plot = "robots from the future",
                 runtimeMinutes = 137,
+                directorNames = listOf("Cameron"),
             ),
     )
 
@@ -168,6 +170,7 @@ fun testDbMovieExtended(movieId: Long = NEW_ID): DbMovie =
         tagline = "Hasta la vista, baby.",
         plot = "robots from the future",
         runtimeMinutes = 137,
+        directorNames = "Cameron",
     )
 
 fun testDbStaff(movieId: Long = NEW_ID): List<DbStaff> =
