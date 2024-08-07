@@ -43,6 +43,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -56,6 +58,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Staff
@@ -100,8 +103,7 @@ fun MovieCard(
             ) {
                 CoverImage(
                     coverUrl = movie.searchData.coverUrl,
-                    Modifier
-                        .align(Alignment.CenterHorizontally),
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -159,24 +161,32 @@ fun CoverImage(
     coverUrl: String,
     modifier: Modifier = Modifier,
 ) {
-    if (coverUrl.isNotBlank()) {
-        AsyncImage(
-            model = coverUrl,
-            contentDescription = null,
-            modifier =
-                modifier
-                    .padding(2.dp)
-                    .width(720.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-        )
-    } else {
-        Box(
+    val imageState =
+        remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
+
+    Box(
+        modifier =
             modifier
-                .padding(2.dp)
-                .background(colorResource(id = R.color.missing_image))
-                .width(720.dp)
-                .clip(RoundedCornerShape(8.dp)),
-        )
+                .padding(8.dp)
+                .size(width = 320.dp, height = 480.dp)
+                .clip(RoundedCornerShape(12.dp)),
+    ) {
+        if (imageState.value !is AsyncImagePainter.State.Success) {
+            CoverPlaceholder(
+                isLoading = imageState.value is AsyncImagePainter.State.Loading,
+                modifier = Modifier,
+            )
+        }
+
+        if (coverUrl.isNotBlank()) {
+            AsyncImage(
+                model = coverUrl,
+                contentDescription = "",
+                onState = { state -> imageState.value = state },
+                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
+                contentScale = ContentScale.Crop,
+            )
+        }
     }
 }
 
@@ -319,37 +329,36 @@ fun MiniProfile(
     person: Staff,
     modifier: Modifier = Modifier,
 ) {
+    val imageState =
+        remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
     Column(
         modifier =
             modifier
                 .padding(2.dp)
-//                .border(
-//                    width = 1.dp,
-//                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
-//                    shape = RoundedCornerShape(4.dp),
-//                )
                 .width(100.dp)
                 .padding(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        if (person.faceUrl.isNotBlank()) {
-            AsyncImage(
-                model = person.faceUrl,
-                contentDescription = "",
-                modifier =
-                    modifier
-                        .size(width = 64.dp, height = 80.dp)
-                        .clip(RoundedCornerShape(4.dp)),
-                contentScale = ContentScale.Crop,
-            )
-        } else {
-            Box(
-                modifier =
-                    modifier
-                        .size(width = 64.dp, height = 80.dp)
-                        .background(color = colorResource(R.color.missing_image))
-                        .clip(RoundedCornerShape(4.dp)),
-            )
+        Box(modifier = Modifier.size(64.dp, 80.dp)) {
+            if (imageState.value !is AsyncImagePainter.State.Success) {
+                FacePlaceholder(
+                    isLoading = imageState.value is AsyncImagePainter.State.Loading,
+                    modifier = Modifier,
+                )
+            }
+
+            if (person.faceUrl.isNotBlank()) {
+                AsyncImage(
+                    model = person.faceUrl,
+                    onState = { state -> imageState.value = state },
+                    contentDescription = "",
+                    modifier =
+                        modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Crop,
+                )
+            }
         }
         Spacer(modifier = Modifier.height(6.dp))
         Text(
