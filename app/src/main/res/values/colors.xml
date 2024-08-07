@@ -17,6 +17,5 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-    <color name="missing_image">#FF666666</color>
     <color name="link">#ff4477ff</color>
 </resources>

@@ -37,14 +37,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.lairofpixies.whatmovienext.R
+import coil.compose.AsyncImagePainter
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 
@@ -84,7 +87,6 @@ fun SearchResultItem(
     data: MovieData.SearchData,
     onClick: () -> Unit,
 ) {
-    val missingThumbnailColor = colorResource(R.color.missing_image)
     Row(
         modifier =
             Modifier
@@ -100,24 +102,12 @@ fun SearchResultItem(
                     shape = RoundedCornerShape(8.dp),
                 ).padding(6.dp),
     ) {
-        if (data.thumbnailUrl.isNotBlank()) {
-            AsyncImage(
-                model = data.thumbnailUrl,
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(width = 68.dp, height = 102.dp)
-                        .align(Alignment.CenterVertically),
-            )
-        } else {
-            Spacer(
-                modifier =
-                    Modifier
-                        .size(width = 68.dp, height = 102.dp)
-                        .align(Alignment.CenterVertically)
-                        .background(missingThumbnailColor),
-            )
-        }
+        ThumbnailImage(
+            thumbnailUrl = data.thumbnailUrl,
+            modifier =
+                Modifier
+                    .align(Alignment.CenterVertically),
+        )
         Spacer(modifier = Modifier.size(16.dp))
         Column(
             modifier = Modifier.heightIn(min = 100.dp),
@@ -148,6 +138,42 @@ fun SearchResultItem(
                     fontStyle = FontStyle.Italic,
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun ThumbnailImage(
+    thumbnailUrl: String,
+    modifier: Modifier = Modifier,
+) {
+    val imageState =
+        remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
+
+    Box(
+        modifier =
+            modifier
+                .size(width = 68.dp, height = 102.dp)
+                .clip(RoundedCornerShape(4.dp)),
+    ) {
+        if (imageState.value !is AsyncImagePainter.State.Success) {
+            ThumbnailPlaceholder(
+                isLoading = imageState.value is AsyncImagePainter.State.Loading,
+                modifier = Modifier,
+            )
+        }
+
+        if (thumbnailUrl.isNotBlank()) {
+            AsyncImage(
+                model = thumbnailUrl,
+                contentDescription = "",
+                onState = { state -> imageState.value = state },
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(4.dp)),
+                contentScale = ContentScale.Crop,
+            )
         }
     }
 }
