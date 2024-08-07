@@ -95,6 +95,12 @@ fun String.toAnnotatedString(linkColor: Color = Color.Blue): AnnotatedString {
     }
 }
 
+fun printableYear(
+    year: Int?,
+    pre: String = "",
+    pos: String = "",
+): String = year?.let { "$pre$it$pos" } ?: ""
+
 fun printableRuntime(
     runtimeMinutes: Int,
     pre: String = "",

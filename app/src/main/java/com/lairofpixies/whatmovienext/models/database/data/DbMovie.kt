@@ -40,6 +40,7 @@ data class DbMovie(
     val plot: String = "",
     val genres: String = "",
     val runtimeMinutes: Int = 0,
+    val directorNames: String = "",
     val watchState: WatchState = WatchState.PENDING,
     val isArchived: Boolean = false,
 )

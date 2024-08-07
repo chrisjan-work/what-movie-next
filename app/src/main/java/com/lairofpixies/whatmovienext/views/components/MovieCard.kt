@@ -231,10 +231,11 @@ fun RuntimeAndGenresDisplay(
     genres: List<String>,
     modifier: Modifier = Modifier,
 ) {
+    val dot = stringResource(id = R.string.middle_dot)
     Text(
         modifier = modifier,
         text =
-            printableRuntime(runtimeMinutes = runtime, pos = "  •  ") +
+            printableRuntime(runtimeMinutes = runtime, pos = "  $dot  ") +
                 genres.joinToString(" / "),
         fontStyle = FontStyle.Italic,
         style = MaterialTheme.typography.bodySmall,

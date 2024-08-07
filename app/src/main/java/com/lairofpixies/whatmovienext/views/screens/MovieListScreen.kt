@@ -18,24 +18,44 @@
  */
 package com.lairofpixies.whatmovienext.views.screens
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.RemoveRedEye
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.util.printableRuntime
+import com.lairofpixies.whatmovienext.util.printableYear
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
-import com.lairofpixies.whatmovienext.views.components.DebugTitle
+import com.lairofpixies.whatmovienext.views.components.ThumbnailImage
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
@@ -88,16 +108,11 @@ fun MovieList(
     onMovieClicked: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
+    LazyColumn(
+        modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
     ) {
-        DebugTitle("Movie List")
-        LazyColumn(
-            modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
-        ) {
-            items(filteredMovies) { movie ->
-                MovieListItem(movie) { onMovieClicked(movie.appData.movieId) }
-            }
+        items(filteredMovies) { movie ->
+            MovieListItem(movie) { onMovieClicked(movie.appData.movieId) }
         }
     }
 }
@@ -107,25 +122,114 @@ fun MovieListItem(
     movie: Movie.ForList,
     onItemClicked: () -> Unit = {},
 ) {
-    val backgroundColor =
-        when (movie.appData.watchState) {
-            WatchState.PENDING -> Color.White
-            WatchState.WATCHED -> Color.LightGray
+    val bgColor =
+        if (movie.appData.watchState == WatchState.WATCHED) {
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.14f)
+        } else {
+            MaterialTheme.colorScheme.background
         }
-    val foregroundColor =
-        when (movie.appData.watchState) {
-            WatchState.PENDING -> Color.DarkGray
-            WatchState.WATCHED -> Color.Black
-        }
-
-    Text(
-        text = movie.searchData.title,
+    Row(
         modifier =
             Modifier
-                .background(backgroundColor)
-                .clickable { onItemClicked() },
-        color = foregroundColor,
+                .clickable(onClick = onItemClicked)
+                .padding(2.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .fillMaxWidth()
+                .background(bgColor)
+                .border(
+                    border =
+                        BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                        ),
+                    shape = RoundedCornerShape(8.dp),
+                ).padding(6.dp),
+    ) {
+        ThumbnailImage(
+            thumbnailUrl = movie.searchData.thumbnailUrl,
+            modifier =
+                Modifier
+                    .align(Alignment.CenterVertically),
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        Column(
+            modifier = Modifier.heightIn(min = 100.dp),
+        ) {
+            Text(
+                text = movie.searchData.title,
+                fontWeight = FontWeight.SemiBold,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            YearAndRuntimeDisplay(
+                movie.searchData.year,
+                movie.detailData.runtimeMinutes,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            if (movie.searchData.genres.isNotEmpty()) {
+                Text(
+                    text = movie.searchData.genres.joinToString(" / "),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontStyle = FontStyle.Italic,
+                )
+            }
+            if (movie.detailData.directorNames.isNotEmpty()) {
+                val names = movie.detailData.directorNames.joinToString(", ")
+                val intro = stringResource(R.string.directed_by_short)
+                Text(
+                    text = "$intro: $names",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontStyle = FontStyle.Italic,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.weight(1f))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            SeenDisplay(
+                movie.appData.watchState,
+            )
+        }
+    }
+}
+
+@Composable
+fun YearAndRuntimeDisplay(
+    year: Int?,
+    runtimeMinutes: Int,
+    modifier: Modifier = Modifier,
+) {
+    val dot = stringResource(id = R.string.middle_dot)
+    Text(
+        text = printableYear(year, pos = "  $dot  ") + printableRuntime(runtimeMinutes),
+        style = MaterialTheme.typography.bodySmall,
+        modifier = modifier,
     )
+}
+
+@Composable
+fun SeenDisplay(
+    watchState: WatchState,
+    modifier: Modifier = Modifier,
+) {
+    if (watchState == WatchState.WATCHED) {
+        val seenIcon = Icons.Outlined.RemoveRedEye
+        Icon(
+            imageVector = seenIcon,
+            contentDescription = "",
+            modifier =
+                modifier
+                    .padding(2.dp)
+                    .size(24.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f))
+                    .padding(2.dp),
+            tint = MaterialTheme.colorScheme.background.copy(alpha = 0.7f),
+        )
+    } else {
+        Spacer(modifier.padding(4.dp).size(24.dp))
+    }
 }
 
 fun bottomItemsForMovieList(

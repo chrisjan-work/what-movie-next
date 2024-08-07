@@ -60,6 +60,7 @@ class DbMapper
                             tagline = tagline,
                             plot = plot,
                             runtimeMinutes = runtimeMinutes,
+                            directorNames = toDirectorNames(staffedMovie.staff),
                         ),
                     staffData = toStaffData(staffedMovie.staff),
                 )
@@ -95,6 +96,11 @@ class DbMapper
                 )
             }
 
+        fun toDirectorNames(dbStaffers: List<DbStaff>): List<String> =
+            dbStaffers
+                .filter { Departments.Directors.matcher(it.role.dept, it.role.credit) }
+                .map { it.person.name }
+
         fun toListMovie(dbMovie: DbMovie): Movie.ForList =
             with(dbMovie) {
                 Movie.ForList(
@@ -121,6 +127,7 @@ class DbMapper
                             tagline = tagline,
                             plot = plot,
                             runtimeMinutes = runtimeMinutes,
+                            directorNames = toDirectorNames(directorNames),
                         ),
                 )
             }
@@ -141,6 +148,7 @@ class DbMapper
                     plot = detailData.plot,
                     genres = toDbGenres(searchData.genres),
                     runtimeMinutes = detailData.runtimeMinutes,
+                    directorNames = toDbDirectorNames(detailData.directorNames),
                     watchState = appData.watchState,
                     isArchived = appData.isArchived,
                 )
@@ -177,4 +185,8 @@ class DbMapper
         fun toGenres(dbGenres: String): List<String> = dbGenres.decodeToList()
 
         fun toDbGenres(genres: List<String>): String = genres.encodeToString()
+
+        fun toDirectorNames(names: String): List<String> = names.decodeToList()
+
+        fun toDbDirectorNames(directorNames: List<String>): String = directorNames.encodeToString()
     }
