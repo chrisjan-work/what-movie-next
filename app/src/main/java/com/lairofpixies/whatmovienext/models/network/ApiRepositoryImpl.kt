@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.PagedMovies
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -36,13 +37,16 @@ class ApiRepositoryImpl(
 ) : ApiRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
-    override fun findMoviesByTitle(title: String): Flow<AsyncMovie> =
+    override fun findMoviesByTitle(
+        title: String,
+        page: Int?,
+    ): Flow<PagedMovies> =
         flow {
-            emit(AsyncMovie.Loading)
+            emit(PagedMovies.Loading)
             val remoteMovies =
                 repositoryScope
                     .async {
-                        tmdbApi.findMoviesByTitle(escapeForQuery(title))
+                        tmdbApi.findMoviesByTitle(escapeForQuery(title), page)
                     }.await()
 
             val asyncMovie =
@@ -51,9 +55,15 @@ class ApiRepositoryImpl(
                         remoteMapper.toSearchMovie(remoteMovie)
                     },
                 )
-            emit(asyncMovie)
+            val pagedMovies =
+                PagedMovies(
+                    movies = asyncMovie,
+                    lastPage = remoteMovies.page,
+                    pagesLeft = remoteMovies.totalPages - remoteMovies.page,
+                )
+            emit(pagedMovies)
         }.catch { exception: Throwable ->
-            emit(AsyncMovie.Failed(exception))
+            emit(PagedMovies.Failed(exception))
         }
 
     private fun escapeForQuery(title: String) = title.trim().replace(" ", "+")

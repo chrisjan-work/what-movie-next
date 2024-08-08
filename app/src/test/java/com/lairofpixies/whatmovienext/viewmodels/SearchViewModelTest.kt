@@ -21,6 +21,8 @@ package com.lairofpixies.whatmovienext.viewmodels
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.PagedMovies
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forSearch
@@ -91,7 +93,7 @@ class SearchViewModelTest {
                     forSearch(title = "Three times a lady"),
                 )
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                flowOf(AsyncMovie.fromList(searchResults))
+                flowOf(PagedMovies.fromList(searchResults))
 
             searchViewModel.updateSearchQuery(SearchQuery(title = "Forever young"))
             searchViewModel.startSearch()
@@ -143,10 +145,9 @@ class SearchViewModelTest {
     fun `search and find a movie`() =
         runTest {
             // Given
-            val foundMovie =
-                AsyncMovie.Single(forSearch(tmdbId = 1007, title = "From Russia with Love"))
+            val foundMovie = forSearch(tmdbId = 1007, title = "From Russia with Love")
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                flowOf(foundMovie)
+                flowOf(PagedMovies(AsyncMovie.Single(foundMovie)))
 
             val detailMovie =
                 AsyncMovie.Single(forCard(tmdbId = 1007, title = "From Russia with Love"))
@@ -165,23 +166,22 @@ class SearchViewModelTest {
     fun `search and find multiple movies`() =
         runTest {
             // Given
-            val asyncMovies =
-                AsyncMovie.Multiple(
-                    listOf(
-                        forSearch(title = "Live and let die"),
-                        forSearch(title = "Moonraker"),
-                        forSearch(title = "Octopussy"),
-                    ),
+            val returnedMovies =
+                listOf(
+                    forSearch(title = "Live and let die"),
+                    forSearch(title = "Moonraker"),
+                    forSearch(title = "Octopussy"),
                 )
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                flowOf(asyncMovies)
+                flowOf(PagedMovies.fromList(returnedMovies))
             searchViewModel.updateSearchQuery(SearchQuery(title = "Bond"))
 
             // When
             searchViewModel.startSearch()
 
             // Then
-            assertEquals(asyncMovies, searchViewModel.searchResults.value)
+            val result = searchViewModel.searchResults.value.toList<Movie.ForSearch>()
+            assertEquals(returnedMovies, result)
         }
 
     @Test
@@ -189,7 +189,7 @@ class SearchViewModelTest {
         runTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                flowOf(AsyncMovie.Empty)
+                flowOf(PagedMovies.Empty)
             searchViewModel.updateSearchQuery(SearchQuery(title = "nothing"))
 
             // When
@@ -204,7 +204,7 @@ class SearchViewModelTest {
         runTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                flowOf(AsyncMovie.Failed(Exception()))
+                flowOf(PagedMovies.Failed(Exception()))
             searchViewModel.updateSearchQuery(SearchQuery(title = "failure"))
 
             // When
@@ -232,7 +232,7 @@ class SearchViewModelTest {
         runTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                flowOf(AsyncMovie.Loading)
+                flowOf(PagedMovies.Loading)
             searchViewModel.updateSearchQuery(SearchQuery(title = "anything"))
 
             // When
@@ -247,7 +247,7 @@ class SearchViewModelTest {
         runTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                flowOf(AsyncMovie.Loading)
+                flowOf(PagedMovies.Loading)
             searchViewModel.updateSearchQuery(SearchQuery(title = "stuck"))
             searchViewModel.startSearch()
 
@@ -366,7 +366,7 @@ class SearchViewModelTest {
             // Given
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
                 flowOf(
-                    AsyncMovie.fromList(
+                    PagedMovies.fromList(
                         listOf(
                             forSearch(title = "ABC"),
                             forSearch(title = "CDE"),

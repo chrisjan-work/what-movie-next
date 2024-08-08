@@ -30,6 +30,7 @@ interface TmdbApi {
     @GET("search/movie")
     suspend fun findMoviesByTitle(
         @Query("query") escapedTitle: String,
+        @Query("page") page: Int? = null,
     ): TmdbSearchResults
 
     @GET("configuration")

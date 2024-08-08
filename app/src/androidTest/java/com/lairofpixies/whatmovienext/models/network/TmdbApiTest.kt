@@ -62,7 +62,10 @@ class TmdbApiTest {
                 MockResponse()
                     .setResponseCode(200)
                     .setBody(
-                        """{ "results" : [ { "id": 1, "title": "example title" }, { "id": 3, "title": "example title 2: the revenge" } ] }""",
+                        """{ 
+                            "results" : [ { "id": 1, "title": "example title" }, { "id": 3, "title": "example title 2: the revenge" } ], 
+                            "page": 2, "total_pages": 5 }
+                        """.trimMargin(),
                     )
             mockWebServer.enqueue(mockResponse)
 
@@ -76,6 +79,8 @@ class TmdbApiTest {
                     TmdbMovieBasic(tmdbId = 3, title = "example title 2: the revenge"),
                 )
             assertEquals(expectedMovies, result.results)
+            assertEquals(2, result.page)
+            assertEquals(5, result.totalPages)
         }
 
     @Test

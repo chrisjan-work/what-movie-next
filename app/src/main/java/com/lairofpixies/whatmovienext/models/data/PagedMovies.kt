@@ -16,17 +16,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.network
+package com.lairofpixies.whatmovienext.models.data
 
-import com.lairofpixies.whatmovienext.models.data.AsyncMovie
-import com.lairofpixies.whatmovienext.models.data.PagedMovies
-import kotlinx.coroutines.flow.Flow
+data class PagedMovies(
+    val movies: AsyncMovie,
+    // always load incrementally
+    val lastPage: Int = 1,
+    val pagesLeft: Int = 0,
+) {
+    companion object {
+        val Loading = PagedMovies(AsyncMovie.Loading)
 
-interface ApiRepository {
-    fun findMoviesByTitle(
-        title: String,
-        page: Int? = null,
-    ): Flow<PagedMovies>
+        val Empty = PagedMovies(AsyncMovie.Empty)
 
-    fun getMovieDetails(tmdbId: Long): Flow<AsyncMovie>
+        @Suppress("ktlint:standard:function-naming")
+        fun Failed(trowable: Throwable) = PagedMovies(AsyncMovie.Failed(trowable))
+
+        fun fromList(movies: List<Movie>) = PagedMovies(AsyncMovie.fromList(movies))
+    }
 }
