@@ -28,7 +28,8 @@ import com.lairofpixies.whatmovienext.models.network.ConfigRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizer
 import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizerImpl
 import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
-import com.lairofpixies.whatmovienext.models.network.RequestHeaderInterceptor
+import com.lairofpixies.whatmovienext.models.network.OmdbApi
+import com.lairofpixies.whatmovienext.models.network.RequestInterceptorFactory
 import com.lairofpixies.whatmovienext.models.network.TmdbApi
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.squareup.moshi.Moshi
@@ -59,15 +60,15 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient =
-        OkHttpClient
-            .Builder()
-            .addInterceptor(RequestHeaderInterceptor())
-            .build()
+    fun provideTmdbApi(): TmdbApi {
+        val interceptor = RequestInterceptorFactory.tmdbInterceptor()
 
-    @Provides
-    @Singleton
-    fun provideMovieApi(okHttpClient: OkHttpClient): TmdbApi {
+        val okHttpClient: OkHttpClient =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(interceptor)
+                .build()
+
         val moshi =
             Moshi
                 .Builder()
@@ -81,6 +82,32 @@ object ApiModule {
             .client(okHttpClient)
             .build()
             .create(TmdbApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOmdbApi(): OmdbApi {
+        val interceptor = RequestInterceptorFactory.omdbInterceptor()
+
+        val okHttpClient: OkHttpClient =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(interceptor)
+                .build()
+
+        val moshi =
+            Moshi
+                .Builder()
+                .add(KotlinJsonAdapterFactory())
+                .build()
+
+        return Retrofit
+            .Builder()
+            .baseUrl(BuildConfig.omdburl)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(okHttpClient)
+            .build()
+            .create(OmdbApi::class.java)
     }
 
     @Provides

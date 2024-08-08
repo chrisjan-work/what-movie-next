@@ -18,17 +18,13 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
-import com.lairofpixies.whatmovienext.BuildConfig
-import okhttp3.Interceptor
-import okhttp3.Request
-import okhttp3.Response
+import com.lairofpixies.whatmovienext.models.network.data.OmdbMovieInfo
+import retrofit2.http.GET
+import retrofit2.http.Query
 
-class RequestHeaderInterceptor : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response = chain.proceed(chain.request().injectHeaders())
-
-    private fun Request.injectHeaders() =
-        newBuilder()
-            .header("Authorization", "Bearer ${BuildConfig.tmdbtoken}")
-            .header("User-Agent", BuildConfig.tmdbuseragent)
-            .build()
+interface OmdbApi {
+    @GET("/")
+    suspend fun fetchMovieRatings(
+        @Query("i") imdbId: String,
+    ): OmdbMovieInfo
 }
