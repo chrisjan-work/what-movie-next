@@ -20,10 +20,16 @@ package com.lairofpixies.whatmovienext.models.data
 
 data class PagedMovies(
     val movies: AsyncMovie,
-    // always load incrementally
     val lastPage: Int = 1,
     val pagesLeft: Int = 0,
 ) {
+    inline fun <reified T : Movie> addTo(head: List<T>): PagedMovies =
+        if (movies.isResult() && head.isNotEmpty()) {
+            copy(movies = AsyncMovie.fromList(head + movies.toList<T>()))
+        } else {
+            this
+        }
+
     companion object {
         val Loading = PagedMovies(AsyncMovie.Loading)
 

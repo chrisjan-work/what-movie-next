@@ -75,3 +75,11 @@ fun AsyncMovie?.hasMovie(): Boolean =
             this is AsyncMovie.Single ||
                 this is AsyncMovie.Multiple
         )
+
+fun AsyncMovie?.isResult(): Boolean =
+    this != null &&
+        (
+            this is AsyncMovie.Single ||
+                this is AsyncMovie.Multiple ||
+                this is AsyncMovie.Empty
+        )
