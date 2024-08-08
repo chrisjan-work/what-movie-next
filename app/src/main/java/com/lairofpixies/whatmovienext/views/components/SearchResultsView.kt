@@ -174,7 +174,7 @@ fun ThumbnailImage(
     Box(
         modifier =
             modifier
-                .size(width = 68.dp, height = 102.dp)
+                .size(width = 76.dp, height = 116.dp)
                 .clip(RoundedCornerShape(4.dp)),
     ) {
         if (imageState.value !is AsyncImagePainter.State.Success) {
