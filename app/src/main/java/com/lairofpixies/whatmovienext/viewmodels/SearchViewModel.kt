@@ -22,6 +22,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.PagedMovies
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
@@ -52,9 +53,9 @@ class SearchViewModel
         private val _selectedMovie = MutableStateFlow<AsyncMovie>(AsyncMovie.Empty)
         val selectedMovie = _selectedMovie.asStateFlow()
 
-        private val _searchResults: MutableStateFlow<AsyncMovie> =
-            MutableStateFlow(AsyncMovie.Empty)
-        val searchResults: StateFlow<AsyncMovie> = _searchResults.asStateFlow()
+        private val _searchResults: MutableStateFlow<PagedMovies> =
+            MutableStateFlow(PagedMovies.Empty)
+        val searchResults: StateFlow<PagedMovies> = _searchResults.asStateFlow()
 
         private var searchJob: Job? = null
 
@@ -63,7 +64,7 @@ class SearchViewModel
         }
 
         fun switchToSearchResults() {
-            if (searchResults.value is AsyncMovie.Multiple) {
+            if (searchResults.value.movies is AsyncMovie.Multiple) {
                 _searchState.value = SearchState.RESULTS
             } else {
                 switchToSearchEntry()
@@ -98,8 +99,7 @@ class SearchViewModel
                     }
 
                     apiRepo.findMoviesByTitle(title = currentQuery.value.title).collect { results ->
-                        val asyncMovie = results.movies
-                        when (asyncMovie) {
+                        when (val asyncMovie = results.movies) {
                             is AsyncMovie.Loading -> {
                                 updateBusyDisplay(true)
                             }
@@ -126,7 +126,7 @@ class SearchViewModel
                             }
 
                             is AsyncMovie.Multiple -> {
-                                _searchResults.value = asyncMovie
+                                _searchResults.value = results
                                 switchToSearchResults()
                             }
                         }
@@ -142,7 +142,7 @@ class SearchViewModel
         }
 
         private fun clearSearchResults(resetBusyDisplay: Boolean = true) {
-            _searchResults.value = AsyncMovie.Empty
+            _searchResults.value = PagedMovies.Empty
             if (resetBusyDisplay) {
                 updateBusyDisplay(false)
             }
@@ -212,7 +212,7 @@ class SearchViewModel
                 SearchState.ENTRY -> onLeaveAction()
                 SearchState.RESULTS -> switchToSearchEntry()
                 SearchState.CHOICE -> {
-                    if (searchResults.value is AsyncMovie.Multiple) {
+                    if (searchResults.value.movies is AsyncMovie.Multiple) {
                         switchToSearchResults()
                     } else {
                         switchToSearchEntry()

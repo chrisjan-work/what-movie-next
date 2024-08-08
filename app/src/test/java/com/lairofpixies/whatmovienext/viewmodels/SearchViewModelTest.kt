@@ -21,7 +21,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.PagedMovies
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
@@ -172,16 +171,17 @@ class SearchViewModelTest {
                     forSearch(title = "Moonraker"),
                     forSearch(title = "Octopussy"),
                 )
+            val pagedMovies = PagedMovies.fromList(returnedMovies)
             coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
-                flowOf(PagedMovies.fromList(returnedMovies))
+                flowOf(pagedMovies)
             searchViewModel.updateSearchQuery(SearchQuery(title = "Bond"))
 
             // When
             searchViewModel.startSearch()
 
             // Then
-            val result = searchViewModel.searchResults.value.toList<Movie.ForSearch>()
-            assertEquals(returnedMovies, result)
+            val result = searchViewModel.searchResults.value
+            assertEquals(pagedMovies, result)
         }
 
     @Test
