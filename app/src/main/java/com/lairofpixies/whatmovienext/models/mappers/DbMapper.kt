@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.models.mappers
 import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
+import com.lairofpixies.whatmovienext.models.data.Rating
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
@@ -61,6 +62,8 @@ class DbMapper
                             plot = plot,
                             runtimeMinutes = runtimeMinutes,
                             directorNames = toDirectorNames(staffedMovie.staff),
+                            rtRating = toRtRating(rtRating),
+                            mcRating = toMcRating(mcRating),
                         ),
                     staffData = toStaffData(staffedMovie.staff),
                 )
@@ -128,6 +131,8 @@ class DbMapper
                             plot = plot,
                             runtimeMinutes = runtimeMinutes,
                             directorNames = toDirectorNames(directorNames),
+                            rtRating = toRtRating(rtRating),
+                            mcRating = toMcRating(mcRating),
                         ),
                 )
             }
@@ -149,6 +154,8 @@ class DbMapper
                     genres = toDbGenres(searchData.genres),
                     runtimeMinutes = detailData.runtimeMinutes,
                     directorNames = toDbDirectorNames(detailData.directorNames),
+                    rtRating = detailData.rtRating?.percentValue,
+                    mcRating = detailData.mcRating?.percentValue,
                     watchState = appData.watchState,
                     isArchived = appData.isArchived,
                 )
@@ -189,4 +196,22 @@ class DbMapper
         fun toDirectorNames(names: String): List<String> = names.decodeToList()
 
         fun toDbDirectorNames(directorNames: List<String>): String = directorNames.encodeToString()
+
+        fun toRtRating(rtRating: Int?): Rating? =
+            rtRating?.let {
+                Rating(
+                    source = Rating.Rater.RottenTomatoes,
+                    percentValue = rtRating,
+                    displayValue = "$rtRating%",
+                )
+            }
+
+        fun toMcRating(mcRating: Int?): Rating? =
+            mcRating?.let {
+                Rating(
+                    source = Rating.Rater.Metacritic,
+                    percentValue = mcRating,
+                    displayValue = "$mcRating/100",
+                )
+            }
     }
