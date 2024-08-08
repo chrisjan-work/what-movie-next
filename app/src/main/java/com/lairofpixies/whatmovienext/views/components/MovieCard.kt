@@ -20,12 +20,16 @@ package com.lairofpixies.whatmovienext.views.components
 
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,6 +56,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -70,6 +75,7 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 @Composable
 fun MovieCard(
     movie: Movie.ForCard,
+    showLinks: Boolean,
     bottomItems: List<CustomBarItem>,
     modifier: Modifier = Modifier,
 ) {
@@ -101,10 +107,48 @@ fun MovieCard(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                CoverImage(
-                    coverUrl = movie.searchData.coverUrl,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                )
+                Row {
+                    Spacer(modifier = Modifier.weight(1f))
+                    CoverImage(
+                        coverUrl = movie.searchData.coverUrl,
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Column(
+                        modifier =
+                            Modifier
+                                .height(height = 480.dp)
+                                .padding(top = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        if (movie.detailData.mcRating != null) {
+                            RatingRow(
+                                logo = R.drawable.metacritic,
+                                text =
+                                    movie.detailData.mcRating.percentValue
+                                        .toString(),
+                                modifier = Modifier.alpha(0.8f),
+                            )
+                        }
+                        if (movie.detailData.rtRating != null) {
+                            RatingRow(
+                                logo = R.drawable.rotten_tomatoes,
+                                text = movie.detailData.rtRating.displayValue,
+                                modifier = Modifier.alpha(0.8f),
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        if (showLinks) {
+                            ClickableLogo(
+                                logo = R.drawable.imdb,
+                                url = stringResource(R.string.imdb_url) + movie.detailData.imdbId,
+                            )
+                            ClickableLogo(
+                                logo = R.drawable.tmdb,
+                                url = stringResource(R.string.tmdb_url) + movie.searchData.tmdbId,
+                            )
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -166,7 +210,7 @@ fun CoverImage(
 
     Box(
         modifier =
-            modifier
+            Modifier
                 .padding(8.dp)
                 .size(width = 320.dp, height = 480.dp)
                 .clip(RoundedCornerShape(12.dp)),
@@ -183,11 +227,79 @@ fun CoverImage(
                 model = coverUrl,
                 contentDescription = "",
                 onState = { state -> imageState.value = state },
-                modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(16.dp)),
                 contentScale = ContentScale.Crop,
             )
         }
     }
+}
+
+@Composable
+fun RatingRow(
+    @DrawableRes logo: Int,
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            painter = painterResource(id = logo),
+            contentDescription = "",
+            modifier =
+                modifier
+                    .padding(4.dp)
+                    .size(20.dp),
+        )
+
+        Text(
+            text,
+            style = MaterialTheme.typography.labelLarge,
+            fontStyle = FontStyle.Italic,
+            textAlign = TextAlign.Center,
+            modifier =
+                modifier
+                    .padding(top = 12.dp)
+                    .size(30.dp),
+        )
+    }
+}
+
+@Composable
+fun ClickableLogo(
+    @DrawableRes logo: Int,
+    modifier: Modifier = Modifier,
+    url: String? = null,
+) {
+    val context = LocalContext.current
+
+    val borderColor =
+        MaterialTheme.colorScheme.onBackground.copy(
+            alpha = if (url != null) 0.2f else 0f,
+        )
+
+    Image(
+        painter = painterResource(id = logo),
+        contentDescription = "",
+        modifier =
+            modifier
+                .padding(4.dp)
+                .border(
+                    width = 1.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(8.dp),
+                ).padding(10.dp)
+                .size(36.dp)
+                .clickable {
+                    url?.let {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        context.startActivity(intent)
+                    }
+                },
+    )
 }
 
 @Composable
