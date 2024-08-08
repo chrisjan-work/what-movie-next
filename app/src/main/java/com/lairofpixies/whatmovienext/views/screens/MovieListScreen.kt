@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.views.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,14 +45,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.Rating
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.printableYear
@@ -145,6 +152,7 @@ fun MovieListItem(
                     shape = RoundedCornerShape(8.dp),
                 ).padding(6.dp),
     ) {
+        val maxWidth = if (movie.appData.watchState == WatchState.WATCHED) 260.dp else 320.dp
         ThumbnailImage(
             thumbnailUrl = movie.searchData.thumbnailUrl,
             modifier =
@@ -153,7 +161,10 @@ fun MovieListItem(
         )
         Spacer(modifier = Modifier.size(16.dp))
         Column(
-            modifier = Modifier.heightIn(min = 100.dp),
+            modifier =
+                Modifier
+                    .heightIn(min = 120.dp)
+                    .widthIn(max = maxWidth),
         ) {
             Text(
                 text = movie.searchData.title,
@@ -163,6 +174,11 @@ fun MovieListItem(
             YearAndRuntimeDisplay(
                 movie.searchData.year,
                 movie.detailData.runtimeMinutes,
+            )
+            RatingsDisplay(
+                movie.detailData.mcRating,
+                movie.detailData.rtRating,
+                modifier = Modifier.alpha(0.8f),
             )
             Spacer(modifier = Modifier.weight(1f))
             if (movie.searchData.genres.isNotEmpty()) {
@@ -182,11 +198,9 @@ fun MovieListItem(
                 )
             }
         }
-        Spacer(modifier = Modifier.size(8.dp))
-        Spacer(modifier = Modifier.weight(1f))
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+        if (movie.appData.watchState == WatchState.WATCHED) {
+            Spacer(modifier = Modifier.size(8.dp))
+            Spacer(modifier = Modifier.weight(1f))
             SeenDisplay(
                 movie.appData.watchState,
             )
@@ -228,8 +242,74 @@ fun SeenDisplay(
             tint = MaterialTheme.colorScheme.background.copy(alpha = 0.7f),
         )
     } else {
-        Spacer(modifier.padding(4.dp).size(24.dp))
+        Spacer(
+            modifier
+                .padding(2.dp)
+                .size(24.dp),
+        )
     }
+}
+
+@Composable
+fun RatingsDisplay(
+    mcRating: Rating?,
+    rtRating: Rating?,
+    modifier: Modifier = Modifier,
+) {
+    Row {
+        if (mcRating != null) {
+            MetacriticIcon(modifier = modifier)
+            RatingDisplay(
+                mcRating.displayValue,
+                modifier = modifier,
+            )
+        }
+        if (rtRating != null) {
+            RottenTomatoesIcon(modifier = modifier)
+            RatingDisplay(
+                rtRating.displayValue,
+                modifier = modifier,
+            )
+        }
+    }
+}
+
+@Composable
+fun MetacriticIcon(modifier: Modifier = Modifier) {
+    Image(
+        painterResource(R.drawable.metacritic),
+        contentDescription = "",
+        modifier =
+            modifier
+                .padding(2.dp)
+                .size(16.dp),
+    )
+}
+
+@Composable
+fun RottenTomatoesIcon(modifier: Modifier = Modifier) {
+    Image(
+        painterResource(R.drawable.rotten_tomatoes),
+        contentDescription = "",
+        modifier =
+            modifier
+                .padding(2.dp)
+                .size(16.dp),
+        colorFilter = ColorFilter.tint(Color.Red),
+    )
+}
+
+@Composable
+fun RatingDisplay(
+    rating: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = rating,
+        style = MaterialTheme.typography.bodySmall,
+        modifier = modifier.padding(2.dp),
+        color = MaterialTheme.colorScheme.onBackground,
+    )
 }
 
 fun bottomItemsForMovieList(
