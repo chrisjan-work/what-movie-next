@@ -49,4 +49,6 @@
     <string name="cast">Cast</string>
     <string name="middle_dot">•</string>
     <string name="directed_by_short">Dir.</string>
+    <string name="imdb_url">https://www.imdb.com/title/</string>
+    <string name="tmdb_url">https://www.themoviedb.org/movie/</string>
 </resources>

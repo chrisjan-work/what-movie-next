@@ -112,6 +112,7 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
             selectedMovie.singleMovieOrNull<Movie.ForCard>()?.let { movie ->
                 MovieCard(
                     movie = movie,
+                    showLinks = false,
                     bottomItems =
                         bottomItemsForChoiceView(
                             onCancelAction = { searchViewModel.onLeaveAction() },

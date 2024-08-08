@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.views.screens
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -47,8 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -258,14 +257,20 @@ fun RatingsDisplay(
 ) {
     Row {
         if (mcRating != null) {
-            MetacriticIcon(modifier = modifier)
+            RatingIcon(
+                R.drawable.metacritic,
+                modifier = modifier,
+            )
             RatingDisplay(
                 mcRating.displayValue,
                 modifier = modifier,
             )
         }
         if (rtRating != null) {
-            RottenTomatoesIcon(modifier = modifier)
+            RatingIcon(
+                R.drawable.rotten_tomatoes,
+                modifier = modifier,
+            )
             RatingDisplay(
                 rtRating.displayValue,
                 modifier = modifier,
@@ -275,27 +280,17 @@ fun RatingsDisplay(
 }
 
 @Composable
-fun MetacriticIcon(modifier: Modifier = Modifier) {
+fun RatingIcon(
+    @DrawableRes resource: Int,
+    modifier: Modifier = Modifier,
+) {
     Image(
-        painterResource(R.drawable.metacritic),
+        painterResource(resource),
         contentDescription = "",
         modifier =
             modifier
                 .padding(2.dp)
                 .size(16.dp),
-    )
-}
-
-@Composable
-fun RottenTomatoesIcon(modifier: Modifier = Modifier) {
-    Image(
-        painterResource(R.drawable.rotten_tomatoes),
-        contentDescription = "",
-        modifier =
-            modifier
-                .padding(2.dp)
-                .size(16.dp),
-        colorFilter = ColorFilter.tint(Color.Red),
     )
 }
 
