@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +55,7 @@ import com.lairofpixies.whatmovienext.models.data.MovieData
 @Composable
 fun SearchResultsPicker(
     searchResults: List<Movie.ForSearch>,
+    scrollState: LazyListState,
     onResultSelected: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -68,6 +70,7 @@ fun SearchResultsPicker(
                 .fillMaxSize(),
     ) {
         LazyColumn(
+            state = scrollState,
             modifier = modifier,
         ) {
             items(searchResults) { movie ->
