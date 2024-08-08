@@ -172,8 +172,7 @@ fun MovieCard(
                     modifier = Modifier.weight(1f),
                 )
 
-                CreditsLink(
-                    text = stringResource(R.string.tmdbCredits),
+                CreditsRow(
                     modifier =
                         Modifier
                             .align(Alignment.End)
@@ -498,6 +497,31 @@ fun MovieLinks(
 }
 
 @Composable
+fun CreditsRow(modifier: Modifier = Modifier) {
+    Row(modifier = modifier) {
+        Text(
+            text = stringResource(id = R.string.sources),
+            style = MaterialTheme.typography.labelSmall,
+            fontStyle = FontStyle.Italic,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier.padding(4.dp),
+        )
+        CreditsLink(
+            text = stringResource(R.string.tmdb_credits),
+        )
+        CreditsLink(
+            text = stringResource(R.string.omdb_credits),
+        )
+        CreditsLink(
+            text = stringResource(R.string.iconduck_credits),
+        )
+        CreditsLink(
+            text = stringResource(R.string.icon8_credits),
+        )
+    }
+}
+
+@Composable
 fun CreditsLink(
     text: String,
     modifier: Modifier = Modifier,
@@ -511,14 +535,16 @@ fun CreditsLink(
         fontStyle = FontStyle.Italic,
         color = MaterialTheme.colorScheme.onBackground,
         modifier =
-            modifier.clickable {
-                annotatedString
-                    .getStringAnnotations(tag = "URL", start = 0, end = text.length)
-                    .firstOrNull()
-                    ?.let { annotation ->
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
-                        context.startActivity(intent)
-                    }
-            },
+            modifier
+                .padding(4.dp)
+                .clickable {
+                    annotatedString
+                        .getStringAnnotations(tag = "URL", start = 0, end = text.length)
+                        .firstOrNull()
+                        ?.let { annotation ->
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
+                            context.startActivity(intent)
+                        }
+                },
     )
 }
