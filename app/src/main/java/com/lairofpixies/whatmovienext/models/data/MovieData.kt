@@ -42,6 +42,8 @@ object MovieData {
         val plot: String = "",
         val runtimeMinutes: Int = 0,
         val directorNames: List<String> = emptyList(),
+        val rtRating: Rating? = null,
+        val mcRating: Rating? = null,
     )
 
     data class StaffData(

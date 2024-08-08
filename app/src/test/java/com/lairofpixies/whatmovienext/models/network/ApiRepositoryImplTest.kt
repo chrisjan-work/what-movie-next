@@ -23,6 +23,7 @@ import com.lairofpixies.whatmovienext.models.data.TestMovie
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
+import com.lairofpixies.whatmovienext.models.mappers.testOmdbMovieRatings
 import com.lairofpixies.whatmovienext.models.mappers.testTmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
@@ -46,6 +47,7 @@ import retrofit2.Response
 @OptIn(ExperimentalCoroutinesApi::class)
 class ApiRepositoryImplTest {
     private lateinit var tmdbApi: TmdbApi
+    private lateinit var omdbApi: OmdbApi
     private lateinit var configRepo: ConfigRepository
     private lateinit var genreRepository: GenreRepository
     private lateinit var remoteMapper: RemoteMapper
@@ -54,6 +56,7 @@ class ApiRepositoryImplTest {
     @Before
     fun setUp() {
         tmdbApi = mockk(relaxed = true)
+        omdbApi = mockk(relaxed = true)
         configRepo = mockk(relaxed = true)
         genreRepository = mockk(relaxed = true)
         remoteMapper = RemoteMapper(configRepo, genreRepository)
@@ -63,6 +66,7 @@ class ApiRepositoryImplTest {
         apiRepository =
             ApiRepositoryImpl(
                 tmdbApi,
+                omdbApi,
                 remoteMapper,
                 ioDispatcher = UnconfinedTestDispatcher(testScheduler),
             )
@@ -187,9 +191,10 @@ class ApiRepositoryImplTest {
         runTest {
             // Given
             coEvery { tmdbApi.getMovieDetails(any()) } returns testTmdbMovieExtended()
+            coEvery { omdbApi.fetchMovieRatings(any()) } returns testOmdbMovieRatings()
             remoteMapper =
                 mockk(relaxed = true) {
-                    every { toCardMovie(any<TmdbMovieExtended>()) } returns testCardMovieExtended()
+                    every { toCardMovie(any<TmdbMovieExtended>(), any()) } returns testCardMovieExtended()
                 }
             initializeSut()
 

@@ -18,9 +18,12 @@
  */
 package com.lairofpixies.whatmovienext.models.mappers
 
+import com.lairofpixies.whatmovienext.models.data.Rating
+import com.lairofpixies.whatmovienext.models.data.RatingMap
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
+import com.lairofpixies.whatmovienext.models.network.data.OmdbMovieInfo
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import io.mockk.every
@@ -107,6 +110,55 @@ class RemoteMapperTest {
     }
 
     @Test
+    fun `parse percentage from string`() {
+        // Given
+        val percentageMatrix =
+            listOf(
+                "100%" to 100,
+                "12.25%" to 12,
+                "30%" to 30,
+                "3/5" to 60,
+                "71/100" to 71,
+                "7" to 7,
+                "nope" to 0,
+            )
+
+        // When
+        percentageMatrix.map { (percentage, expected) ->
+            assertEquals(expected, remoteMapper.toPercent(percentage))
+        }
+    }
+
+    @Test
+    fun `parse ratings`() {
+        // Given
+        val ratings = testOmdbMovieRatings()
+
+        // When
+        val result = remoteMapper.toRatings(ratings)
+
+        // Then
+        val expected = testRatingMap()
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `null or failing ratings`() {
+        // Given
+        val noInfo: OmdbMovieInfo? = null
+        val failedInfo =
+            OmdbMovieInfo(
+                success = "False",
+                errorMessage = "Whatever",
+            )
+
+        val noRatings: RatingMap = emptyMap()
+        assertEquals(noRatings, remoteMapper.toRatings(noInfo))
+        assertEquals(noRatings, remoteMapper.toRatings(failedInfo))
+    }
+
+    @Test
     fun `convert movie from search results`() {
         // Given
         every { configRepo.getThumbnailUrl(any()) } answers {
@@ -157,11 +209,23 @@ class RemoteMapperTest {
         every { genreRepository.genreNamesByTmdbIds(listOf(188)) } returns listOf("Action")
 
         // When
-        val result = remoteMapper.toCardMovie(testTmdbMovieExtended())
+        val ratings = testRatingMap()
+        val result = remoteMapper.toCardMovie(testTmdbMovieExtended(), ratings)
 
         // Then
+        // TODO: remove this when ratings are part of db
+        val expected =
+            testCardMovieExtended().removeCreationTime().run {
+                copy(
+                    detailData =
+                        detailData.copy(
+                            rtRating = ratings[Rating.Rater.RottenTomatoes],
+                            mcRating = ratings[Rating.Rater.Metacritic],
+                        ),
+                )
+            }
         assertEquals(
-            testCardMovieExtended().removeCreationTime(),
+            expected,
             result.removeCreationTime(),
         )
     }
