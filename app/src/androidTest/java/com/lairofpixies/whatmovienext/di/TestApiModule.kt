@@ -56,9 +56,16 @@ import javax.inject.Singleton
 object TestApiModule {
     @Provides
     fun provideApiRepository(
-        movieApi: TestTmdbApi,
+        tmdbApi: TestTmdbApi,
+        omdbApi: TestOmdbApi,
         remoteMapper: RemoteMapper,
-    ): ApiRepository = ApiRepositoryImpl(movieApi, remoteMapper, Dispatchers.IO)
+    ): ApiRepository =
+        ApiRepositoryImpl(
+            tmdbApi,
+            omdbApi,
+            remoteMapper,
+            Dispatchers.IO,
+        )
 
     @Singleton
     @Provides

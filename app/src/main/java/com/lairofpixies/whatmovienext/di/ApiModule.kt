@@ -50,10 +50,12 @@ object ApiModule {
     @Provides
     fun provideApiRepository(
         tmdbApi: TmdbApi,
+        omdbApi: OmdbApi,
         remoteMapper: RemoteMapper,
     ): ApiRepository =
         ApiRepositoryImpl(
             tmdbApi,
+            omdbApi,
             remoteMapper,
             Dispatchers.IO,
         )

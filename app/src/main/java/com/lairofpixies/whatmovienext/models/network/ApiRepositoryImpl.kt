@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.flow
 
 class ApiRepositoryImpl(
     private val tmdbApi: TmdbApi,
+    private val omdbApi: OmdbApi,
     private val remoteMapper: RemoteMapper,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ApiRepository {
@@ -77,7 +78,15 @@ class ApiRepositoryImpl(
                 emit(AsyncMovie.Failed(Exception("Failed to get movie details")))
                 return@flow
             }
-            val movie = remoteMapper.toCardMovie(remoteMovie)
+            val remoteRatings =
+                if (!remoteMovie.imdbId.isNullOrBlank()) {
+                    omdbApi.fetchMovieRatings(remoteMovie.imdbId)
+                } else {
+                    null
+                }
+
+            val ratings = remoteMapper.toRatings(remoteRatings)
+            val movie = remoteMapper.toCardMovie(remoteMovie, ratings)
             emit(AsyncMovie.Single(movie))
         }.catch { exception: Throwable ->
             emit(AsyncMovie.Failed(exception))
