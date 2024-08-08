@@ -75,7 +75,6 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 @Composable
 fun MovieCard(
     movie: Movie.ForCard,
-    showLinks: Boolean,
     bottomItems: List<CustomBarItem>,
     modifier: Modifier = Modifier,
 ) {
@@ -107,48 +106,10 @@ fun MovieCard(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                Row {
-                    Spacer(modifier = Modifier.weight(1f))
-                    CoverImage(
-                        coverUrl = movie.searchData.coverUrl,
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Column(
-                        modifier =
-                            Modifier
-                                .height(height = 480.dp)
-                                .padding(top = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        if (movie.detailData.mcRating != null) {
-                            RatingRow(
-                                logo = R.drawable.metacritic,
-                                text =
-                                    movie.detailData.mcRating.percentValue
-                                        .toString(),
-                                modifier = Modifier.alpha(0.8f),
-                            )
-                        }
-                        if (movie.detailData.rtRating != null) {
-                            RatingRow(
-                                logo = R.drawable.rotten_tomatoes,
-                                text = movie.detailData.rtRating.displayValue,
-                                modifier = Modifier.alpha(0.8f),
-                            )
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        if (showLinks) {
-                            ClickableLogo(
-                                logo = R.drawable.imdb,
-                                url = stringResource(R.string.imdb_url) + movie.detailData.imdbId,
-                            )
-                            ClickableLogo(
-                                logo = R.drawable.tmdb,
-                                url = stringResource(R.string.tmdb_url) + movie.searchData.tmdbId,
-                            )
-                        }
-                    }
-                }
+                CoverImage(
+                    coverUrl = movie.searchData.coverUrl,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -165,7 +126,25 @@ fun MovieCard(
                     genres = movie.searchData.genres,
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Row {
+                    if (movie.detailData.mcRating != null) {
+                        RatingRow(
+                            logo = R.drawable.metacritic,
+                            text =
+                                movie.detailData.mcRating.displayValue,
+                            modifier = Modifier.alpha(0.8f),
+                        )
+                    }
+                    if (movie.detailData.rtRating != null) {
+                        RatingRow(
+                            logo = R.drawable.rotten_tomatoes,
+                            text = movie.detailData.rtRating.displayValue,
+                            modifier = Modifier.alpha(0.8f),
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
 
                 TaglineDisplay(movie.detailData.tagline)
 
@@ -173,14 +152,19 @@ fun MovieCard(
 
                 PlotDisplay(movie.detailData.plot)
 
+                Spacer(modifier = Modifier.height(22.dp))
+
                 if (movie.staffData.crew.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(16.dp))
                     DirectorsRooster(movie.staffData.crew)
                 }
                 if (movie.staffData.cast.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(16.dp))
                     ActorsRooster(movie.staffData.cast)
                 }
+
+                MovieLinks(
+                    imdbId = movie.detailData.imdbId,
+                    tmdbId = movie.searchData.tmdbId.toString(),
+                )
 
                 Spacer(modifier = Modifier.padding(top = 36.dp))
 
@@ -210,7 +194,7 @@ fun CoverImage(
 
     Box(
         modifier =
-            Modifier
+            modifier
                 .padding(8.dp)
                 .size(width = 320.dp, height = 480.dp)
                 .clip(RoundedCornerShape(12.dp)),
@@ -259,11 +243,10 @@ fun RatingRow(
             text,
             style = MaterialTheme.typography.labelLarge,
             fontStyle = FontStyle.Italic,
-            textAlign = TextAlign.Center,
             modifier =
                 modifier
-                    .padding(top = 12.dp)
-                    .size(30.dp),
+                    .padding(top = 12.dp, start = 4.dp, end = 4.dp)
+                    .height(height = 30.dp),
         )
     }
 }
@@ -390,7 +373,7 @@ fun DirectorsRooster(
     modifier: Modifier = Modifier,
 ) {
     val combinedCrew = joinRoles(crew)
-    Column(modifier = modifier) {
+    Column(modifier = modifier.height(180.dp)) {
         Text(
             text = stringResource(R.string.direction_and_writing),
             style = MaterialTheme.typography.titleSmall,
@@ -408,7 +391,7 @@ fun ActorsRooster(
     cast: List<Staff>,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.height(180.dp)) {
         Text(
             text = stringResource(R.string.cast),
             style = MaterialTheme.typography.titleSmall,
@@ -486,6 +469,30 @@ fun MiniProfile(
             fontStyle = FontStyle.Italic,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
             textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Composable
+fun MovieLinks(
+    imdbId: String?,
+    tmdbId: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = stringResource(R.string.external_links),
+        style = MaterialTheme.typography.titleSmall,
+    )
+    Row {
+        if (imdbId != null) {
+            ClickableLogo(
+                logo = R.drawable.imdb,
+                url = stringResource(R.string.imdb_url) + imdbId,
+            )
+        }
+        ClickableLogo(
+            logo = R.drawable.tmdb,
+            url = stringResource(R.string.tmdb_url) + tmdbId,
         )
     }
 }
