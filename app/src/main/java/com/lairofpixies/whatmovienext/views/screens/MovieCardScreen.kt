@@ -74,7 +74,6 @@ fun MovieCardScreen(
 
         MovieCard(
             movie = loadedMovie,
-            showLinks = true,
             bottomItems = bottomItems,
             modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
         )
