@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
@@ -182,6 +183,31 @@ class SearchViewModelTest {
             // Then
             val result = searchViewModel.searchResults.value
             assertEquals(pagedMovies, result)
+        }
+
+    @Test
+    fun `with multiple movies, scroll, select, and go back to results`() =
+        runTest {
+            // Given
+            val returnedMovies =
+                listOf(
+                    forSearch(title = "Live and let die"),
+                    forSearch(title = "Moonraker"),
+                    forSearch(title = "Octopussy"),
+                )
+            val pagedMovies = PagedMovies.fromList(returnedMovies)
+            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+                flowOf(pagedMovies)
+            searchViewModel.updateSearchQuery(SearchQuery(title = "Bond"))
+            searchViewModel.startSearch()
+
+            // When scroll, select result, go back
+            searchViewModel.resultsScroll = LazyListState(firstVisibleItemIndex = 10)
+            searchViewModel.fetchFromRemote(returnedMovies[1].searchData.tmdbId)
+            searchViewModel.switchToSearchResults()
+
+            // Then
+            assertEquals(10, searchViewModel.resultsScroll.firstVisibleItemIndex)
         }
 
     @Test

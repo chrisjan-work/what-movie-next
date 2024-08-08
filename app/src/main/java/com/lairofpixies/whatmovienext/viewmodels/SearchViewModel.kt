@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.annotation.VisibleForTesting
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
@@ -56,6 +57,7 @@ class SearchViewModel
         private val _searchResults: MutableStateFlow<PagedMovies> =
             MutableStateFlow(PagedMovies.Empty)
         val searchResults: StateFlow<PagedMovies> = _searchResults.asStateFlow()
+        var resultsScroll: LazyListState = LazyListState()
 
         private var searchJob: Job? = null
 
@@ -143,6 +145,7 @@ class SearchViewModel
 
         private fun clearSearchResults(resetBusyDisplay: Boolean = true) {
             _searchResults.value = PagedMovies.Empty
+            resultsScroll = LazyListState()
             if (resetBusyDisplay) {
                 updateBusyDisplay(false)
             }
