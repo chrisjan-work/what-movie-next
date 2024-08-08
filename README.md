@@ -96,3 +96,12 @@ Languages and Frameworks
 
 **Images**
  * [Coil](https://github.com/coil-kt/coil)
+
+Data Sources
+------------
+
+ * Basic information about the movies and the TMDB logo comes from The Movie Database (https://www.themoviedb.org)
+ * Information about the ratings comes from The Open Movie Database Api (https://www.omdbapi.com)
+ * IMDB logo from iconduck https://iconduck.com/icons/14111/imdb (The asset is MIT-licensed)
+ * RT logo from iconduck https://iconduck.com/icons/243754/rotten-tomatoes (MIT license)
+ * Metacritic logo from Icons8 https://icons8.com/icons/set/metacritic
