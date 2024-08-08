@@ -84,7 +84,7 @@ fun testOmdbMovieRatings(): OmdbMovieInfo =
                 ),
                 OmdbMovieInfo.OmdbRating(
                     source = "Metacritic",
-                    value = "8.2/10",
+                    value = "82/100",
                 ),
             ),
     )
@@ -100,7 +100,7 @@ fun testRatingMap(): RatingMap =
         Rating.Rater.Metacritic to
             Rating(
                 source = Rating.Rater.Metacritic,
-                displayValue = "8.2/10",
+                displayValue = "82/100",
                 percentValue = 82,
             ),
     )
@@ -131,18 +131,18 @@ fun testCardMovieExtended(movieId: Long = NEW_ID): Movie.ForCard =
                 plot = "robots from the future",
                 runtimeMinutes = 137,
                 directorNames = listOf("Cameron"),
-//                rtRating =
-//                    Rating(
-//                        source = Rating.Rater.RottenTomatoes,
-//                        displayValue = "81%",
-//                        percentValue = 81,
-//                    ),
-//                mcRating =
-//                    Rating(
-//                        source = Rating.Rater.Metacritic,
-//                        displayValue = "8.2/10",
-//                        percentValue = 82,
-//                    ),
+                rtRating =
+                    Rating(
+                        source = Rating.Rater.RottenTomatoes,
+                        displayValue = "81%",
+                        percentValue = 81,
+                    ),
+                mcRating =
+                    Rating(
+                        source = Rating.Rater.Metacritic,
+                        displayValue = "82/100",
+                        percentValue = 82,
+                    ),
             ),
         staffData =
             MovieData.StaffData(
@@ -199,6 +199,18 @@ fun testListMovieExtended(): Movie.ForList =
                 plot = "robots from the future",
                 runtimeMinutes = 137,
                 directorNames = listOf("Cameron"),
+                rtRating =
+                    Rating(
+                        source = Rating.Rater.RottenTomatoes,
+                        displayValue = "81%",
+                        percentValue = 81,
+                    ),
+                mcRating =
+                    Rating(
+                        source = Rating.Rater.Metacritic,
+                        displayValue = "82/100",
+                        percentValue = 82,
+                    ),
             ),
     )
 
@@ -218,6 +230,8 @@ fun testDbMovieExtended(movieId: Long = NEW_ID): DbMovie =
         plot = "robots from the future",
         runtimeMinutes = 137,
         directorNames = "Cameron",
+        rtRating = 81,
+        mcRating = 82,
     )
 
 fun testDbStaff(movieId: Long = NEW_ID): List<DbStaff> =
