@@ -91,7 +91,7 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
         SearchState.RESULTS -> {
             val searchResults = searchViewModel.searchResults.collectAsState().value
             SearchResultsPicker(
-                searchResults = searchResults.toList<Movie.ForSearch>(),
+                searchResults = searchResults.movies.toList<Movie.ForSearch>(),
                 onResultSelected = { selectedId ->
                     searchViewModel.fetchFromRemote(selectedId)
                 },
