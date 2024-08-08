@@ -23,11 +23,14 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.MovieData.UNKNOWN_ID
+import com.lairofpixies.whatmovienext.models.data.Rating
+import com.lairofpixies.whatmovienext.models.data.RatingMap
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
+import com.lairofpixies.whatmovienext.models.network.data.OmdbMovieInfo
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
@@ -35,6 +38,7 @@ import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended.Tmdb
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended.TmdbCrewMember
 import java.lang.NumberFormatException
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 class RemoteMapper
     @Inject
@@ -58,7 +62,10 @@ class RemoteMapper
                 )
             }
 
-        fun toCardMovie(tmdbMovieExtended: TmdbMovieExtended): Movie.ForCard =
+        fun toCardMovie(
+            tmdbMovieExtended: TmdbMovieExtended,
+            ratings: RatingMap,
+        ): Movie.ForCard =
             with(tmdbMovieExtended) {
                 Movie.ForCard(
                     appData =
@@ -84,6 +91,8 @@ class RemoteMapper
                             plot = summary ?: "",
                             runtimeMinutes = runtime ?: 0,
                             directorNames = toDirectorNames(credits?.crew),
+                            rtRating = ratings[Rating.Rater.RottenTomatoes],
+                            mcRating = ratings[Rating.Rater.Metacritic],
                         ),
                     staffData =
                         MovieData.StaffData(
@@ -167,4 +176,45 @@ class RemoteMapper
             } else {
                 null
             }
+
+        fun toRatings(omdbRatings: OmdbMovieInfo?): RatingMap {
+            if (omdbRatings == null) return emptyMap()
+            if (omdbRatings.success != "True") return emptyMap()
+            val ratings =
+                omdbRatings.ratings.mapNotNull { omdbRating ->
+                    Rating.fromName(
+                        omdbRating.source,
+                        omdbRating.value,
+                        toPercent(omdbRating.value),
+                    )
+                }
+            return ratings.associateBy { it.source }
+        }
+
+        fun toPercent(value: String): Int {
+            val asPercent =
+                Regex("(\\d+)(\\.\\d+)?%")
+                    .find(value)
+                    ?.groupValues
+                    ?.get(1)
+                    ?.toIntOrNull()
+            if (asPercent != null) return asPercent
+
+            val asFraction =
+                Regex("(\\d+(\\.\\d+)?)/(\\d+(\\.\\d+)?)")
+                    .find(value)
+                    ?.groupValues
+                    ?.let { it[1].toFloatOrNull() to it[3].toFloatOrNull() }
+                    ?.let { (numerator, denominator) ->
+                        if (numerator != null && denominator != null) {
+                            numerator * 100f / denominator
+                        } else {
+                            null
+                        }
+                    }?.roundToInt()
+            if (asFraction != null) return asFraction
+
+            val asAnAbsolute = value.toFloatOrNull()
+            return asAnAbsolute?.toInt() ?: 0
+        }
     }

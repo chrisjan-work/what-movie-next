@@ -21,6 +21,8 @@ package com.lairofpixies.whatmovienext.models.mappers
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
+import com.lairofpixies.whatmovienext.models.data.Rating
+import com.lairofpixies.whatmovienext.models.data.RatingMap
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -28,6 +30,7 @@ import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.models.database.data.DbStaff
 import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
+import com.lairofpixies.whatmovienext.models.network.data.OmdbMovieInfo
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 
@@ -70,6 +73,38 @@ fun testTmdbMovieExtended(): TmdbMovieExtended =
             ),
     )
 
+fun testOmdbMovieRatings(): OmdbMovieInfo =
+    OmdbMovieInfo(
+        success = "True",
+        ratings =
+            listOf(
+                OmdbMovieInfo.OmdbRating(
+                    source = "Rotten Tomatoes",
+                    value = "81%",
+                ),
+                OmdbMovieInfo.OmdbRating(
+                    source = "Metacritic",
+                    value = "8.2/10",
+                ),
+            ),
+    )
+
+fun testRatingMap(): RatingMap =
+    mapOf(
+        Rating.Rater.RottenTomatoes to
+            Rating(
+                source = Rating.Rater.RottenTomatoes,
+                displayValue = "81%",
+                percentValue = 81,
+            ),
+        Rating.Rater.Metacritic to
+            Rating(
+                source = Rating.Rater.Metacritic,
+                displayValue = "8.2/10",
+                percentValue = 82,
+            ),
+    )
+
 fun testCardMovieExtended(movieId: Long = NEW_ID): Movie.ForCard =
     Movie.ForCard(
         appData =
@@ -96,6 +131,18 @@ fun testCardMovieExtended(movieId: Long = NEW_ID): Movie.ForCard =
                 plot = "robots from the future",
                 runtimeMinutes = 137,
                 directorNames = listOf("Cameron"),
+//                rtRating =
+//                    Rating(
+//                        source = Rating.Rater.RottenTomatoes,
+//                        displayValue = "81%",
+//                        percentValue = 81,
+//                    ),
+//                mcRating =
+//                    Rating(
+//                        source = Rating.Rater.Metacritic,
+//                        displayValue = "8.2/10",
+//                        percentValue = 82,
+//                    ),
             ),
         staffData =
             MovieData.StaffData(
