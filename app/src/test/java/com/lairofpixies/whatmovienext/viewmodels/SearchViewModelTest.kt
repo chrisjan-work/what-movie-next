@@ -92,7 +92,7 @@ class SearchViewModelTest {
                     forSearch(title = "Two tickets to paradise"),
                     forSearch(title = "Three times a lady"),
                 )
-            coEvery { apiRepoMock.findMoviesByTitle(any()) } returns
+            coEvery { apiRepoMock.findMoviesByTitle(any(), null) } returns
                 flowOf(PagedMovies.fromList(searchResults))
 
             searchViewModel.updateSearchQuery(SearchQuery(title = "Forever young"))
@@ -183,6 +183,52 @@ class SearchViewModelTest {
             // Then
             val result = searchViewModel.searchResults.value
             assertEquals(pagedMovies, result)
+        }
+
+    @Test
+    fun `search and find multiple movies in two pages`() =
+        runTest {
+            // Given
+            val movies =
+                listOf(
+                    forSearch(title = "Live and let die"),
+                    forSearch(title = "Moonraker"),
+                    forSearch(title = "Octopussy"),
+                )
+            val firstPage =
+                PagedMovies(
+                    movies =
+                        AsyncMovie.Multiple(movies.take(2)),
+                    lastPage = 1,
+                    pagesLeft = 1,
+                )
+            val secondPage =
+                PagedMovies(
+                    movies =
+                        AsyncMovie.Single(movies.last()),
+                    lastPage = 2,
+                    pagesLeft = 0,
+                )
+            coEvery { apiRepoMock.findMoviesByTitle(any(), any()) } returnsMany
+                listOf(
+                    flowOf(firstPage),
+                    flowOf(secondPage),
+                )
+            searchViewModel.updateSearchQuery(SearchQuery(title = "Bond"))
+
+            // When
+            searchViewModel.startSearch()
+            searchViewModel.continueSearch()
+            val result = searchViewModel.searchResults.value
+
+            // Then
+            val expected =
+                PagedMovies(
+                    movies = AsyncMovie.Multiple(movies),
+                    lastPage = 2,
+                    pagesLeft = 0,
+                )
+            assertEquals(expected, result)
         }
 
     @Test

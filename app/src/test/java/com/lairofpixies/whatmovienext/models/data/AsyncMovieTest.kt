@@ -67,7 +67,7 @@ class AsyncMovieTest {
     }
 
     @Test
-    fun `is missing table`() {
+    fun `table for is missing a movie`() {
         val isMissingPairs: List<Pair<AsyncMovie?, Boolean>> =
             listOf(
                 null to true,
@@ -87,7 +87,7 @@ class AsyncMovieTest {
     }
 
     @Test
-    fun `has movie table`() {
+    fun `table for has movie`() {
         val hasMoviePairs: List<Pair<AsyncMovie?, Boolean>> =
             listOf(
                 null to false,
@@ -102,6 +102,27 @@ class AsyncMovieTest {
             assertEquals(
                 expectedResult,
                 asyncMovie.hasMovie(),
+            )
+        }
+    }
+
+    @Test
+    fun `table for is a result`() {
+        // not loading, not error
+        val hasMoviePairs: List<Pair<AsyncMovie?, Boolean>> =
+            listOf(
+                null to false,
+                AsyncMovie.Loading to false,
+                AsyncMovie.Failed(mockk()) to false,
+                AsyncMovie.Empty to true,
+                AsyncMovie.Single(mockk<Movie.ForSearch>()) to true,
+                AsyncMovie.Multiple(emptyList<Movie.ForSearch>()) to true,
+            )
+
+        hasMoviePairs.forEach { (asyncMovie, expectedResult) ->
+            assertEquals(
+                expectedResult,
+                asyncMovie.isResult(),
             )
         }
     }

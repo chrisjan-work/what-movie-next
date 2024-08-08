@@ -100,37 +100,58 @@ class SearchViewModel
                         return@launch
                     }
 
-                    apiRepo.findMoviesByTitle(title = currentQuery.value.title).collect { results ->
-                        when (val asyncMovie = results.movies) {
-                            is AsyncMovie.Loading -> {
-                                updateBusyDisplay(true)
-                            }
+                    performSearch(null)
+                }
+        }
 
-                            is AsyncMovie.Failed -> {
+        fun continueSearch() {
+            if (searchResults.value.pagesLeft > 0) {
+                viewModelScope.launch {
+                    performSearch(
+                        pageIndex = searchResults.value.lastPage + 1,
+                        prepend = searchResults.value.movies.toList(),
+                    )
+                }
+            }
+        }
+
+        private suspend fun performSearch(
+            pageIndex: Int?,
+            prepend: List<Movie.ForSearch> = emptyList(),
+        ) {
+            apiRepo
+                .findMoviesByTitle(title = currentQuery.value.title, page = pageIndex)
+                .collect { fromApi ->
+                    val results = fromApi.addTo(prepend)
+                    when (val asyncMovie = results.movies) {
+                        is AsyncMovie.Loading -> {
+                            updateBusyDisplay(true)
+                        }
+
+                        is AsyncMovie.Failed -> {
+                            updateBusyDisplay(false)
+                            showPopup(PopupInfo.ConnectionFailed)
+                            Timber.e("Connection error: ${asyncMovie.trowable}")
+                        }
+
+                        is AsyncMovie.Empty -> {
+                            clearSearchResults()
+                            showPopup(PopupInfo.SearchEmpty)
+                        }
+
+                        is AsyncMovie.Single -> {
+                            clearSearchResults(false)
+                            asyncMovie.singleMovieOrNull<Movie.ForSearch>()?.let { movie ->
+                                fetchFromRemote(movie.searchData.tmdbId)
+                            } ?: {
                                 updateBusyDisplay(false)
                                 showPopup(PopupInfo.ConnectionFailed)
-                                Timber.e("Connection error: ${asyncMovie.trowable}")
                             }
+                        }
 
-                            is AsyncMovie.Empty -> {
-                                clearSearchResults()
-                                showPopup(PopupInfo.SearchEmpty)
-                            }
-
-                            is AsyncMovie.Single -> {
-                                clearSearchResults(false)
-                                asyncMovie.singleMovieOrNull<Movie.ForSearch>()?.let { movie ->
-                                    fetchFromRemote(movie.searchData.tmdbId)
-                                } ?: {
-                                    updateBusyDisplay(false)
-                                    showPopup(PopupInfo.ConnectionFailed)
-                                }
-                            }
-
-                            is AsyncMovie.Multiple -> {
-                                _searchResults.value = results
-                                switchToSearchResults()
-                            }
+                        is AsyncMovie.Multiple -> {
+                            _searchResults.value = results
+                            switchToSearchResults()
                         }
                     }
                 }

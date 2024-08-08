@@ -38,8 +38,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,11 +59,27 @@ fun SearchResultsPicker(
     searchResults: List<Movie.ForSearch>,
     scrollState: LazyListState,
     onResultSelected: (Long) -> Unit,
+    onBottomReached: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (searchResults.isEmpty()) {
         return
     }
+
+    // detect scroll-to-end
+    LaunchedEffect(scrollState, searchResults.size) {
+        snapshotFlow {
+            scrollState.layoutInfo.visibleItemsInfo
+                .lastOrNull()
+                ?.index
+        }.collect { lastVisibleItemIndex ->
+            if (lastVisibleItemIndex == searchResults.size - 1) {
+                onBottomReached()
+            }
+        }
+    }
+
+    // display
     Box(
         modifier =
             modifier

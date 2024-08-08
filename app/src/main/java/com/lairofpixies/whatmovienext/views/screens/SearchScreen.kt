@@ -102,6 +102,7 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
                 onResultSelected = { selectedId ->
                     searchViewModel.fetchFromRemote(selectedId)
                 },
+                onBottomReached = { searchViewModel.continueSearch() },
                 modifier = Modifier.testTag(UiTags.Screens.SEARCH_RESULTS),
             )
         }
