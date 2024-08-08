@@ -28,6 +28,8 @@ import com.lairofpixies.whatmovienext.models.network.ConfigRepositoryImpl
 import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizer
 import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizerImpl
 import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
+import com.lairofpixies.whatmovienext.models.network.OmdbApi
+import com.lairofpixies.whatmovienext.models.network.TestOmdbApi
 import com.lairofpixies.whatmovienext.models.network.TestTmdbApi
 import com.lairofpixies.whatmovienext.models.network.TmdbApi
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
@@ -60,7 +62,11 @@ object TestApiModule {
 
     @Singleton
     @Provides
-    fun provideTestMovieApi() = TestTmdbApi()
+    fun provideTestTmdbApi() = TestTmdbApi()
+
+    @Singleton
+    @Provides
+    fun provideTestOmdbApi() = TestOmdbApi()
 
     @Provides
     @Singleton
@@ -104,7 +110,7 @@ object TestApiModule {
 
     @Provides
     @Singleton
-    fun provideMovieApi(
+    fun provideTmdbApi(
         mockWebServer: MockWebServer,
         okHttpClient: OkHttpClient,
     ): TmdbApi {
@@ -121,6 +127,27 @@ object TestApiModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(TmdbApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOmdbApi(
+        mockWebServer: MockWebServer,
+        okHttpClient: OkHttpClient,
+    ): OmdbApi {
+        val moshi =
+            Moshi
+                .Builder()
+                .add(KotlinJsonAdapterFactory())
+                .build()
+
+        return Retrofit
+            .Builder()
+            .client(okHttpClient)
+            .baseUrl(mockWebServer.url("/"))
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(OmdbApi::class.java)
     }
 
     @Provides
