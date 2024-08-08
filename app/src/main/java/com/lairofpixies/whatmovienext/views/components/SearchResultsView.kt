@@ -131,7 +131,7 @@ fun SearchResultItem(
         )
         Spacer(modifier = Modifier.size(16.dp))
         Column(
-            modifier = Modifier.heightIn(min = 100.dp),
+            modifier = Modifier.heightIn(min = 120.dp),
         ) {
             Text(
                 text = data.title,
