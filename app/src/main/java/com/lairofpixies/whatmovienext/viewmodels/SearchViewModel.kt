@@ -98,7 +98,8 @@ class SearchViewModel
                     }
 
                     apiRepo.findMoviesByTitle(title = currentQuery.value.title).collect { results ->
-                        when (results) {
+                        val asyncMovie = results.movies
+                        when (asyncMovie) {
                             is AsyncMovie.Loading -> {
                                 updateBusyDisplay(true)
                             }
@@ -106,7 +107,7 @@ class SearchViewModel
                             is AsyncMovie.Failed -> {
                                 updateBusyDisplay(false)
                                 showPopup(PopupInfo.ConnectionFailed)
-                                Timber.e("Connection error: ${results.trowable}")
+                                Timber.e("Connection error: ${asyncMovie.trowable}")
                             }
 
                             is AsyncMovie.Empty -> {
@@ -116,7 +117,7 @@ class SearchViewModel
 
                             is AsyncMovie.Single -> {
                                 clearSearchResults(false)
-                                results.singleMovieOrNull<Movie.ForSearch>()?.let { movie ->
+                                asyncMovie.singleMovieOrNull<Movie.ForSearch>()?.let { movie ->
                                     fetchFromRemote(movie.searchData.tmdbId)
                                 } ?: {
                                     updateBusyDisplay(false)
@@ -125,7 +126,7 @@ class SearchViewModel
                             }
 
                             is AsyncMovie.Multiple -> {
-                                _searchResults.value = results
+                                _searchResults.value = asyncMovie
                                 switchToSearchResults()
                             }
                         }

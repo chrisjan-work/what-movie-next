@@ -47,7 +47,10 @@ class TestTmdbApi
             fakeMoviesBasic = { newList }
         }
 
-        override suspend fun findMoviesByTitle(escapedTitle: String): TmdbSearchResults = TmdbSearchResults(results = fakeMoviesBasic())
+        override suspend fun findMoviesByTitle(
+            escapedTitle: String,
+            page: Int?,
+        ): TmdbSearchResults = TmdbSearchResults(results = fakeMoviesBasic())
 
         override suspend fun getConfiguration(): TmdbConfiguration =
             TmdbConfiguration(

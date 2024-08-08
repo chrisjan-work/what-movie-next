@@ -77,7 +77,7 @@ class ApiRepositoryImplTest {
             initializeSut()
 
             // When
-            val result = apiRepository.findMoviesByTitle("test").last()
+            val result = apiRepository.findMoviesByTitle("test").last().movies
 
             // Then
             assertEquals(AsyncMovie.Empty, result)
@@ -102,7 +102,7 @@ class ApiRepositoryImplTest {
             // Then
             val expectedMovie =
                 AsyncMovie.Single(TestMovie.forSearch(title = "test", tmdbId = 1))
-            assertEquals(expectedMovie, result)
+            assertEquals(expectedMovie, result.movies)
         }
 
     @Test
@@ -129,7 +129,36 @@ class ApiRepositoryImplTest {
                     TestMovie.forSearch(tmdbId = 2, title = "movie2"),
                     TestMovie.forSearch(tmdbId = 3, title = "movie3"),
                 )
-            assertEquals(AsyncMovie.Multiple(expectedMovies), result)
+            assertEquals(AsyncMovie.Multiple(expectedMovies), result.movies)
+        }
+
+    @Test
+    fun `find movies by title, count pages`() =
+        runTest {
+            // Given
+            val receivedMovies =
+                listOf(
+                    TmdbMovieBasic(tmdbId = 1, title = "movie1"),
+                    TmdbMovieBasic(tmdbId = 2, title = "movie2"),
+                    TmdbMovieBasic(tmdbId = 3, title = "movie3"),
+                )
+            coEvery { tmdbApi.findMoviesByTitle(any()) } returns
+                TmdbSearchResults(results = receivedMovies, page = 3, totalPages = 7)
+            initializeSut()
+
+            // When
+            val result = apiRepository.findMoviesByTitle("test").last()
+
+            // Then
+            val expectedMovies =
+                listOf(
+                    TestMovie.forSearch(tmdbId = 1, title = "movie1"),
+                    TestMovie.forSearch(tmdbId = 2, title = "movie2"),
+                    TestMovie.forSearch(tmdbId = 3, title = "movie3"),
+                )
+            assertEquals(AsyncMovie.Multiple(expectedMovies), result.movies)
+            assertEquals(3, result.lastPage)
+            assertEquals(4, result.pagesLeft)
         }
 
     @Test
@@ -150,7 +179,7 @@ class ApiRepositoryImplTest {
             val result = apiRepository.findMoviesByTitle("test").last()
 
             // Then
-            assertEquals(AsyncMovie.Failed(http404), result)
+            assertEquals(AsyncMovie.Failed(http404), result.movies)
         }
 
     @Test
