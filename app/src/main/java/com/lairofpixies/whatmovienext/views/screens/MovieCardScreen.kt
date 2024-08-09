@@ -19,9 +19,14 @@
 package com.lairofpixies.whatmovienext.views.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -57,25 +62,34 @@ fun MovieCardScreen(
     val loadedMovie = partialMovie.singleMovieOrNull<Movie.ForCard>()
     if (loadedMovie != null) {
         val bottomItems =
-            bottomItemsForMovieCard(
-                loadedMovie,
-                onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
-                onArchiveAction = {
-                    cardViewModel.archiveCurrentMovie()
-                    cardViewModel.onLeaveAction()
-                },
-                onUpdateAction = { updateMovieId, watchState ->
-                    cardViewModel.updateMovieWatched(
-                        updateMovieId,
-                        watchState,
-                    )
-                },
-            )
+            remember {
+                bottomItemsForMovieCard(
+                    loadedMovie,
+                    onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
+                    onArchiveAction = {
+                        cardViewModel.archiveCurrentMovie()
+                        cardViewModel.onLeaveAction()
+                    },
+                    onUpdateAction = { updateMovieId, watchState ->
+                        cardViewModel.updateMovieWatched(
+                            updateMovieId,
+                            watchState,
+                        )
+                    },
+                )
+            }
 
         MovieCard(
             movie = loadedMovie,
             bottomItems = bottomItems,
             modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
+        )
+    } else {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
         )
     }
 }
