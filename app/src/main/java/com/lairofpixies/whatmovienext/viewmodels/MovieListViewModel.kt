@@ -57,17 +57,19 @@ class MovieListViewModel
         }
 
         override fun attachMainViewModel(mainViewModel: MainViewModel) {
-            super.attachMainViewModel(mainViewModel)
+            if (mainViewModel != this.mainViewModel) {
+                super.attachMainViewModel(mainViewModel)
 
-            // initialize and connect list mode
-            listMode = mainViewModel.movieListDisplayState.mapState { it.listMode }
-            viewModelScope.launch {
-                repo.listedMovies
-                    .combine(listMode) { movieInfo, listMode ->
-                        filterMovies(movieInfo, listMode)
-                    }.collect { filteredMovies ->
-                        _listedMovies.value = filteredMovies
-                    }
+                // initialize and connect list mode
+                listMode = mainViewModel.movieListDisplayState.mapState { it.listMode }
+                viewModelScope.launch {
+                    repo.listedMovies
+                        .combine(listMode) { movieInfo, listMode ->
+                            filterMovies(movieInfo, listMode)
+                        }.collect { filteredMovies ->
+                            _listedMovies.value = filteredMovies
+                        }
+                }
             }
         }
 
