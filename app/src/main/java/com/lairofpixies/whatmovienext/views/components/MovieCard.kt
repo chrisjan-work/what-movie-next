@@ -96,7 +96,6 @@ fun MovieCard(
             Column(
                 modifier =
                     Modifier
-                        .padding(6.dp)
                         .fillMaxWidth()
                         .heightIn(min = parentHeight)
                         .verticalScroll(rememberScrollState()),
@@ -107,7 +106,7 @@ fun MovieCard(
                     modifier =
                         Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(8.dp),
+                            .padding(14.dp),
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -204,6 +203,7 @@ fun RatingRow(
     modifier: Modifier = Modifier,
 ) {
     Row(
+        modifier = modifier.padding(start = 8.dp, end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
@@ -271,13 +271,14 @@ fun TitlesDisplay(
         text = title,
         fontWeight = FontWeight.SemiBold,
         style = MaterialTheme.typography.titleLarge,
+        modifier = modifier.padding(start = 8.dp, end = 8.dp),
     )
     if (originalTitle.isNotBlank() && originalTitle != title) {
         Text(
             text = originalTitle,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-            modifier = modifier,
+            modifier = modifier.padding(start = 8.dp, end = 8.dp),
         )
     }
 }
@@ -291,7 +292,7 @@ fun YearDisplay(
         Text(
             text = year.toString(),
             style = MaterialTheme.typography.titleMedium,
-            modifier = modifier,
+            modifier = modifier.padding(start = 8.dp, end = 8.dp),
         )
     }
 }
@@ -304,12 +305,12 @@ fun RuntimeAndGenresDisplay(
 ) {
     val dot = stringResource(id = R.string.middle_dot)
     Text(
-        modifier = modifier,
         text =
             printableRuntime(runtimeMinutes = runtime, pos = "  $dot  ") +
                 genres.joinToString(" / "),
         fontStyle = FontStyle.Italic,
         style = MaterialTheme.typography.bodySmall,
+        modifier = modifier.padding(start = 8.dp, end = 8.dp),
     )
 }
 
@@ -323,7 +324,7 @@ fun TaglineDisplay(
             text = tagline,
             fontWeight = FontWeight.Medium,
             style = MaterialTheme.typography.titleMedium,
-            modifier = modifier,
+            modifier = modifier.padding(start = 8.dp, end = 8.dp),
         )
     }
 }
@@ -334,12 +335,12 @@ fun PlotDisplay(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        modifier = modifier,
         text = plot,
         textAlign = TextAlign.Start,
         fontStyle = FontStyle.Italic,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+        modifier = modifier.padding(start = 8.dp, end = 8.dp),
     )
 }
 
@@ -353,6 +354,7 @@ fun DirectorsRooster(
         Text(
             text = stringResource(R.string.direction_and_writing),
             style = MaterialTheme.typography.titleSmall,
+            modifier = modifier.padding(start = 8.dp, end = 8.dp),
         )
         LazyRow {
             items(combinedCrew) {
@@ -371,6 +373,7 @@ fun ActorsRooster(
         Text(
             text = stringResource(R.string.cast),
             style = MaterialTheme.typography.titleSmall,
+            modifier = modifier.padding(start = 8.dp, end = 8.dp),
         )
         LazyRow {
             items(cast) {
@@ -454,9 +457,9 @@ fun MovieLinks(
     Text(
         text = stringResource(R.string.external_links),
         style = MaterialTheme.typography.titleSmall,
-        modifier = modifier,
+        modifier = modifier.padding(start = 8.dp, end = 8.dp),
     )
-    Row {
+    Row(modifier = modifier.padding(start = 8.dp, end = 8.dp)) {
         if (imdbId != null) {
             ClickableLogo(
                 logo = R.drawable.imdb,
@@ -474,7 +477,7 @@ fun MovieLinks(
 
 @Composable
 fun CreditsRow(modifier: Modifier = Modifier) {
-    Row(modifier = modifier) {
+    Row(modifier = modifier.padding(start = 8.dp, end = 8.dp)) {
         Text(
             text = stringResource(id = R.string.sources),
             style = MaterialTheme.typography.labelSmall,
