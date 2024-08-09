@@ -26,6 +26,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -49,9 +51,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -153,10 +161,10 @@ fun MovieCard(
                 Spacer(modifier = Modifier.height(22.dp))
 
                 if (movie.staffData.crew.isNotEmpty()) {
-                    DirectorsRooster(movie.staffData.crew)
+                    DirectorsRoster(movie.staffData.crew)
                 }
                 if (movie.staffData.cast.isNotEmpty()) {
-                    ActorsRooster(movie.staffData.cast)
+                    ActorsRoster(movie.staffData.cast)
                 }
 
                 MovieLinks(
@@ -345,42 +353,15 @@ fun PlotDisplay(
 }
 
 @Composable
-fun DirectorsRooster(
+fun DirectorsRoster(
     crew: List<Staff>,
     modifier: Modifier = Modifier,
 ) {
-    val combinedCrew = joinRoles(crew)
-    Column(modifier = modifier.height(180.dp)) {
-        Text(
-            text = stringResource(R.string.direction_and_writing),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = modifier.padding(start = 8.dp, end = 8.dp),
-        )
-        LazyRow {
-            items(combinedCrew) {
-                MiniProfile(it)
-            }
-        }
-    }
-}
-
-@Composable
-fun ActorsRooster(
-    cast: List<Staff>,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.height(180.dp)) {
-        Text(
-            text = stringResource(R.string.cast),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = modifier.padding(start = 8.dp, end = 8.dp),
-        )
-        LazyRow {
-            items(cast) {
-                MiniProfile(it)
-            }
-        }
-    }
+    StaffRoster(
+        sectionTitle = stringResource(R.string.direction_and_writing),
+        staff = joinRoles(crew),
+        modifier = modifier,
+    )
 }
 
 // sometimes a movie is directed and written by the same person
@@ -400,6 +381,104 @@ fun joinRoles(crew: List<Staff>): List<Staff> =
         }.sortedBy { it.order }
 
 @Composable
+fun ActorsRoster(
+    cast: List<Staff>,
+    modifier: Modifier = Modifier,
+) {
+    StaffRoster(
+        sectionTitle = stringResource(R.string.cast),
+        staff = cast,
+        modifier = modifier,
+    )
+}
+
+@Composable
+fun StaffRoster(
+    sectionTitle: String,
+    staff: List<Staff>,
+    modifier: Modifier = Modifier,
+) {
+    val scrollState = remember { LazyListState() }
+    val startOverlayOpacity = remember { mutableFloatStateOf(0f) }
+    val endOverlayOpacity = remember { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(scrollState, staff.size) {
+        snapshotFlow {
+            scrollState.firstVisibleItemIndex to scrollState.firstVisibleItemScrollOffset
+        }.collect { (index, offset) ->
+            startOverlayOpacity.floatValue =
+                if (index == 0) {
+                    val item = scrollState.layoutInfo.visibleItemsInfo.first()
+                    offset.toFloat() / item.size
+                } else {
+                    1f
+                }
+        }
+    }
+
+    LaunchedEffect(scrollState, staff.size) {
+        snapshotFlow { scrollState.firstVisibleItemScrollOffset }
+            .collect { _ ->
+                endOverlayOpacity.floatValue =
+                    scrollState.layoutInfo.visibleItemsInfo
+                        .find { it.index == staff.size - 1 }
+                        ?.let { lastItem ->
+                            val visibleFraction =
+                                (scrollState.layoutInfo.viewportEndOffset - lastItem.offset)
+                                    .coerceAtMost(lastItem.size)
+                            1f - visibleFraction.toFloat() / lastItem.size
+                        } ?: 1f
+            }
+    }
+
+    Column(modifier = modifier.height(186.dp)) {
+        Text(
+            text = sectionTitle,
+            style = MaterialTheme.typography.titleSmall,
+            modifier = modifier.padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
+        )
+        Box(modifier = modifier.fillMaxWidth()) {
+            LazyRow(
+                state = scrollState,
+                modifier = modifier.fillMaxWidth(),
+            ) {
+                items(staff) {
+                    MiniProfile(it)
+                }
+            }
+            Box(
+                modifier =
+                    modifier
+                        .size(48.dp, 186.dp)
+                        .alpha(startOverlayOpacity.floatValue)
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(
+                                    MaterialTheme.colorScheme.background,
+                                    Color.Transparent,
+                                ),
+                            ),
+                        ),
+            )
+            Box(
+                modifier =
+                    modifier
+                        .size(48.dp, 186.dp)
+                        .alpha(endOverlayOpacity.floatValue)
+                        .background(
+                            Brush.horizontalGradient(
+                                listOf(
+                                    Color.Transparent,
+                                    MaterialTheme.colorScheme.background,
+                                ),
+                            ),
+                        ).align(Alignment.CenterEnd),
+            )
+        }
+    }
+}
+
+@Composable
 fun MiniProfile(
     person: Staff,
     modifier: Modifier = Modifier,
@@ -408,8 +487,8 @@ fun MiniProfile(
         modifier =
             modifier
                 .padding(2.dp)
-                .width(100.dp)
-                .padding(2.dp),
+                .width(104.dp)
+                .padding(0.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         FacePic(
@@ -441,9 +520,9 @@ fun FacePic(
     AsyncPic(
         url = faceUrl,
         placeholderIcon = Icons.Outlined.PersonPin,
-        width = 64.dp,
-        height = 80.dp,
-        cornerRadius = 4.dp,
+        width = 66.dp,
+        height = 85.dp,
+        cornerRadius = 5.dp,
         modifier = modifier,
     )
 }
