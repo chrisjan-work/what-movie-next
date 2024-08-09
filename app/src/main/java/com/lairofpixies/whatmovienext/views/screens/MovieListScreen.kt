@@ -38,6 +38,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.RemoveRedEye
+import androidx.compose.material.icons.outlined.Theaters
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -61,7 +62,7 @@ import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.printableYear
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
-import com.lairofpixies.whatmovienext.views.components.ThumbnailImage
+import com.lairofpixies.whatmovienext.views.components.AsyncPic
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
@@ -152,7 +153,7 @@ fun MovieListItem(
                 ).padding(6.dp),
     ) {
         val maxWidth = if (movie.appData.watchState == WatchState.WATCHED) 260.dp else 320.dp
-        ThumbnailImage(
+        ThumbnailPic(
             thumbnailUrl = movie.searchData.thumbnailUrl,
             modifier =
                 Modifier
@@ -205,6 +206,21 @@ fun MovieListItem(
             )
         }
     }
+}
+
+@Composable
+fun ThumbnailPic(
+    thumbnailUrl: String,
+    modifier: Modifier = Modifier,
+) {
+    AsyncPic(
+        url = thumbnailUrl,
+        placeholderIcon = Icons.Outlined.Theaters,
+        width = 76.dp,
+        height = 116.dp,
+        cornerRadius = 5.dp,
+        modifier = modifier,
+    )
 }
 
 @Composable

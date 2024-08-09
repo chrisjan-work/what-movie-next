@@ -26,7 +26,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,17 +42,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PersonPin
+import androidx.compose.material.icons.outlined.Theaters
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -62,8 +60,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Staff
@@ -106,9 +102,12 @@ fun MovieCard(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                CoverImage(
+                CoverPic(
                     coverUrl = movie.searchData.coverUrl,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    modifier =
+                        Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(8.dp),
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -184,40 +183,18 @@ fun MovieCard(
 }
 
 @Composable
-fun CoverImage(
+fun CoverPic(
     coverUrl: String,
     modifier: Modifier = Modifier,
 ) {
-    val imageState =
-        remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
-
-    Box(
-        modifier =
-            modifier
-                .padding(8.dp)
-                .size(width = 320.dp, height = 480.dp)
-                .clip(RoundedCornerShape(12.dp)),
-    ) {
-        if (imageState.value !is AsyncImagePainter.State.Success) {
-            CoverPlaceholder(
-                isLoading = imageState.value is AsyncImagePainter.State.Loading,
-                modifier = Modifier,
-            )
-        }
-
-        if (coverUrl.isNotBlank()) {
-            AsyncImage(
-                model = coverUrl,
-                contentDescription = "",
-                onState = { state -> imageState.value = state },
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(16.dp)),
-                contentScale = ContentScale.Crop,
-            )
-        }
-    }
+    AsyncPic(
+        url = coverUrl,
+        placeholderIcon = Icons.Outlined.Theaters,
+        width = 320.dp,
+        height = 480.dp,
+        cornerRadius = 16.dp,
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -424,8 +401,6 @@ fun MiniProfile(
     person: Staff,
     modifier: Modifier = Modifier,
 ) {
-    val imageState =
-        remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
     Column(
         modifier =
             modifier
@@ -434,27 +409,10 @@ fun MiniProfile(
                 .padding(2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Box(modifier = Modifier.size(64.dp, 80.dp)) {
-            if (imageState.value !is AsyncImagePainter.State.Success) {
-                FacePlaceholder(
-                    isLoading = imageState.value is AsyncImagePainter.State.Loading,
-                    modifier = Modifier,
-                )
-            }
-
-            if (person.faceUrl.isNotBlank()) {
-                AsyncImage(
-                    model = person.faceUrl,
-                    onState = { state -> imageState.value = state },
-                    contentDescription = "",
-                    modifier =
-                        modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(4.dp)),
-                    contentScale = ContentScale.Crop,
-                )
-            }
-        }
+        FacePic(
+            person.faceUrl,
+            modifier,
+        )
         Spacer(modifier = Modifier.height(6.dp))
         Text(
             text = person.name,
@@ -473,6 +431,21 @@ fun MiniProfile(
 }
 
 @Composable
+fun FacePic(
+    faceUrl: String,
+    modifier: Modifier = Modifier,
+) {
+    AsyncPic(
+        url = faceUrl,
+        placeholderIcon = Icons.Outlined.PersonPin,
+        width = 64.dp,
+        height = 80.dp,
+        cornerRadius = 4.dp,
+        modifier = modifier,
+    )
+}
+
+@Composable
 fun MovieLinks(
     imdbId: String?,
     tmdbId: String,
@@ -481,17 +454,20 @@ fun MovieLinks(
     Text(
         text = stringResource(R.string.external_links),
         style = MaterialTheme.typography.titleSmall,
+        modifier = modifier,
     )
     Row {
         if (imdbId != null) {
             ClickableLogo(
                 logo = R.drawable.imdb,
                 url = stringResource(R.string.imdb_url) + imdbId,
+                modifier = modifier,
             )
         }
         ClickableLogo(
             logo = R.drawable.tmdb,
             url = stringResource(R.string.tmdb_url) + tmdbId,
+            modifier = modifier,
         )
     }
 }
