@@ -207,6 +207,19 @@ class MovieDatabaseTest {
         }
 
     @Test
+    fun `get any movie`() =
+        runTest {
+            // None
+            assertEquals(null, movieDao.getOneMovie().first())
+
+            // One
+            val movie = DbMovie(movieId = 99, title = "Home Alone")
+            movieDao.insertMovie(movie)
+
+            assertEquals(movie, movieDao.getOneMovie().first())
+        }
+
+    @Test
     fun `fetch single movie by id`() =
         runTest {
             // Given a database with a single movie

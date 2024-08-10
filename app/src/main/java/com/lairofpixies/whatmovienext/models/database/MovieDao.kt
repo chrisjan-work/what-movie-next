@@ -38,6 +38,9 @@ interface MovieDao {
     @Query("SELECT * FROM dbmovie WHERE isArchived = 0")
     fun getAllMovies(): Flow<List<DbMovie>>
 
+    @Query("SELECT * FROM dbmovie WHERE isArchived = 0 LIMIT 1")
+    fun getOneMovie(): Flow<DbMovie?>
+
     @Query("SELECT * FROM dbmovie WHERE movieId = :movieId")
     suspend fun fetchMovieById(movieId: Long): DbMovie?
 

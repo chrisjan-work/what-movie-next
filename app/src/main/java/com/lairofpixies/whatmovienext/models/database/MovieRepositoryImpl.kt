@@ -62,6 +62,12 @@ class MovieRepositoryImpl(
                 )
             }.flowOn(ioDispatcher)
 
+    override val isEmpty: Flow<Boolean> =
+        dao
+            .getOneMovie()
+            .map { it == null }
+            .flowOn(ioDispatcher)
+
     override fun singleCardMovie(movieId: Long): Flow<AsyncMovie> =
         dao
             .getStaffedMovie(movieId)

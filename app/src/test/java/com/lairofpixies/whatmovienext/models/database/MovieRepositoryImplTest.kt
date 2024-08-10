@@ -46,6 +46,8 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -208,6 +210,20 @@ class MovieRepositoryImplTest {
 
             // Then
             assertEquals(AsyncMovie.Empty, result)
+        }
+
+    @Test
+    fun `check if table is empty`() =
+        runTest {
+            // When it's empty
+            coEvery { movieDao.getOneMovie() } returns flowOf(null)
+            initializeSut()
+            assertTrue(movieRepository.isEmpty.last())
+
+            // When it's not empty
+            coEvery { movieDao.getOneMovie() } returns flowOf(testDbMovieExtended())
+            initializeSut()
+            assertFalse(movieRepository.isEmpty.last())
         }
 
     @Test

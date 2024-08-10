@@ -30,6 +30,8 @@ interface MovieRepository {
 
     val archivedMovies: Flow<AsyncMovie>
 
+    val isEmpty: Flow<Boolean>
+
     fun singleCardMovie(movieId: Long): Flow<AsyncMovie>
 
     // write
