@@ -31,6 +31,7 @@ import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
 import com.lairofpixies.whatmovienext.models.network.OmdbApi
 import com.lairofpixies.whatmovienext.models.network.RequestInterceptorFactory
 import com.lairofpixies.whatmovienext.models.network.TmdbApi
+import com.lairofpixies.whatmovienext.models.network.WikidataApi
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -51,11 +52,13 @@ object ApiModule {
     fun provideApiRepository(
         tmdbApi: TmdbApi,
         omdbApi: OmdbApi,
+        wikidataApi: WikidataApi,
         remoteMapper: RemoteMapper,
     ): ApiRepository =
         ApiRepositoryImpl(
             tmdbApi,
             omdbApi,
+            wikidataApi,
             remoteMapper,
             Dispatchers.IO,
         )
@@ -110,6 +113,32 @@ object ApiModule {
             .client(okHttpClient)
             .build()
             .create(OmdbApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWikidataApi(): WikidataApi {
+        val interceptor = RequestInterceptorFactory.wikidataInterceptor()
+
+        val okHttpClient: OkHttpClient =
+            OkHttpClient
+                .Builder()
+                .addInterceptor(interceptor)
+                .build()
+
+        val moshi =
+            Moshi
+                .Builder()
+                .add(KotlinJsonAdapterFactory())
+                .build()
+
+        return Retrofit
+            .Builder()
+            .baseUrl(BuildConfig.wikidataurl)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(okHttpClient)
+            .build()
+            .create(WikidataApi::class.java)
     }
 
     @Provides

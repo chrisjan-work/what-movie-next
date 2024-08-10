@@ -22,7 +22,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.Rating
-import com.lairofpixies.whatmovienext.models.data.RatingMap
+import com.lairofpixies.whatmovienext.models.data.RatingPair
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -33,6 +33,10 @@ import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
 import com.lairofpixies.whatmovienext.models.network.data.OmdbMovieInfo
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo.Binding
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo.Bindings
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo.Results
 
 fun testTmdbMovieExtended(): TmdbMovieExtended =
     TmdbMovieExtended(
@@ -89,17 +93,34 @@ fun testOmdbMovieRatings(): OmdbMovieInfo =
             ),
     )
 
-fun testRatingMap(): RatingMap =
-    mapOf(
-        Rating.Rater.RottenTomatoes to
+fun testWikidataMovieRatings(): WikidataMovieInfo =
+    WikidataMovieInfo(
+        Results(
+            listOf(
+                Bindings(
+                    entity = Binding("tt100", "literal"),
+                    rottenTomatoesId = Binding("m/churminator_the_ii", "literal"),
+                    metacriticId = Binding("movie/churminator_the_2nd", "literal"),
+                    rottenTomatoesRating = Binding("81%", "literal"),
+                    metacriticRating = Binding("82/100", "literal"),
+                ),
+            ),
+        ),
+    )
+
+fun testRatingMap(): RatingPair =
+    RatingPair(
+        rtRating =
             Rating(
                 source = Rating.Rater.RottenTomatoes,
+                sourceId = "m/churminator_the_ii",
                 displayValue = "81%",
                 percentValue = 81,
             ),
-        Rating.Rater.Metacritic to
+        mcRating =
             Rating(
                 source = Rating.Rater.Metacritic,
+                sourceId = "movie/churminator_the_2nd",
                 displayValue = "82/100",
                 percentValue = 82,
             ),
@@ -134,12 +155,14 @@ fun testCardMovieExtended(movieId: Long = NEW_ID): Movie.ForCard =
                 rtRating =
                     Rating(
                         source = Rating.Rater.RottenTomatoes,
+                        sourceId = "m/churminator_the_ii",
                         displayValue = "81%",
                         percentValue = 81,
                     ),
                 mcRating =
                     Rating(
                         source = Rating.Rater.Metacritic,
+                        sourceId = "movie/churminator_the_2nd",
                         displayValue = "82/100",
                         percentValue = 82,
                     ),
@@ -202,12 +225,14 @@ fun testListMovieExtended(): Movie.ForList =
                 rtRating =
                     Rating(
                         source = Rating.Rater.RottenTomatoes,
+                        sourceId = "m/churminator_the_ii",
                         displayValue = "81%",
                         percentValue = 81,
                     ),
                 mcRating =
                     Rating(
                         source = Rating.Rater.Metacritic,
+                        sourceId = "movie/churminator_the_2nd",
                         displayValue = "82/100",
                         percentValue = 82,
                     ),
@@ -230,7 +255,9 @@ fun testDbMovieExtended(movieId: Long = NEW_ID): DbMovie =
         plot = "robots from the future",
         runtimeMinutes = 137,
         directorNames = "Cameron",
+        rtId = "m/churminator_the_ii",
         rtRating = 81,
+        mcId = "movie/churminator_the_2nd",
         mcRating = 82,
     )
 

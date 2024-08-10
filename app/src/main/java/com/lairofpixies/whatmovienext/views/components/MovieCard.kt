@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Staff
+import com.lairofpixies.whatmovienext.models.data.isNotNegative
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.toAnnotatedString
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
@@ -133,18 +134,18 @@ fun MovieCard(
                 )
 
                 Row {
-                    if (movie.detailData.mcRating != null) {
+                    if (movie.detailData.mcRating.isNotNegative()) {
                         RatingRow(
                             logo = R.drawable.metacritic,
                             text =
-                                movie.detailData.mcRating.displayValue,
+                                movie.detailData.mcRating?.displayValue ?: "?",
                             modifier = Modifier.alpha(0.8f),
                         )
                     }
-                    if (movie.detailData.rtRating != null) {
+                    if (movie.detailData.rtRating.isNotNegative()) {
                         RatingRow(
                             logo = R.drawable.rotten_tomatoes,
-                            text = movie.detailData.rtRating.displayValue,
+                            text = movie.detailData.rtRating?.displayValue ?: "?",
                             modifier = Modifier.alpha(0.8f),
                         )
                     }

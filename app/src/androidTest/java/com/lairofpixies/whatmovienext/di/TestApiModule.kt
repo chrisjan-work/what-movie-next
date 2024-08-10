@@ -31,7 +31,9 @@ import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
 import com.lairofpixies.whatmovienext.models.network.OmdbApi
 import com.lairofpixies.whatmovienext.models.network.TestOmdbApi
 import com.lairofpixies.whatmovienext.models.network.TestTmdbApi
+import com.lairofpixies.whatmovienext.models.network.TestWikidataApi
 import com.lairofpixies.whatmovienext.models.network.TmdbApi
+import com.lairofpixies.whatmovienext.models.network.WikidataApi
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -58,11 +60,13 @@ object TestApiModule {
     fun provideApiRepository(
         tmdbApi: TestTmdbApi,
         omdbApi: TestOmdbApi,
+        wikidataApi: TestWikidataApi,
         remoteMapper: RemoteMapper,
     ): ApiRepository =
         ApiRepositoryImpl(
             tmdbApi,
             omdbApi,
+            wikidataApi,
             remoteMapper,
             Dispatchers.IO,
         )
@@ -74,6 +78,10 @@ object TestApiModule {
     @Singleton
     @Provides
     fun provideTestOmdbApi() = TestOmdbApi()
+
+    @Singleton
+    @Provides
+    fun provideTestWikidataApi() = TestWikidataApi()
 
     @Provides
     @Singleton
@@ -155,6 +163,27 @@ object TestApiModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
             .create(OmdbApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWikidataApi(
+        mockWebServer: MockWebServer,
+        okHttpClient: OkHttpClient,
+    ): WikidataApi {
+        val moshi =
+            Moshi
+                .Builder()
+                .add(KotlinJsonAdapterFactory())
+                .build()
+
+        return Retrofit
+            .Builder()
+            .client(okHttpClient)
+            .baseUrl(mockWebServer.url("/"))
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+            .create(WikidataApi::class.java)
     }
 
     @Provides

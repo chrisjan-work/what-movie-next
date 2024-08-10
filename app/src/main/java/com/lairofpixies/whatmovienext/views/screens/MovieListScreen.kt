@@ -59,6 +59,7 @@ import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Rating
 import com.lairofpixies.whatmovienext.models.data.WatchState
+import com.lairofpixies.whatmovienext.models.data.isNotNegative
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.printableYear
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
@@ -272,23 +273,23 @@ fun RatingsDisplay(
     modifier: Modifier = Modifier,
 ) {
     Row {
-        if (mcRating != null) {
+        if (mcRating.isNotNegative()) {
             RatingIcon(
                 R.drawable.metacritic,
                 modifier = modifier,
             )
             RatingDisplay(
-                mcRating.displayValue,
+                mcRating?.displayValue ?: "?",
                 modifier = modifier,
             )
         }
-        if (rtRating != null) {
+        if (rtRating.isNotNegative()) {
             RatingIcon(
                 R.drawable.rotten_tomatoes,
                 modifier = modifier,
             )
             RatingDisplay(
-                rtRating.displayValue,
+                rtRating?.displayValue ?: "?",
                 modifier = modifier,
             )
         }
