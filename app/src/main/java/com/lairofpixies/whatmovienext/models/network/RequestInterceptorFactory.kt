@@ -30,7 +30,7 @@ object RequestInterceptorFactory {
         interceptor {
             newBuilder()
                 .header("Authorization", "Bearer ${BuildConfig.tmdbtoken}")
-                .header("User-Agent", BuildConfig.tmdbuseragent)
+                .header("User-Agent", USER_AGENT)
                 .build()
         }
 
@@ -42,6 +42,9 @@ object RequestInterceptorFactory {
                         .newBuilder()
                         .addQueryParameter("apikey", BuildConfig.omdbkey)
                         .build(),
-                ).build()
+                ).header("User-Agent", USER_AGENT)
+                .build()
         }
+
+    private const val USER_AGENT = "WhatMovieNext/1.0 (Android; ${BuildConfig.VERSION_NAME})"
 }
