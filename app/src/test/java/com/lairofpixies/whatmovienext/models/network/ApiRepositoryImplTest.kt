@@ -48,6 +48,7 @@ import retrofit2.Response
 class ApiRepositoryImplTest {
     private lateinit var tmdbApi: TmdbApi
     private lateinit var omdbApi: OmdbApi
+    private lateinit var wikidataApi: WikidataApi
     private lateinit var configRepo: ConfigRepository
     private lateinit var genreRepository: GenreRepository
     private lateinit var remoteMapper: RemoteMapper
@@ -57,6 +58,7 @@ class ApiRepositoryImplTest {
     fun setUp() {
         tmdbApi = mockk(relaxed = true)
         omdbApi = mockk(relaxed = true)
+        wikidataApi = mockk(relaxed = true)
         configRepo = mockk(relaxed = true)
         genreRepository = mockk(relaxed = true)
         remoteMapper = RemoteMapper(configRepo, genreRepository)
@@ -67,6 +69,7 @@ class ApiRepositoryImplTest {
             ApiRepositoryImpl(
                 tmdbApi,
                 omdbApi,
+                wikidataApi,
                 remoteMapper,
                 ioDispatcher = UnconfinedTestDispatcher(testScheduler),
             )

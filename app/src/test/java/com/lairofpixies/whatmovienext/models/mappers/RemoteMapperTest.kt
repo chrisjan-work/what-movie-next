@@ -19,13 +19,17 @@
 package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Rating
-import com.lairofpixies.whatmovienext.models.data.RatingMap
+import com.lairofpixies.whatmovienext.models.data.RatingPair
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import com.lairofpixies.whatmovienext.models.network.data.OmdbMovieInfo
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo.Binding
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo.Bindings
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo.Results
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
@@ -120,7 +124,8 @@ class RemoteMapperTest {
                 "3/5" to 60,
                 "71/100" to 71,
                 "7" to 7,
-                "nope" to 0,
+                "0" to 0,
+                "nope" to -1,
             )
 
         // When
@@ -132,10 +137,15 @@ class RemoteMapperTest {
     @Test
     fun `parse ratings`() {
         // Given
-        val ratings = testOmdbMovieRatings()
+        val omdbRatings = testOmdbMovieRatings()
+        val wikiRatings = testWikidataMovieRatings()
 
         // When
-        val result = remoteMapper.toRatings(ratings)
+        val result =
+            remoteMapper.toRatings(
+                omdbRatings = omdbRatings,
+                wikidataMovieInfo = wikiRatings,
+            )
 
         // Then
         val expected = testRatingMap()
@@ -144,18 +154,139 @@ class RemoteMapperTest {
     }
 
     @Test
-    fun `null or failing ratings`() {
+    fun `parse ratings - combine wikidata and omdb`() {
         // Given
-        val noInfo: OmdbMovieInfo? = null
-        val failedInfo =
+        val metacriticOmdb =
+            OmdbMovieInfo(
+                success = "True",
+                ratings =
+                    listOf(
+                        OmdbMovieInfo.OmdbRating(
+                            source = "Metacritic",
+                            value = "82/100",
+                        ),
+                    ),
+            )
+
+        val rottenTomatoesWikidata =
+            WikidataMovieInfo(
+                Results(
+                    listOf(
+                        Bindings(
+                            entity = Binding("tt100", "literal"),
+                            rottenTomatoesId = Binding("m/churminator_the_ii", "literal"),
+                            rottenTomatoesRating = Binding("81%", "literal"),
+                            metacriticId = Binding("", "literal"),
+                            metacriticRating = Binding("", "literal"),
+                        ),
+                    ),
+                ),
+            )
+
+        // When
+        val result =
+            remoteMapper.toRatings(
+                omdbRatings = metacriticOmdb,
+                wikidataMovieInfo = rottenTomatoesWikidata,
+            )
+
+        // Then
+        val expected =
+            testRatingMap().run {
+                copy(mcRating = mcRating?.copy(sourceId = ""))
+            }
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `parse ratings - wikidata fallback when omdb missing`() {
+        // Given
+        val failedOmdbRatings =
             OmdbMovieInfo(
                 success = "False",
                 errorMessage = "Whatever",
             )
+        val wikiRatings = testWikidataMovieRatings()
 
-        val noRatings: RatingMap = emptyMap()
-        assertEquals(noRatings, remoteMapper.toRatings(noInfo))
-        assertEquals(noRatings, remoteMapper.toRatings(failedInfo))
+        // When
+        val result =
+            remoteMapper.toRatings(
+                omdbRatings = failedOmdbRatings,
+                wikidataMovieInfo = wikiRatings,
+            )
+
+        // Then
+        val expected = testRatingMap()
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `parse ratings - wikidata missing but omdb present`() {
+        // Given
+        val failedOmdbRatings = testOmdbMovieRatings()
+        val failedWiki =
+            WikidataMovieInfo(
+                results = Results(emptyList()),
+            )
+
+        // When
+        val result =
+            remoteMapper.toRatings(
+                omdbRatings = failedOmdbRatings,
+                wikidataMovieInfo = failedWiki,
+            )
+
+        // Then
+        val expected =
+            testRatingMap().run {
+                copy(
+                    rtRating = rtRating?.copy(sourceId = ""),
+                    mcRating = mcRating?.copy(sourceId = ""),
+                )
+            }
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `null or failing ratings`() {
+        // Given
+        val noOmdb: OmdbMovieInfo? = null
+        val noWiki: WikidataMovieInfo? = null
+        val failedOmdb =
+            OmdbMovieInfo(
+                success = "False",
+                errorMessage = "Whatever",
+            )
+        val failedWiki =
+            WikidataMovieInfo(
+                results = WikidataMovieInfo.Results(emptyList()),
+            )
+
+        // every combination always returns an "empty" rating pair
+        val emptyRatings =
+            RatingPair(
+                rtRating =
+                    Rating(
+                        Rating.Rater.RottenTomatoes,
+                        sourceId = "",
+                        displayValue = "",
+                        percentValue = -1,
+                    ),
+                mcRating =
+                    Rating(
+                        Rating.Rater.Metacritic,
+                        sourceId = "",
+                        displayValue = "",
+                        percentValue = -1,
+                    ),
+            )
+        assertEquals(emptyRatings, remoteMapper.toRatings(noOmdb, noWiki))
+        assertEquals(emptyRatings, remoteMapper.toRatings(noOmdb, failedWiki))
+        assertEquals(emptyRatings, remoteMapper.toRatings(failedOmdb, failedWiki))
+        assertEquals(emptyRatings, remoteMapper.toRatings(failedOmdb, noWiki))
     }
 
     @Test
@@ -213,17 +344,7 @@ class RemoteMapperTest {
         val result = remoteMapper.toCardMovie(testTmdbMovieExtended(), ratings)
 
         // Then
-        // TODO: remove this when ratings are part of db
-        val expected =
-            testCardMovieExtended().removeCreationTime().run {
-                copy(
-                    detailData =
-                        detailData.copy(
-                            rtRating = ratings[Rating.Rater.RottenTomatoes],
-                            mcRating = ratings[Rating.Rater.Metacritic],
-                        ),
-                )
-            }
+        val expected = testCardMovieExtended().removeCreationTime()
         assertEquals(
             expected,
             result.removeCreationTime(),

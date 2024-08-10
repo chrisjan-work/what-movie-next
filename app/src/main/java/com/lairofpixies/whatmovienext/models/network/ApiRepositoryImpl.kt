@@ -20,7 +20,9 @@ package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.PagedMovies
+import com.lairofpixies.whatmovienext.models.data.RatingPair
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,10 +31,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 
 class ApiRepositoryImpl(
     private val tmdbApi: TmdbApi,
     private val omdbApi: OmdbApi,
+    private val wikidataApi: WikidataApi,
     private val remoteMapper: RemoteMapper,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ApiRepository {
@@ -78,14 +82,28 @@ class ApiRepositoryImpl(
                 emit(AsyncMovie.Failed(Exception("Failed to get movie details")))
                 return@flow
             }
-            val remoteRatings =
-                if (!remoteMovie.imdbId.isNullOrBlank()) {
-                    omdbApi.fetchMovieRatings(remoteMovie.imdbId)
-                } else {
-                    null
-                }
 
-            val ratings = remoteMapper.toRatings(remoteRatings)
+            val ratings =
+                if (!remoteMovie.imdbId.isNullOrBlank()) {
+                    val omdbRatings =
+                        try {
+                            omdbApi.fetchMovieRatings(remoteMovie.imdbId)
+                        } catch (e: Throwable) {
+                            Timber.e("omdbApi call failed with error $e")
+                            null
+                        }
+                    val wikidataRatings =
+                        try {
+                            wikidataApi.askSparql(WikidataMovieInfo.sparqlQuery(remoteMovie.imdbId))
+                        } catch (e: Throwable) {
+                            Timber.e("wikidataApi call failed with error $e")
+                            null
+                        }
+
+                    remoteMapper.toRatings(omdbRatings, wikidataRatings)
+                } else {
+                    RatingPair()
+                }
             val movie = remoteMapper.toCardMovie(remoteMovie, ratings)
             emit(AsyncMovie.Single(movie))
         }.catch { exception: Throwable ->

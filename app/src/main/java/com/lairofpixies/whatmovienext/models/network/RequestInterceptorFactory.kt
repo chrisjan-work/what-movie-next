@@ -46,5 +46,12 @@ object RequestInterceptorFactory {
                 .build()
         }
 
+    fun wikidataInterceptor(): Interceptor =
+        interceptor {
+            newBuilder()
+                .header("User-Agent", USER_AGENT)
+                .build()
+        }
+
     private const val USER_AGENT = "WhatMovieNext/1.0 (Android; ${BuildConfig.VERSION_NAME})"
 }

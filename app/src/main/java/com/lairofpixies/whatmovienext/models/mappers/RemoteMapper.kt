@@ -24,7 +24,8 @@ import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.MovieData.UNKNOWN_ID
 import com.lairofpixies.whatmovienext.models.data.Rating
-import com.lairofpixies.whatmovienext.models.data.RatingMap
+import com.lairofpixies.whatmovienext.models.data.Rating.Rater
+import com.lairofpixies.whatmovienext.models.data.RatingPair
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
@@ -36,6 +37,7 @@ import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended.TmdbCastMember
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended.TmdbCrewMember
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo
 import java.lang.NumberFormatException
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -64,7 +66,7 @@ class RemoteMapper
 
         fun toCardMovie(
             tmdbMovieExtended: TmdbMovieExtended,
-            ratings: RatingMap,
+            ratings: RatingPair,
         ): Movie.ForCard =
             with(tmdbMovieExtended) {
                 Movie.ForCard(
@@ -91,8 +93,8 @@ class RemoteMapper
                             plot = summary ?: "",
                             runtimeMinutes = runtime ?: 0,
                             directorNames = toDirectorNames(credits?.crew),
-                            rtRating = ratings[Rating.Rater.RottenTomatoes],
-                            mcRating = ratings[Rating.Rater.Metacritic],
+                            rtRating = ratings.rtRating,
+                            mcRating = ratings.mcRating,
                         ),
                     staffData =
                         MovieData.StaffData(
@@ -177,18 +179,45 @@ class RemoteMapper
                 null
             }
 
-        fun toRatings(omdbRatings: OmdbMovieInfo?): RatingMap {
-            if (omdbRatings == null) return emptyMap()
-            if (omdbRatings.success != "True") return emptyMap()
-            val ratings =
-                omdbRatings.ratings.mapNotNull { omdbRating ->
-                    Rating.fromName(
-                        omdbRating.source,
-                        omdbRating.value,
-                        toPercent(omdbRating.value),
-                    )
-                }
-            return ratings.associateBy { it.source }
+        fun toRatings(
+            omdbRatings: OmdbMovieInfo?,
+            wikidataMovieInfo: WikidataMovieInfo?,
+        ): RatingPair {
+            val omdbMap: Map<Rater, String> =
+                run {
+                    if (omdbRatings == null) return@run emptyList()
+                    if (omdbRatings.success != "True") return@run emptyList()
+                    omdbRatings.ratings.mapNotNull { omdbRating ->
+                        Rater.fromName(omdbRating.source)?.let { rater ->
+                            rater to omdbRating.value
+                        }
+                    }
+                }.toMap()
+
+            // get rating from omdb, fallback to wikidata, finally fall back to empty
+            val rtValue =
+                omdbMap[Rater.RottenTomatoes]?.let { it.ifBlank { null } }
+                    ?: wikidataMovieInfo?.rottenTomatoesRating ?: ""
+            val mcValue =
+                omdbMap[Rater.Metacritic]?.let { it.ifBlank { null } }
+                    ?: wikidataMovieInfo?.metacriticRating ?: ""
+
+            return RatingPair(
+                rtRating =
+                    Rating(
+                        source = Rating.Rater.RottenTomatoes,
+                        sourceId = wikidataMovieInfo?.rottenTomatoesId ?: "",
+                        displayValue = rtValue,
+                        percentValue = toPercent(rtValue),
+                    ),
+                mcRating =
+                    Rating(
+                        source = Rating.Rater.Metacritic,
+                        sourceId = wikidataMovieInfo?.metacriticId ?: "",
+                        displayValue = mcValue,
+                        percentValue = toPercent(mcValue),
+                    ),
+            )
         }
 
         fun toPercent(value: String): Int {
@@ -215,6 +244,6 @@ class RemoteMapper
             if (asFraction != null) return asFraction
 
             val asAnAbsolute = value.toFloatOrNull()
-            return asAnAbsolute?.toInt() ?: 0
+            return asAnAbsolute?.toInt() ?: -1
         }
     }

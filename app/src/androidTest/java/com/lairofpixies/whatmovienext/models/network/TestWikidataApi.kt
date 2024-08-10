@@ -16,30 +16,24 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.models.data
+package com.lairofpixies.whatmovienext.models.network
 
-data class Rating(
-    val source: Rater,
-    val sourceId: String,
-    val displayValue: String,
-    val percentValue: Int,
-) {
-    enum class Rater(
-        val displayName: String,
-    ) {
-        RottenTomatoes("Rotten Tomatoes"),
-        Metacritic("Metacritic"),
-        ;
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo
+import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo.Results
+import javax.inject.Inject
 
-        companion object {
-            fun fromName(name: String): Rater? = entries.firstOrNull { it.displayName == name }
-        }
+class TestWikidataApi
+    @Inject
+    constructor() : WikidataApi {
+        var fakeRatings =
+            WikidataMovieInfo(
+                Results(
+                    bindings = emptyList(),
+                ),
+            )
+
+        override suspend fun askSparql(
+            sparqlQuery: String,
+            format: String,
+        ): WikidataMovieInfo = fakeRatings
     }
-}
-
-fun Rating?.isNotNegative(): Boolean = this != null && this.percentValue >= 0
-
-data class RatingPair(
-    val rtRating: Rating? = null,
-    val mcRating: Rating? = null,
-)

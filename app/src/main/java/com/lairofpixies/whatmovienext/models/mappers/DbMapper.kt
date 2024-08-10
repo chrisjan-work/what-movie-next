@@ -62,8 +62,8 @@ class DbMapper
                             plot = plot,
                             runtimeMinutes = runtimeMinutes,
                             directorNames = toDirectorNames(staffedMovie.staff),
-                            rtRating = toRtRating(rtRating),
-                            mcRating = toMcRating(mcRating),
+                            rtRating = toRtRating(rtId, rtRating),
+                            mcRating = toMcRating(mcId, mcRating),
                         ),
                     staffData = toStaffData(staffedMovie.staff),
                 )
@@ -131,8 +131,8 @@ class DbMapper
                             plot = plot,
                             runtimeMinutes = runtimeMinutes,
                             directorNames = toDirectorNames(directorNames),
-                            rtRating = toRtRating(rtRating),
-                            mcRating = toMcRating(mcRating),
+                            rtRating = toRtRating(rtId, rtRating),
+                            mcRating = toMcRating(mcId, mcRating),
                         ),
                 )
             }
@@ -154,7 +154,9 @@ class DbMapper
                     genres = toDbGenres(searchData.genres),
                     runtimeMinutes = detailData.runtimeMinutes,
                     directorNames = toDbDirectorNames(detailData.directorNames),
+                    rtId = detailData.rtRating?.sourceId ?: "",
                     rtRating = detailData.rtRating?.percentValue,
+                    mcId = detailData.mcRating?.sourceId ?: "",
                     mcRating = detailData.mcRating?.percentValue,
                     watchState = appData.watchState,
                     isArchived = appData.isArchived,
@@ -197,19 +199,27 @@ class DbMapper
 
         fun toDbDirectorNames(directorNames: List<String>): String = directorNames.encodeToString()
 
-        fun toRtRating(rtRating: Int?): Rating? =
+        fun toRtRating(
+            rtId: String,
+            rtRating: Int?,
+        ): Rating? =
             rtRating?.let {
                 Rating(
                     source = Rating.Rater.RottenTomatoes,
+                    sourceId = rtId,
                     percentValue = rtRating,
                     displayValue = "$rtRating%",
                 )
             }
 
-        fun toMcRating(mcRating: Int?): Rating? =
+        fun toMcRating(
+            mcId: String,
+            mcRating: Int?,
+        ): Rating? =
             mcRating?.let {
                 Rating(
                     source = Rating.Rater.Metacritic,
+                    sourceId = mcId,
                     percentValue = mcRating,
                     displayValue = "$mcRating/100",
                 )
