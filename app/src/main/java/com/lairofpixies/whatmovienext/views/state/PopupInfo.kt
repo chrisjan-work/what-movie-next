@@ -23,11 +23,6 @@ sealed class PopupInfo {
 
     data object EmptyTitle : PopupInfo()
 
-    data class UnsavedChanges(
-        val onSave: () -> Unit,
-        val onDiscard: () -> Unit,
-    ) : PopupInfo()
-
     data class ConfirmDeletion(
         val onConfirm: () -> Unit,
     ) : PopupInfo()
