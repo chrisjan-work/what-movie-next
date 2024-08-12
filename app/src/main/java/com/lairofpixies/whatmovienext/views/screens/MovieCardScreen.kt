@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -62,22 +61,20 @@ fun MovieCardScreen(
     val loadedMovie = partialMovie.singleMovieOrNull<Movie.ForCard>()
     if (loadedMovie != null) {
         val bottomItems =
-            remember {
-                bottomItemsForMovieCard(
-                    loadedMovie,
-                    onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
-                    onArchiveAction = {
-                        cardViewModel.archiveCurrentMovie()
-                        cardViewModel.onLeaveAction()
-                    },
-                    onUpdateAction = { updateMovieId, watchState ->
-                        cardViewModel.updateMovieWatched(
-                            updateMovieId,
-                            watchState,
-                        )
-                    },
-                )
-            }
+            bottomItemsForMovieCard(
+                loadedMovie,
+                onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
+                onArchiveAction = {
+                    cardViewModel.archiveCurrentMovie()
+                    cardViewModel.onLeaveAction()
+                },
+                onUpdateAction = { updateMovieId, watchState ->
+                    cardViewModel.updateMovieWatched(
+                        updateMovieId,
+                        watchState,
+                    )
+                },
+            )
 
         MovieCard(
             movie = loadedMovie,
