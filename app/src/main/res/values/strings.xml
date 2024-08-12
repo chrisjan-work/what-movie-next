@@ -57,4 +57,6 @@
     <string name="external_links">External links</string>
     <string name="rotten_tomatoes_url">https://www.rottentomatoes.com/</string>
     <string name="metacritic_url">https://www.metacritic.com/</string>
+    <string name="connection_failed_title">Network problem</string>
+    <string name="missing_title_title">Missing title</string>
 </resources>

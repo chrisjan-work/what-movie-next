@@ -19,19 +19,23 @@
 package com.lairofpixies.whatmovienext.views.screens
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 
@@ -46,19 +50,8 @@ fun PopupDialogs(
         PopupInfo.EmptyTitle ->
             SingleButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.EMPTY_TITLE),
+                titleRes = R.string.missing_title_title,
                 contentRes = R.string.error_title_is_required,
-                onDismiss = onDismiss,
-            )
-
-        is PopupInfo.UnsavedChanges ->
-            ThreeButtonDialog(
-                modifier = modifier.testTag(UiTags.Popups.UNSAVED_CHANGES),
-                contentRes = R.string.warning_changes_not_saved,
-                saveLabelRes = R.string.save,
-                onSave = popupInfo.onSave,
-                discardLabelRes = R.string.discard,
-                onDiscard = popupInfo.onDiscard,
-                dismissLabelRes = R.string.continue_editing,
                 onDismiss = onDismiss,
             )
 
@@ -94,6 +87,7 @@ fun PopupDialogs(
         is PopupInfo.ConnectionFailed ->
             SingleButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.CONNECTION_FAILED),
+                titleRes = R.string.connection_failed_title,
                 contentRes = R.string.connection_failed_explanation,
                 onDismiss = onDismiss,
             )
@@ -120,24 +114,38 @@ fun SingleButtonDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProgressDialog(
     @StringRes contentRes: Int,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BasicAlertDialog(
-        modifier = modifier,
+    Dialog(
         onDismissRequest = onDismiss,
     ) {
-        Box {
-            Column {
-                Row {
-                    CircularProgressIndicator()
-                    Text(stringResource(contentRes))
+        Surface(
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+            shape = AlertDialogDefaults.shape,
+        ) {
+            Column(
+                modifier =
+                    modifier
+                        .padding(24.dp),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(16.dp),
+                    )
+                    Text(
+                        stringResource(contentRes),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AlertDialogDefaults.textContentColor,
+                    )
                 }
-                Button(onClick = onDismiss) {
+                Button(
+                    onClick = onDismiss,
+                    modifier = Modifier.align(Alignment.End),
+                ) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -174,45 +182,4 @@ fun TwoButtonDialog(
             }
         },
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ThreeButtonDialog(
-    @StringRes contentRes: Int,
-    @StringRes saveLabelRes: Int,
-    onSave: () -> Unit,
-    @StringRes discardLabelRes: Int,
-    onDiscard: () -> Unit,
-    @StringRes dismissLabelRes: Int,
-    onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    BasicAlertDialog(
-        modifier = modifier,
-        onDismissRequest = onDismiss,
-    ) {
-        Box {
-            Column {
-                Text(stringResource(contentRes))
-                Row {
-                    Button(onClick = {
-                        onSave()
-                        onDismiss()
-                    }) {
-                        Text(stringResource(saveLabelRes))
-                    }
-                    Button(onClick = {
-                        onDiscard()
-                        onDismiss()
-                    }) {
-                        Text(stringResource(discardLabelRes))
-                    }
-                    Button(onClick = onDismiss) {
-                        Text(stringResource(dismissLabelRes))
-                    }
-                }
-            }
-        }
-    }
 }
