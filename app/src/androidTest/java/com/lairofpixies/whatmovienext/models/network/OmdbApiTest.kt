@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
+import com.lairofpixies.whatmovienext.BuildConfig
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
@@ -109,5 +110,24 @@ class OmdbApiTest {
             // Then
             assertEquals("False", result.success)
             assertEquals("Simulated error", result.errorMessage)
+        }
+
+    @Test
+    fun `omdb interceptor`() =
+        runTest {
+            // Given
+            val mockResponse =
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody("{}")
+            mockWebServer.enqueue(mockResponse)
+
+            // When
+            omdbApi.fetchMovieRatings("tt10")
+            val request = mockWebServer.takeRequest()
+
+            // Then
+            assertEquals(RequestInterceptorFactory.USER_AGENT, request.getHeader("User-Agent"))
+            assertEquals(BuildConfig.omdbkey, request.requestUrl?.queryParameter("apikey"))
         }
 }

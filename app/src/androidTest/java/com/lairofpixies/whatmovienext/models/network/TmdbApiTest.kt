@@ -18,6 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
+import com.lairofpixies.whatmovienext.BuildConfig
+import com.lairofpixies.whatmovienext.models.network.RequestInterceptorFactory.USER_AGENT
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
@@ -240,5 +242,24 @@ class TmdbApiTest {
                         ),
                 )
             assertEquals(expectedMovie, result)
+        }
+
+    @Test
+    fun `tmdb interceptor`() =
+        runTest {
+            // Given
+            val mockResponse =
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody("{}")
+            mockWebServer.enqueue(mockResponse)
+
+            // When
+            tmdbApi.getMovieDetails(tmdbId = 1)
+            val request = mockWebServer.takeRequest()
+
+            // Then
+            assertEquals(USER_AGENT, request.getHeader("User-Agent"))
+            assertEquals("Bearer ${BuildConfig.tmdbtoken}", request.getHeader("Authorization"))
         }
 }

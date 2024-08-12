@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.network
 
+import com.lairofpixies.whatmovienext.models.network.RequestInterceptorFactory.USER_AGENT
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
@@ -132,5 +133,23 @@ class WikidataApiTest {
             assertEquals("", result.rottenTomatoesRating)
             assertEquals("", result.metacriticId)
             assertEquals("", result.metacriticRating)
+        }
+
+    @Test
+    fun `wikidata interceptor`() =
+        runTest {
+            // Given
+            val mockResponse =
+                MockResponse()
+                    .setResponseCode(200)
+                    .setBody("""{"results":{"bindings":[]}}""")
+            mockWebServer.enqueue(mockResponse)
+
+            // When
+            wikidataApi.askSparql("something")
+            val request = mockWebServer.takeRequest()
+
+            // Then
+            assertEquals(USER_AGENT, request.getHeader("User-Agent"))
         }
 }
