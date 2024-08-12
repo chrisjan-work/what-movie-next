@@ -29,6 +29,7 @@ import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizer
 import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizerImpl
 import com.lairofpixies.whatmovienext.models.network.ConnectivityTracker
 import com.lairofpixies.whatmovienext.models.network.OmdbApi
+import com.lairofpixies.whatmovienext.models.network.RequestInterceptorFactory
 import com.lairofpixies.whatmovienext.models.network.TestOmdbApi
 import com.lairofpixies.whatmovienext.models.network.TestTmdbApi
 import com.lairofpixies.whatmovienext.models.network.TestWikidataApi
@@ -129,6 +130,12 @@ object TestApiModule {
         mockWebServer: MockWebServer,
         okHttpClient: OkHttpClient,
     ): TmdbApi {
+        val tmdbOkHttpClient =
+            okHttpClient
+                .newBuilder()
+                .addInterceptor(RequestInterceptorFactory.tmdbInterceptor())
+                .build()
+
         val moshi =
             Moshi
                 .Builder()
@@ -137,7 +144,7 @@ object TestApiModule {
 
         return Retrofit
             .Builder()
-            .client(okHttpClient)
+            .client(tmdbOkHttpClient)
             .baseUrl(mockWebServer.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
@@ -150,6 +157,12 @@ object TestApiModule {
         mockWebServer: MockWebServer,
         okHttpClient: OkHttpClient,
     ): OmdbApi {
+        val omdbOkHttpClient =
+            okHttpClient
+                .newBuilder()
+                .addInterceptor(RequestInterceptorFactory.omdbInterceptor())
+                .build()
+
         val moshi =
             Moshi
                 .Builder()
@@ -158,7 +171,7 @@ object TestApiModule {
 
         return Retrofit
             .Builder()
-            .client(okHttpClient)
+            .client(omdbOkHttpClient)
             .baseUrl(mockWebServer.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
@@ -171,6 +184,12 @@ object TestApiModule {
         mockWebServer: MockWebServer,
         okHttpClient: OkHttpClient,
     ): WikidataApi {
+        val wikidataOkHttpClient =
+            okHttpClient
+                .newBuilder()
+                .addInterceptor(RequestInterceptorFactory.wikidataInterceptor())
+                .build()
+
         val moshi =
             Moshi
                 .Builder()
@@ -179,7 +198,7 @@ object TestApiModule {
 
         return Retrofit
             .Builder()
-            .client(okHttpClient)
+            .client(wikidataOkHttpClient)
             .baseUrl(mockWebServer.url("/"))
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()

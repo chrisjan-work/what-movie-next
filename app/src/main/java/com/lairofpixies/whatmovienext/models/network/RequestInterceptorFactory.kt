@@ -53,5 +53,5 @@ object RequestInterceptorFactory {
                 .build()
         }
 
-    private const val USER_AGENT = "WhatMovieNext/1.0 (Android; ${BuildConfig.VERSION_NAME})"
+    const val USER_AGENT = "WhatMovieNext/1.0 (Android; ${BuildConfig.VERSION_NAME})"
 }
