@@ -47,8 +47,7 @@
     <string name="sources">Sources:</string>
     <string name="tmdb_credits"><![CDATA[<a href=\"https://www.themoviedb.org/\">TMDB</a>]]></string>
     <string name="omdb_credits"><![CDATA[<a href=\"https://www.omdbapi.com/\">OMDB</a>]]></string>
-    <string name="iconduck_credits"><![CDATA[<a href=\"https://iconduck.com/\">iconduck</a>]]></string>
-    <string name="icon8_credits"><![CDATA[<a href=\"https://icons8.com/\">icons8</a>]]></string>
+    <string name="wikidata_credits"><![CDATA[<a href=\"https://www.wikidata.org/\">Wikidata</a>]]></string>
     <string name="direction_and_writing">Direction and Writing</string>
     <string name="cast">Cast</string>
     <string name="middle_dot">•</string>
@@ -56,4 +55,6 @@
     <string name="imdb_url">https://www.imdb.com/title/</string>
     <string name="tmdb_url">https://www.themoviedb.org/movie/</string>
     <string name="external_links">External links</string>
+    <string name="rotten_tomatoes_url">https://www.rottentomatoes.com/</string>
+    <string name="metacritic_url">https://www.metacritic.com/</string>
 </resources>

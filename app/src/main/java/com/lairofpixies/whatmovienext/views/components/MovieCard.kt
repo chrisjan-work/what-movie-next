@@ -169,8 +169,10 @@ fun MovieCard(
                 }
 
                 MovieLinks(
-                    imdbId = movie.detailData.imdbId,
                     tmdbId = movie.searchData.tmdbId.toString(),
+                    imdbId = movie.detailData.imdbId,
+                    rtId = movie.detailData.rtRating?.sourceId,
+                    mcId = movie.detailData.mcRating?.sourceId,
                 )
 
                 Spacer(modifier = Modifier.padding(top = 36.dp))
@@ -261,6 +263,7 @@ fun ClickableLogo(
                     shape = RoundedCornerShape(8.dp),
                 ).padding(10.dp)
                 .size(36.dp)
+                .alpha(0.7f)
                 .clickable {
                     url?.let {
                         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -530,8 +533,10 @@ fun FacePic(
 
 @Composable
 fun MovieLinks(
-    imdbId: String?,
     tmdbId: String,
+    imdbId: String?,
+    rtId: String?,
+    mcId: String?,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -540,18 +545,32 @@ fun MovieLinks(
         modifier = modifier.padding(start = 8.dp, end = 8.dp),
     )
     Row(modifier = modifier.padding(start = 8.dp, end = 8.dp)) {
-        if (imdbId != null) {
+        ClickableLogo(
+            logo = R.drawable.tmdb,
+            url = stringResource(R.string.tmdb_url) + tmdbId,
+            modifier = modifier,
+        )
+        if (!imdbId.isNullOrBlank()) {
             ClickableLogo(
                 logo = R.drawable.imdb,
                 url = stringResource(R.string.imdb_url) + imdbId,
                 modifier = modifier,
             )
         }
-        ClickableLogo(
-            logo = R.drawable.tmdb,
-            url = stringResource(R.string.tmdb_url) + tmdbId,
-            modifier = modifier,
-        )
+        if (!rtId.isNullOrBlank()) {
+            ClickableLogo(
+                logo = R.drawable.rotten_tomatoes,
+                url = stringResource(R.string.rotten_tomatoes_url) + rtId,
+                modifier = modifier,
+            )
+        }
+        if (!mcId.isNullOrBlank()) {
+            ClickableLogo(
+                logo = R.drawable.metacritic,
+                url = stringResource(R.string.metacritic_url) + mcId,
+                modifier = modifier,
+            )
+        }
     }
 }
 
@@ -572,10 +591,7 @@ fun CreditsRow(modifier: Modifier = Modifier) {
             text = stringResource(R.string.omdb_credits),
         )
         CreditsLink(
-            text = stringResource(R.string.iconduck_credits),
-        )
-        CreditsLink(
-            text = stringResource(R.string.icon8_credits),
+            text = stringResource(R.string.wikidata_credits),
         )
     }
 }
