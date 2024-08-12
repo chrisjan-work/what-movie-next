@@ -92,68 +92,65 @@ class SearchViewModel
         }
 
         fun startSearch() {
-            searchJob =
-                viewModelScope.launch {
-                    clearSearchResults()
-                    if (currentQuery.value.title.isBlank()) {
-                        showPopup(PopupInfo.EmptyTitle)
-                        return@launch
-                    }
-
-                    performSearch(null)
-                }
+            clearSearchResults()
+            if (currentQuery.value.title.isBlank()) {
+                showPopup(PopupInfo.EmptyTitle)
+                return
+            }
+            performSearch(null)
         }
 
         fun continueSearch() {
             if (searchResults.value.pagesLeft > 0) {
-                viewModelScope.launch {
-                    performSearch(
-                        pageIndex = searchResults.value.lastPage + 1,
-                        prepend = searchResults.value.movies.toList(),
-                    )
-                }
+                performSearch(
+                    pageIndex = searchResults.value.lastPage + 1,
+                    prepend = searchResults.value.movies.toList(),
+                )
             }
         }
 
-        private suspend fun performSearch(
+        private fun performSearch(
             pageIndex: Int?,
             prepend: List<Movie.ForSearch> = emptyList(),
         ) {
-            apiRepo
-                .findMoviesByTitle(title = currentQuery.value.title, page = pageIndex)
-                .collect { fromApi ->
-                    val results = fromApi.addTo(prepend)
-                    when (val asyncMovie = results.movies) {
-                        is AsyncMovie.Loading -> {
-                            updateBusyDisplay(true)
-                        }
+            searchJob =
+                viewModelScope.launch {
+                    apiRepo
+                        .findMoviesByTitle(title = currentQuery.value.title, page = pageIndex)
+                        .collect { fromApi ->
+                            val results = fromApi.addTo(prepend)
+                            when (val asyncMovie = results.movies) {
+                                is AsyncMovie.Loading -> {
+                                    updateBusyDisplay(true)
+                                }
 
-                        is AsyncMovie.Failed -> {
-                            updateBusyDisplay(false)
-                            showPopup(PopupInfo.ConnectionFailed)
-                            Timber.e("Connection error: ${asyncMovie.trowable}")
-                        }
+                                is AsyncMovie.Failed -> {
+                                    updateBusyDisplay(false)
+                                    showPopup(PopupInfo.ConnectionFailed)
+                                    Timber.e("Connection error: ${asyncMovie.trowable}")
+                                }
 
-                        is AsyncMovie.Empty -> {
-                            clearSearchResults()
-                            showPopup(PopupInfo.SearchEmpty)
-                        }
+                                is AsyncMovie.Empty -> {
+                                    clearSearchResults()
+                                    showPopup(PopupInfo.SearchEmpty)
+                                }
 
-                        is AsyncMovie.Single -> {
-                            clearSearchResults(false)
-                            asyncMovie.singleMovieOrNull<Movie.ForSearch>()?.let { movie ->
-                                fetchFromRemote(movie.searchData.tmdbId)
-                            } ?: {
-                                updateBusyDisplay(false)
-                                showPopup(PopupInfo.ConnectionFailed)
+                                is AsyncMovie.Single -> {
+                                    clearSearchResults(false)
+                                    asyncMovie.singleMovieOrNull<Movie.ForSearch>()?.let { movie ->
+                                        fetchFromRemote(movie.searchData.tmdbId)
+                                    } ?: {
+                                        updateBusyDisplay(false)
+                                        showPopup(PopupInfo.ConnectionFailed)
+                                    }
+                                }
+
+                                is AsyncMovie.Multiple -> {
+                                    _searchResults.value = results
+                                    switchToSearchResults()
+                                }
                             }
                         }
-
-                        is AsyncMovie.Multiple -> {
-                            _searchResults.value = results
-                            switchToSearchResults()
-                        }
-                    }
                 }
         }
 
@@ -161,7 +158,7 @@ class SearchViewModel
         fun cancelSearch() {
             searchJob?.cancel()
             searchJob = null
-            clearSearchResults()
+            updateBusyDisplay(false)
         }
 
         private fun clearSearchResults(resetBusyDisplay: Boolean = true) {
@@ -173,42 +170,43 @@ class SearchViewModel
         }
 
         fun fetchFromRemote(tmdbId: Long) {
-            viewModelScope.launch {
-                apiRepo.getMovieDetails(tmdbId).collect { asyncMovie ->
-                    when (asyncMovie) {
-                        is AsyncMovie.Loading -> {
-                            updateBusyDisplay(true)
-                        }
+            searchJob =
+                viewModelScope.launch {
+                    apiRepo.getMovieDetails(tmdbId).collect { asyncMovie ->
+                        when (asyncMovie) {
+                            is AsyncMovie.Loading -> {
+                                updateBusyDisplay(true)
+                            }
 
-                        is AsyncMovie.Failed -> {
-                            updateBusyDisplay(false)
-                            switchToSearchEntry()
-                            showPopup(PopupInfo.ConnectionFailed)
-                            Timber.e("Connection error: ${asyncMovie.trowable}")
-                        }
+                            is AsyncMovie.Failed -> {
+                                updateBusyDisplay(false)
+                                switchToSearchEntry()
+                                showPopup(PopupInfo.ConnectionFailed)
+                                Timber.e("Connection error: ${asyncMovie.trowable}")
+                            }
 
-                        is AsyncMovie.Empty -> {
-                            updateBusyDisplay(false)
-                            switchToSearchEntry()
-                            showPopup(PopupInfo.SearchEmpty)
-                        }
+                            is AsyncMovie.Empty -> {
+                                updateBusyDisplay(false)
+                                switchToSearchEntry()
+                                showPopup(PopupInfo.SearchEmpty)
+                            }
 
-                        is AsyncMovie.Single -> {
-                            _selectedMovie.value = asyncMovie
-                            switchToChoiceScreen()
-                        }
+                            is AsyncMovie.Single -> {
+                                _selectedMovie.value = asyncMovie
+                                switchToChoiceScreen()
+                            }
 
-                        is AsyncMovie.Multiple -> {
-                            // should never happen:
-                            // the api call always returns a single movie or nothing
-                            // even though our wrapper can accept multiple movies
-                            updateBusyDisplay(false)
-                            showPopup(PopupInfo.ConnectionFailed)
-                            Timber.e("Connection error: multiple results where only one was expected when fetching movie from backend")
+                            is AsyncMovie.Multiple -> {
+                                // should never happen:
+                                // the api call always returns a single movie or nothing
+                                // even though our wrapper can accept multiple movies
+                                updateBusyDisplay(false)
+                                showPopup(PopupInfo.ConnectionFailed)
+                                Timber.e("Connection error: multiple results where only one was expected when fetching movie from backend")
+                            }
                         }
                     }
                 }
-            }
         }
 
         fun onSaveMovieAction() {
