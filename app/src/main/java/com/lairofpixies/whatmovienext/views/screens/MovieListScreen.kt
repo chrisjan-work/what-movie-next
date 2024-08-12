@@ -354,7 +354,7 @@ fun bottomItemsForMovieList(
 
     return listOfNotNull(
         filterItem,
-        createItem,
         archiveItem,
+        createItem,
     )
 }
