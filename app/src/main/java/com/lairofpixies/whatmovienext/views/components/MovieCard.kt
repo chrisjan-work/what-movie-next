@@ -138,14 +138,14 @@ fun MovieCard(
                         RatingRow(
                             logo = R.drawable.metacritic,
                             text =
-                                movie.detailData.mcRating?.displayValue ?: "?",
+                                movie.detailData.mcRating.displayValue,
                             modifier = Modifier.alpha(0.8f),
                         )
                     }
                     if (movie.detailData.rtRating.isNotNegative()) {
                         RatingRow(
                             logo = R.drawable.rotten_tomatoes,
-                            text = movie.detailData.rtRating?.displayValue ?: "?",
+                            text = movie.detailData.rtRating.displayValue,
                             modifier = Modifier.alpha(0.8f),
                         )
                     }
@@ -171,8 +171,8 @@ fun MovieCard(
                 MovieLinks(
                     tmdbId = movie.searchData.tmdbId.toString(),
                     imdbId = movie.detailData.imdbId,
-                    rtId = movie.detailData.rtRating?.sourceId,
-                    mcId = movie.detailData.mcRating?.sourceId,
+                    rtId = movie.detailData.rtRating.sourceId,
+                    mcId = movie.detailData.mcRating.sourceId,
                 )
 
                 Spacer(modifier = Modifier.padding(top = 36.dp))
@@ -535,8 +535,8 @@ fun FacePic(
 fun MovieLinks(
     tmdbId: String,
     imdbId: String?,
-    rtId: String?,
-    mcId: String?,
+    rtId: String,
+    mcId: String,
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -557,14 +557,14 @@ fun MovieLinks(
                 modifier = modifier,
             )
         }
-        if (!rtId.isNullOrBlank()) {
+        if (rtId.isNotBlank()) {
             ClickableLogo(
                 logo = R.drawable.rotten_tomatoes,
                 url = stringResource(R.string.rotten_tomatoes_url) + rtId,
                 modifier = modifier,
             )
         }
-        if (!mcId.isNullOrBlank()) {
+        if (mcId.isNotBlank()) {
             ClickableLogo(
                 logo = R.drawable.metacritic,
                 url = stringResource(R.string.metacritic_url) + mcId,

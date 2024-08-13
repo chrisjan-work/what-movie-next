@@ -35,11 +35,21 @@ data class Rating(
             fun fromName(name: String): Rater? = entries.firstOrNull { it.displayName == name }
         }
     }
+
+    companion object {
+        fun defaultFor(rater: Rater) =
+            Rating(
+                source = rater,
+                sourceId = "",
+                displayValue = "",
+                percentValue = -1,
+            )
+    }
 }
 
 fun Rating?.isNotNegative(): Boolean = this != null && this.percentValue >= 0
 
 data class RatingPair(
-    val rtRating: Rating? = null,
-    val mcRating: Rating? = null,
+    val rtRating: Rating = Rating.defaultFor(Rating.Rater.RottenTomatoes),
+    val mcRating: Rating = Rating.defaultFor(Rating.Rater.Metacritic),
 )

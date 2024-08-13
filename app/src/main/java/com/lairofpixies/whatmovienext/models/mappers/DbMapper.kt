@@ -154,10 +154,10 @@ class DbMapper
                     genres = toDbGenres(searchData.genres),
                     runtimeMinutes = detailData.runtimeMinutes,
                     directorNames = toDbDirectorNames(detailData.directorNames),
-                    rtId = detailData.rtRating?.sourceId ?: "",
-                    rtRating = detailData.rtRating?.percentValue,
-                    mcId = detailData.mcRating?.sourceId ?: "",
-                    mcRating = detailData.mcRating?.percentValue,
+                    rtId = detailData.rtRating.sourceId,
+                    rtRating = detailData.rtRating.percentValue,
+                    mcId = detailData.mcRating.sourceId,
+                    mcRating = detailData.mcRating.percentValue,
                     watchState = appData.watchState,
                     isArchived = appData.isArchived,
                 )
@@ -202,7 +202,7 @@ class DbMapper
         fun toRtRating(
             rtId: String,
             rtRating: Int?,
-        ): Rating? =
+        ): Rating =
             rtRating?.let {
                 Rating(
                     source = Rating.Rater.RottenTomatoes,
@@ -210,12 +210,12 @@ class DbMapper
                     percentValue = rtRating,
                     displayValue = "$rtRating%",
                 )
-            }
+            } ?: Rating.defaultFor(Rating.Rater.RottenTomatoes)
 
         fun toMcRating(
             mcId: String,
             mcRating: Int?,
-        ): Rating? =
+        ): Rating =
             mcRating?.let {
                 Rating(
                     source = Rating.Rater.Metacritic,
@@ -223,5 +223,5 @@ class DbMapper
                     percentValue = mcRating,
                     displayValue = "$mcRating/100",
                 )
-            }
+            } ?: Rating.defaultFor(Rating.Rater.RottenTomatoes)
     }
