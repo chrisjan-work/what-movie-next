@@ -44,9 +44,9 @@ data class DbMovie(
     val watchState: WatchState = WatchState.PENDING,
     val isArchived: Boolean = false,
     val rtId: String = "",
-    val rtRating: Int? = null,
+    val rtRating: Int = -1,
     val mcId: String = "",
-    val mcRating: Int? = null,
+    val mcRating: Int = -1,
 )
 
 // a movie with people doing roles

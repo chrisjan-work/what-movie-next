@@ -193,7 +193,7 @@ class RemoteMapperTest {
         // Then
         val expected =
             testRatingMap().run {
-                copy(mcRating = mcRating?.copy(sourceId = ""))
+                copy(mcRating = mcRating.copy(sourceId = ""))
             }
 
         assertEquals(expected, result)
@@ -242,8 +242,8 @@ class RemoteMapperTest {
         val expected =
             testRatingMap().run {
                 copy(
-                    rtRating = rtRating?.copy(sourceId = ""),
-                    mcRating = mcRating?.copy(sourceId = ""),
+                    rtRating = rtRating.copy(sourceId = ""),
+                    mcRating = mcRating.copy(sourceId = ""),
                 )
             }
 
@@ -262,7 +262,7 @@ class RemoteMapperTest {
             )
         val failedWiki =
             WikidataMovieInfo(
-                results = WikidataMovieInfo.Results(emptyList()),
+                results = Results(emptyList()),
             )
 
         // every combination always returns an "empty" rating pair
