@@ -47,7 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
-import com.lairofpixies.whatmovienext.views.screens.ThumbnailPic
+import com.lairofpixies.whatmovienext.views.screens.movielist.ThumbnailPic
 
 @Composable
 fun SearchResultsPicker(

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.views.screens
+package com.lairofpixies.whatmovienext.views.screens.movielist
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
@@ -25,26 +25,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.Theaters
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -62,53 +60,8 @@ import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isNotNegative
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.printableYear
-import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
-import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
-import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
-import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
-import com.lairofpixies.whatmovienext.views.navigation.Routes
-import com.lairofpixies.whatmovienext.views.state.ListMode
-
-@Composable
-fun MovieListScreen(listViewModel: MovieListViewModel) {
-    Scaffold(
-        bottomBar = {
-            CustomBottomBar(
-                items =
-                    bottomItemsForMovieList(
-                        listMode = listViewModel.listMode.collectAsState().value,
-                        isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
-                        onListModeChanged = { listViewModel.setListMode(it) },
-                        onCreateNewMovie = {
-                            listViewModel.onNavigateTo(Routes.CreateMovieView)
-                        },
-                        onOpenArchive = {
-                            listViewModel.onNavigateTo(Routes.ArchiveView)
-                        },
-                    ),
-            )
-        },
-    ) { innerPadding ->
-        MovieList(
-            filteredMovies =
-                listViewModel.listedMovies
-                    .collectAsState()
-                    .value
-                    .toList(),
-            onMovieClicked = { movieId ->
-                listViewModel.onNavigateWithParam(
-                    Routes.SingleMovieView,
-                    movieId,
-                )
-            },
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-        )
-    }
-}
+import com.lairofpixies.whatmovienext.views.screens.UiTags
 
 @Composable
 fun MovieList(
@@ -118,9 +71,13 @@ fun MovieList(
 ) {
     LazyColumn(
         modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
+        contentPadding = PaddingValues(bottom = 120.dp),
     ) {
-        items(filteredMovies) { movie ->
-            MovieListItem(movie) { onMovieClicked(movie.appData.movieId) }
+        itemsIndexed(filteredMovies) { movieIndex, movie ->
+            MovieListItem(
+                movie,
+                modifier = modifier.testTag("${UiTags.Items.MOVIE_LIST_ITEM}_$movieIndex"),
+            ) { onMovieClicked(movie.appData.movieId) }
         }
     }
 }
@@ -128,6 +85,7 @@ fun MovieList(
 @Composable
 fun MovieListItem(
     movie: Movie.ForList,
+    modifier: Modifier = Modifier,
     onItemClicked: () -> Unit = {},
 ) {
     val bgColor =
@@ -138,7 +96,7 @@ fun MovieListItem(
         }
     Row(
         modifier =
-            Modifier
+            modifier
                 .clickable(onClick = onItemClicked)
                 .padding(2.dp)
                 .clip(RoundedCornerShape(8.dp))
@@ -321,40 +279,5 @@ fun RatingDisplay(
         style = MaterialTheme.typography.bodySmall,
         modifier = modifier.padding(2.dp),
         color = MaterialTheme.colorScheme.onBackground,
-    )
-}
-
-fun bottomItemsForMovieList(
-    listMode: ListMode,
-    isArchiveVisitable: Boolean,
-    onListModeChanged: (ListMode) -> Unit,
-    onCreateNewMovie: () -> Unit,
-    onOpenArchive: () -> Unit,
-): List<CustomBarItem> {
-    val filterItem =
-        CustomBarItem(
-            when (listMode) {
-                ListMode.ALL -> ButtonSpec.AllMoviesFilter
-                ListMode.PENDING -> ButtonSpec.PendingFilter
-                ListMode.WATCHED -> ButtonSpec.WatchedFilter
-            },
-            tag = UiTags.Buttons.LIST_MODE,
-        ) {
-            onListModeChanged(listMode.next())
-        }
-
-    val createItem = CustomBarItem(ButtonSpec.CreateMovieShortcut, onCreateNewMovie)
-
-    val archiveItem =
-        if (isArchiveVisitable) {
-            CustomBarItem(ButtonSpec.ArchiveShortcut, onOpenArchive)
-        } else {
-            null
-        }
-
-    return listOfNotNull(
-        filterItem,
-        archiveItem,
-        createItem,
     )
 }

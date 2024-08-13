@@ -30,14 +30,22 @@ object UiTags {
 
     object Buttons {
         const val LIST_MODE = "ListModeButton"
+        const val SORT_MENU = "SortMenuButton"
     }
 
     object Popups {
         const val EMPTY_TITLE = "EmptyTitle"
-        const val UNSAVED_CHANGES = "UnsavedChanges"
         const val CONFIRM_DELETION = "ConfirmDeletion"
         const val SEARCHING = "Searching"
         const val SEARCH_EMPTY = "SearchReturnedNothing"
         const val CONNECTION_FAILED = "OnlineConnectionError"
+    }
+
+    object Menus {
+        const val SORTING = "SortingMenu"
+    }
+
+    object Items {
+        const val MOVIE_LIST_ITEM = "MovieListItem"
     }
 }

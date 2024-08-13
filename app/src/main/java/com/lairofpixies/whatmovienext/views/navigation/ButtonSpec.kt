@@ -29,6 +29,7 @@ import androidx.compose.material.icons.outlined.FolderDelete
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.RestoreFromTrash
+import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.TravelExplore
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -116,5 +117,10 @@ sealed class ButtonSpec(
     data object WatchedFilter : ButtonSpec(
         labelRes = R.string.seen,
         icon = Icons.Outlined.RemoveRedEye,
+    )
+
+    data object SortingMenu : ButtonSpec(
+        labelRes = R.string.sort,
+        icon = Icons.Outlined.SortByAlpha,
     )
 }

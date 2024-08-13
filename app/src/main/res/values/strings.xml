@@ -20,15 +20,12 @@
     <string name="app_name">What Movie Next</string>
     <string name="close">Close</string>
     <string name="archive">Archive</string>
-    <string name="add_new_movie">Add new movie</string>
+    <string name="add_new_movie">Add movie</string>
     <string name="edit">Edit</string>
     <string name="title">Title</string>
     <string name="error_title_is_required">Title is missing. Please provide one.</string>
     <string name="alertdialog_title">Problem</string>
-    <string name="warning_changes_not_saved">There are unsaved changes in the movie description</string>
     <string name="save">Save</string>
-    <string name="discard">Discard</string>
-    <string name="continue_editing">Continue editing</string>
     <string name="movies">Movies</string>
     <string name="cancel">Cancel</string>
     <string name="to_watch">To watch</string>
@@ -59,4 +56,14 @@
     <string name="metacritic_url">https://www.metacritic.com/</string>
     <string name="connection_failed_title">Network problem</string>
     <string name="missing_title_title">Missing title</string>
+    <string name="sort">Sort</string>
+    <string name="by_title">title</string>
+    <string name="by_date_added">date added</string>
+    <string name="by_year">year</string>
+    <string name="by_seen_times">seen times</string>
+    <string name="by_genre">genre</string>
+    <string name="by_runtime">runtime</string>
+    <string name="by_director">director</string>
+    <string name="by_rating">avg. score</string>
+    <string name="random">random</string>
 </resources>
