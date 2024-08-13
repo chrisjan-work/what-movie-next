@@ -26,20 +26,19 @@ import androidx.compose.ui.platform.testTag
 
 @Composable
 fun CustomBottomBar(
-    modifier: Modifier = Modifier,
     items: List<CustomBarItem>,
+    modifier: Modifier = Modifier,
 ) {
-    NavigationBar {
+    NavigationBar(modifier = modifier) {
         items.forEach { customBarItem ->
             NavigationBarItem(
                 selected = false,
                 modifier =
                     customBarItem.tag?.let { tag ->
-                        modifier.testTag(tag)
-                    } ?: modifier,
+                        Modifier.testTag(tag)
+                    } ?: Modifier,
                 icon = {
                     CustomBarIcon(
-                        modifier,
                         customBarItem.buttonSpec,
                     )
                 },

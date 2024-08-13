@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomBarIcon(
-    modifier: Modifier = Modifier,
     specification: ButtonSpec,
+    modifier: Modifier = Modifier,
 ) {
     val label = stringResource(specification.labelRes)
 

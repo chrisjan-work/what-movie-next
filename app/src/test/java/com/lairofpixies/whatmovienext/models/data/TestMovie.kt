@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.data
 
 import com.lairofpixies.whatmovienext.models.data.MovieData.UNKNOWN_ID
+import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 
 object TestMovie {
     fun forSearch(
@@ -58,6 +59,11 @@ object TestMovie {
         tagline: String = "",
         plot: String = "",
         runtimeMinutes: Int = 0,
+        directors: List<String> = emptyList(),
+        rtId: String = "",
+        rtRating: Int = -1,
+        mcId: String = "",
+        mcRating: Int = -1,
     ) = Movie.ForList(
         appData =
             MovieData.AppData(
@@ -82,6 +88,9 @@ object TestMovie {
                 tagline = tagline,
                 plot = plot,
                 runtimeMinutes = runtimeMinutes,
+                directorNames = directors,
+                rtRating = DbMapper().toRtRating(rtId, rtRating),
+                mcRating = DbMapper().toMcRating(mcId, mcRating),
             ),
     )
 

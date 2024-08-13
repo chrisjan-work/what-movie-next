@@ -73,6 +73,14 @@ class MovieCardStepDefs(
                 "genres" -> copy(genres = value)
                 "tagline" -> copy(tagline = value)
                 "plot" -> copy(plot = value)
+                "creation time" -> copy(creationTime = value.toLong())
+                "directors" -> copy(directorNames = value)
+                "ratings" ->
+                    copy(
+                        rtRating = value.split(",").first().toInt(),
+                        mcRating = value.split(",").last().toInt(),
+                    )
+
                 else -> throw PendingException("Unknown field \"$field\"")
             }
         }
