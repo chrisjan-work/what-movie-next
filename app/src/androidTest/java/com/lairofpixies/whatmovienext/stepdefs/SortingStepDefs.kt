@@ -41,13 +41,22 @@ class SortingStepDefs(
     @Given("the user clicks on Sort")
     fun theUserClicksOnSort() =
         composeRule.composeStep {
-            onNodeWithTag(UiTags.Buttons.SORT_MENU).performClick()
+            onNodeWithTag(UiTags.Buttons.SORT_MENU)
+                .performClick()
         }
 
-    @Then("the bottom menu is open with the Sorting view")
-    fun theBottomMenuIsOpenWithTheSortingView() =
+    @Then("the sorting menu is visible")
+    fun theSortingMenuIsVisible() =
         composeRule.composeStep {
-            onNodeWithTag(UiTags.Menus.SORTING).assertIsDisplayed()
+            onNodeWithTag(UiTags.Menus.SORTING)
+                .assertIsDisplayed()
+        }
+
+    @Then("the sorting menu is not visible")
+    fun theSortingMenuIsNotVisible() =
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Menus.SORTING)
+                .assertDoesNotExist()
         }
 
     @And("the user sorts by {string}")

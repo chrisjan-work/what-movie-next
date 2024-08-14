@@ -20,7 +20,12 @@ Feature: Sorting movie list
 
   Scenario: Open menu
     When the user clicks on Sort
-    Then the bottom menu is open with the Sorting view
+    Then the sorting menu is visible
+
+  Scenario: Close menu
+    Given the user clicks on Sort
+    When the user presses the back button
+    Then the sorting menu is not visible
 
   Scenario: Sort by title ascending
     Given a list with an entry "Monkey Man"
