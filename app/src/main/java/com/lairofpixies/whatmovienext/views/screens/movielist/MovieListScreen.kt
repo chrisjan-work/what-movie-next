@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.views.screens.movielist
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -26,9 +27,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.navigation.Routes
+import com.lairofpixies.whatmovienext.views.state.BottomMenu
 
 @Composable
 fun MovieListScreen(listViewModel: MovieListViewModel) {
+    val isMenuShown = listViewModel.bottomMenu.collectAsState().value != BottomMenu.None
+    BackHandler(isMenuShown) {
+        listViewModel.closeBottomMenu()
+    }
+
     Box(
         modifier =
             Modifier
