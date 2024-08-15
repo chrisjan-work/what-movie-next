@@ -36,7 +36,6 @@ import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
-import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 
 @Composable
@@ -62,8 +61,9 @@ fun MovieCardScreen(
     if (loadedMovie != null) {
         val bottomItems =
             bottomItemsForMovieCard(
-                loadedMovie,
-                onHomeAction = { cardViewModel.onNavigateTo(Routes.AllMoviesView) },
+                movie = loadedMovie,
+                isRouletteAvailable = cardViewModel.canSpinRoulette(),
+                onRouletteAction = { cardViewModel.onNavigateToRandomMovie(loadedMovie.appData.movieId) },
                 onArchiveAction = {
                     cardViewModel.archiveCurrentMovie()
                     cardViewModel.onLeaveAction()
@@ -93,12 +93,19 @@ fun MovieCardScreen(
 
 fun bottomItemsForMovieCard(
     movie: Movie.ForCard,
-    onHomeAction: () -> Unit,
+    isRouletteAvailable: Boolean,
+    onRouletteAction: () -> Unit,
     onArchiveAction: () -> Unit,
     onUpdateAction: (Long, WatchState) -> Unit,
-): List<CustomBarItem> =
-    listOf(
-        CustomBarItem(ButtonSpec.MoviesShortcut, onHomeAction),
+): List<CustomBarItem> {
+    val rouletteItem =
+        if (isRouletteAvailable) {
+            CustomBarItem(ButtonSpec.RouletteAction, onRouletteAction)
+        } else {
+            null
+        }
+
+    val seenItem =
         if (movie.appData.watchState == WatchState.PENDING) {
             CustomBarItem(ButtonSpec.PendingMovieState) {
                 onUpdateAction(movie.appData.movieId, WatchState.WATCHED)
@@ -107,6 +114,13 @@ fun bottomItemsForMovieCard(
             CustomBarItem(ButtonSpec.WatchedMovieState) {
                 onUpdateAction(movie.appData.movieId, WatchState.PENDING)
             }
-        },
-        CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction),
+        }
+
+    val archiveItem = CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction)
+
+    return listOfNotNull(
+        seenItem,
+        archiveItem,
+        rouletteItem,
     )
+}

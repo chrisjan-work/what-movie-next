@@ -42,7 +42,7 @@ Feature: Movie list
     And the list is in mode "To watch"
     When the user opens the entry "Mary Poppins"
     And the user marks the entry as watched
-    And the user navigates to the list
+    And the user presses the back button
     Then the entry "Mary Poppins" is not available
 
   Scenario: Mark entry as pending and filter it out
@@ -50,7 +50,7 @@ Feature: Movie list
     And the list is in mode "Seen"
     When the user opens the entry "Paprika"
     When the user marks the entry as pending
-    And the user navigates to the list
+    And the user presses the back button
     Then the entry "Paprika" is not available
 
   Scenario: The Movie list is scrollable

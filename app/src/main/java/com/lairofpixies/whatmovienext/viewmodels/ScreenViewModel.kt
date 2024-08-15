@@ -20,14 +20,22 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
+import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import kotlin.random.Random
 import kotlin.reflect.KClass
 
 open class ScreenViewModel protected constructor() : ViewModel() {
+    @Inject
+    lateinit var randomizer: Random
+
     private lateinit var navHostController: NavHostController
     protected var mainViewModel: MainViewModel? = null
         private set
@@ -50,14 +58,25 @@ open class ScreenViewModel protected constructor() : ViewModel() {
         }
 
     fun onNavigateTo(destination: Routes) {
-        navHostController.navigate(destination.route)
+        CoroutineScope(Dispatchers.Main).launch {
+            navHostController.navigate(destination.route)
+        }
     }
 
     fun onNavigateWithParam(
         destination: Routes,
         parameter: Long,
+        popToHome: Boolean = false,
     ) {
-        navHostController.navigate(destination.route(parameter))
+        CoroutineScope(Dispatchers.Main).launch {
+            navHostController.navigate(destination.route(parameter)) {
+                if (popToHome) {
+                    popUpTo(Routes.HOME.route) {
+                        inclusive = false
+                    }
+                }
+            }
+        }
     }
 
     fun showPopup(popupInfo: PopupInfo) = mainViewModel?.showPopup(popupInfo)
@@ -65,4 +84,19 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     fun closePopup() = mainViewModel?.closePopup()
 
     fun closePopupOfType(popupType: KClass<out PopupInfo>) = mainViewModel?.closePopupOfType(popupType)
+
+    fun canSpinRoulette(): Boolean = mainViewModel?.listedMovies?.value?.hasMovie() == true
+
+    fun onNavigateToRandomMovie(tabooId: Long = NEW_ID) {
+        val mainViewModel = mainViewModel ?: return
+        if (canSpinRoulette()) {
+            val movieList =
+                mainViewModel.listedMovies.value
+                    .toList<Movie.ForList>()
+                    .filter { it.appData.movieId != tabooId }
+            val movieIndex = randomizer.nextInt(movieList.size)
+            val movie = movieList.getOrNull(movieIndex) ?: return
+            onNavigateWithParam(Routes.SingleMovieView, movie.appData.movieId, popToHome = true)
+        }
+    }
 }
