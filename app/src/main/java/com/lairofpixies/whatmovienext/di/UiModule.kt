@@ -18,9 +18,14 @@
  */
 package com.lairofpixies.whatmovienext.di
 
+import android.content.Context
+import coil.ImageLoader
+import coil.disk.DiskCache
+import coil.request.CachePolicy
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -32,4 +37,21 @@ object UiModule {
     @Provides
     @Singleton
     fun provideRandomizer(): Random = Random(seed = System.currentTimeMillis())
+
+    @Provides
+    @Singleton
+    fun provideImageLoader(
+        @ApplicationContext context: Context,
+    ): ImageLoader =
+        ImageLoader
+            .Builder(context)
+            .diskCache {
+                DiskCache
+                    .Builder()
+                    .directory(context.cacheDir.resolve("image_cache"))
+                    .build()
+            }.diskCachePolicy(CachePolicy.ENABLED)
+            .networkCachePolicy(CachePolicy.ENABLED)
+            .respectCacheHeaders(false) // Optional: ignore HTTP cache headers
+            .build()
 }
