@@ -18,10 +18,15 @@
  */
 package com.lairofpixies.whatmovienext.di
 
+import android.content.Context
+import coil.ImageLoader
+import coil.request.CachePolicy
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import javax.inject.Singleton
 import kotlin.random.Random
 
 @Module
@@ -34,4 +39,14 @@ object TestUiModule {
     // reset on each test run, not singleton
     @Provides
     fun provideRandomizer(): Random = Random(seed = 1000L)
+
+    @Provides
+    @Singleton
+    fun provideImageLoader(
+        @ApplicationContext context: Context,
+    ): ImageLoader =
+        ImageLoader
+            .Builder(context)
+            .networkCachePolicy(CachePolicy.DISABLED)
+            .build()
 }

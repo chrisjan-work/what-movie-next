@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext
 
 import android.app.Application
+import coil.ImageLoader
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizer
 import dagger.hilt.android.HiltAndroidApp
@@ -32,6 +33,9 @@ class MainApplication : Application() {
 
     @Inject
     lateinit var configSynchronizer: ConfigSynchronizer
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
 
     override fun onCreate() {
         super.onCreate()

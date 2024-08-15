@@ -36,9 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.lairofpixies.whatmovienext.views.state.AsyncPicState
 import com.lairofpixies.whatmovienext.views.state.AsyncPicState.Loading
 import com.lairofpixies.whatmovienext.views.state.AsyncPicState.Missing
@@ -78,7 +81,12 @@ fun AsyncPic(
 
         if (url.isNotBlank()) {
             AsyncImage(
-                model = url,
+                model =
+                    ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(url)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .build(),
                 contentDescription = "",
                 onState = { state ->
                     asyncPicState.value =
