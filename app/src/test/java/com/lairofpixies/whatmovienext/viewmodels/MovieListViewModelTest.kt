@@ -46,6 +46,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
+import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieListViewModelTest {
@@ -70,7 +71,7 @@ class MovieListViewModelTest {
     }
 
     private fun construct() {
-        listViewModel = MovieListViewModel(repo)
+        listViewModel = MovieListViewModel(repo, Random(100L))
         listViewModel.attachMainViewModel(mainViewModelMock)
     }
 
@@ -428,7 +429,6 @@ class MovieListViewModelTest {
             listViewModel.sortMovies(
                 AsyncMovie.fromList(moviesToSort),
                 SortingSetup(SortingCriteria.Random, SortingDirection.Ascending),
-                seed = 100,
             ) as AsyncMovie.Multiple
 
         // Then
