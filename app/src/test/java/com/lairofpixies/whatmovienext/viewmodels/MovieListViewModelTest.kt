@@ -24,14 +24,12 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MovieListDisplayState
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
-import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -77,9 +75,10 @@ class MovieListViewModelTest {
     }
 
     private fun construct() {
-        listViewModel = MovieListViewModel(repo, Random(100L))
+        listViewModel = MovieListViewModel(repo)
         listViewModel.attachMainViewModel(mainViewModelMock)
         listViewModel.attachNavHostController(navHostControllerMock)
+        listViewModel.randomizer = Random(100)
     }
 
     @After
@@ -90,7 +89,7 @@ class MovieListViewModelTest {
     private fun packMoviesToFlow(vararg movies: Movie.ForList) = flowOf(AsyncMovie.fromList(movies.toList()))
 
     @Test
-    fun `forward movie list with all movies filter`() =
+    fun `update movie list with all movies filter`() =
         runTest {
             // Given
             val seenMovie =
@@ -110,12 +109,20 @@ class MovieListViewModelTest {
             construct()
 
             // Then
-            val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(AsyncMovie.Multiple(listOf(unseenMovie, seenMovie)), forwardedMovies)
+            verify {
+                mainViewModelMock.updateMovies(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            unseenMovie,
+                            seenMovie,
+                        ),
+                    ),
+                )
+            }
         }
 
     @Test
-    fun `forward movie list with only unseen movies`() =
+    fun `update movie list with only unseen movies`() =
         runTest {
             // Given
             val seenMovie =
@@ -135,12 +142,11 @@ class MovieListViewModelTest {
             construct()
 
             // Then
-            val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(AsyncMovie.Single(unseenMovie), forwardedMovies)
+            verify { mainViewModelMock.updateMovies(AsyncMovie.Single(unseenMovie)) }
         }
 
     @Test
-    fun `forward movie list with only seen movies`() =
+    fun `update movie list with only seen movies`() =
         runTest {
             // Given
             val seenMovie =
@@ -160,8 +166,7 @@ class MovieListViewModelTest {
             construct()
 
             // Then
-            val forwardedMovies = listViewModel.listedMovies.value
-            assertEquals(AsyncMovie.Single(seenMovie), forwardedMovies)
+            verify { mainViewModelMock.updateMovies(AsyncMovie.Single(seenMovie)) }
         }
 
     @Test
@@ -460,67 +465,5 @@ class MovieListViewModelTest {
             val sortingSetup = SortingSetup(SortingCriteria.Genre, SortingDirection.Descending)
             listViewModel.updateSortingSetup(sortingSetup)
             assertEquals(sortingSetup, listViewModel.sortingSetup.value)
-        }
-
-    @Test
-    fun `roulette feature`() =
-        runTest {
-            // Given
-            every { repo.listedMovies } returns
-                flowOf(
-                    AsyncMovie.Multiple(
-                        listOf(
-                            forList(id = 1, title = "Riddick"),
-                            forList(id = 2, title = "Pitch Black"),
-                            forList(id = 3, title = "The Chronicles of Riddick"),
-                        ),
-                    ),
-                )
-            construct()
-            assertEquals(true, listViewModel.canSpinRoulette())
-
-            // randomizer with fixed seed will produce fixed sequence
-            val expectedSequence: List<Long> = listOf(3, 3, 3, 2, 1, 2)
-
-            expectedSequence.forEach { expectedId ->
-                clearMocks(navHostControllerMock)
-                // When
-                listViewModel.onNavigateToRandomMovie()
-
-                // Then
-                verify { navHostControllerMock.navigate(Routes.SingleMovieView.route(expectedId)) }
-            }
-        }
-
-    @Test
-    fun `roulette feature with taboo`() =
-        runTest {
-            // Given
-            every { repo.listedMovies } returns
-                flowOf(
-                    AsyncMovie.Multiple(
-                        listOf(
-                            forList(id = 1, title = "Riddick"),
-                            forList(id = 2, title = "Pitch Black"),
-                            forList(id = 3, title = "The Chronicles of Riddick"),
-                        ),
-                    ),
-                )
-            construct()
-            assertEquals(true, listViewModel.canSpinRoulette())
-
-            // randomizer with fixed seed will produce fixed sequence
-            val expectedSequence: List<Long> = listOf(3, 2, 3, 1, 3, 2)
-            var lastId = 0L
-
-            expectedSequence.forEach { expectedId ->
-                clearMocks(navHostControllerMock)
-                // When
-                listViewModel.onNavigateToRandomMovie(lastId)
-                lastId = expectedId
-
-                // Then
-                verify { navHostControllerMock.navigate(Routes.SingleMovieView.route(expectedId)) }
-            }
         }
 }

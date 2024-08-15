@@ -19,6 +19,8 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MovieListDisplayState
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -37,6 +40,9 @@ class MainViewModel
         private val _movieListDisplayState = MutableStateFlow(MovieListDisplayState())
         val movieListDisplayState: StateFlow<MovieListDisplayState> =
             _movieListDisplayState.asStateFlow()
+
+        private val _listedMovies = MutableStateFlow<AsyncMovie>(AsyncMovie.Loading)
+        val listedMovies: StateFlow<AsyncMovie> = _listedMovies.asStateFlow()
 
         private val _popupInfo: MutableStateFlow<PopupInfo> = MutableStateFlow(PopupInfo.None)
         val popupInfo: StateFlow<PopupInfo> = _popupInfo.asStateFlow()
@@ -56,6 +62,12 @@ class MainViewModel
         fun closePopupOfType(popupType: KClass<out PopupInfo>) {
             if (popupType.isInstance(_popupInfo.value)) {
                 closePopup()
+            }
+        }
+
+        internal fun updateMovies(movies: AsyncMovie) {
+            viewModelScope.launch {
+                _listedMovies.value = movies
             }
         }
     }

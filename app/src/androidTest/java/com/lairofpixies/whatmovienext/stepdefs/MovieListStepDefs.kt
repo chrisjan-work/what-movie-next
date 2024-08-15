@@ -148,14 +148,6 @@ class MovieListStepDefs(
             }
         }
 
-    @And("the user navigates to the list")
-    fun theUserNavigatesToTheList() =
-        composeRule.composeStep {
-            val home = stringResource(R.string.movies)
-            onNodeWithText(home)
-                .performClick()
-        }
-
     @When("the user marks the entry as pending")
     fun theUserMarksTheEntryAsPending() =
         composeRule.composeStep {
@@ -211,7 +203,7 @@ class MovieListStepDefs(
     @Then("the card {string} is visible and the list contains this entry")
     fun theCardIsVisibleAndTheListContainsThisEntry(movieTitle: String) {
         theCardContainingTheInformationOfShouldBeVisible(movieTitle)
-        theUserNavigatesToTheList()
+        theUserPressesTheBackButton()
         theEntryIsVisible(movieTitle)
     }
 
