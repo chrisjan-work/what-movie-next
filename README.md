@@ -105,3 +105,4 @@ Data Sources
  * IMDB logo from iconduck https://iconduck.com/icons/14111/imdb (The asset is MIT-licensed)
  * RT logo from iconduck https://iconduck.com/icons/243754/rotten-tomatoes (MIT license)
  * Metacritic logo from Icons8 https://icons8.com/icons/set/metacritic
+ * Extra information about ratings and links from Wikidata (https://wikidata.org)
