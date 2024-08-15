@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.views.screens
+package com.lairofpixies.whatmovienext.views.screens.card
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -34,10 +34,10 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
-import com.lairofpixies.whatmovienext.views.components.MovieCard
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.Routes
+import com.lairofpixies.whatmovienext.views.screens.UiTags
 
 @Composable
 fun MovieCardScreen(
