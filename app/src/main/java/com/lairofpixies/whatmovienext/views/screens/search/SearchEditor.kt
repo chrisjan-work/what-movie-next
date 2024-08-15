@@ -16,14 +16,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.views.screens
+package com.lairofpixies.whatmovienext.views.screens.search
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,100 +31,21 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
-import com.lairofpixies.whatmovienext.viewmodels.SearchViewModel
 import com.lairofpixies.whatmovienext.views.components.DebugTitle
-import com.lairofpixies.whatmovienext.views.components.MovieCard
-import com.lairofpixies.whatmovienext.views.components.SearchResultsPicker
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
-import com.lairofpixies.whatmovienext.views.state.SearchState
-
-@Composable
-fun SearchScreen(searchViewModel: SearchViewModel) {
-    val softwareKeyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
-    val onCloseKeyboard: () -> Unit = {
-        softwareKeyboardController?.hide()
-        focusManager.clearFocus()
-        focusRequester.freeFocus()
-    }
-
-    BackHandler(true) {
-        searchViewModel.handleBackButton()
-    }
-
-    when (searchViewModel.searchState.collectAsState().value) {
-        SearchState.ENTRY -> {
-            SearchEditor(
-                query = searchViewModel.currentQuery.collectAsState().value,
-                onUpdateQuery = { searchQuery ->
-                    searchViewModel.updateSearchQuery(searchQuery)
-                },
-                onSearchAction = { searchViewModel.startSearch() },
-                onSaveQueryAction = { searchViewModel.onSaveQueryAction() },
-                onCancelAction = { searchViewModel.onLeaveAction() },
-                onCloseKeyboard = onCloseKeyboard,
-                focusRequester = focusRequester,
-                modifier = Modifier.testTag(UiTags.Screens.QUERY_EDITOR),
-            )
-        }
-
-        SearchState.RESULTS -> {
-            val searchResults = searchViewModel.searchResults.collectAsState().value
-            val scrollState =
-                rememberSaveable(saver = LazyListState.Saver) {
-                    searchViewModel.resultsScroll
-                }
-            SearchResultsPicker(
-                searchResults = searchResults.movies.toList<Movie.ForSearch>(),
-                scrollState = scrollState,
-                onResultSelected = { selectedId ->
-                    searchViewModel.fetchFromRemote(selectedId)
-                },
-                onBottomReached = { searchViewModel.continueSearch() },
-                modifier = Modifier.testTag(UiTags.Screens.SEARCH_RESULTS),
-            )
-        }
-
-        SearchState.CHOICE -> {
-            val selectedMovie = searchViewModel.selectedMovie.collectAsState().value
-            selectedMovie.singleMovieOrNull<Movie.ForCard>()?.let { movie ->
-                MovieCard(
-                    movie = movie,
-                    bottomItems =
-                        bottomItemsForChoiceView(
-                            onCancelAction = { searchViewModel.onLeaveAction() },
-                            onEditSearchAction = { searchViewModel.switchToSearchEntry() },
-                            onShowResultsAction = { searchViewModel.switchToSearchResults() },
-                            onSaveMovieAction = { searchViewModel.onSaveMovieAction() },
-                        ),
-                    modifier = Modifier.testTag(UiTags.Screens.SELECTION_VIEW),
-                )
-            } ?: {
-                searchViewModel.switchToSearchEntry()
-            }
-        }
-    }
-}
 
 @Composable
 fun SearchEditor(
@@ -233,17 +152,4 @@ fun bottomItemsForSearchEditor(
         CustomBarItem(ButtonSpec.CancelAction, onCancelAction),
         CustomBarItem(ButtonSpec.SaveAction, enabled = false, onClick = onSaveAction),
         CustomBarItem(ButtonSpec.SearchAction, searchEnabled, onClick = onSearchAction),
-    )
-
-fun bottomItemsForChoiceView(
-    onCancelAction: () -> Unit,
-    onEditSearchAction: () -> Unit,
-    onShowResultsAction: () -> Unit,
-    onSaveMovieAction: () -> Unit,
-): List<CustomBarItem> =
-    listOf(
-        CustomBarItem(ButtonSpec.CancelAction, onCancelAction),
-        CustomBarItem(ButtonSpec.EditShortcut, onEditSearchAction),
-        CustomBarItem(ButtonSpec.SearchAction, onShowResultsAction),
-        CustomBarItem(ButtonSpec.SaveAction, onSaveMovieAction),
     )

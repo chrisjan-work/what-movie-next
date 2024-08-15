@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.views.components
+package com.lairofpixies.whatmovienext.views.screens.search
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

@@ -31,10 +31,10 @@ import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.viewmodels.ScreenViewModel
 import com.lairofpixies.whatmovienext.viewmodels.SearchViewModel
-import com.lairofpixies.whatmovienext.views.screens.ArchiveScreen
-import com.lairofpixies.whatmovienext.views.screens.MovieCardScreen
-import com.lairofpixies.whatmovienext.views.screens.SearchScreen
+import com.lairofpixies.whatmovienext.views.screens.archive.ArchiveScreen
+import com.lairofpixies.whatmovienext.views.screens.card.MovieCardScreen
 import com.lairofpixies.whatmovienext.views.screens.movielist.MovieListScreen
+import com.lairofpixies.whatmovienext.views.screens.search.SearchScreen
 
 @Composable
 fun NavigationHost(

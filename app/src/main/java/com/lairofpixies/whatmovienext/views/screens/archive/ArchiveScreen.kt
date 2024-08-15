@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package com.lairofpixies.whatmovienext.views.screens
+package com.lairofpixies.whatmovienext.views.screens.archive
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +41,7 @@ import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 import com.lairofpixies.whatmovienext.views.navigation.Routes
+import com.lairofpixies.whatmovienext.views.screens.UiTags
 
 @Composable
 fun ArchiveScreen(archiveViewModel: ArchiveViewModel) {
