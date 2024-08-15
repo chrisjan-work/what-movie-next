@@ -22,6 +22,7 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Cancel
+import androidx.compose.material.icons.outlined.Casino
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
@@ -122,5 +123,10 @@ sealed class ButtonSpec(
     data object SortingMenu : ButtonSpec(
         labelRes = R.string.sort,
         icon = Icons.Outlined.SortByAlpha,
+    )
+
+    data object RouletteAction : ButtonSpec(
+        labelRes = R.string.roulette,
+        icon = Icons.Outlined.Casino,
     )
 }

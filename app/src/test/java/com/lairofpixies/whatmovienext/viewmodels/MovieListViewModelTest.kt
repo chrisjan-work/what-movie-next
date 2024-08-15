@@ -18,17 +18,20 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
+import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MovieListDisplayState
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
+import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -52,6 +55,7 @@ import kotlin.random.Random
 class MovieListViewModelTest {
     private lateinit var listViewModel: MovieListViewModel
     private lateinit var mainViewModelMock: MainViewModel
+    private lateinit var navHostControllerMock: NavHostController
     private lateinit var repo: MovieRepository
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
@@ -68,11 +72,14 @@ class MovieListViewModelTest {
                     listMode = ListMode.ALL,
                 ),
             )
+
+        navHostControllerMock = mockk(relaxed = true)
     }
 
     private fun construct() {
         listViewModel = MovieListViewModel(repo, Random(100L))
         listViewModel.attachMainViewModel(mainViewModelMock)
+        listViewModel.attachNavHostController(navHostControllerMock)
     }
 
     @After
@@ -453,5 +460,67 @@ class MovieListViewModelTest {
             val sortingSetup = SortingSetup(SortingCriteria.Genre, SortingDirection.Descending)
             listViewModel.updateSortingSetup(sortingSetup)
             assertEquals(sortingSetup, listViewModel.sortingSetup.value)
+        }
+
+    @Test
+    fun `roulette feature`() =
+        runTest {
+            // Given
+            every { repo.listedMovies } returns
+                flowOf(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            forList(id = 1, title = "Riddick"),
+                            forList(id = 2, title = "Pitch Black"),
+                            forList(id = 3, title = "The Chronicles of Riddick"),
+                        ),
+                    ),
+                )
+            construct()
+            assertEquals(true, listViewModel.canSpinRoulette())
+
+            // randomizer with fixed seed will produce fixed sequence
+            val expectedSequence: List<Long> = listOf(3, 3, 3, 2, 1, 2)
+
+            expectedSequence.forEach { expectedId ->
+                clearMocks(navHostControllerMock)
+                // When
+                listViewModel.onNavigateToRandomMovie()
+
+                // Then
+                verify { navHostControllerMock.navigate(Routes.SingleMovieView.route(expectedId)) }
+            }
+        }
+
+    @Test
+    fun `roulette feature with taboo`() =
+        runTest {
+            // Given
+            every { repo.listedMovies } returns
+                flowOf(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            forList(id = 1, title = "Riddick"),
+                            forList(id = 2, title = "Pitch Black"),
+                            forList(id = 3, title = "The Chronicles of Riddick"),
+                        ),
+                    ),
+                )
+            construct()
+            assertEquals(true, listViewModel.canSpinRoulette())
+
+            // randomizer with fixed seed will produce fixed sequence
+            val expectedSequence: List<Long> = listOf(3, 2, 3, 1, 3, 2)
+            var lastId = 0L
+
+            expectedSequence.forEach { expectedId ->
+                clearMocks(navHostControllerMock)
+                // When
+                listViewModel.onNavigateToRandomMovie(lastId)
+                lastId = expectedId
+
+                // Then
+                verify { navHostControllerMock.navigate(Routes.SingleMovieView.route(expectedId)) }
+            }
         }
 }

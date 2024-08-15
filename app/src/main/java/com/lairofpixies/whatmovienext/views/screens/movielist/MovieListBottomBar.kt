@@ -39,15 +39,19 @@ fun MovieListBottomBar(
             bottomItemsForMovieList(
                 listMode = listViewModel.listMode.collectAsState().value,
                 isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
+                isRouleteActive = listViewModel.canSpinRoulette(),
                 onListModeChanged = { listViewModel.setListMode(it) },
                 onCreateNewMovie = {
                     listViewModel.onNavigateTo(Routes.CreateMovieView)
                 },
-                onOpenArchive = {
-                    listViewModel.onNavigateTo(Routes.ArchiveView)
-                },
                 onSortingClicked = {
                     listViewModel.onOpenSortingMenu()
+                },
+                onRouletteClicked = {
+                    listViewModel.onNavigateToRandomMovie()
+                },
+                onOpenArchive = {
+                    listViewModel.onNavigateTo(Routes.ArchiveView)
                 },
             ),
         modifier = modifier,
@@ -57,10 +61,12 @@ fun MovieListBottomBar(
 fun bottomItemsForMovieList(
     listMode: ListMode,
     isArchiveVisitable: Boolean,
+    isRouleteActive: Boolean,
     onListModeChanged: (ListMode) -> Unit,
     onCreateNewMovie: () -> Unit,
-    onOpenArchive: () -> Unit,
     onSortingClicked: () -> Unit,
+    onRouletteClicked: () -> Unit,
+    onOpenArchive: () -> Unit,
 ): List<CustomBarItem> {
     val seenFilter =
         CustomBarItem(
@@ -76,12 +82,13 @@ fun bottomItemsForMovieList(
 
     val createItem = CustomBarItem(ButtonSpec.CreateMovieShortcut, onCreateNewMovie)
 
-    val archiveItem =
-        if (isArchiveVisitable) {
-            CustomBarItem(ButtonSpec.ArchiveShortcut, onOpenArchive)
-        } else {
-            null
-        }
+    val rouletteItem =
+        CustomBarItem(
+            ButtonSpec.RouletteAction,
+            tag = UiTags.Buttons.ROULETTE,
+            enabled = isRouleteActive,
+            onClick = onRouletteClicked,
+        )
 
     val sortingItem =
         CustomBarItem(
@@ -90,10 +97,18 @@ fun bottomItemsForMovieList(
             onClick = onSortingClicked,
         )
 
+    val archiveItem =
+        if (isArchiveVisitable) {
+            CustomBarItem(ButtonSpec.ArchiveShortcut, onOpenArchive)
+        } else {
+            null
+        }
+
     return listOfNotNull(
         sortingItem,
         seenFilter,
         archiveItem,
+        rouletteItem,
         createItem,
     )
 }

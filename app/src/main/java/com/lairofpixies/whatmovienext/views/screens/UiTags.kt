@@ -31,6 +31,7 @@ object UiTags {
     object Buttons {
         const val LIST_MODE = "ListModeButton"
         const val SORT_MENU = "SortMenuButton"
+        const val ROULETTE = "RouletteButton"
     }
 
     object Popups {

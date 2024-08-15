@@ -22,10 +22,12 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.util.mapState
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
@@ -175,6 +177,20 @@ class MovieListViewModel
         fun updateSortingSetup(setup: SortingSetup) {
             viewModelScope.launch {
                 _sortingSetup.value = setup
+            }
+        }
+
+        fun canSpinRoulette(): Boolean = listedMovies.value.hasMovie()
+
+        fun onNavigateToRandomMovie(tabooId: Long = NEW_ID) {
+            if (canSpinRoulette()) {
+                val movieList =
+                    listedMovies.value
+                        .toList<Movie.ForList>()
+                        .filter { it.appData.movieId != tabooId }
+                val movieIndex = randomizer.nextInt(movieList.size)
+                val movie = movieList.getOrNull(movieIndex) ?: return
+                onNavigateWithParam(Routes.SingleMovieView, movie.appData.movieId)
             }
         }
     }
