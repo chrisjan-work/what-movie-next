@@ -19,14 +19,15 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeDown
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
-import com.lairofpixies.whatmovienext.test.stringResource
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -114,10 +115,19 @@ class MovieCardStepDefs(
     }
 
     @When("the user archives the current entry")
-    fun theUserArchivesTheCurrentEntry() =
+    fun theUserArchivesTheCurrentEntry() {
+        // pull-to-refresh to show top bar
         composeRule.composeStep {
-            val archiveLabel = stringResource(com.lairofpixies.whatmovienext.R.string.archive)
-            onNodeWithText(archiveLabel)
+            onNodeWithTag(UiTags.Screens.MOVIE_CARD)
+                .performTouchInput {
+                    swipeDown()
+                }
+        }
+
+        // click on button
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Buttons.ARCHIVE_ACTION)
                 .performClick()
         }
+    }
 }

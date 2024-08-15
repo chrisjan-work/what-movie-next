@@ -20,15 +20,29 @@ package com.lairofpixies.whatmovienext.views.screens.card
 
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isMissing
@@ -36,6 +50,7 @@ import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.screens.UiTags
+import kotlin.math.roundToInt
 
 @Composable
 fun MovieCardScreen(
@@ -63,10 +78,6 @@ fun MovieCardScreen(
                 movie = loadedMovie,
                 isRouletteAvailable = cardViewModel.canSpinRoulette(),
                 onRouletteAction = { cardViewModel.onNavigateToRandomMovie(loadedMovie.appData.movieId) },
-                onArchiveAction = {
-                    cardViewModel.archiveCurrentMovie()
-                    cardViewModel.onLeaveAction()
-                },
                 onReplaceDatesAction = { updateMovieId, watchDates ->
                     cardViewModel.updateMovieWatchDates(
                         updateMovieId,
@@ -78,6 +89,15 @@ fun MovieCardScreen(
         MovieCard(
             movie = loadedMovie,
             bottomItems = bottomItems,
+            topBar = { trigger ->
+                MovieCardTopBar(
+                    trigger = trigger,
+                    onArchiveAction = {
+                        cardViewModel.archiveCurrentMovie()
+                        cardViewModel.onLeaveAction()
+                    },
+                )
+            },
             modifier = Modifier.testTag(UiTags.Screens.MOVIE_CARD),
         )
     } else {
@@ -90,11 +110,53 @@ fun MovieCardScreen(
     }
 }
 
+@Composable
+fun MovieCardTopBar(
+    trigger: State<Boolean>,
+    onArchiveAction: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val topBarHeight = 56.dp
+    val topBarHeightPx = with(LocalDensity.current) { topBarHeight.toPx() }
+    val topBarOffset = remember { mutableFloatStateOf(-topBarHeightPx) }
+
+    if (trigger.value) {
+        topBarOffset.floatValue = 0f
+    } else {
+        topBarOffset.floatValue = -topBarHeightPx
+    }
+
+    Box(
+        modifier =
+            modifier
+                .offset {
+                    IntOffset(
+                        x = 0,
+                        y = topBarOffset.floatValue.roundToInt(),
+                    )
+                }.background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.14f))
+                .fillMaxWidth(),
+    ) {
+        Icon(
+            ButtonSpec.ArchiveAction.icon,
+            contentDescription = stringResource(ButtonSpec.ArchiveAction.labelRes),
+            modifier =
+                Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(8.dp)
+                    .alpha(0.8f)
+                    .clickable { onArchiveAction() }
+                    .testTag(UiTags.Buttons.ARCHIVE_ACTION),
+            tint = MaterialTheme.colorScheme.onBackground,
+        )
+    }
+}
+
 fun bottomItemsForMovieCard(
     movie: Movie.ForCard,
     isRouletteAvailable: Boolean,
     onRouletteAction: () -> Unit,
-    onArchiveAction: () -> Unit,
     onReplaceDatesAction: (Long, List<Long>) -> Unit,
 ): List<CustomBarItem> {
     val rouletteItem =
@@ -116,11 +178,8 @@ fun bottomItemsForMovieCard(
             }
         }
 
-    val archiveItem = CustomBarItem(ButtonSpec.ArchiveAction, onArchiveAction)
-
     return listOfNotNull(
         seenItem,
-        archiveItem,
         rouletteItem,
     )
 }

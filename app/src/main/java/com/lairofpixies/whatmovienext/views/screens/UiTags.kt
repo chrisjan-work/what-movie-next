@@ -32,6 +32,7 @@ object UiTags {
         const val LIST_MODE = "ListModeButton"
         const val SORT_MENU = "SortMenuButton"
         const val ROULETTE = "RouletteButton"
+        const val ARCHIVE_ACTION = "ArchiveAction"
     }
 
     object Popups {
