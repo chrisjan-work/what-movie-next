@@ -45,6 +45,7 @@ class MovieListViewModel
     @Inject
     constructor(
         private val repo: MovieRepository,
+        private val randomizer: Random,
     ) : ScreenViewModel() {
         private val _listedMovies = MutableStateFlow<AsyncMovie>(AsyncMovie.Loading)
         val listedMovies: StateFlow<AsyncMovie> = _listedMovies.asStateFlow()
@@ -107,7 +108,6 @@ class MovieListViewModel
         fun sortMovies(
             movies: AsyncMovie,
             sortingSetup: SortingSetup,
-            seed: Long = System.currentTimeMillis(),
         ): AsyncMovie {
             val unsorted = movies.toList<Movie.ForList>()
             val sortedAscending =
@@ -146,8 +146,7 @@ class MovieListViewModel
                         }
 
                     SortingCriteria.Random -> {
-                        val random = Random(seed)
-                        val order = List(unsorted.size) { random.nextDouble() }
+                        val order = List(unsorted.size) { randomizer.nextDouble() }
                         unsorted.zip(order).sortedBy { it.second }.map { it.first }
                     }
                 }
