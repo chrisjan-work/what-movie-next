@@ -65,5 +65,5 @@
     <string name="by_runtime">runtime</string>
     <string name="by_director">director</string>
     <string name="by_rating">avg. score</string>
-    <string name="random">random</string>
+    <string name="random">shuffle</string>
 </resources>
