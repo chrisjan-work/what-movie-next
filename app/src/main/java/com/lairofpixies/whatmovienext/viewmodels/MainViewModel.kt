@@ -21,7 +21,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
-import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,20 +34,11 @@ import kotlin.reflect.KClass
 class MainViewModel
     @Inject
     constructor() : ViewModel() {
-        private val _listFilters = MutableStateFlow(ListFilters())
-        val listFilters: StateFlow<ListFilters> = _listFilters.asStateFlow()
-
         private val _listedMovies = MutableStateFlow<AsyncMovie>(AsyncMovie.Loading)
         val listedMovies: StateFlow<AsyncMovie> = _listedMovies.asStateFlow()
 
         private val _popupInfo: MutableStateFlow<PopupInfo> = MutableStateFlow(PopupInfo.None)
         val popupInfo: StateFlow<PopupInfo> = _popupInfo.asStateFlow()
-
-        fun setListFilters(listFilters: ListFilters) {
-            viewModelScope.launch {
-                _listFilters.value = listFilters
-            }
-        }
 
         fun showPopup(popupInfo: PopupInfo) {
             _popupInfo.value = popupInfo

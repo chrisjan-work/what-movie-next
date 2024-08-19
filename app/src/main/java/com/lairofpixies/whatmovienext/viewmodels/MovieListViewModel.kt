@@ -20,8 +20,10 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
@@ -39,7 +41,8 @@ import javax.inject.Inject
 class MovieListViewModel
     @Inject
     constructor(
-        private val repo: MovieRepository,
+        private val movieRepository: MovieRepository,
+        private val presetRepository: PresetRepository,
         private val sortProcessor: SortProcessor,
         private val filterProcessor: FilterProcessor,
     ) : ScreenViewModel() {
@@ -50,20 +53,31 @@ class MovieListViewModel
         val hasArchivedMovies: StateFlow<Boolean> = _hasArchivedMovies.asStateFlow()
 
         private val _bottomMenu = MutableStateFlow(BottomMenu.None)
-        val bottomMenu: StateFlow<BottomMenu> =
-            _bottomMenu.asStateFlow()
+        val bottomMenu: StateFlow<BottomMenu> = _bottomMenu.asStateFlow()
 
-        private val _sortingSetup = MutableStateFlow(SortingSetup.Default)
-        val sortingSetup: StateFlow<SortingSetup> = _sortingSetup.asStateFlow()
-
-        lateinit var listFilters: StateFlow<ListFilters>
-            private set
+        private val _currentPreset = MutableStateFlow(Preset.Default)
+        val currentPreset: StateFlow<Preset> = _currentPreset.asStateFlow()
 
         init {
+            connectArchivedMovies()
+            connectPresets()
+        }
+
+        private fun connectArchivedMovies() {
             viewModelScope.launch {
-                repo.archivedMovies.collect { movieInfo ->
+                movieRepository.archivedMovies.collect { movieInfo ->
                     _hasArchivedMovies.value = movieInfo.hasMovie()
                 }
+            }
+        }
+
+        private fun connectPresets() {
+            viewModelScope.launch {
+                presetRepository
+                    .getPreset(Preset.FIXED_ID)
+                    .collect { presetOrNull ->
+                        _currentPreset.value = presetOrNull ?: Preset.Default
+                    }
             }
         }
 
@@ -71,16 +85,14 @@ class MovieListViewModel
             if (mainViewModel != this.mainViewModel) {
                 super.attachMainViewModel(mainViewModel)
 
-                // initialize and connect main view model flows
                 listedMovies = mainViewModel.listedMovies
-                listFilters = mainViewModel.listFilters
 
                 viewModelScope.launch {
-                    repo.listedMovies
-                        .combine(listFilters) { movieInfo, listFilters ->
-                            filterProcessor.filterMovies(movieInfo, listFilters)
-                        }.combine(sortingSetup) { filteredMovies, sorting ->
-                            sortProcessor.sortMovies(filteredMovies, sorting)
+                    movieRepository.listedMovies
+                        .combine(currentPreset) { movieInfo, preset ->
+                            val filteredMovies =
+                                filterProcessor.filterMovies(movieInfo, preset.listFilters)
+                            sortProcessor.sortMovies(filteredMovies, preset.sortingSetup)
                         }.collect { sortedMovies ->
                             mainViewModel.updateMovies(sortedMovies)
                         }
@@ -89,7 +101,19 @@ class MovieListViewModel
         }
 
         fun setListFilters(listFilters: ListFilters) {
-            mainViewModel?.setListFilters(listFilters)
+            viewModelScope.launch {
+                presetRepository.updatePreset(
+                    currentPreset.value.copy(listFilters = listFilters),
+                )
+            }
+        }
+
+        fun updateSortingSetup(sortingSetup: SortingSetup) {
+            viewModelScope.launch {
+                presetRepository.updatePreset(
+                    currentPreset.value.copy(sortingSetup = sortingSetup),
+                )
+            }
         }
 
         fun onOpenSortingMenu() {
@@ -101,12 +125,6 @@ class MovieListViewModel
         fun closeBottomMenu() {
             viewModelScope.launch {
                 _bottomMenu.value = BottomMenu.None
-            }
-        }
-
-        fun updateSortingSetup(setup: SortingSetup) {
-            viewModelScope.launch {
-                _sortingSetup.value = setup
             }
         }
     }

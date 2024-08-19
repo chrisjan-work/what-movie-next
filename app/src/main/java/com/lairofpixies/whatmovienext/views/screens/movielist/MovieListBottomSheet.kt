@@ -61,7 +61,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun MovieListBottomSheet(
     bottomMenu: StateFlow<BottomMenu>,
-    sortingSetup: StateFlow<SortingSetup>,
+    sortingSetup: SortingSetup,
     closeBottomMenu: () -> Unit,
     updateSortingSetup: (SortingSetup) -> Unit,
     modifier: Modifier = Modifier,
@@ -100,7 +100,7 @@ fun MovieListBottomSheet(
             when (bottomMenu.collectAsState().value) {
                 BottomMenu.Sorting ->
                     SortingMenu(
-                        sortingSetup = sortingSetup.collectAsState().value,
+                        sortingSetup = sortingSetup,
                         onSelectAction = { criteria, direction ->
                             updateSortingSetup(SortingSetup(criteria, direction))
                         },

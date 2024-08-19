@@ -38,7 +38,10 @@ fun MovieListBottomBar(
     CustomBottomBar(
         items =
             bottomItemsForMovieList(
-                listFilters = listViewModel.listFilters.collectAsState().value,
+                listFilters =
+                    listViewModel.currentPreset
+                        .collectAsState()
+                        .value.listFilters,
                 isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
                 isRouleteActive = listViewModel.canSpinRoulette(),
                 onListFiltersChanged = { listViewModel.setListFilters(it) },

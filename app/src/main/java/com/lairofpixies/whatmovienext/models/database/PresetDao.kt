@@ -18,29 +18,25 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
-import com.lairofpixies.whatmovienext.models.database.data.DbMovie
-import com.lairofpixies.whatmovienext.models.database.data.DbPerson
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.lairofpixies.whatmovienext.models.database.data.DbPreset
-import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import kotlinx.coroutines.flow.Flow
 
-@Database(
-    entities = [
-        DbMovie::class,
-        DbGenre::class,
-        DbPerson::class,
-        DbRole::class,
-        DbPreset::class,
-    ],
-    version = 1,
-    exportSchema = false,
-)
-abstract class MovieDatabase : RoomDatabase() {
-    abstract fun movieDao(): MovieDao
+@Dao
+interface PresetDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertOrUpdate(dbPreset: DbPreset): Long
 
-    abstract fun genreDao(): GenreDao
+    @Delete
+    suspend fun deletePreset(dbPreset: DbPreset)
 
-    abstract fun presetDao(): PresetDao
+    @Query("SELECT * FROM dbpreset")
+    fun getAllPresets(): Flow<List<DbPreset>>
+
+    @Query("SELECT * FROM dbpreset WHERE presetId = :presetId")
+    fun getPreset(presetId: Long): Flow<DbPreset?>
 }
