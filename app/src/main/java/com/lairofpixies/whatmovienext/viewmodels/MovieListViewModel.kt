@@ -24,8 +24,8 @@ import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.util.mapState
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
+import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
@@ -37,7 +37,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.random.Random
 
 @HiltViewModel
 class MovieListViewModel
@@ -58,7 +57,7 @@ class MovieListViewModel
         private val _sortingSetup = MutableStateFlow(SortingSetup.Default)
         val sortingSetup: StateFlow<SortingSetup> = _sortingSetup.asStateFlow()
 
-        lateinit var listMode: StateFlow<ListMode>
+        lateinit var listFilters: StateFlow<ListFilters>
             private set
 
         init {
@@ -75,12 +74,12 @@ class MovieListViewModel
 
                 // initialize and connect main view model flows
                 listedMovies = mainViewModel.listedMovies
-                listMode = mainViewModel.movieListDisplayState.mapState { it.listMode }
+                listFilters = mainViewModel.listFilters
 
                 viewModelScope.launch {
                     repo.listedMovies
-                        .combine(listMode) { movieInfo, listMode ->
-                            filterMovies(movieInfo, listMode)
+                        .combine(listFilters) { movieInfo, listFilters ->
+                            filterMovies(movieInfo, listFilters.listMode)
                         }.combine(sortingSetup) { filteredMovies, sorting ->
                             sortMovies(filteredMovies, sorting)
                         }.collect { sortedMovies ->
@@ -90,8 +89,8 @@ class MovieListViewModel
             }
         }
 
-        fun setListMode(listMode: ListMode) {
-            mainViewModel?.setListMode(listMode)
+        fun setListFilters(listFilters: ListFilters) {
+            mainViewModel?.setListFilters(listFilters)
         }
 
         private fun filterMovies(

@@ -18,6 +18,8 @@
  */
 package com.lairofpixies.whatmovienext.views.state
 
-data class MovieListDisplayState(
+data class ListFilters(
     val listMode: ListMode = ListMode.ALL,
 )
+
+// data class MinMax<T: Number>(val min: T? = null, val max: T? = null)

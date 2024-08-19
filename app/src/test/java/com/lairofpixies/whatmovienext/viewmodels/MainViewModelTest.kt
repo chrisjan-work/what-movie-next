@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
+import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import kotlinx.coroutines.Dispatchers
@@ -53,8 +54,8 @@ class MainViewModelTest {
     fun `change list mode`() {
         ListMode.entries.forEach { mode ->
             // When
-            mainViewModel.setListMode(mode)
-            val result = mainViewModel.movieListDisplayState.value.listMode
+            mainViewModel.setListFilters(ListFilters(mode))
+            val result = mainViewModel.listFilters.value.listMode
 
             // Then
             assertEquals(mode, result)
