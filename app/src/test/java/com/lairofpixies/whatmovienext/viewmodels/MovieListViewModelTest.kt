@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Preset
@@ -28,12 +29,14 @@ import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
+import io.mockk.clearMocks
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -41,6 +44,7 @@ import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -51,6 +55,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieListViewModelTest {
@@ -216,5 +221,51 @@ class MovieListViewModelTest {
 
             listViewModel.closeBottomMenu()
             assertEquals(BottomMenu.None, listViewModel.bottomMenu.value)
+        }
+
+    @Test
+    fun `roulette feature`() =
+        runTest {
+            // Given
+            every { mainViewModelMock.listedMovies } returns
+                MutableStateFlow(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            forList(id = 1, title = "Riddick"),
+                            forList(id = 2, title = "Pitch Black"),
+                            forList(id = 3, title = "The Chronicles of Riddick"),
+                        ),
+                    ),
+                )
+            construct()
+            listViewModel.randomizer = Random(100)
+            assertEquals(true, listViewModel.canSpinRoulette())
+
+            // randomizer with fixed seed will produce fixed sequence
+            val expectedSequence: List<Long> = listOf(3, 3, 3, 2, 1, 2)
+
+            expectedSequence.forEach { expectedId ->
+                clearMocks(navHostControllerMock)
+                // When
+                listViewModel.onNavigateToRandomMovie()
+
+                // Then
+                verify {
+                    navHostControllerMock.navigate(
+                        Routes.SingleMovieView.route(expectedId),
+                        any<NavOptionsBuilder.() -> Unit>(),
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun `roulette disabled with empty list`() =
+        runTest {
+            // Given
+            every { mainViewModelMock.listedMovies } returns
+                MutableStateFlow(AsyncMovie.Empty)
+            construct()
+            assertEquals(false, listViewModel.canSpinRoulette())
         }
 }

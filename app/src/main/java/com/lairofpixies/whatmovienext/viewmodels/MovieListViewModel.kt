@@ -20,12 +20,14 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
@@ -125,6 +127,25 @@ class MovieListViewModel
         fun closeBottomMenu() {
             viewModelScope.launch {
                 _bottomMenu.value = BottomMenu.None
+            }
+        }
+
+        fun canSpinRoulette(): Boolean =
+            mainViewModel
+                ?.listedMovies
+                ?.value
+                ?.hasMovie()
+                ?: false
+
+        fun onNavigateToRandomMovie() {
+            val mainViewModel = mainViewModel ?: return
+            if (canSpinRoulette()) {
+                val movieList =
+                    mainViewModel.listedMovies.value
+                        .toList<Movie.ForList>()
+                val movieIndex = randomizer.nextInt(movieList.size)
+                val movie = movieList.getOrNull(movieIndex) ?: return
+                onNavigateWithParam(Routes.SingleMovieView, movie.appData.movieId, popToHome = true)
             }
         }
     }

@@ -20,9 +20,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
-import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import kotlinx.coroutines.CoroutineScope
@@ -84,19 +81,4 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     fun closePopup() = mainViewModel?.closePopup()
 
     fun closePopupOfType(popupType: KClass<out PopupInfo>) = mainViewModel?.closePopupOfType(popupType)
-
-    fun canSpinRoulette(): Boolean = mainViewModel?.listedMovies?.value?.hasMovie() == true
-
-    fun onNavigateToRandomMovie(tabooId: Long = NEW_ID) {
-        val mainViewModel = mainViewModel ?: return
-        if (canSpinRoulette()) {
-            val movieList =
-                mainViewModel.listedMovies.value
-                    .toList<Movie.ForList>()
-                    .filter { it.appData.movieId != tabooId }
-            val movieIndex = randomizer.nextInt(movieList.size)
-            val movie = movieList.getOrNull(movieIndex) ?: return
-            onNavigateWithParam(Routes.SingleMovieView, movie.appData.movieId, popToHome = true)
-        }
-    }
 }
