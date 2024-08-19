@@ -18,17 +18,14 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
-import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
-import com.lairofpixies.whatmovienext.views.state.SortingCriteria
-import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,6 +40,7 @@ class MovieListViewModel
     @Inject
     constructor(
         private val repo: MovieRepository,
+        private val sortProcessor: SortProcessor,
     ) : ScreenViewModel() {
         lateinit var listedMovies: StateFlow<AsyncMovie>
             private set
@@ -81,7 +79,7 @@ class MovieListViewModel
                         .combine(listFilters) { movieInfo, listFilters ->
                             filterMovies(movieInfo, listFilters.listMode)
                         }.combine(sortingSetup) { filteredMovies, sorting ->
-                            sortMovies(filteredMovies, sorting)
+                            sortProcessor.sortMovies(filteredMovies, sorting)
                         }.collect { sortedMovies ->
                             mainViewModel.updateMovies(sortedMovies)
                         }
@@ -102,63 +100,6 @@ class MovieListViewModel
                 ListMode.WATCHED -> movies.filter { it.appData?.watchDates?.isNotEmpty() == true }
                 ListMode.PENDING -> movies.filter { it.appData?.watchDates?.isEmpty() == true }
             }
-
-        @VisibleForTesting
-        fun sortMovies(
-            movies: AsyncMovie,
-            sortingSetup: SortingSetup,
-        ): AsyncMovie {
-            val unsorted = movies.toList<Movie.ForList>()
-            val sortedAscending =
-                when (sortingSetup.criteria) {
-                    SortingCriteria.CreationTime ->
-                        unsorted.sortedBy { it.appData.creationTime }
-
-                    SortingCriteria.Title ->
-                        unsorted.sortedBy { it.searchData.title }
-
-                    SortingCriteria.Year ->
-                        unsorted.sortedBy { it.searchData.year ?: 0 }
-
-                    // TODO: sort by watchdate instead of watchcount? if so, where does the "unwatched" go, beginning or end?
-                    SortingCriteria.WatchCount ->
-                        unsorted.sortedBy { it.appData.watchDates.size }
-
-                    SortingCriteria.Genre ->
-                        unsorted.sortedBy { it.searchData.genres.joinToString(",") }
-
-                    SortingCriteria.Runtime ->
-                        unsorted.sortedBy { it.detailData.runtimeMinutes }
-
-                    SortingCriteria.Director ->
-                        unsorted.sortedBy {
-                            it.detailData.directorNames.joinToString(",")
-                        }
-
-                    SortingCriteria.MeanRating ->
-                        unsorted.sortedBy { movie ->
-                            listOf(
-                                movie.detailData.rtRating.percentValue,
-                                movie.detailData.mcRating.percentValue,
-                            ).filter { it >= 0 }
-                                .average()
-                                .takeIf { !it.isNaN() } ?: 0.0
-                        }
-
-                    SortingCriteria.Random -> {
-                        val order = List(unsorted.size) { randomizer.nextDouble() }
-                        unsorted.zip(order).sortedBy { it.second }.map { it.first }
-                    }
-                }
-
-            val sortedList =
-                if (sortingSetup.direction == SortingDirection.Descending) {
-                    sortedAscending.reversed()
-                } else {
-                    sortedAscending
-                }
-            return AsyncMovie.fromList(sortedList)
-        }
 
         fun onOpenSortingMenu() {
             viewModelScope.launch {
