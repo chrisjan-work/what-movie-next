@@ -22,7 +22,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.util.mapState
@@ -101,8 +100,8 @@ class MovieListViewModel
         ): AsyncMovie =
             when (listMode) {
                 ListMode.ALL -> movies
-                ListMode.WATCHED -> movies.filter { it.appData?.watchState == WatchState.WATCHED }
-                ListMode.PENDING -> movies.filter { it.appData?.watchState == WatchState.PENDING }
+                ListMode.WATCHED -> movies.filter { it.appData?.watchDates?.isNotEmpty() == true }
+                ListMode.PENDING -> movies.filter { it.appData?.watchDates?.isEmpty() == true }
             }
 
         @VisibleForTesting
@@ -122,8 +121,9 @@ class MovieListViewModel
                     SortingCriteria.Year ->
                         unsorted.sortedBy { it.searchData.year ?: 0 }
 
+                    // TODO: sort by watchdate instead of watchcount? if so, where does the "unwatched" go, beginning or end?
                     SortingCriteria.WatchCount ->
-                        unsorted.sortedBy { it.appData.watchState }
+                        unsorted.sortedBy { it.appData.watchDates.size }
 
                     SortingCriteria.Genre ->
                         unsorted.sortedBy { it.searchData.genres.joinToString(",") }

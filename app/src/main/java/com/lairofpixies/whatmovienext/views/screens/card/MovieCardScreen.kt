@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
@@ -68,10 +67,10 @@ fun MovieCardScreen(
                     cardViewModel.archiveCurrentMovie()
                     cardViewModel.onLeaveAction()
                 },
-                onUpdateAction = { updateMovieId, watchState ->
-                    cardViewModel.updateMovieWatched(
+                onReplaceDatesAction = { updateMovieId, watchDates ->
+                    cardViewModel.updateMovieWatchDates(
                         updateMovieId,
-                        watchState,
+                        watchDates,
                     )
                 },
             )
@@ -96,7 +95,7 @@ fun bottomItemsForMovieCard(
     isRouletteAvailable: Boolean,
     onRouletteAction: () -> Unit,
     onArchiveAction: () -> Unit,
-    onUpdateAction: (Long, WatchState) -> Unit,
+    onReplaceDatesAction: (Long, List<Long>) -> Unit,
 ): List<CustomBarItem> {
     val rouletteItem =
         if (isRouletteAvailable) {
@@ -105,14 +104,15 @@ fun bottomItemsForMovieCard(
             null
         }
 
+    // TODO: enter dates here
     val seenItem =
-        if (movie.appData.watchState == WatchState.PENDING) {
+        if (movie.appData.watchDates.isEmpty()) {
             CustomBarItem(ButtonSpec.PendingMovieState) {
-                onUpdateAction(movie.appData.movieId, WatchState.WATCHED)
+                onReplaceDatesAction(movie.appData.movieId, listOf(System.currentTimeMillis()))
             }
         } else {
             CustomBarItem(ButtonSpec.WatchedMovieState) {
-                onUpdateAction(movie.appData.movieId, WatchState.PENDING)
+                onReplaceDatesAction(movie.appData.movieId, emptyList())
             }
         }
 

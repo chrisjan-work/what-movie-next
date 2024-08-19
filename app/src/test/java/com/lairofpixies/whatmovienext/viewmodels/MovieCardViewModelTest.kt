@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
@@ -92,13 +91,13 @@ class MovieCardViewModelTest {
     @Test
     fun `update watch state of movie`() {
         // When
-        cardViewModel.updateMovieWatched(10, WatchState.WATCHED)
-        cardViewModel.updateMovieWatched(31, WatchState.PENDING)
+        cardViewModel.updateMovieWatchDates(10, listOf(678L))
+        cardViewModel.updateMovieWatchDates(31, emptyList())
 
         // Then
         coVerifyOrder {
-            repo.setWatchState(10, WatchState.WATCHED)
-            repo.setWatchState(31, WatchState.PENDING)
+            repo.updateWatchDates(10, listOf(678L))
+            repo.updateWatchDates(31, emptyList())
         }
     }
 

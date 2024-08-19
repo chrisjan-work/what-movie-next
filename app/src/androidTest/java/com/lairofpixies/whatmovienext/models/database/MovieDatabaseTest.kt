@@ -19,7 +19,6 @@
 package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.MovieData
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
@@ -74,7 +73,7 @@ class MovieDatabaseTest {
                     movieId = MovieData.NEW_ID,
                     tmdbId = 22,
                     title = "Casino",
-                    watchState = WatchState.PENDING,
+                    dbWatchDates = "",
                 )
             val movieId = movieDao.insertMovie(dbMovie)
             val result = movieDao.getStaffedMovie(movieId).first()
@@ -101,17 +100,17 @@ class MovieDatabaseTest {
                     DbMovie(
                         movieId = 1,
                         title = "Someone flew over the cuckoo's nest",
-                        watchState = WatchState.PENDING,
+                        dbWatchDates = "",
                     ),
                     DbMovie(
                         movieId = 2,
                         title = "Watchmen",
-                        watchState = WatchState.PENDING,
+                        dbWatchDates = "",
                     ),
                     DbMovie(
                         movieId = 3,
                         title = "A Beautiful Mind",
-                        watchState = WatchState.PENDING,
+                        dbWatchDates = "",
                     ),
                 )
 
@@ -127,7 +126,7 @@ class MovieDatabaseTest {
             // Given a database with a single movie
             assert(movieDao.getAllMovies().first().isEmpty())
             val movie =
-                DbMovie(movieId = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+                DbMovie(movieId = 1, title = "The Wizard of Oz", dbWatchDates = "")
             movieDao.insertMovie(movie)
 
             // When we remove it
@@ -141,7 +140,7 @@ class MovieDatabaseTest {
     fun `update movie details`() =
         runTest {
             // Given a database with a single movie
-            val movie = DbMovie(movieId = 9, title = "Stargate", watchState = WatchState.PENDING)
+            val movie = DbMovie(movieId = 9, title = "Stargate", dbWatchDates = "")
             movieDao.insertMovie(movie)
 
             // When updating the movie details
@@ -164,20 +163,20 @@ class MovieDatabaseTest {
             // Given a database with a single movie
             assert(movieDao.getAllMovies().first().isEmpty())
             val movie =
-                DbMovie(movieId = 1, title = "The Wizard of Oz", watchState = WatchState.PENDING)
+                DbMovie(movieId = 1, title = "The Wizard of Oz", dbWatchDates = "")
             movieDao.insertMovie(movie)
 
             // When setting the movie to watched
-            movieDao.updateWatchState(movie.movieId, WatchState.WATCHED)
+            movieDao.replaceWatchDates(movie.movieId, "10000,200")
 
             // Then the movie is watched
             assertEquals(
-                WatchState.WATCHED,
+                "10000,200",
                 movieDao
                     .getStaffedMovie(1)
                     .first()
                     ?.movie
-                    ?.watchState,
+                    ?.dbWatchDates,
             )
         }
 
@@ -190,7 +189,7 @@ class MovieDatabaseTest {
                 DbMovie(
                     movieId = 1,
                     title = "The Wizard of Oz",
-                    watchState = WatchState.PENDING,
+                    dbWatchDates = "",
                     isArchived = false,
                 )
             movieDao.insertMovie(movie)
@@ -426,7 +425,7 @@ class MovieDatabaseTest {
                 DbMovie(
                     movieId = 10,
                     title = "Casino",
-                    watchState = WatchState.PENDING,
+                    dbWatchDates = "",
                 )
             val dbStaff =
                 DbStaff(

@@ -22,7 +22,6 @@ import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListMode
@@ -93,9 +92,9 @@ class MovieListViewModelTest {
         runTest {
             // Given
             val seenMovie =
-                forList(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
+                forList(id = 23, title = "The Number 23", watchDates = listOf(667788L))
             val unseenMovie =
-                forList(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
+                forList(id = 9, title = "Plan 9 from Outer Space", watchDates = emptyList())
             every { repo.listedMovies } returns
                 packMoviesToFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.movieListDisplayState } returns
@@ -126,9 +125,9 @@ class MovieListViewModelTest {
         runTest {
             // Given
             val seenMovie =
-                forList(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
+                forList(id = 23, title = "The Number 23", watchDates = listOf(667788L))
             val unseenMovie =
-                forList(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
+                forList(id = 9, title = "Plan 9 from Outer Space", watchDates = emptyList())
             every { repo.listedMovies } returns
                 packMoviesToFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.movieListDisplayState } returns
@@ -150,9 +149,9 @@ class MovieListViewModelTest {
         runTest {
             // Given
             val seenMovie =
-                forList(id = 23, title = "The Number 23", watchState = WatchState.WATCHED)
+                forList(id = 23, title = "The Number 23", watchDates = listOf(667788L))
             val unseenMovie =
-                forList(id = 9, title = "Plan 9 from Outer Space", watchState = WatchState.PENDING)
+                forList(id = 9, title = "Plan 9 from Outer Space", watchDates = emptyList())
             every { repo.listedMovies } returns
                 packMoviesToFlow(unseenMovie, seenMovie)
             every { mainViewModelMock.movieListDisplayState } returns
@@ -300,9 +299,12 @@ class MovieListViewModelTest {
 
     @Test
     fun `sort movies by watchcount`() {
-        fun generateList(vararg watchState: WatchState) = watchState.map { forList(watchState = it) }
+        fun generateList(vararg watchState: Long?) =
+            watchState.map {
+                forList(watchDates = it?.let { listOf(it) } ?: emptyList())
+            }
         // Given
-        val moviesToSort = generateList(WatchState.WATCHED, WatchState.PENDING, WatchState.PENDING)
+        val moviesToSort = generateList(1, null, null)
 
         // When
         construct()
@@ -319,11 +321,11 @@ class MovieListViewModelTest {
 
         // Then
         assertEquals(
-            generateList(WatchState.PENDING, WatchState.PENDING, WatchState.WATCHED),
+            generateList(null, null, 1),
             up.movies,
         )
         assertEquals(
-            generateList(WatchState.WATCHED, WatchState.PENDING, WatchState.PENDING),
+            generateList(1, null, null),
             down.movies,
         )
     }

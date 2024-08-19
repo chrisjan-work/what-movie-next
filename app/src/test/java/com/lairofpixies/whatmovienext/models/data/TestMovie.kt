@@ -46,7 +46,7 @@ object TestMovie {
     fun forList(
         id: Long = 1,
         creationTime: Long = 0,
-        watchState: WatchState = WatchState.PENDING,
+        watchDates: List<Long> = emptyList(),
         isArchived: Boolean = false,
         tmdbId: Long = 1,
         title: String = "",
@@ -69,7 +69,7 @@ object TestMovie {
             MovieData.AppData(
                 movieId = id,
                 creationTime = creationTime,
-                watchState = watchState,
+                watchDates = watchDates,
                 isArchived = isArchived,
             ),
         searchData =
@@ -97,7 +97,7 @@ object TestMovie {
     fun forCard(
         id: Long = 1,
         creationTime: Long = 0,
-        watchState: WatchState = WatchState.PENDING,
+        watchDates: List<Long> = emptyList(),
         isArchived: Boolean = false,
         tmdbId: Long = 1,
         title: String = "",
@@ -117,7 +117,7 @@ object TestMovie {
             MovieData.AppData(
                 movieId = id,
                 creationTime = creationTime,
-                watchState = watchState,
+                watchDates = watchDates,
                 isArchived = isArchived,
             ),
         searchData =

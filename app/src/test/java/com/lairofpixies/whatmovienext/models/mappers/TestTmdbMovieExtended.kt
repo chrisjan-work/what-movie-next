@@ -24,7 +24,6 @@ import com.lairofpixies.whatmovienext.models.data.MovieData.NEW_ID
 import com.lairofpixies.whatmovienext.models.data.Rating
 import com.lairofpixies.whatmovienext.models.data.RatingPair
 import com.lairofpixies.whatmovienext.models.data.Staff
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
@@ -132,7 +131,7 @@ fun testCardMovieExtended(movieId: Long = NEW_ID): Movie.ForCard =
             MovieData.AppData(
                 movieId = movieId,
                 creationTime = 0,
-                watchState = WatchState.PENDING,
+                watchDates = emptyList(),
                 isArchived = false,
             ),
         searchData =
@@ -202,7 +201,7 @@ fun testListMovieExtended(): Movie.ForList =
             MovieData.AppData(
                 movieId = NEW_ID,
                 creationTime = 0,
-                watchState = WatchState.PENDING,
+                watchDates = emptyList(),
                 isArchived = false,
             ),
         searchData =

@@ -22,7 +22,7 @@ object MovieData {
     data class AppData(
         val movieId: Long = NEW_ID,
         val creationTime: Long = System.currentTimeMillis(),
-        val watchState: WatchState = WatchState.PENDING,
+        val watchDates: List<Long> = emptyList(),
         val isArchived: Boolean = false,
     )
 

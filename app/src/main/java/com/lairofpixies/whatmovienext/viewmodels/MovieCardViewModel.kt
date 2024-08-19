@@ -21,7 +21,6 @@ package com.lairofpixies.whatmovienext.viewmodels
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,10 +52,10 @@ class MovieCardViewModel
             }
         }
 
-        fun updateMovieWatched(
+        fun updateMovieWatchDates(
             movieId: Long,
-            watchState: WatchState,
-        ) = viewModelScope.launch { repo.setWatchState(movieId, watchState) }
+            watchDates: List<Long>,
+        ) = viewModelScope.launch { repo.updateWatchDates(movieId, watchDates) }
 
         fun archiveCurrentMovie() =
             viewModelScope.launch {

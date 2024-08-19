@@ -42,7 +42,7 @@ class DbMapper
                         MovieData.AppData(
                             movieId = movieId,
                             creationTime = creationTime,
-                            watchState = watchState,
+                            watchDates = toWatchDates(dbWatchDates),
                             isArchived = isArchived,
                         ),
                     searchData =
@@ -111,7 +111,7 @@ class DbMapper
                         MovieData.AppData(
                             movieId = movieId,
                             creationTime = creationTime,
-                            watchState = watchState,
+                            watchDates = toWatchDates(dbWatchDates),
                             isArchived = isArchived,
                         ),
                     searchData =
@@ -158,7 +158,7 @@ class DbMapper
                     rtRating = detailData.rtRating.percentValue,
                     mcId = detailData.mcRating.sourceId,
                     mcRating = detailData.mcRating.percentValue,
-                    watchState = appData.watchState,
+                    dbWatchDates = toDbWatchDates(appData.watchDates),
                     isArchived = appData.isArchived,
                 )
             }
@@ -224,4 +224,8 @@ class DbMapper
                     displayValue = "$mcRating/100",
                 )
             } ?: Rating.defaultFor(Rating.Rater.RottenTomatoes)
+
+        fun toDbWatchDates(watchDates: List<Long>): String = watchDates.joinToString(",")
+
+        fun toWatchDates(dbWatchDates: String): List<Long> = dbWatchDates.split(",").mapNotNull { it.toLongOrNull() }
     }

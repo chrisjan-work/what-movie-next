@@ -25,7 +25,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
@@ -62,10 +61,10 @@ interface MovieDao {
     @Update
     suspend fun updateMovie(dbMovie: DbMovie)
 
-    @Query("UPDATE dbmovie SET watchState = :watchState WHERE movieId = :movieId")
-    suspend fun updateWatchState(
+    @Query("UPDATE dbmovie SET dbWatchDates = :dbWatchDates WHERE movieId = :movieId")
+    suspend fun replaceWatchDates(
         movieId: Long,
-        watchState: WatchState,
+        dbWatchDates: String,
     )
 
     @Query("UPDATE dbmovie SET isArchived = 1 WHERE movieId = :movieId")

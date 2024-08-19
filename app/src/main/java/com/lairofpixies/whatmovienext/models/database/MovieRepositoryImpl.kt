@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
@@ -115,13 +114,13 @@ class MovieRepositoryImpl(
             dao.insertRoles(roles)
         }
 
-    override suspend fun setWatchState(
+    override suspend fun updateWatchDates(
         movieId: Long,
-        watchState: WatchState,
+        watchDates: List<Long>,
     ) {
         repositoryScope
             .launch {
-                dao.updateWatchState(movieId, watchState)
+                dao.replaceWatchDates(movieId, dbMapper.toDbWatchDates(watchDates))
             }
     }
 
