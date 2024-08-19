@@ -22,10 +22,10 @@ import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListFilters
-import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +41,7 @@ class MovieListViewModel
     constructor(
         private val repo: MovieRepository,
         private val sortProcessor: SortProcessor,
+        private val filterProcessor: FilterProcessor,
     ) : ScreenViewModel() {
         lateinit var listedMovies: StateFlow<AsyncMovie>
             private set
@@ -77,7 +78,7 @@ class MovieListViewModel
                 viewModelScope.launch {
                     repo.listedMovies
                         .combine(listFilters) { movieInfo, listFilters ->
-                            filterMovies(movieInfo, listFilters.listMode)
+                            filterProcessor.filterMovies(movieInfo, listFilters)
                         }.combine(sortingSetup) { filteredMovies, sorting ->
                             sortProcessor.sortMovies(filteredMovies, sorting)
                         }.collect { sortedMovies ->
@@ -90,16 +91,6 @@ class MovieListViewModel
         fun setListFilters(listFilters: ListFilters) {
             mainViewModel?.setListFilters(listFilters)
         }
-
-        private fun filterMovies(
-            movies: AsyncMovie,
-            listMode: ListMode,
-        ): AsyncMovie =
-            when (listMode) {
-                ListMode.ALL -> movies
-                ListMode.WATCHED -> movies.filter { it.appData?.watchDates?.isNotEmpty() == true }
-                ListMode.PENDING -> movies.filter { it.appData?.watchDates?.isEmpty() == true }
-            }
 
         fun onOpenSortingMenu() {
             viewModelScope.launch {
