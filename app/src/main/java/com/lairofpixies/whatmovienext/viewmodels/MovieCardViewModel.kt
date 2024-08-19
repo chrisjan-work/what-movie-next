@@ -22,6 +22,7 @@ import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,4 +67,25 @@ class MovieCardViewModel
                         ?.movieId ?: return@launch
                 repo.archiveMovie(movieId)
             }
+
+        fun canSpinRoulette(): Boolean =
+            (mainViewModel?.listedMovies?.value as? AsyncMovie.Multiple)
+                ?.movies
+                ?.size
+                ?.let { movieCount ->
+                    movieCount > 1
+                } ?: false
+
+        fun onNavigateToRandomMovie(tabooId: Long) {
+            val mainViewModel = mainViewModel ?: return
+            if (canSpinRoulette()) {
+                val movieList =
+                    mainViewModel.listedMovies.value
+                        .toList<Movie.ForList>()
+                        .filter { it.appData.movieId != tabooId }
+                val movieIndex = randomizer.nextInt(movieList.size)
+                val movie = movieList.getOrNull(movieIndex) ?: return
+                onNavigateWithParam(Routes.SingleMovieView, movie.appData.movieId, popToHome = true)
+            }
+        }
     }

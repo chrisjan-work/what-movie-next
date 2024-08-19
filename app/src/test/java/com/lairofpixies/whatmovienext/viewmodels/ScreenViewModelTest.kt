@@ -20,18 +20,13 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
-import com.lairofpixies.whatmovienext.models.data.AsyncMovie
-import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
-import io.mockk.clearMocks
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -41,7 +36,6 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ScreenViewModelTest {
@@ -161,76 +155,4 @@ class ScreenViewModelTest {
         // Then
         verify { mainViewModelMock.closePopupOfType(PopupInfo.SearchEmpty::class) }
     }
-
-    @Test
-    fun `roulette feature`() =
-        runTest {
-            // Given
-            every { mainViewModelMock.listedMovies } returns
-                MutableStateFlow(
-                    AsyncMovie.Multiple(
-                        listOf(
-                            forList(id = 1, title = "Riddick"),
-                            forList(id = 2, title = "Pitch Black"),
-                            forList(id = 3, title = "The Chronicles of Riddick"),
-                        ),
-                    ),
-                )
-            screenViewModel.randomizer = Random(100)
-            assertEquals(true, screenViewModel.canSpinRoulette())
-
-            // randomizer with fixed seed will produce fixed sequence
-            val expectedSequence: List<Long> = listOf(3, 3, 3, 2, 1, 2)
-
-            expectedSequence.forEach { expectedId ->
-                clearMocks(navHostControllerMock)
-                // When
-                screenViewModel.onNavigateToRandomMovie()
-
-                // Then
-                verify {
-                    navHostControllerMock.navigate(
-                        Routes.SingleMovieView.route(expectedId),
-                        any<NavOptionsBuilder.() -> Unit>(),
-                    )
-                }
-            }
-        }
-
-    @Test
-    fun `roulette feature with taboo`() =
-        runTest {
-            // Given
-            every { mainViewModelMock.listedMovies } returns
-                MutableStateFlow(
-                    AsyncMovie.Multiple(
-                        listOf(
-                            forList(id = 1, title = "Riddick"),
-                            forList(id = 2, title = "Pitch Black"),
-                            forList(id = 3, title = "The Chronicles of Riddick"),
-                        ),
-                    ),
-                )
-            screenViewModel.randomizer = Random(100)
-            assertEquals(true, screenViewModel.canSpinRoulette())
-
-            // randomizer with fixed seed will produce fixed sequence
-            val expectedSequence: List<Long> = listOf(3, 2, 3, 1, 3, 2)
-            var lastId = 0L
-
-            expectedSequence.forEach { expectedId ->
-                clearMocks(navHostControllerMock)
-                // When
-                screenViewModel.onNavigateToRandomMovie(lastId)
-                lastId = expectedId
-
-                // Then
-                verify {
-                    navHostControllerMock.navigate(
-                        Routes.SingleMovieView.route(expectedId),
-                        any<NavOptionsBuilder.() -> Unit>(),
-                    )
-                }
-            }
-        }
 }

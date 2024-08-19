@@ -18,15 +18,22 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
+import androidx.navigation.NavHostController
+import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
+import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.views.navigation.Routes
+import io.mockk.clearMocks
 import io.mockk.coVerify
 import io.mockk.coVerifyOrder
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -37,11 +44,14 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieCardViewModelTest {
-    private lateinit var cardViewModel: MovieCardViewModel
     private lateinit var repo: MovieRepository
+    private lateinit var mainViewModelMock: MainViewModel
+    private lateinit var navHostControllerMock: NavHostController
+    private lateinit var cardViewModel: MovieCardViewModel
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
 
@@ -49,7 +59,12 @@ class MovieCardViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         repo = mockk(relaxed = true)
+        mainViewModelMock = mockk(relaxed = true)
+        navHostControllerMock = mockk(relaxed = true)
+
         cardViewModel = MovieCardViewModel(repo)
+        cardViewModel.attachMainViewModel(mainViewModelMock)
+        cardViewModel.attachNavHostController(navHostControllerMock)
     }
 
     @After
@@ -119,5 +134,55 @@ class MovieCardViewModelTest {
 
             // Then
             coVerify { repo.archiveMovie(10) }
+        }
+
+    @Test
+    fun `roulette feature with taboo`() =
+        runTest {
+            // Given
+            every { mainViewModelMock.listedMovies } returns
+                MutableStateFlow(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            forList(id = 1, title = "Riddick"),
+                            forList(id = 2, title = "Pitch Black"),
+                            forList(id = 3, title = "The Chronicles of Riddick"),
+                        ),
+                    ),
+                )
+            cardViewModel.randomizer = Random(100)
+            assertEquals(true, cardViewModel.canSpinRoulette())
+
+            // randomizer with fixed seed will produce fixed sequence
+            val expectedSequence: List<Long> = listOf(3, 2, 3, 1, 3, 2)
+            var lastId = 0L
+
+            expectedSequence.forEach { expectedId ->
+                clearMocks(navHostControllerMock)
+                // When
+                cardViewModel.onNavigateToRandomMovie(lastId)
+                lastId = expectedId
+
+                // Then
+                verify {
+                    navHostControllerMock.navigate(
+                        Routes.SingleMovieView.route(expectedId),
+                        any<NavOptionsBuilder.() -> Unit>(),
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun `roulette feature disabled with only 1 movie`() =
+        runTest {
+            // Given
+            every { mainViewModelMock.listedMovies } returns
+                MutableStateFlow(
+                    AsyncMovie.Single(
+                        forList(id = 2, title = "Pitch Black"),
+                    ),
+                )
+            assertEquals(false, cardViewModel.canSpinRoulette())
         }
 }
