@@ -27,6 +27,7 @@ import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.screens.UiTags
+import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 
 @Composable
@@ -37,10 +38,10 @@ fun MovieListBottomBar(
     CustomBottomBar(
         items =
             bottomItemsForMovieList(
-                listMode = listViewModel.listMode.collectAsState().value,
+                listFilters = listViewModel.listFilters.collectAsState().value,
                 isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
                 isRouleteActive = listViewModel.canSpinRoulette(),
-                onListModeChanged = { listViewModel.setListMode(it) },
+                onListFiltersChanged = { listViewModel.setListFilters(it) },
                 onCreateNewMovie = {
                     listViewModel.onNavigateTo(Routes.CreateMovieView)
                 },
@@ -59,10 +60,10 @@ fun MovieListBottomBar(
 }
 
 fun bottomItemsForMovieList(
-    listMode: ListMode,
+    listFilters: ListFilters,
     isArchiveVisitable: Boolean,
     isRouleteActive: Boolean,
-    onListModeChanged: (ListMode) -> Unit,
+    onListFiltersChanged: (ListFilters) -> Unit,
     onCreateNewMovie: () -> Unit,
     onSortingClicked: () -> Unit,
     onRouletteClicked: () -> Unit,
@@ -70,14 +71,18 @@ fun bottomItemsForMovieList(
 ): List<CustomBarItem> {
     val seenFilter =
         CustomBarItem(
-            when (listMode) {
+            when (listFilters.listMode) {
                 ListMode.ALL -> ButtonSpec.AllMoviesFilter
                 ListMode.PENDING -> ButtonSpec.PendingFilter
                 ListMode.WATCHED -> ButtonSpec.WatchedFilter
             },
             tag = UiTags.Buttons.LIST_MODE,
         ) {
-            onListModeChanged(listMode.next())
+            onListFiltersChanged(
+                listFilters.let {
+                    it.copy(listMode = it.listMode.next())
+                },
+            )
         }
 
     val createItem = CustomBarItem(ButtonSpec.CreateMovieShortcut, onCreateNewMovie)

@@ -24,8 +24,8 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
+import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
-import com.lairofpixies.whatmovienext.views.state.MovieListDisplayState
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
@@ -63,9 +63,9 @@ class MovieListViewModelTest {
         repo = mockk(relaxed = true)
 
         mainViewModelMock = mockk(relaxed = true)
-        every { mainViewModelMock.movieListDisplayState } returns
+        every { mainViewModelMock.listFilters } returns
             MutableStateFlow(
-                MovieListDisplayState(
+                ListFilters(
                     listMode = ListMode.ALL,
                 ),
             )
@@ -97,9 +97,9 @@ class MovieListViewModelTest {
                 forList(id = 9, title = "Plan 9 from Outer Space", watchDates = emptyList())
             every { repo.listedMovies } returns
                 packMoviesToFlow(unseenMovie, seenMovie)
-            every { mainViewModelMock.movieListDisplayState } returns
+            every { mainViewModelMock.listFilters } returns
                 MutableStateFlow(
-                    MovieListDisplayState(
+                    ListFilters(
                         listMode = ListMode.ALL,
                     ),
                 )
@@ -130,9 +130,9 @@ class MovieListViewModelTest {
                 forList(id = 9, title = "Plan 9 from Outer Space", watchDates = emptyList())
             every { repo.listedMovies } returns
                 packMoviesToFlow(unseenMovie, seenMovie)
-            every { mainViewModelMock.movieListDisplayState } returns
+            every { mainViewModelMock.listFilters } returns
                 MutableStateFlow(
-                    MovieListDisplayState(
+                    ListFilters(
                         listMode = ListMode.PENDING,
                     ),
                 )
@@ -154,9 +154,9 @@ class MovieListViewModelTest {
                 forList(id = 9, title = "Plan 9 from Outer Space", watchDates = emptyList())
             every { repo.listedMovies } returns
                 packMoviesToFlow(unseenMovie, seenMovie)
-            every { mainViewModelMock.movieListDisplayState } returns
+            every { mainViewModelMock.listFilters } returns
                 MutableStateFlow(
-                    MovieListDisplayState(
+                    ListFilters(
                         listMode = ListMode.WATCHED,
                     ),
                 )
@@ -172,9 +172,9 @@ class MovieListViewModelTest {
     fun `forward list mode`() =
         runTest {
             // Given
-            every { mainViewModelMock.movieListDisplayState } returns
+            every { mainViewModelMock.listFilters } returns
                 MutableStateFlow(
-                    MovieListDisplayState(
+                    ListFilters(
                         listMode = ListMode.WATCHED,
                     ),
                 )
@@ -183,17 +183,17 @@ class MovieListViewModelTest {
             construct()
 
             // Then
-            assertEquals(ListMode.WATCHED, listViewModel.listMode.value)
+            assertEquals(ListMode.WATCHED, listViewModel.listFilters.value.listMode)
         }
 
     @Test
     fun `change list mode`() =
         runTest {
             construct()
-            listViewModel.setListMode(ListMode.WATCHED)
+            listViewModel.setListFilters(ListFilters(ListMode.WATCHED))
 
             verify {
-                mainViewModelMock.setListMode(ListMode.WATCHED)
+                mainViewModelMock.setListFilters(ListFilters(ListMode.WATCHED))
             }
         }
 

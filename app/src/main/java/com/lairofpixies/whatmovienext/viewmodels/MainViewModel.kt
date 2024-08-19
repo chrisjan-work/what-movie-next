@@ -21,14 +21,12 @@ package com.lairofpixies.whatmovienext.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
-import com.lairofpixies.whatmovienext.views.state.ListMode
-import com.lairofpixies.whatmovienext.views.state.MovieListDisplayState
+import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.reflect.KClass
@@ -37,9 +35,8 @@ import kotlin.reflect.KClass
 class MainViewModel
     @Inject
     constructor() : ViewModel() {
-        private val _movieListDisplayState = MutableStateFlow(MovieListDisplayState())
-        val movieListDisplayState: StateFlow<MovieListDisplayState> =
-            _movieListDisplayState.asStateFlow()
+        private val _listFilters = MutableStateFlow(ListFilters())
+        val listFilters: StateFlow<ListFilters> = _listFilters.asStateFlow()
 
         private val _listedMovies = MutableStateFlow<AsyncMovie>(AsyncMovie.Loading)
         val listedMovies: StateFlow<AsyncMovie> = _listedMovies.asStateFlow()
@@ -47,8 +44,10 @@ class MainViewModel
         private val _popupInfo: MutableStateFlow<PopupInfo> = MutableStateFlow(PopupInfo.None)
         val popupInfo: StateFlow<PopupInfo> = _popupInfo.asStateFlow()
 
-        fun setListMode(listMode: ListMode) {
-            _movieListDisplayState.update { it.copy(listMode = listMode) }
+        fun setListFilters(listFilters: ListFilters) {
+            viewModelScope.launch {
+                _listFilters.value = listFilters
+            }
         }
 
         fun showPopup(popupInfo: PopupInfo) {
