@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Rating
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.data.isNotNegative
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.printableYear
@@ -89,7 +88,7 @@ fun MovieListItem(
     onItemClicked: () -> Unit = {},
 ) {
     val bgColor =
-        if (movie.appData.watchState == WatchState.WATCHED) {
+        if (movie.appData.watchDates.isNotEmpty()) {
             MaterialTheme.colorScheme.onBackground.copy(alpha = 0.14f)
         } else {
             MaterialTheme.colorScheme.background
@@ -111,7 +110,7 @@ fun MovieListItem(
                     shape = RoundedCornerShape(8.dp),
                 ).padding(6.dp),
     ) {
-        val maxWidth = if (movie.appData.watchState == WatchState.WATCHED) 260.dp else 320.dp
+        val maxWidth = if (movie.appData.watchDates.isNotEmpty()) 260.dp else 320.dp
         ThumbnailPic(
             thumbnailUrl = movie.searchData.thumbnailUrl,
             modifier =
@@ -157,11 +156,11 @@ fun MovieListItem(
                 )
             }
         }
-        if (movie.appData.watchState == WatchState.WATCHED) {
+        if (movie.appData.watchDates.isNotEmpty()) {
             Spacer(modifier = Modifier.size(8.dp))
             Spacer(modifier = Modifier.weight(1f))
             SeenDisplay(
-                movie.appData.watchState,
+                movie.appData.watchDates,
             )
         }
     }
@@ -198,10 +197,11 @@ fun YearAndRuntimeDisplay(
 
 @Composable
 fun SeenDisplay(
-    watchState: WatchState,
+    watchDates: List<Long>,
     modifier: Modifier = Modifier,
 ) {
-    if (watchState == WatchState.WATCHED) {
+    // TODO: show count if more than 1
+    if (watchDates.isNotEmpty()) {
         val seenIcon = Icons.Outlined.RemoveRedEye
         Icon(
             imageVector = seenIcon,

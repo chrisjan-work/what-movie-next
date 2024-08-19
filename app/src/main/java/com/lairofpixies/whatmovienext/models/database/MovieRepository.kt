@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 
@@ -37,9 +36,9 @@ interface MovieRepository {
     // write
     suspend fun storeMovie(movie: Movie.ForCard): Job
 
-    suspend fun setWatchState(
+    suspend fun updateWatchDates(
         movieId: Long,
-        watchState: WatchState,
+        watchDates: List<Long>,
     )
 
     // delete

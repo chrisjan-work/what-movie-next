@@ -27,7 +27,6 @@ import com.lairofpixies.whatmovienext.models.data.Rating
 import com.lairofpixies.whatmovienext.models.data.Rating.Rater
 import com.lairofpixies.whatmovienext.models.data.RatingPair
 import com.lairofpixies.whatmovienext.models.data.Staff
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
@@ -73,7 +72,7 @@ class RemoteMapper
                     appData =
                         MovieData.AppData(
                             movieId = NEW_ID,
-                            watchState = WatchState.PENDING,
+                            watchDates = emptyList(),
                             isArchived = false,
                         ),
                     searchData =

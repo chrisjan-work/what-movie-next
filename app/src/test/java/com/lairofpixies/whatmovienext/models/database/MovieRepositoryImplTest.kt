@@ -22,7 +22,6 @@ import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
-import com.lairofpixies.whatmovienext.models.data.WatchState
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
@@ -322,7 +321,7 @@ class MovieRepositoryImplTest {
                             movie.copy(
                                 movieId = 1,
                                 title = "oldTitle",
-                                watchState = WatchState.WATCHED,
+                                dbWatchDates = "10000",
                                 isArchived = true,
                             ),
                     )
@@ -335,7 +334,7 @@ class MovieRepositoryImplTest {
             movieRepository.storeMovie(
                 forCard(
                     title = "newTitle",
-                    watchState = WatchState.PENDING,
+                    watchDates = emptyList(),
                     isArchived = false,
                 ),
             )
@@ -347,7 +346,7 @@ class MovieRepositoryImplTest {
             // the title is updated (new data from the backend)
             assertEquals("newTitle", dbMovie.captured.title)
             // the watch state remains untouched (local data in the app)
-            assertEquals(WatchState.WATCHED, dbMovie.captured.watchState)
+            assertEquals("10000", dbMovie.captured.dbWatchDates)
             // the movie is automatically unarchieved
             // (user might have archived it in the past, forgot about it, and wants to re-add)
             assertEquals(false, dbMovie.captured.isArchived)
@@ -357,14 +356,14 @@ class MovieRepositoryImplTest {
     fun setWatchState() =
         runTest {
             // Given
-            coEvery { movieDao.updateWatchState(any(), any()) } just runs
+            coEvery { movieDao.replaceWatchDates(any(), any()) } just runs
 
             // When
             initializeSut()
-            movieRepository.setWatchState(11, WatchState.WATCHED)
+            movieRepository.updateWatchDates(11, listOf(50L, 5000L))
 
             // Then
-            coVerify { movieDao.updateWatchState(11, WatchState.WATCHED) }
+            coVerify { movieDao.replaceWatchDates(11, "50,5000") }
         }
 
     @Test
@@ -405,7 +404,7 @@ class MovieRepositoryImplTest {
                 DbMovie(
                     movieId = 1,
                     title = "isArchived",
-                    watchState = WatchState.WATCHED,
+                    dbWatchDates = "600",
                     isArchived = true,
                 )
             val archivedMovie = slot<DbMovie>()

@@ -23,7 +23,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.lairofpixies.whatmovienext.models.data.MovieData
-import com.lairofpixies.whatmovienext.models.data.WatchState
 
 @Entity
 data class DbMovie(
@@ -41,7 +40,7 @@ data class DbMovie(
     val genres: String = "",
     val runtimeMinutes: Int = 0,
     val directorNames: String = "",
-    val watchState: WatchState = WatchState.PENDING,
+    val dbWatchDates: String = "",
     val isArchived: Boolean = false,
     val rtId: String = "",
     val rtRating: Int = -1,

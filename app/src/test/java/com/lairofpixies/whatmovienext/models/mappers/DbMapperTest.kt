@@ -154,4 +154,21 @@ class DbMapperTest {
             )
         assertEquals(expected, result)
     }
+
+    @Test
+    fun `pack and unpack watch dates`() {
+        // Given
+        listOf(
+            emptyList(), // never
+            listOf(1L), // once
+            listOf(100L, 300L, 428L), // several times
+        ).forEach { watchDates ->
+            // When
+            val converted = dbMapper.toDbWatchDates(watchDates)
+            val back = dbMapper.toWatchDates(converted)
+
+            // Then
+            assertEquals(watchDates, back)
+        }
+    }
 }
