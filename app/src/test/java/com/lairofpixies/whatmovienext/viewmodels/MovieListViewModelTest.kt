@@ -23,6 +23,7 @@ import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 import com.lairofpixies.whatmovienext.views.state.ListFilters
@@ -46,7 +47,6 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieListViewModelTest {
@@ -54,6 +54,7 @@ class MovieListViewModelTest {
     private lateinit var mainViewModelMock: MainViewModel
     private lateinit var navHostControllerMock: NavHostController
     private lateinit var sortProcessor: SortProcessor
+    private lateinit var filterProcessor: FilterProcessor
     private lateinit var repo: MovieRepository
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
@@ -72,11 +73,12 @@ class MovieListViewModelTest {
             )
 
         navHostControllerMock = mockk(relaxed = true)
-        sortProcessor = SortProcessor(Random(100))
+        sortProcessor = SortProcessor(mockk(relaxed = true))
+        filterProcessor = FilterProcessor()
     }
 
     private fun construct() {
-        listViewModel = MovieListViewModel(repo, sortProcessor)
+        listViewModel = MovieListViewModel(repo, sortProcessor, filterProcessor)
         listViewModel.attachMainViewModel(mainViewModelMock)
         listViewModel.attachNavHostController(navHostControllerMock)
     }
@@ -89,7 +91,7 @@ class MovieListViewModelTest {
     private fun packMoviesToFlow(vararg movies: Movie.ForList) = flowOf(AsyncMovie.fromList(movies.toList()))
 
     @Test
-    fun `update movie list with all movies filter`() =
+    fun `movie list is processed during construction`() =
         runTest {
             // Given
             val seenMovie =
@@ -104,69 +106,13 @@ class MovieListViewModelTest {
                         listMode = ListMode.ALL,
                     ),
                 )
+            val asAsync = AsyncMovie.Multiple(listOf(unseenMovie, seenMovie))
 
             // When
             construct()
 
             // Then
-            verify {
-                mainViewModelMock.updateMovies(
-                    AsyncMovie.Multiple(
-                        listOf(
-                            unseenMovie,
-                            seenMovie,
-                        ),
-                    ),
-                )
-            }
-        }
-
-    @Test
-    fun `update movie list with only unseen movies`() =
-        runTest {
-            // Given
-            val seenMovie =
-                forList(id = 23, title = "The Number 23", watchDates = listOf(667788L))
-            val unseenMovie =
-                forList(id = 9, title = "Plan 9 from Outer Space", watchDates = emptyList())
-            every { repo.listedMovies } returns
-                packMoviesToFlow(unseenMovie, seenMovie)
-            every { mainViewModelMock.listFilters } returns
-                MutableStateFlow(
-                    ListFilters(
-                        listMode = ListMode.PENDING,
-                    ),
-                )
-
-            // When
-            construct()
-
-            // Then
-            verify { mainViewModelMock.updateMovies(AsyncMovie.Single(unseenMovie)) }
-        }
-
-    @Test
-    fun `update movie list with only seen movies`() =
-        runTest {
-            // Given
-            val seenMovie =
-                forList(id = 23, title = "The Number 23", watchDates = listOf(667788L))
-            val unseenMovie =
-                forList(id = 9, title = "Plan 9 from Outer Space", watchDates = emptyList())
-            every { repo.listedMovies } returns
-                packMoviesToFlow(unseenMovie, seenMovie)
-            every { mainViewModelMock.listFilters } returns
-                MutableStateFlow(
-                    ListFilters(
-                        listMode = ListMode.WATCHED,
-                    ),
-                )
-
-            // When
-            construct()
-
-            // Then
-            verify { mainViewModelMock.updateMovies(AsyncMovie.Single(seenMovie)) }
+            verify { mainViewModelMock.updateMovies(asAsync) }
         }
 
     @Test
