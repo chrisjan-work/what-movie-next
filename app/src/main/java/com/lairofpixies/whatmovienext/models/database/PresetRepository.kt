@@ -18,29 +18,13 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
-import com.lairofpixies.whatmovienext.models.database.data.DbMovie
-import com.lairofpixies.whatmovienext.models.database.data.DbPerson
-import com.lairofpixies.whatmovienext.models.database.data.DbPreset
-import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import com.lairofpixies.whatmovienext.models.data.Preset
+import kotlinx.coroutines.flow.Flow
 
-@Database(
-    entities = [
-        DbMovie::class,
-        DbGenre::class,
-        DbPerson::class,
-        DbRole::class,
-        DbPreset::class,
-    ],
-    version = 1,
-    exportSchema = false,
-)
-abstract class MovieDatabase : RoomDatabase() {
-    abstract fun movieDao(): MovieDao
+interface PresetRepository {
+    fun getPreset(presetId: Long): Flow<Preset?>
 
-    abstract fun genreDao(): GenreDao
+    suspend fun updatePreset(preset: Preset): Long
 
-    abstract fun presetDao(): PresetDao
+    suspend fun saveNewPreset(preset: Preset): Long
 }

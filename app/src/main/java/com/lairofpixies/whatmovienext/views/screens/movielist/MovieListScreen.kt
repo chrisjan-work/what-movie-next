@@ -65,7 +65,10 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
 
         MovieListBottomSheet(
             bottomMenu = listViewModel.bottomMenu,
-            sortingSetup = listViewModel.sortingSetup,
+            sortingSetup =
+                listViewModel.currentPreset
+                    .collectAsState()
+                    .value.sortingSetup,
             closeBottomMenu = { listViewModel.closeBottomMenu() },
             updateSortingSetup = { listViewModel.updateSortingSetup(it) },
         )

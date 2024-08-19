@@ -29,7 +29,11 @@ import com.lairofpixies.whatmovienext.models.database.MovieDao
 import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.MovieRepositoryImpl
+import com.lairofpixies.whatmovienext.models.database.PresetDao
+import com.lairofpixies.whatmovienext.models.database.PresetRepository
+import com.lairofpixies.whatmovienext.models.database.PresetRepositoryImpl
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
+import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferencesImpl
 import com.lairofpixies.whatmovienext.models.preferences.TestDataStore
@@ -76,8 +80,23 @@ object TestDBModule {
 
     @Singleton
     @Provides
+    fun providePresetDao(db: MovieDatabase): PresetDao = db.presetDao()
+
+    @Singleton
+    @Provides
     fun provideDataStore(): DataStore<Preferences> = TestDataStore()
 
     @Provides
     fun provideAppPreferences(dataStore: DataStore<Preferences>): AppPreferences = AppPreferencesImpl(dataStore)
+
+    @Provides
+    fun providePresetRepository(
+        presetDao: PresetDao,
+        presetMapper: PresetMapper,
+    ): PresetRepository =
+        PresetRepositoryImpl(
+            presetDao,
+            presetMapper,
+            Dispatchers.IO,
+        )
 }
