@@ -19,13 +19,10 @@
 package com.lairofpixies.whatmovienext.views.screens.card
 
 import android.widget.Toast
-import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,19 +34,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
+import com.lairofpixies.whatmovienext.views.components.CustomTopBar
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.screens.UiTags
-import kotlin.math.roundToInt
 
 @Composable
 fun MovieCardScreen(
@@ -115,25 +110,9 @@ fun MovieCardTopBar(
     onArchiveAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val topBarHeightPx = with(LocalDensity.current) { 56.dp.toPx() }
-    val topBarOffset =
-        animateIntOffsetAsState(
-            targetValue =
-                if (trigger.value) {
-                    IntOffset.Zero
-                } else {
-                    IntOffset(x = 0, y = -topBarHeightPx.roundToInt())
-                },
-            label = "topbar offset animation",
-        )
-
-    Box(
-        modifier =
-            modifier
-                .offset { topBarOffset.value }
-                .background(MaterialTheme.colorScheme.background)
-                .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.14f))
-                .fillMaxWidth(),
+    CustomTopBar(
+        trigger = trigger,
+        modifier = modifier,
     ) {
         Icon(
             ButtonSpec.ArchiveAction.icon,

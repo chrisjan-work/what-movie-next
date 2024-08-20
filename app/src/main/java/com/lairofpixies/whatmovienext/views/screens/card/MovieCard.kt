@@ -22,10 +22,8 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,27 +31,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Theaters
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -66,14 +52,11 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.toAnnotatedString
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
+import com.lairofpixies.whatmovienext.views.components.CustomScaffold
+import com.lairofpixies.whatmovienext.views.components.ScrollableColumn
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
-const val TOP_BAR_REFRESH_TIME_MS = 1000L
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MovieCard(
     movie: Movie.ForCard,
@@ -81,43 +64,15 @@ fun MovieCard(
     modifier: Modifier = Modifier,
     topBar: @Composable (State<Boolean>) -> Unit = {},
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val topbarState = remember { mutableStateOf(false) }
-    val isRefreshing = remember { mutableStateOf(false) }
-    val onShowTopBar: () -> Unit = {
-        coroutineScope.launch {
-            isRefreshing.value = true
-            topbarState.value = true
-            delay(TOP_BAR_REFRESH_TIME_MS)
-            isRefreshing.value = false
-        }
-    }
-    val refreshState = rememberPullRefreshState(isRefreshing.value, onRefresh = onShowTopBar)
-
-    val scrollState = rememberScrollState()
-    LaunchedEffect(scrollState.value) {
-        snapshotFlow { scrollState.value }.collect { _ ->
-            if (!isRefreshing.value) {
-                topbarState.value = false
-            }
-        }
-    }
-
-    Scaffold(
-        modifier =
-            modifier
-                .pullRefresh(refreshState)
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onLongPress = { onShowTopBar() },
-                    )
-                },
+    CustomScaffold(
+        modifier = modifier,
         bottomBar = {
             CustomBottomBar(
                 items = bottomItems,
             )
         },
-    ) { innerPadding ->
+        topBar = topBar,
+    ) { innerPadding, onScrollEvent ->
         BoxWithConstraints(
             modifier =
                 Modifier
@@ -129,13 +84,13 @@ fun MovieCard(
         ) {
             val parentHeight = maxHeight
 
-            Column(
+            ScrollableColumn(
                 modifier =
                     Modifier
                         .fillMaxWidth()
-                        .heightIn(min = parentHeight)
-                        .verticalScroll(scrollState),
+                        .heightIn(min = parentHeight),
                 verticalArrangement = Arrangement.SpaceBetween,
+                onScrollEvent = onScrollEvent,
             ) {
                 CoverPic(
                     coverUrl = movie.searchData.coverUrl,
@@ -202,8 +157,6 @@ fun MovieCard(
                             .alpha(0.4f),
                 )
             }
-
-            topBar(topbarState)
         }
     }
 }
