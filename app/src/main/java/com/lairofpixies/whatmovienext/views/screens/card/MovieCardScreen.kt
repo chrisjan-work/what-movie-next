@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.views.screens.card
 
 import android.widget.Toast
+import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -32,8 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -116,25 +115,23 @@ fun MovieCardTopBar(
     onArchiveAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val topBarHeight = 56.dp
-    val topBarHeightPx = with(LocalDensity.current) { topBarHeight.toPx() }
-    val topBarOffset = remember { mutableFloatStateOf(-topBarHeightPx) }
-
-    if (trigger.value) {
-        topBarOffset.floatValue = 0f
-    } else {
-        topBarOffset.floatValue = -topBarHeightPx
-    }
+    val topBarHeightPx = with(LocalDensity.current) { 56.dp.toPx() }
+    val topBarOffset =
+        animateIntOffsetAsState(
+            targetValue =
+                if (trigger.value) {
+                    IntOffset.Zero
+                } else {
+                    IntOffset(x = 0, y = -topBarHeightPx.roundToInt())
+                },
+            label = "topbar offset animation",
+        )
 
     Box(
         modifier =
             modifier
-                .offset {
-                    IntOffset(
-                        x = 0,
-                        y = topBarOffset.floatValue.roundToInt(),
-                    )
-                }.background(MaterialTheme.colorScheme.background)
+                .offset { topBarOffset.value }
+                .background(MaterialTheme.colorScheme.background)
                 .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.14f))
                 .fillMaxWidth(),
     ) {
