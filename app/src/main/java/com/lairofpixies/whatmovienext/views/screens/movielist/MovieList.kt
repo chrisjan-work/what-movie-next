@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -60,17 +59,20 @@ import com.lairofpixies.whatmovienext.models.data.isNotNegative
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.printableYear
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
+import com.lairofpixies.whatmovienext.views.components.ScrollableLazyColumn
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 
 @Composable
 fun MovieList(
     filteredMovies: List<Movie.ForList>,
     onMovieClicked: (Long) -> Unit,
+    onScrollEvent: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
+    ScrollableLazyColumn(
         modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
         contentPadding = PaddingValues(bottom = 120.dp),
+        onScrollEvent = onScrollEvent,
     ) {
         itemsIndexed(filteredMovies) { movieIndex, movie ->
             MovieListItem(

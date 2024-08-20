@@ -65,7 +65,8 @@ Feature: Archive
 
   Scenario: archive should not be reachable when empty
     Given a list with an entry "Cast Away"
-    Then the archive shortcut is not available
+    When the user navigates to the archive
+    Then the list view is visible
 
   Scenario: leaving archive automatically when emptied
     Given a list with an entry "Ghoulies Go to College"
@@ -77,4 +78,5 @@ Feature: Archive
     Then a pop-up asks for confirmation for deleting the entry
     When the user selects "Confirm" in the deletion pop-up
     Then the list view is visible
-    And the archive shortcut is not available
+    When the user navigates to the archive
+    Then the list view is visible

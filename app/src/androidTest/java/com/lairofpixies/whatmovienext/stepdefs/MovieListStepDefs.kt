@@ -25,6 +25,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeDown
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
@@ -207,12 +209,21 @@ class MovieListStepDefs(
     }
 
     @And("the user navigates to the archive")
-    fun theUserNavigatesToTheArchive() =
+    fun theUserNavigatesToTheArchive() {
+        // pull-to-refresh to show top bar
         composeRule.composeStep {
-            val archiveLabel = stringResource(R.string.archive)
-            onNodeWithText(archiveLabel)
+            onNodeWithTag(UiTags.Screens.MOVIE_LIST)
+                .performTouchInput {
+                    swipeDown()
+                }
+        }
+
+        // click on button
+        composeRule.composeStep {
+            onNodeWithTag(UiTags.Buttons.ARCHIVE_SHORTCUT)
                 .performClick()
         }
+    }
 
     @When("the user presses the back button")
     fun theUserPressesTheBackButton() =
