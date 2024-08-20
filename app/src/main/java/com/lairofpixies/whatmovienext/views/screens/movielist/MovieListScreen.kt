@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
+import com.lairofpixies.whatmovienext.views.components.CustomScaffold
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.BottomMenu
 
@@ -41,27 +42,41 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
             Modifier
                 .fillMaxSize(),
     ) {
-        MovieList(
-            filteredMovies =
-                listViewModel.listedMovies
-                    .collectAsState()
-                    .value
-                    .toList(),
-            onMovieClicked = { movieId ->
-                listViewModel.onNavigateWithParam(
-                    Routes.SingleMovieView,
-                    movieId,
+        CustomScaffold(
+            bottomBar = {
+                MovieListBottomBar(
+                    listViewModel = listViewModel,
+                    modifier = Modifier.align(Alignment.BottomCenter),
                 )
             },
-            modifier =
-                Modifier
-                    .fillMaxSize(),
-        )
-
-        MovieListBottomBar(
-            listViewModel,
-            modifier = Modifier.align(Alignment.BottomCenter),
-        )
+            topBar = { trigger ->
+                MovieListTopBar(
+                    trigger = trigger,
+                    isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
+                    onOpenArchive = {
+                        listViewModel.onNavigateTo(Routes.ArchiveView)
+                    },
+                )
+            },
+        ) { _, onScrollEvent ->
+            MovieList(
+                filteredMovies =
+                    listViewModel.listedMovies
+                        .collectAsState()
+                        .value
+                        .toList(),
+                onMovieClicked = { movieId ->
+                    listViewModel.onNavigateWithParam(
+                        Routes.SingleMovieView,
+                        movieId,
+                    )
+                },
+                onScrollEvent = onScrollEvent,
+                modifier =
+                    Modifier
+                        .fillMaxSize(),
+            )
+        }
 
         MovieListBottomSheet(
             bottomMenu = listViewModel.bottomMenu,

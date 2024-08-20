@@ -33,6 +33,7 @@ object UiTags {
         const val SORT_MENU = "SortMenuButton"
         const val ROULETTE = "RouletteButton"
         const val ARCHIVE_ACTION = "ArchiveAction"
+        const val ARCHIVE_SHORTCUT = "ArchiveShortcut"
     }
 
     object Popups {

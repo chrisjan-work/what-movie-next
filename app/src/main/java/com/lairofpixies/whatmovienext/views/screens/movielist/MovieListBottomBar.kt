@@ -42,7 +42,6 @@ fun MovieListBottomBar(
                     listViewModel.currentPreset
                         .collectAsState()
                         .value.listFilters,
-                isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
                 isRouleteActive = listViewModel.canSpinRoulette(),
                 onListFiltersChanged = { listViewModel.setListFilters(it) },
                 onCreateNewMovie = {
@@ -54,9 +53,6 @@ fun MovieListBottomBar(
                 onRouletteClicked = {
                     listViewModel.onNavigateToRandomMovie()
                 },
-                onOpenArchive = {
-                    listViewModel.onNavigateTo(Routes.ArchiveView)
-                },
             ),
         modifier = modifier,
     )
@@ -64,13 +60,11 @@ fun MovieListBottomBar(
 
 fun bottomItemsForMovieList(
     listFilters: ListFilters,
-    isArchiveVisitable: Boolean,
     isRouleteActive: Boolean,
     onListFiltersChanged: (ListFilters) -> Unit,
     onCreateNewMovie: () -> Unit,
     onSortingClicked: () -> Unit,
     onRouletteClicked: () -> Unit,
-    onOpenArchive: () -> Unit,
 ): List<CustomBarItem> {
     val seenFilter =
         CustomBarItem(
@@ -105,17 +99,9 @@ fun bottomItemsForMovieList(
             onClick = onSortingClicked,
         )
 
-    val archiveItem =
-        if (isArchiveVisitable) {
-            CustomBarItem(ButtonSpec.ArchiveShortcut, onOpenArchive)
-        } else {
-            null
-        }
-
     return listOfNotNull(
         sortingItem,
         seenFilter,
-        archiveItem,
         rouletteItem,
         createItem,
     )
