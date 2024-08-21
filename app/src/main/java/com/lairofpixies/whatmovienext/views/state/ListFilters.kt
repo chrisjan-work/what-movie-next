@@ -24,6 +24,8 @@ data class ListFilters(
     val runtime: MinMaxFilter = MinMaxFilter(null, null),
     val rtScore: MinMaxFilter = MinMaxFilter(null, null),
     val mcScore: MinMaxFilter = MinMaxFilter(null, null),
+    val genres: List<String> = emptyList(),
+    val directors: List<String> = emptyList(),
 )
 
 data class MinMaxFilter(

@@ -240,6 +240,65 @@ class FilterProcessorTest {
         }
 
     @Test
+    fun `filter by genre`() {
+        // Given
+        val inputMovies =
+            listOf(
+                forList(title = "one", genres = listOf("Action")),
+                forList(title = "two", genres = listOf("Action", "Drama")),
+                forList(title = "three", genres = listOf("Mystery")),
+            )
+
+        // When
+        fun filterBy(vararg genres: String) =
+            inputMovies.toMutableList().apply {
+                with(filterProcessor) {
+                    byText(genres.toList()) { it?.searchData?.genres }
+                }
+            }
+
+        val action = filterBy("Action")
+        val actionOrDrama = filterBy("Action", "Drama")
+        val dramaOrMystery = filterBy("Mystery", "Drama")
+        val anything = filterBy()
+
+        // Then
+        assertEquals(inputMovies.take(2), action)
+        assertEquals(inputMovies.take(2), actionOrDrama)
+        assertEquals(inputMovies.takeLast(2), dramaOrMystery)
+        assertEquals(inputMovies, anything)
+    }
+
+    @Test
+    fun `filter by director`() {
+        // Given
+        val inputMovies =
+            listOf(
+                forList(title = "one", directors = listOf("Max")),
+                forList(title = "two", directors = listOf("Sam")),
+            )
+
+        // When
+        fun filterBy(vararg directors: String) =
+            inputMovies.toMutableList().apply {
+                with(filterProcessor) {
+                    byText(directors.toList()) { it?.detailData?.directorNames }
+                }
+            }
+
+        val first = filterBy("Max")
+        val second = filterBy("Sam")
+        val both = filterBy("Sam", "Max")
+        val anything = filterBy()
+
+        // Then
+        assertEquals(inputMovies.take(1), first)
+        assertEquals(inputMovies.takeLast(1), second)
+        assertEquals(inputMovies, both)
+        assertEquals(inputMovies, anything)
+    }
+
+    @Test
     fun `all filters on`() {
         val survivor =
             forList(

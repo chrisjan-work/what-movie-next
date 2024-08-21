@@ -44,6 +44,8 @@ class FilterProcessor
                             byNumber(runtime) { it?.detailData?.runtimeMinutes }
                             byNumber(rtScore) { it?.detailData?.rtRating?.percentValue }
                             byNumber(mcScore) { it?.detailData?.mcRating?.percentValue }
+                            byText(genres) { it?.searchData?.genres }
+                            byText(directors) { it?.detailData?.directorNames }
                         }
                     }
 
@@ -73,6 +75,21 @@ class FilterProcessor
                     val minInclusive = criteria.min ?: value
                     val maxInclusive = criteria.max ?: value
                     return@filterInPlace value in minInclusive..maxInclusive
+                }
+            }
+        }
+
+        @VisibleForTesting
+        fun MutableList<Movie.ForList>.byText(
+            words: List<String>,
+            acceptEmpty: Boolean = ACCEPT_EMPTY_ENTRIES,
+            getValue: (Movie.ForList?) -> List<String>?,
+        ) {
+            if (words.isNotEmpty()) {
+                filterInPlace { movie ->
+                    val offering = getValue(movie)
+                    if (offering.isNullOrEmpty()) return@filterInPlace acceptEmpty
+                    return@filterInPlace words.any { it in offering }
                 }
             }
         }
