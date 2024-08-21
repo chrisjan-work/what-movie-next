@@ -30,7 +30,7 @@ import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.navigation.Routes
-import com.lairofpixies.whatmovienext.views.state.BottomMenu
+import com.lairofpixies.whatmovienext.views.state.BottomMenuOption
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
@@ -216,11 +216,34 @@ class MovieListViewModelTest {
     fun `control bottom menu visibility`() =
         runTest {
             construct()
-            listViewModel.onOpenSortingMenu()
-            assertEquals(BottomMenu.Sorting, listViewModel.bottomMenu.value)
+            listViewModel.onOpenBottomMenu(BottomMenuOption.Sorting)
+            assertEquals(
+                BottomMenuOption.Sorting,
+                listViewModel.bottomMenuState.value.bottomMenuOption,
+            )
+            assertEquals(true, listViewModel.bottomMenuState.value.isOpen)
+
+            listViewModel.onOpenBottomMenu(BottomMenuOption.Filtering)
+            assertEquals(
+                BottomMenuOption.Filtering,
+                listViewModel.bottomMenuState.value.bottomMenuOption,
+            )
+            assertEquals(true, listViewModel.bottomMenuState.value.isOpen)
 
             listViewModel.closeBottomMenu()
-            assertEquals(BottomMenu.None, listViewModel.bottomMenu.value)
+            assertEquals(false, listViewModel.bottomMenuState.value.isOpen)
+        }
+
+    @Test
+    fun `showing menu without specifying tab reopens last tab`() =
+        runTest {
+            construct()
+            listOf(BottomMenuOption.Sorting, BottomMenuOption.Filtering).forEach { option ->
+                listViewModel.onOpenBottomMenu(option)
+                listViewModel.closeBottomMenu()
+                listViewModel.onOpenBottomMenu(null)
+                assertEquals(option, listViewModel.bottomMenuState.value.bottomMenuOption)
+            }
         }
 
     @Test

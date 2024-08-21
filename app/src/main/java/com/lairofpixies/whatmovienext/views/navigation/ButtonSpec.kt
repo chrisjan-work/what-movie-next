@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.views.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Rule
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.Casino
@@ -30,7 +31,9 @@ import androidx.compose.material.icons.outlined.FolderDelete
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.RestoreFromTrash
+import androidx.compose.material.icons.outlined.Rule
 import androidx.compose.material.icons.outlined.SortByAlpha
+import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.TravelExplore
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -122,6 +125,16 @@ sealed class ButtonSpec(
 
     data object SortingMenu : ButtonSpec(
         labelRes = R.string.sort,
+        icon = Icons.Outlined.SwapVert,
+    )
+
+    data object FilterMenu : ButtonSpec(
+        labelRes = R.string.filter,
+        icon = Icons.AutoMirrored.Outlined.Rule,
+    )
+
+    data object ArrangeMenu : ButtonSpec(
+        labelRes = R.string.arrange,
         icon = Icons.Outlined.SortByAlpha,
     )
 

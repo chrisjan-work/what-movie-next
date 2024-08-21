@@ -28,11 +28,13 @@ import androidx.compose.ui.Modifier
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.components.CustomScaffold
 import com.lairofpixies.whatmovienext.views.navigation.Routes
-import com.lairofpixies.whatmovienext.views.state.BottomMenu
 
 @Composable
 fun MovieListScreen(listViewModel: MovieListViewModel) {
-    val isMenuShown = listViewModel.bottomMenu.collectAsState().value != BottomMenu.None
+    val isMenuShown =
+        listViewModel.bottomMenuState
+            .collectAsState()
+            .value.isOpen
     BackHandler(isMenuShown) {
         listViewModel.closeBottomMenu()
     }
@@ -79,13 +81,16 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
         }
 
         MovieListBottomSheet(
-            bottomMenu = listViewModel.bottomMenu,
+            bottomMenuState = listViewModel.bottomMenuState,
+            selectMenu = { option ->
+                listViewModel.onOpenBottomMenu(option)
+            },
             sortingSetup =
                 listViewModel.currentPreset
                     .collectAsState()
                     .value.sortingSetup,
-            closeBottomMenu = { listViewModel.closeBottomMenu() },
             updateSortingSetup = { listViewModel.updateSortingSetup(it) },
+            closeBottomMenu = { listViewModel.closeBottomMenu() },
         )
     }
 }

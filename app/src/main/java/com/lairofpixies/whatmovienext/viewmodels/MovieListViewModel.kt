@@ -28,7 +28,8 @@ import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.navigation.Routes
-import com.lairofpixies.whatmovienext.views.state.BottomMenu
+import com.lairofpixies.whatmovienext.views.state.BottomMenuOption
+import com.lairofpixies.whatmovienext.views.state.BottomMenuState
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,8 +55,8 @@ class MovieListViewModel
         private val _hasArchivedMovies = MutableStateFlow(false)
         val hasArchivedMovies: StateFlow<Boolean> = _hasArchivedMovies.asStateFlow()
 
-        private val _bottomMenu = MutableStateFlow(BottomMenu.None)
-        val bottomMenu: StateFlow<BottomMenu> = _bottomMenu.asStateFlow()
+        private val _bottomMenuState = MutableStateFlow(BottomMenuState(BottomMenuOption.Sorting, false))
+        val bottomMenuState: StateFlow<BottomMenuState> = _bottomMenuState.asStateFlow()
 
         private val _currentPreset = MutableStateFlow(Preset.Default)
         val currentPreset: StateFlow<Preset> = _currentPreset.asStateFlow()
@@ -118,15 +119,19 @@ class MovieListViewModel
             }
         }
 
-        fun onOpenSortingMenu() {
+        fun onOpenBottomMenu(option: BottomMenuOption?) {
             viewModelScope.launch {
-                _bottomMenu.value = BottomMenu.Sorting
+                _bottomMenuState.value =
+                    BottomMenuState(
+                        bottomMenuOption = option ?: bottomMenuState.value.bottomMenuOption,
+                        isOpen = true,
+                    )
             }
         }
 
         fun closeBottomMenu() {
             viewModelScope.launch {
-                _bottomMenu.value = BottomMenu.None
+                _bottomMenuState.value = bottomMenuState.value.copy(isOpen = false)
             }
         }
 

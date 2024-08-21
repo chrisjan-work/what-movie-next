@@ -47,8 +47,8 @@ fun MovieListBottomBar(
                 onCreateNewMovie = {
                     listViewModel.onNavigateTo(Routes.CreateMovieView)
                 },
-                onSortingClicked = {
-                    listViewModel.onOpenSortingMenu()
+                onArrangeClicked = {
+                    listViewModel.onOpenBottomMenu(null)
                 },
                 onRouletteClicked = {
                     listViewModel.onNavigateToRandomMovie()
@@ -63,7 +63,7 @@ fun bottomItemsForMovieList(
     isRouleteActive: Boolean,
     onListFiltersChanged: (ListFilters) -> Unit,
     onCreateNewMovie: () -> Unit,
-    onSortingClicked: () -> Unit,
+    onArrangeClicked: () -> Unit,
     onRouletteClicked: () -> Unit,
 ): List<CustomBarItem> {
     val seenFilter =
@@ -92,15 +92,15 @@ fun bottomItemsForMovieList(
             onClick = onRouletteClicked,
         )
 
-    val sortingItem =
+    val arrangeItem =
         CustomBarItem(
-            ButtonSpec.SortingMenu,
-            tag = UiTags.Buttons.SORT_MENU,
-            onClick = onSortingClicked,
+            ButtonSpec.ArrangeMenu,
+            tag = UiTags.Buttons.ARRANGE_MENU,
+            onClick = onArrangeClicked,
         )
 
     return listOfNotNull(
-        sortingItem,
+        arrangeItem,
         seenFilter,
         rouletteItem,
         createItem,
