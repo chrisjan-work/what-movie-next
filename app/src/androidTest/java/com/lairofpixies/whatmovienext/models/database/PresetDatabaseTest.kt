@@ -73,6 +73,8 @@ class PresetDatabaseTest {
                     maxRtScore = 70,
                     minMcScore = 30,
                     maxMcScore = 80,
+                    directors = "Alan Smithee",
+                    genres = "Soap Opera",
                 )
 
             // insert

@@ -20,6 +20,8 @@ package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.database.data.DbPreset
+import com.lairofpixies.whatmovienext.util.decodeToList
+import com.lairofpixies.whatmovienext.util.encodeToString
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
@@ -40,6 +42,8 @@ class PresetMapper
                             runtime = MinMaxFilter(minRuntime, maxRuntime),
                             rtScore = MinMaxFilter(minRtScore, maxRtScore),
                             mcScore = MinMaxFilter(minMcScore, maxMcScore),
+                            genres = genres.decodeToList(),
+                            directors = directors.decodeToList(),
                         ),
                     sortingSetup = SortingSetup(sortingCriteria, sortingDirection),
                 )
@@ -61,6 +65,8 @@ class PresetMapper
                     maxRtScore = listFilters.rtScore.max,
                     minMcScore = listFilters.mcScore.min,
                     maxMcScore = listFilters.mcScore.max,
+                    genres = listFilters.genres.encodeToString(),
+                    directors = listFilters.directors.encodeToString(),
                 )
             }
     }

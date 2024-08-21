@@ -39,6 +39,8 @@ object TestPreset {
                     runtime = MinMaxFilter(90, 130),
                     rtScore = MinMaxFilter(50, 100),
                     mcScore = MinMaxFilter(60, 80),
+                    genres = listOf("Action", "Adventure"),
+                    directors = listOf("John Cassavetes", "Frank Capra"),
                 ),
         )
 
@@ -57,5 +59,7 @@ object TestPreset {
             maxRtScore = 100,
             minMcScore = 60,
             maxMcScore = 80,
+            genres = "Action,Adventure",
+            directors = "John Cassavetes,Frank Capra",
         )
 }

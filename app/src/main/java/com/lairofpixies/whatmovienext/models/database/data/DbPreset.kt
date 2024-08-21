@@ -41,4 +41,6 @@ data class DbPreset(
     val maxRtScore: Int?,
     val minMcScore: Int?,
     val maxMcScore: Int?,
+    val genres: String,
+    val directors: String,
 )
