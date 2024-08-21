@@ -39,10 +39,10 @@ class SortingStepDefs(
     private val composeRule
         get() = testContext.composeRuleHolder.composeRule
 
-    @Given("the user clicks on Sort")
-    fun theUserClicksOnSort() =
+    @Given("the user clicks on Arrange")
+    fun theUserClicksOnArrange() =
         composeRule.composeStep {
-            onNodeWithTag(UiTags.Buttons.SORT_MENU)
+            onNodeWithTag(UiTags.Buttons.ARRANGE_MENU)
                 .performClick()
         }
 

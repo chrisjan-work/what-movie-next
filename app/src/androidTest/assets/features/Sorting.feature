@@ -19,11 +19,11 @@
 Feature: Sorting movie list
 
   Scenario: Open menu
-    When the user clicks on Sort
+    When the user clicks on Arrange
     Then the sorting menu is visible
 
   Scenario: Close menu
-    Given the user clicks on Sort
+    Given the user clicks on Arrange
     When the user presses the back button
     Then the sorting menu is not visible
 
@@ -31,7 +31,7 @@ Feature: Sorting movie list
     Given a list with an entry "Monkey Man"
     And a list with an entry "Zatoichi"
     And a list with an entry "Anatomy"
-    When the user clicks on Sort
+    When the user clicks on Arrange
     And the user sorts by "title"
     Then the list contains an entry "Anatomy" in position "0"
     And the list contains an entry "Monkey Man" in position "1"
@@ -41,7 +41,7 @@ Feature: Sorting movie list
     Given a list with an entry "Monkey Man"
     And a list with an entry "Zatoichi"
     And a list with an entry "Anatomy"
-    When the user clicks on Sort
+    When the user clicks on Arrange
     # click twice for inverting the sorting
     And the user taps on sort by "title" "2" times
     Then the list contains an entry "Anatomy" in position "2"
@@ -55,7 +55,7 @@ Feature: Sorting movie list
     And the db entry "Monkey Man" has "creation time" set as "3000"
     And the db entry "Zatoichi" has "creation time" set as "500"
     And the db entry "Anatomy" has "creation time" set as "1500"
-    When the user clicks on Sort
+    When the user clicks on Arrange
     And the list contains an entry "Zatoichi" in position "0"
     Then the list contains an entry "Anatomy" in position "1"
     And the list contains an entry "Monkey Man" in position "2"
@@ -71,7 +71,7 @@ Feature: Sorting movie list
     And the db entry "Third" has "<data>" set as "<third>"
     And a list with an entry "First"
     And the db entry "First" has "<data>" set as "<first>"
-    When the user clicks on Sort
+    When the user clicks on Arrange
     And the user sorts by "<criteria>"
     Then the list contains an entry "First" in position "0"
     And the list contains an entry "Second" in position "1"

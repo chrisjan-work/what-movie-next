@@ -29,9 +29,10 @@ object UiTags {
     }
 
     object Buttons {
+        const val ARRANGE_MENU = "ArrangeMenuButton"
+        const val SORT_TAB = "SortMenuTab"
+        const val FILTER_TAB = "FilterMenuTab"
         const val LIST_MODE = "ListModeButton"
-        const val SORT_MENU = "SortMenuButton"
-        const val ARRANGE_MENU = "SortMenuButton"
         const val ROULETTE = "RouletteButton"
         const val ARCHIVE_ACTION = "ArchiveAction"
         const val ARCHIVE_SHORTCUT = "ArchiveShortcut"
