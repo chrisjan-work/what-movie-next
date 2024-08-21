@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -59,6 +58,8 @@ import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import com.lairofpixies.whatmovienext.views.state.BottomMenuOption
 import com.lairofpixies.whatmovienext.views.state.BottomMenuState
+import com.lairofpixies.whatmovienext.views.state.ListFilters
+import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
@@ -71,6 +72,8 @@ fun MovieListBottomSheet(
     selectMenu: (BottomMenuOption) -> Unit,
     sortingSetup: SortingSetup,
     updateSortingSetup: (SortingSetup) -> Unit,
+    listFilters: ListFilters,
+    onListFiltersChanged: (ListFilters) -> Unit,
     closeBottomMenu: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -115,6 +118,8 @@ fun MovieListBottomSheet(
                 bottomMenuOption = bottomMenuState.collectAsState().value.bottomMenuOption,
                 sortingSetup = sortingSetup,
                 updateSortingSetup = updateSortingSetup,
+                listFilters = listFilters,
+                onListFiltersChanged = onListFiltersChanged,
             )
         },
         sheetPeekHeight = 0.dp,
@@ -139,6 +144,7 @@ fun BottomSheetTabs(
             select = { selectMenu(BottomMenuOption.Sorting) },
             buttonSpec = ButtonSpec.SortingMenu,
             height = tabHeight,
+            modifier = Modifier.testTag(UiTags.Buttons.SORT_TAB),
         )
         BottomMenuTab(
             currentOption = bottomMenuOption,
@@ -146,10 +152,9 @@ fun BottomSheetTabs(
             select = { selectMenu(BottomMenuOption.Filtering) },
             buttonSpec = ButtonSpec.FilterMenu,
             height = tabHeight,
+            modifier = Modifier.testTag(UiTags.Buttons.FILTER_TAB),
         )
     }
-
-    Spacer(Modifier.size(8.dp))
 }
 
 @Composable
@@ -158,6 +163,7 @@ fun BottomMenuTab(
     tabOption: BottomMenuOption,
     select: () -> Unit,
     buttonSpec: ButtonSpec,
+    modifier: Modifier = Modifier,
     height: Dp = 24.dp,
 ) {
     val label = stringResource(buttonSpec.labelRes)
@@ -172,7 +178,7 @@ fun BottomMenuTab(
             )
         },
         text = { Text(text = label, style = MaterialTheme.typography.labelSmall) },
-        modifier = Modifier.height(height),
+        modifier = modifier.height(height),
     )
 }
 
@@ -181,6 +187,8 @@ fun BottomSheetMenu(
     bottomMenuOption: BottomMenuOption,
     sortingSetup: SortingSetup,
     updateSortingSetup: (SortingSetup) -> Unit,
+    listFilters: ListFilters,
+    onListFiltersChanged: (ListFilters) -> Unit,
 ) {
     when (bottomMenuOption) {
         BottomMenuOption.Sorting ->
@@ -191,7 +199,11 @@ fun BottomSheetMenu(
                 },
             )
 
-        BottomMenuOption.Filtering -> {}
+        BottomMenuOption.Filtering ->
+            FilteringMenu(
+                listFilters = listFilters,
+                onListFiltersChanged = onListFiltersChanged,
+            )
     }
 }
 
@@ -205,7 +217,7 @@ fun SortingMenu(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp, start = 12.dp, end = 12.dp)
+                .padding(bottom = 16.dp, start = 12.dp, end = 12.dp, top = 8.dp)
                 .testTag(UiTags.Menus.SORTING),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
@@ -282,5 +294,85 @@ fun SortingButton(
                         .align(Alignment.CenterEnd),
             )
         }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun FilteringMenu(
+    listFilters: ListFilters,
+    onListFiltersChanged: (ListFilters) -> Unit,
+) {
+    FlowRow(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp, start = 12.dp, end = 12.dp, top = 8.dp)
+                .testTag(UiTags.Menus.SORTING),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+    ) {
+        ListModeButton(listFilters, onListFiltersChanged)
+    }
+}
+
+@Composable
+fun ListModeButton(
+    listFilters: ListFilters,
+    onListFiltersChanged: (ListFilters) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val buttonSpec =
+        when (listFilters.listMode) {
+            ListMode.ALL -> ButtonSpec.AllMoviesFilter
+            ListMode.PENDING -> ButtonSpec.PendingFilter
+            ListMode.WATCHED -> ButtonSpec.WatchedFilter
+        }
+    val isSelected = listFilters.listMode != ListMode.ALL
+    val borderColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+        } else {
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+        }
+    Box(
+        modifier =
+            modifier
+                .padding(3.dp)
+                .size(width = 120.dp, height = 32.dp)
+                .border(
+                    width = 1.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(8.dp),
+                ).clickable {
+                    onListFiltersChanged(
+                        listFilters.let {
+                            it.copy(listMode = it.listMode.next())
+                        },
+                    )
+                }.testTag(tag = UiTags.Buttons.LIST_MODE),
+    ) {
+        Text(
+            text = stringResource(id = buttonSpec.labelRes),
+            style = MaterialTheme.typography.bodySmall,
+            fontStyle = if (isSelected) FontStyle.Normal else FontStyle.Italic,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Light,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            maxLines = 1,
+            modifier =
+                Modifier
+                    .padding(8.dp)
+                    .size(100.dp)
+                    .align(Alignment.CenterStart),
+        )
+        Icon(
+            buttonSpec.icon,
+            contentDescription = "",
+            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            modifier =
+                Modifier
+                    .padding(8.dp)
+                    .size(12.dp)
+                    .align(Alignment.CenterEnd),
+        )
     }
 }

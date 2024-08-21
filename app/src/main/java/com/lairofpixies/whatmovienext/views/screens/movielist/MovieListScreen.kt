@@ -80,17 +80,17 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
             )
         }
 
+        val currentPreset = listViewModel.currentPreset.collectAsState().value
         MovieListBottomSheet(
             bottomMenuState = listViewModel.bottomMenuState,
             selectMenu = { option ->
                 listViewModel.onOpenBottomMenu(option)
             },
-            sortingSetup =
-                listViewModel.currentPreset
-                    .collectAsState()
-                    .value.sortingSetup,
+            sortingSetup = currentPreset.sortingSetup,
             updateSortingSetup = { listViewModel.updateSortingSetup(it) },
             closeBottomMenu = { listViewModel.closeBottomMenu() },
+            listFilters = currentPreset.listFilters,
+            onListFiltersChanged = { listViewModel.setListFilters(it) },
         )
     }
 }
