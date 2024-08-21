@@ -29,4 +29,6 @@ data class ListFilters(
 data class MinMaxFilter(
     val min: Int? = null,
     val max: Int? = null,
-)
+) {
+    val isActive: Boolean = min != null || max != null
+}

@@ -18,9 +18,12 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels.processors
 
+import androidx.annotation.VisibleForTesting
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
+import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import javax.inject.Inject
 
 class FilterProcessor
@@ -29,10 +32,52 @@ class FilterProcessor
         fun filterMovies(
             movies: AsyncMovie,
             listFilters: ListFilters,
-        ): AsyncMovie =
-            when (listFilters.listMode) {
-                ListMode.ALL -> movies
-                ListMode.WATCHED -> movies.filter { it.appData?.watchDates?.isNotEmpty() == true }
-                ListMode.PENDING -> movies.filter { it.appData?.watchDates?.isEmpty() == true }
+        ): AsyncMovie {
+            val filtered =
+                movies
+                    .toList<Movie.ForList>()
+                    .toMutableList()
+                    .apply {
+                        with(listFilters) {
+                            byListMode(listMode)
+                            byNumber(year) { it?.searchData?.year }
+                            byNumber(runtime) { it?.detailData?.runtimeMinutes }
+                            byNumber(rtScore) { it?.detailData?.rtRating?.percentValue }
+                            byNumber(mcScore) { it?.detailData?.mcRating?.percentValue }
+                        }
+                    }
+
+            return AsyncMovie.fromList(filtered)
+        }
+
+        private fun <T> MutableList<T>.filterInPlace(sieve: (T) -> Boolean) = removeIf { !sieve(it) }
+
+        @VisibleForTesting
+        fun MutableList<Movie.ForList>.byListMode(listMode: ListMode) {
+            when (listMode) {
+                ListMode.ALL -> {}
+                ListMode.WATCHED -> filterInPlace { it.appData.watchDates.isNotEmpty() }
+                ListMode.PENDING -> filterInPlace { it.appData.watchDates.isEmpty() }
             }
+        }
+
+        @VisibleForTesting
+        fun MutableList<Movie.ForList>.byNumber(
+            criteria: MinMaxFilter,
+            acceptEmpty: Boolean = ACCEPT_EMPTY_ENTRIES,
+            getValue: (Movie.ForList?) -> Int?,
+        ) {
+            if (criteria.isActive) {
+                filterInPlace { movie ->
+                    val value = getValue(movie) ?: return@filterInPlace acceptEmpty
+                    val minInclusive = criteria.min ?: value
+                    val maxInclusive = criteria.max ?: value
+                    return@filterInPlace value in minInclusive..maxInclusive
+                }
+            }
+        }
+
+        companion object {
+            const val ACCEPT_EMPTY_ENTRIES = true
+        }
     }
