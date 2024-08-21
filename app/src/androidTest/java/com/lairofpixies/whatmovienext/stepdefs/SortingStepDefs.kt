@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -56,7 +57,7 @@ class SortingStepDefs(
     fun theSortingMenuIsNotVisible() =
         composeRule.composeStep {
             onNodeWithTag(UiTags.Menus.SORTING)
-                .assertDoesNotExist()
+                .assertIsNotDisplayed()
         }
 
     @And("the user sorts by {string}")

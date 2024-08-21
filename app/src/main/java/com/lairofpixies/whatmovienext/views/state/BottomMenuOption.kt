@@ -18,7 +18,12 @@
  */
 package com.lairofpixies.whatmovienext.views.state
 
-enum class BottomMenu {
-    None,
+enum class BottomMenuOption {
     Sorting,
+    Filtering,
 }
+
+data class BottomMenuState(
+    val bottomMenuOption: BottomMenuOption,
+    val isOpen: Boolean,
+)

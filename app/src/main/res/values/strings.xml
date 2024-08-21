@@ -67,4 +67,6 @@
     <string name="by_rating">avg. score</string>
     <string name="random">shuffle</string>
     <string name="roulette">Roulette</string>
+    <string name="filter">Filter</string>
+    <string name="arrange">Arrange</string>
 </resources>

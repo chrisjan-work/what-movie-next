@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,8 +36,10 @@ import androidx.compose.material.icons.outlined.ArrowUpward
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LeadingIconTab
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
@@ -49,9 +53,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.screens.UiTags
-import com.lairofpixies.whatmovienext.views.state.BottomMenu
+import com.lairofpixies.whatmovienext.views.state.BottomMenuOption
+import com.lairofpixies.whatmovienext.views.state.BottomMenuState
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
@@ -60,10 +67,11 @@ import kotlinx.coroutines.flow.StateFlow
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieListBottomSheet(
-    bottomMenu: StateFlow<BottomMenu>,
+    bottomMenuState: StateFlow<BottomMenuState>,
+    selectMenu: (BottomMenuOption) -> Unit,
     sortingSetup: SortingSetup,
-    closeBottomMenu: () -> Unit,
     updateSortingSetup: (SortingSetup) -> Unit,
+    closeBottomMenu: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scaffoldState =
@@ -76,11 +84,11 @@ fun MovieListBottomSheet(
         )
 
     // react to viewmodel menu requests
-    LaunchedEffect(bottomMenu) {
-        bottomMenu.collect {
-            if (it == BottomMenu.None && scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded) {
+    LaunchedEffect(bottomMenuState) {
+        bottomMenuState.collect { (_, isOpen) ->
+            if (!isOpen && scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded) {
                 scaffoldState.bottomSheetState.hide()
-            } else if (it != BottomMenu.None && scaffoldState.bottomSheetState.currentValue != SheetValue.Expanded) {
+            } else if (isOpen && scaffoldState.bottomSheetState.currentValue != SheetValue.Expanded) {
                 scaffoldState.bottomSheetState.expand()
             }
         }
@@ -89,30 +97,102 @@ fun MovieListBottomSheet(
     // notify viewmodel if sheet has been closed
     LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
         snapshotFlow { scaffoldState.bottomSheetState.currentValue }.collect {
-            if (it != SheetValue.Expanded && bottomMenu.value != BottomMenu.None) {
+            if (it != SheetValue.Expanded && bottomMenuState.value.isOpen) {
                 closeBottomMenu()
             }
         }
     }
+
+    // content
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
         sheetContent = {
-            when (bottomMenu.collectAsState().value) {
-                BottomMenu.Sorting ->
-                    SortingMenu(
-                        sortingSetup = sortingSetup,
-                        onSelectAction = { criteria, direction ->
-                            updateSortingSetup(SortingSetup(criteria, direction))
-                        },
-                    )
-
-                BottomMenu.None -> {}
-            }
+            BottomSheetTabs(
+                bottomMenuOption = bottomMenuState.collectAsState().value.bottomMenuOption,
+                selectMenu = selectMenu,
+            )
+            BottomSheetMenu(
+                bottomMenuOption = bottomMenuState.collectAsState().value.bottomMenuOption,
+                sortingSetup = sortingSetup,
+                updateSortingSetup = updateSortingSetup,
+            )
         },
         sheetPeekHeight = 0.dp,
         content = {},
         modifier = modifier,
     )
+}
+
+@Composable
+fun BottomSheetTabs(
+    bottomMenuOption: BottomMenuOption,
+    selectMenu: (BottomMenuOption) -> Unit,
+) {
+    val tabHeight = 24.dp
+    TabRow(
+        selectedTabIndex = bottomMenuOption.ordinal,
+        modifier = Modifier.height(tabHeight),
+    ) {
+        BottomMenuTab(
+            currentOption = bottomMenuOption,
+            tabOption = BottomMenuOption.Sorting,
+            select = { selectMenu(BottomMenuOption.Sorting) },
+            buttonSpec = ButtonSpec.SortingMenu,
+            height = tabHeight,
+        )
+        BottomMenuTab(
+            currentOption = bottomMenuOption,
+            tabOption = BottomMenuOption.Filtering,
+            select = { selectMenu(BottomMenuOption.Filtering) },
+            buttonSpec = ButtonSpec.FilterMenu,
+            height = tabHeight,
+        )
+    }
+
+    Spacer(Modifier.size(8.dp))
+}
+
+@Composable
+fun BottomMenuTab(
+    currentOption: BottomMenuOption,
+    tabOption: BottomMenuOption,
+    select: () -> Unit,
+    buttonSpec: ButtonSpec,
+    height: Dp = 24.dp,
+) {
+    val label = stringResource(buttonSpec.labelRes)
+    LeadingIconTab(
+        selected = currentOption == tabOption,
+        onClick = select,
+        icon = {
+            Icon(
+                buttonSpec.icon,
+                contentDescription = label,
+                modifier = Modifier.size(height / 2),
+            )
+        },
+        text = { Text(text = label, style = MaterialTheme.typography.labelSmall) },
+        modifier = Modifier.height(height),
+    )
+}
+
+@Composable
+fun BottomSheetMenu(
+    bottomMenuOption: BottomMenuOption,
+    sortingSetup: SortingSetup,
+    updateSortingSetup: (SortingSetup) -> Unit,
+) {
+    when (bottomMenuOption) {
+        BottomMenuOption.Sorting ->
+            SortingMenu(
+                sortingSetup = sortingSetup,
+                onSelectAction = { criteria, direction ->
+                    updateSortingSetup(SortingSetup(criteria, direction))
+                },
+            )
+
+        BottomMenuOption.Filtering -> {}
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
