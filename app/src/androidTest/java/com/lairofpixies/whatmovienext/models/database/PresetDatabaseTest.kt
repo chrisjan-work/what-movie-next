@@ -65,6 +65,14 @@ class PresetDatabaseTest {
                     sortingCriteria = SortingCriteria.Runtime,
                     sortingDirection = SortingDirection.Ascending,
                     listMode = ListMode.WATCHED,
+                    minYear = 2001,
+                    maxYear = 2009,
+                    minRuntime = 120,
+                    maxRuntime = 200,
+                    minRtScore = 50,
+                    maxRtScore = 70,
+                    minMcScore = 30,
+                    maxMcScore = 80,
                 )
 
             // insert

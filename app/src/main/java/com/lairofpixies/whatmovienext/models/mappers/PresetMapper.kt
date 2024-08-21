@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.models.mappers
 import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.database.data.DbPreset
 import com.lairofpixies.whatmovienext.views.state.ListFilters
+import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import javax.inject.Inject
 
@@ -32,7 +33,14 @@ class PresetMapper
                 Preset(
                     presetId = presetId,
                     presetName = name,
-                    listFilters = ListFilters(listMode),
+                    listFilters =
+                        ListFilters(
+                            listMode = listMode,
+                            year = MinMaxFilter(minYear, maxYear),
+                            runtime = MinMaxFilter(minRuntime, maxRuntime),
+                            rtScore = MinMaxFilter(minRtScore, maxRtScore),
+                            mcScore = MinMaxFilter(minMcScore, maxMcScore),
+                        ),
                     sortingSetup = SortingSetup(sortingCriteria, sortingDirection),
                 )
             }
@@ -45,6 +53,14 @@ class PresetMapper
                     sortingCriteria = sortingSetup.criteria,
                     sortingDirection = sortingSetup.direction,
                     listMode = listFilters.listMode,
+                    minYear = listFilters.year.min,
+                    maxYear = listFilters.year.max,
+                    minRuntime = listFilters.runtime.min,
+                    maxRuntime = listFilters.runtime.max,
+                    minRtScore = listFilters.rtScore.min,
+                    maxRtScore = listFilters.rtScore.max,
+                    minMcScore = listFilters.mcScore.min,
+                    maxMcScore = listFilters.mcScore.max,
                 )
             }
     }

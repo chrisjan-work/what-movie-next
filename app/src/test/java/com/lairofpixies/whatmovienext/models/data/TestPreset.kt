@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.models.data
 import com.lairofpixies.whatmovienext.models.database.data.DbPreset
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
+import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
@@ -31,7 +32,14 @@ object TestPreset {
             presetId = 37,
             presetName = "preset 37",
             sortingSetup = SortingSetup(SortingCriteria.Year, SortingDirection.Descending),
-            listFilters = ListFilters(ListMode.PENDING),
+            listFilters =
+                ListFilters(
+                    listMode = ListMode.PENDING,
+                    year = MinMaxFilter(1990, 2010),
+                    runtime = MinMaxFilter(90, 130),
+                    rtScore = MinMaxFilter(50, 100),
+                    mcScore = MinMaxFilter(60, 80),
+                ),
         )
 
     fun forDb() =
@@ -41,5 +49,13 @@ object TestPreset {
             sortingCriteria = SortingCriteria.Year,
             sortingDirection = SortingDirection.Descending,
             listMode = ListMode.PENDING,
+            minYear = 1990,
+            maxYear = 2010,
+            minRuntime = 90,
+            maxRuntime = 130,
+            minRtScore = 50,
+            maxRtScore = 100,
+            minMcScore = 60,
+            maxMcScore = 80,
         )
 }

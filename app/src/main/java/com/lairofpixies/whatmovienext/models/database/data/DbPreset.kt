@@ -33,4 +33,12 @@ data class DbPreset(
     val sortingCriteria: SortingCriteria,
     val sortingDirection: SortingDirection,
     val listMode: ListMode,
+    val minYear: Int?,
+    val maxYear: Int?,
+    val minRuntime: Int?,
+    val maxRuntime: Int?,
+    val minRtScore: Int?,
+    val maxRtScore: Int?,
+    val minMcScore: Int?,
+    val maxMcScore: Int?,
 )
