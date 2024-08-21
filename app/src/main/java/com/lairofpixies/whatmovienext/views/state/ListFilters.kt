@@ -20,6 +20,13 @@ package com.lairofpixies.whatmovienext.views.state
 
 data class ListFilters(
     val listMode: ListMode = ListMode.ALL,
+    val year: MinMaxFilter = MinMaxFilter(null, null),
+    val runtime: MinMaxFilter = MinMaxFilter(null, null),
+    val rtScore: MinMaxFilter = MinMaxFilter(null, null),
+    val mcScore: MinMaxFilter = MinMaxFilter(null, null),
 )
 
-// data class MinMax<T: Number>(val min: T? = null, val max: T? = null)
+data class MinMaxFilter(
+    val min: Int? = null,
+    val max: Int? = null,
+)
