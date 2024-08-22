@@ -188,7 +188,6 @@ class MovieListViewModelTest {
             listViewModel.updateSortingSetup(sortingSetup)
 
             // Then
-            val result = listViewModel.currentPreset.value.sortingSetup
             assertEquals(SortingCriteria.MeanRating, preset.captured.sortingSetup.criteria)
             assertEquals(SortingDirection.Descending, preset.captured.sortingSetup.direction)
         }

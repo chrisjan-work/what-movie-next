@@ -335,12 +335,15 @@ fun FilteringMenu(
         MinMaxButton(
             label = stringResource(R.string.by_runtime),
             filterValues = listFilters.runtime,
-            range = PresetMapper.MIN_RUNTIME..PresetMapper.MAX_RUNTIME,
             onFilterValuesChanged = { minMaxFilter ->
                 onListFiltersChanged(listFilters.copy(runtime = minMaxFilter))
             },
             valueToText = { presetMapper.runtimeToString(it) },
-            textToValue = { presetMapper.inputToRuntime(it) },
+            textToValue = { text ->
+                presetMapper
+                    .inputToRuntime(text)
+                    ?.coerceIn(PresetMapper.MIN_RUNTIME..PresetMapper.MAX_RUNTIME)
+            },
             showPopup = showPopup,
         )
     }
@@ -408,7 +411,6 @@ fun ListModeButton(
 fun MinMaxButton(
     label: String,
     filterValues: MinMaxFilter,
-    range: IntRange,
     onFilterValuesChanged: (MinMaxFilter) -> Unit,
     valueToText: (Int?) -> String,
     textToValue: (String) -> Int?,
@@ -442,7 +444,6 @@ fun MinMaxButton(
                             PopupInfo.NumberChooser(
                                 label = label,
                                 filterValues = filterValues,
-                                range = range,
                                 valueToText = valueToText,
                                 textToValue = textToValue,
                                 onConfirm = onFilterValuesChanged,
