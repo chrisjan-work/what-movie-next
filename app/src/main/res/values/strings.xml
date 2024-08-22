@@ -69,4 +69,8 @@
     <string name="roulette">Roulette</string>
     <string name="filter">Filter</string>
     <string name="arrange">Arrange</string>
+    <string name="update">Update</string>
+    <string name="reset">Reset</string>
+    <string name="at_least">at least</string>
+    <string name="at_most">at most</string>
 </resources>

@@ -45,4 +45,57 @@ class PresetMapperTest {
 
         assertEquals(forDb(), converted)
     }
+
+    @Test
+    fun `convert runtime to output`() {
+        val cases =
+            listOf(
+                null to "-",
+                0 to "0",
+                1 to "1 min",
+                12 to "12 min",
+                180 to "3h 0min",
+                210 to "3h 30min",
+                90 to "1h 30min",
+                85 to "1h 25min",
+                135 to "2h 15min",
+                30 to "30 min",
+                105 to "1h 45min",
+            )
+
+        cases.forEach { case ->
+            assertEquals(case.second, presetMapper.runtimeToString(case.first))
+        }
+    }
+
+    @Test
+    fun `parse runtime input`() {
+        val cases =
+            listOf(
+                "" to null,
+                "-" to null,
+                "0" to 0,
+                "1" to 1,
+                "12" to 12,
+                "3h" to 180,
+                "3h 30m" to 210,
+                "1H 30min" to 90,
+                "1:25" to 85,
+                "1.3m" to 1,
+                "1,3m" to 1,
+                "12 min" to 12,
+                "12 MIN" to 12,
+                "12min" to 12,
+                "12m" to 12,
+                "1.5h" to 90,
+                "2.25h" to 135,
+                "0.5h" to 30,
+                "1.75H" to 105,
+                "3 h" to 180,
+            )
+
+        cases.forEach { case ->
+            assertEquals(case.second, presetMapper.inputToRuntime(case.first))
+        }
+    }
 }

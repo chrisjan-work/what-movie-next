@@ -34,4 +34,13 @@ sealed class PopupInfo {
     data object SearchEmpty : PopupInfo()
 
     data object ConnectionFailed : PopupInfo()
+
+    data class NumberChooser(
+        val label: String,
+        val filterValues: MinMaxFilter,
+        val range: IntRange,
+        val valueToText: (Int?) -> String,
+        val textToValue: (String) -> Int?,
+        val onConfirm: (MinMaxFilter) -> Unit,
+    ) : PopupInfo()
 }

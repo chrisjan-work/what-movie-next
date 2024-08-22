@@ -69,4 +69,44 @@ class PresetMapper
                     directors = listFilters.directors.encodeToString(),
                 )
             }
+
+        fun runtimeToString(runtime: Int?): String =
+            when (runtime) {
+                null -> "-"
+                0 -> "0"
+                in 1..59 -> "$runtime min"
+                else -> "${runtime / 60}h ${runtime % 60}min"
+            }
+
+        fun inputToRuntime(runtimeInput: String): Int? {
+            if (runtimeInput.isEmpty()) return null
+
+            // decimal hours
+            val decimalHourRegex = """(\d+(?:\.\d+)?)\s*h$""".toRegex(RegexOption.IGNORE_CASE)
+            decimalHourRegex.find(runtimeInput)?.let { matchResult ->
+                val decimalHours = matchResult.groupValues[1].toDouble()
+                val hours = decimalHours.toInt()
+                val minutes = ((decimalHours - hours) * 60).toInt()
+                return hours * 60 + minutes
+            }
+
+            // hours + minutes or just minutes
+            val regex =
+                """(?:(\d+)\s*[hH:])?\s*(?:(\d+)(?:m|M|MIN)?)?""".toRegex(RegexOption.IGNORE_CASE)
+            val matchResult = regex.find(runtimeInput)
+
+            val hours = matchResult?.groupValues?.get(1)?.toIntOrNull() ?: 0
+            val minutes = matchResult?.groupValues?.get(2)?.toIntOrNull() ?: 0
+
+            return if (hours == 0 && minutes == 0) {
+                runtimeInput.toIntOrNull()
+            } else {
+                hours * 60 + minutes
+            }
+        }
+
+        companion object {
+            const val MIN_RUNTIME = 0
+            const val MAX_RUNTIME = 60 * 24
+        }
     }

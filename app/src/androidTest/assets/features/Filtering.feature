@@ -45,3 +45,42 @@ Feature: Filtering
     When the user marks the entry as pending
     And the user presses the back button
     Then the entry "Paprika" is not available
+
+  Scenario: filter by minimum runtime
+    Given a list with an entry "Sharknado"
+    And the db entry "Sharknado" has "runtime" set as "116"
+    Then the entry "Sharknado" is visible
+    When the user clicks on Arrange and Filter
+    And the user clicks on "runtime"
+    And the user enters "120" in the input "at least"
+    And the user clicks on "Update"
+    Then the entry "Sharknado" is not available
+
+  Scenario: filter by maximum runtime
+    Given a list with an entry "Sharknado"
+    And the db entry "Sharknado" has "runtime" set as "116"
+    Then the entry "Sharknado" is visible
+    When the user clicks on Arrange and Filter
+    And the user clicks on "runtime"
+    And the user enters "100" in the input "at most"
+    And the user clicks on "Update"
+    Then the entry "Sharknado" is not available
+
+  Scenario: filter by some runtimes
+    Given a list with an entry "Short"
+    And the db entry "Short" has "runtime" set as "100"
+    And a list with an entry "Medium"
+    And the db entry "Medium" has "runtime" set as "120"
+    And a list with an entry "Large"
+    And the db entry "Large" has "runtime" set as "140"
+    Then the entry "Short" is visible
+    And the entry "Medium" is visible
+    And the entry "Large" is visible
+    When the user clicks on Arrange and Filter
+    And the user clicks on "runtime"
+    And the user enters "110" in the input "at least"
+    And the user enters "130" in the input "at most"
+    And the user clicks on "Update"
+    Then the entry "Short" is not available
+    Then the entry "Medium" is visible
+    Then the entry "Large" is not available
