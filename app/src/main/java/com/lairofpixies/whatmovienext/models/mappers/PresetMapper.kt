@@ -25,6 +25,7 @@ import com.lairofpixies.whatmovienext.util.encodeToString
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
+import com.lairofpixies.whatmovienext.views.state.WordFilter
 import javax.inject.Inject
 
 class PresetMapper
@@ -38,12 +39,12 @@ class PresetMapper
                     listFilters =
                         ListFilters(
                             listMode = listMode,
-                            year = MinMaxFilter(minYear, maxYear),
-                            runtime = MinMaxFilter(minRuntime, maxRuntime),
-                            rtScore = MinMaxFilter(minRtScore, maxRtScore),
-                            mcScore = MinMaxFilter(minMcScore, maxMcScore),
-                            genres = genres.decodeToList(),
-                            directors = directors.decodeToList(),
+                            year = MinMaxFilter(minYear, maxYear, yearEnabled),
+                            runtime = MinMaxFilter(minRuntime, maxRuntime, runtimeEnabled),
+                            rtScore = MinMaxFilter(minRtScore, maxRtScore, rtScoreEnabled),
+                            mcScore = MinMaxFilter(minMcScore, maxMcScore, mcScoreEnabled),
+                            genres = WordFilter(genres.decodeToList(), genresEnabled),
+                            directors = WordFilter(directors.decodeToList(), directorsEnabled),
                         ),
                     sortingSetup = SortingSetup(sortingCriteria, sortingDirection),
                 )
@@ -59,14 +60,20 @@ class PresetMapper
                     listMode = listFilters.listMode,
                     minYear = listFilters.year.min,
                     maxYear = listFilters.year.max,
+                    yearEnabled = listFilters.year.isEnabled,
                     minRuntime = listFilters.runtime.min,
                     maxRuntime = listFilters.runtime.max,
+                    runtimeEnabled = listFilters.runtime.isEnabled,
                     minRtScore = listFilters.rtScore.min,
                     maxRtScore = listFilters.rtScore.max,
+                    rtScoreEnabled = listFilters.rtScore.isEnabled,
                     minMcScore = listFilters.mcScore.min,
                     maxMcScore = listFilters.mcScore.max,
-                    genres = listFilters.genres.encodeToString(),
-                    directors = listFilters.directors.encodeToString(),
+                    mcScoreEnabled = listFilters.mcScore.isEnabled,
+                    genres = listFilters.genres.words.encodeToString(),
+                    genresEnabled = listFilters.genres.isEnabled,
+                    directors = listFilters.directors.words.encodeToString(),
+                    directorsEnabled = listFilters.directors.isEnabled,
                 )
             }
 

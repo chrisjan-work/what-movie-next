@@ -25,6 +25,7 @@ import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
+import com.lairofpixies.whatmovienext.views.state.WordFilter
 
 object TestPreset {
     fun forApp() =
@@ -35,12 +36,12 @@ object TestPreset {
             listFilters =
                 ListFilters(
                     listMode = ListMode.PENDING,
-                    year = MinMaxFilter(1990, 2010),
-                    runtime = MinMaxFilter(90, 130),
-                    rtScore = MinMaxFilter(50, 100),
-                    mcScore = MinMaxFilter(60, 80),
-                    genres = listOf("Action", "Adventure"),
-                    directors = listOf("John Cassavetes", "Frank Capra"),
+                    year = MinMaxFilter(1990, 2010, true),
+                    runtime = MinMaxFilter(90, 130, true),
+                    rtScore = MinMaxFilter(50, 100, true),
+                    mcScore = MinMaxFilter(60, 80, true),
+                    genres = WordFilter(listOf("Action", "Adventure"), true),
+                    directors = WordFilter(listOf("John Cassavetes", "Frank Capra"), true),
                 ),
         )
 
@@ -53,13 +54,19 @@ object TestPreset {
             listMode = ListMode.PENDING,
             minYear = 1990,
             maxYear = 2010,
+            yearEnabled = true,
             minRuntime = 90,
             maxRuntime = 130,
+            runtimeEnabled = true,
             minRtScore = 50,
             maxRtScore = 100,
+            rtScoreEnabled = true,
             minMcScore = 60,
             maxMcScore = 80,
+            mcScoreEnabled = true,
             genres = "Action,Adventure",
+            genresEnabled = true,
             directors = "John Cassavetes,Frank Capra",
+            directorsEnabled = true,
         )
 }

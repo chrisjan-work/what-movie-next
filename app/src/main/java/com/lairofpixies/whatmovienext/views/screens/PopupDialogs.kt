@@ -228,9 +228,9 @@ fun NumberChooserDialog(
         val currentMax = currentValues.value.max
         currentValues.value =
             if (newMin != null && currentMax != null) {
-                MinMaxFilter(min(newMin, currentMax), max(newMin, currentMax))
+                MinMaxFilter(min(newMin, currentMax), max(newMin, currentMax), true)
             } else {
-                MinMaxFilter(newMin, currentMax)
+                MinMaxFilter(newMin, currentMax, true)
             }
         minInputText.value = valueToText(currentValues.value.min)
     }
@@ -241,9 +241,9 @@ fun NumberChooserDialog(
         val currentMin = currentValues.value.min
         currentValues.value =
             if (newMax != null && currentMin != null) {
-                MinMaxFilter(min(currentMin, newMax), max(currentMin, newMax))
+                MinMaxFilter(min(currentMin, newMax), max(currentMin, newMax), true)
             } else {
-                MinMaxFilter(currentMin, newMax)
+                MinMaxFilter(currentMin, newMax, true)
             }
         maxInputText.value = valueToText(currentValues.value.max)
     }
@@ -293,7 +293,7 @@ fun NumberChooserDialog(
                         Text(stringResource(R.string.cancel))
                     }
                     OutlinedButton(onClick = {
-                        currentValues.value = MinMaxFilter(null, null)
+                        currentValues.value = MinMaxFilter(null, null, false)
                         minInputText.value = "-"
                         maxInputText.value = "-"
                     }) {
