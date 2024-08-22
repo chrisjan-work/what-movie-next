@@ -202,7 +202,6 @@ fun SeenDisplay(
     watchDates: List<Long>,
     modifier: Modifier = Modifier,
 ) {
-    // TODO: show count if more than 1
     if (watchDates.isNotEmpty()) {
         val seenIcon = Icons.Outlined.RemoveRedEye
         Icon(

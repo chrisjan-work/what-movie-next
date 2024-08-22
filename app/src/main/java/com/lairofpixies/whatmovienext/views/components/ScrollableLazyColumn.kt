@@ -27,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import timber.log.Timber
 
 @Composable
 fun ScrollableLazyColumn(
@@ -40,7 +39,6 @@ fun ScrollableLazyColumn(
 
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemScrollOffset }.collect {
-            Timber.d("ASDF - scroll trigger")
             onScrollEvent()
         }
     }

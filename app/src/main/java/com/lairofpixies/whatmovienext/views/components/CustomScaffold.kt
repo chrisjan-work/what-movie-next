@@ -47,15 +47,18 @@ fun CustomScaffold(
     val coroutineScope = rememberCoroutineScope()
     val topbarState = remember { mutableStateOf(false) }
     val isRefreshing = remember { mutableStateOf(false) }
-    val onShowTopBar: () -> Unit = {
+    val onSwitchTopBar: () -> Unit = {
         coroutineScope.launch {
-            isRefreshing.value = true
-            topbarState.value = true
-            delay(TOP_BAR_REFRESH_TIME_MS)
-            isRefreshing.value = false
+            if (!isRefreshing.value) {
+                isRefreshing.value = true
+                topbarState.value = !topbarState.value
+                delay(TOP_BAR_REFRESH_TIME_MS)
+                isRefreshing.value = false
+            }
         }
     }
-    val refreshState = rememberPullRefreshState(isRefreshing.value, onRefresh = onShowTopBar)
+    val refreshState =
+        rememberPullRefreshState(isRefreshing.value, onRefresh = onSwitchTopBar)
 
     val onScrollEvent: () -> Unit = {
         if (!isRefreshing.value) {
@@ -70,7 +73,7 @@ fun CustomScaffold(
                 .pullRefresh(refreshState)
                 .pointerInput(Unit) {
                     detectTapGestures(
-                        onLongPress = { onShowTopBar() },
+                        onLongPress = { onSwitchTopBar() },
                     )
                 },
     ) { padding ->
