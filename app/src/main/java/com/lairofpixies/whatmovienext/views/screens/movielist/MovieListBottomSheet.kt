@@ -435,16 +435,20 @@ fun MinMaxButton(
                     color = borderColor,
                     shape = RoundedCornerShape(8.dp),
                 ).clickable {
-                    showPopup(
-                        PopupInfo.NumberChooser(
-                            label = label,
-                            filterValues = filterValues,
-                            range = range,
-                            valueToText = valueToText,
-                            textToValue = textToValue,
-                            onConfirm = onFilterValuesChanged,
-                        ),
-                    )
+                    if (filterValues.isActive) {
+                        onFilterValuesChanged(filterValues.copy(isEnabled = false))
+                    } else {
+                        showPopup(
+                            PopupInfo.NumberChooser(
+                                label = label,
+                                filterValues = filterValues,
+                                range = range,
+                                valueToText = valueToText,
+                                textToValue = textToValue,
+                                onConfirm = onFilterValuesChanged,
+                            ),
+                        )
+                    }
                 }.testTag(tag = UiTags.Buttons.RUNTIME_FILTER),
     ) {
         Text(

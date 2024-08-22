@@ -24,6 +24,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
+import com.lairofpixies.whatmovienext.views.state.WordFilter
 import javax.inject.Inject
 
 class FilterProcessor
@@ -81,15 +82,15 @@ class FilterProcessor
 
         @VisibleForTesting
         fun MutableList<Movie.ForList>.byText(
-            words: List<String>,
+            wordFilter: WordFilter,
             acceptEmpty: Boolean = ACCEPT_EMPTY_ENTRIES,
             getValue: (Movie.ForList?) -> List<String>?,
         ) {
-            if (words.isNotEmpty()) {
+            if (wordFilter.isActive) {
                 filterInPlace { movie ->
                     val offering = getValue(movie)
                     if (offering.isNullOrEmpty()) return@filterInPlace acceptEmpty
-                    return@filterInPlace words.any { it in offering }
+                    return@filterInPlace wordFilter.words.any { it in offering }
                 }
             }
         }

@@ -23,6 +23,7 @@ import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
+import com.lairofpixies.whatmovienext.views.state.WordFilter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -99,19 +100,54 @@ class FilterProcessorTest {
             // When
             val onlyMin =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(min = 1983)) { it?.searchData?.year }
+                    byNumber(
+                        MinMaxFilter(
+                            min = 1983,
+                            max = null,
+                            isEnabled = true,
+                        ),
+                    ) { it?.searchData?.year }
                 }
             val onlyMax =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(max = 1988)) { it?.searchData?.year }
+                    byNumber(
+                        MinMaxFilter(
+                            min = null,
+                            max = 1988,
+                            isEnabled = true,
+                        ),
+                    ) { it?.searchData?.year }
                 }
             val both =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(min = 1983, max = 1988)) { it?.searchData?.year }
+                    byNumber(
+                        MinMaxFilter(
+                            min = 1983,
+                            max = 1988,
+                            isEnabled = true,
+                        ),
+                    ) { it?.searchData?.year }
                 }
             val none =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter()) { it?.searchData?.year }
+                    byNumber(
+                        MinMaxFilter(
+                            min = null,
+                            max = null,
+                            isEnabled = true,
+                        ),
+                    ) { it?.searchData?.year }
+                }
+
+            val disabled =
+                inputMovies.toMutableList().apply {
+                    byNumber(
+                        MinMaxFilter(
+                            min = 1983,
+                            max = 1988,
+                            isEnabled = false,
+                        ),
+                    ) { it?.searchData?.year }
                 }
 
             // Then
@@ -119,6 +155,7 @@ class FilterProcessorTest {
             assertEquals(inputMovies.take(2), onlyMax)
             assertEquals(listOf(inputMovies[1]), both)
             assertEquals(inputMovies, none)
+            assertEquals(inputMovies, disabled)
         }
 
     @Test
@@ -135,19 +172,53 @@ class FilterProcessorTest {
             // When
             val onlyMin =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(min = 150)) { it?.detailData?.runtimeMinutes }
+                    byNumber(
+                        MinMaxFilter(
+                            min = 150,
+                            max = null,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.runtimeMinutes }
                 }
             val onlyMax =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(max = 250)) { it?.detailData?.runtimeMinutes }
+                    byNumber(
+                        MinMaxFilter(
+                            min = null,
+                            max = 250,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.runtimeMinutes }
                 }
             val both =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(min = 150, max = 250)) { it?.detailData?.runtimeMinutes }
+                    byNumber(
+                        MinMaxFilter(
+                            min = 150,
+                            max = 250,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.runtimeMinutes }
                 }
             val none =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter()) { it?.detailData?.runtimeMinutes }
+                    byNumber(
+                        MinMaxFilter(
+                            min = null,
+                            max = null,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.runtimeMinutes }
+                }
+            val disabled =
+                inputMovies.toMutableList().apply {
+                    byNumber(
+                        MinMaxFilter(
+                            min = 150,
+                            max = 250,
+                            isEnabled = false,
+                        ),
+                    ) { it?.detailData?.runtimeMinutes }
                 }
 
             // Then
@@ -155,6 +226,7 @@ class FilterProcessorTest {
             assertEquals(inputMovies.take(2), onlyMax)
             assertEquals(listOf(inputMovies[1]), both)
             assertEquals(inputMovies, none)
+            assertEquals(inputMovies, disabled)
         }
 
     @Test
@@ -171,11 +243,23 @@ class FilterProcessorTest {
             // When
             val onlyMin =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(min = 30)) { it?.detailData?.rtRating?.percentValue }
+                    byNumber(
+                        MinMaxFilter(
+                            min = 30,
+                            max = null,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.rtRating?.percentValue }
                 }
             val onlyMax =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(max = 60)) { it?.detailData?.rtRating?.percentValue }
+                    byNumber(
+                        MinMaxFilter(
+                            min = null,
+                            max = 60,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.rtRating?.percentValue }
                 }
             val both =
                 inputMovies.toMutableList().apply {
@@ -183,12 +267,29 @@ class FilterProcessorTest {
                         MinMaxFilter(
                             min = 30,
                             max = 60,
+                            isEnabled = true,
                         ),
                     ) { it?.detailData?.rtRating?.percentValue }
                 }
             val none =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter()) { it?.detailData?.rtRating?.percentValue }
+                    byNumber(
+                        MinMaxFilter(
+                            min = null,
+                            max = null,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.rtRating?.percentValue }
+                }
+            val disabled =
+                inputMovies.toMutableList().apply {
+                    byNumber(
+                        MinMaxFilter(
+                            min = 30,
+                            max = 60,
+                            isEnabled = false,
+                        ),
+                    ) { it?.detailData?.rtRating?.percentValue }
                 }
 
             // Then
@@ -196,6 +297,7 @@ class FilterProcessorTest {
             assertEquals(inputMovies.take(2), onlyMax)
             assertEquals(listOf(inputMovies[1]), both)
             assertEquals(inputMovies, none)
+            assertEquals(inputMovies, disabled)
         }
 
     @Test
@@ -212,11 +314,23 @@ class FilterProcessorTest {
             // When
             val onlyMin =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(min = 30)) { it?.detailData?.mcRating?.percentValue }
+                    byNumber(
+                        MinMaxFilter(
+                            min = 30,
+                            max = null,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.mcRating?.percentValue }
                 }
             val onlyMax =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter(max = 60)) { it?.detailData?.mcRating?.percentValue }
+                    byNumber(
+                        MinMaxFilter(
+                            min = null,
+                            max = 60,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.mcRating?.percentValue }
                 }
             val both =
                 inputMovies.toMutableList().apply {
@@ -224,12 +338,29 @@ class FilterProcessorTest {
                         MinMaxFilter(
                             min = 30,
                             max = 60,
+                            isEnabled = true,
                         ),
                     ) { it?.detailData?.mcRating?.percentValue }
                 }
             val none =
                 inputMovies.toMutableList().apply {
-                    byNumber(MinMaxFilter()) { it?.detailData?.mcRating?.percentValue }
+                    byNumber(
+                        MinMaxFilter(
+                            min = null,
+                            max = null,
+                            isEnabled = true,
+                        ),
+                    ) { it?.detailData?.mcRating?.percentValue }
+                }
+            val disabled =
+                inputMovies.toMutableList().apply {
+                    byNumber(
+                        MinMaxFilter(
+                            min = 30,
+                            max = 60,
+                            isEnabled = false,
+                        ),
+                    ) { it?.detailData?.mcRating?.percentValue }
                 }
 
             // Then
@@ -237,6 +368,7 @@ class FilterProcessorTest {
             assertEquals(inputMovies.take(2), onlyMax)
             assertEquals(listOf(inputMovies[1]), both)
             assertEquals(inputMovies, none)
+            assertEquals(inputMovies, disabled)
         }
 
     @Test
@@ -253,7 +385,7 @@ class FilterProcessorTest {
         fun filterBy(vararg genres: String) =
             inputMovies.toMutableList().apply {
                 with(filterProcessor) {
-                    byText(genres.toList()) { it?.searchData?.genres }
+                    byText(WordFilter(genres.toList(), true)) { it?.searchData?.genres }
                 }
             }
 
@@ -261,12 +393,19 @@ class FilterProcessorTest {
         val actionOrDrama = filterBy("Action", "Drama")
         val dramaOrMystery = filterBy("Mystery", "Drama")
         val anything = filterBy()
+        val disabled =
+            inputMovies.toMutableList().apply {
+                with(filterProcessor) {
+                    byText(WordFilter(listOf("Action"), false)) { it?.searchData?.genres }
+                }
+            }
 
         // Then
         assertEquals(inputMovies.take(2), action)
         assertEquals(inputMovies.take(2), actionOrDrama)
         assertEquals(inputMovies.takeLast(2), dramaOrMystery)
         assertEquals(inputMovies, anything)
+        assertEquals(inputMovies, disabled)
     }
 
     @Test
@@ -282,7 +421,7 @@ class FilterProcessorTest {
         fun filterBy(vararg directors: String) =
             inputMovies.toMutableList().apply {
                 with(filterProcessor) {
-                    byText(directors.toList()) { it?.detailData?.directorNames }
+                    byText(WordFilter(directors.toList(), true)) { it?.detailData?.directorNames }
                 }
             }
 
@@ -290,12 +429,24 @@ class FilterProcessorTest {
         val second = filterBy("Sam")
         val both = filterBy("Sam", "Max")
         val anything = filterBy()
+        val disabled =
+            inputMovies.toMutableList().apply {
+                with(filterProcessor) {
+                    byText(
+                        WordFilter(
+                            listOf("Sam", "Max"),
+                            false,
+                        ),
+                    ) { it?.detailData?.directorNames }
+                }
+            }
 
         // Then
         assertEquals(inputMovies.take(1), first)
         assertEquals(inputMovies.takeLast(1), second)
         assertEquals(inputMovies, both)
         assertEquals(inputMovies, anything)
+        assertEquals(inputMovies, disabled)
     }
 
     @Test
@@ -308,6 +459,8 @@ class FilterProcessorTest {
                 runtimeMinutes = 115,
                 rtRating = 70,
                 mcRating = 70,
+                directors = listOf("Joe"),
+                genres = listOf("Comedy"),
             )
         val movieList =
             AsyncMovie.Multiple(
@@ -353,15 +506,19 @@ class FilterProcessorTest {
                                     ),
                             ),
                     ),
+                    survivor.copy(detailData = survivor.detailData.copy(directorNames = listOf("Jack"))),
+                    survivor.copy(searchData = survivor.searchData.copy(genres = listOf("Horror"))),
                 ),
             )
         val listFilters =
             ListFilters(
                 listMode = ListMode.ALL,
-                year = MinMaxFilter(1990, 2001),
-                runtime = MinMaxFilter(100, 120),
-                rtScore = MinMaxFilter(50, 80),
-                mcScore = MinMaxFilter(50, 80),
+                year = MinMaxFilter(1990, 2001, true),
+                runtime = MinMaxFilter(100, 120, true),
+                rtScore = MinMaxFilter(50, 80, true),
+                mcScore = MinMaxFilter(50, 80, true),
+                genres = WordFilter(listOf("Comedy"), true),
+                directors = WordFilter(listOf("Joe"), true),
             )
         // When
         val result = filterProcessor.filterMovies(movieList, listFilters)

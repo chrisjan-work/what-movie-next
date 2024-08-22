@@ -67,14 +67,20 @@ class PresetDatabaseTest {
                     listMode = ListMode.WATCHED,
                     minYear = 2001,
                     maxYear = 2009,
+                    yearEnabled = true,
                     minRuntime = 120,
                     maxRuntime = 200,
+                    runtimeEnabled = true,
                     minRtScore = 50,
                     maxRtScore = 70,
+                    rtScoreEnabled = true,
                     minMcScore = 30,
                     maxMcScore = 80,
+                    mcScoreEnabled = true,
                     directors = "Alan Smithee",
+                    directorsEnabled = true,
                     genres = "Soap Opera",
+                    genresEnabled = true,
                 )
 
             // insert

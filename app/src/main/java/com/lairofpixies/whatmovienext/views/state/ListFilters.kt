@@ -20,17 +20,25 @@ package com.lairofpixies.whatmovienext.views.state
 
 data class ListFilters(
     val listMode: ListMode = ListMode.ALL,
-    val year: MinMaxFilter = MinMaxFilter(null, null),
-    val runtime: MinMaxFilter = MinMaxFilter(null, null),
-    val rtScore: MinMaxFilter = MinMaxFilter(null, null),
-    val mcScore: MinMaxFilter = MinMaxFilter(null, null),
-    val genres: List<String> = emptyList(),
-    val directors: List<String> = emptyList(),
+    val year: MinMaxFilter = MinMaxFilter(null, null, false),
+    val runtime: MinMaxFilter = MinMaxFilter(null, null, false),
+    val rtScore: MinMaxFilter = MinMaxFilter(null, null, false),
+    val mcScore: MinMaxFilter = MinMaxFilter(null, null, false),
+    val genres: WordFilter = WordFilter(emptyList(), false),
+    val directors: WordFilter = WordFilter(emptyList(), false),
 )
 
 data class MinMaxFilter(
-    val min: Int? = null,
-    val max: Int? = null,
+    val min: Int?,
+    val max: Int?,
+    val isEnabled: Boolean,
 ) {
-    val isActive: Boolean = min != null || max != null
+    val isActive: Boolean = isEnabled && (min != null || max != null)
+}
+
+data class WordFilter(
+    val words: List<String>,
+    val isEnabled: Boolean,
+) {
+    val isActive: Boolean = isEnabled && words.isNotEmpty()
 }
