@@ -21,7 +21,6 @@ package com.lairofpixies.whatmovienext.models.network.data
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
-// TODO: deal with the pagination
 @JsonClass(generateAdapter = true)
 data class TmdbSearchResults(
     @Json(name = "page")
