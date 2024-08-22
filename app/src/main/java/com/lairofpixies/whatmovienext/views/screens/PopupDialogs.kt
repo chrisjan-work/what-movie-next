@@ -110,7 +110,6 @@ fun PopupDialogs(
             NumberChooserDialog(
                 label = popupInfo.label,
                 filterValues = popupInfo.filterValues,
-                range = popupInfo.range,
                 valueToText = popupInfo.valueToText,
                 textToValue = popupInfo.textToValue,
                 onConfirm = popupInfo.onConfirm,
@@ -213,7 +212,6 @@ fun TwoButtonDialog(
 fun NumberChooserDialog(
     label: String,
     filterValues: MinMaxFilter,
-    range: IntRange,
     valueToText: (Int?) -> String,
     textToValue: (String) -> Int?,
     onConfirm: (MinMaxFilter) -> Unit,
@@ -223,8 +221,9 @@ fun NumberChooserDialog(
     val currentValues = remember { mutableStateOf(filterValues) }
 
     val minInputText = remember { mutableStateOf(valueToText(currentValues.value.min)) }
+    val maxInputText = remember { mutableStateOf(valueToText(currentValues.value.max)) }
     val commitMinText: (String) -> Unit = {
-        val newMin = textToValue(it)?.coerceIn(range)
+        val newMin = textToValue(it)
         val currentMax = currentValues.value.max
         currentValues.value =
             if (newMin != null && currentMax != null) {
@@ -233,11 +232,11 @@ fun NumberChooserDialog(
                 MinMaxFilter(newMin, currentMax, true)
             }
         minInputText.value = valueToText(currentValues.value.min)
+        maxInputText.value = valueToText(currentValues.value.max)
     }
 
-    val maxInputText = remember { mutableStateOf(valueToText(currentValues.value.max)) }
     val commitMaxText: (String) -> Unit = { it ->
-        val newMax = textToValue(it)?.coerceIn(range)
+        val newMax = textToValue(it)
         val currentMin = currentValues.value.min
         currentValues.value =
             if (newMax != null && currentMin != null) {
@@ -245,6 +244,7 @@ fun NumberChooserDialog(
             } else {
                 MinMaxFilter(currentMin, newMax, true)
             }
+        minInputText.value = valueToText(currentValues.value.min)
         maxInputText.value = valueToText(currentValues.value.max)
     }
 
@@ -301,8 +301,12 @@ fun NumberChooserDialog(
                     }
                     Button(
                         onClick = {
-                            commitMinText(minInputText.value)
-                            commitMaxText(maxInputText.value)
+                            currentValues.value =
+                                MinMaxFilter(
+                                    textToValue(minInputText.value),
+                                    textToValue(maxInputText.value),
+                                    isEnabled = true,
+                                )
                             onConfirm(currentValues.value)
                             onDismiss()
                         },
