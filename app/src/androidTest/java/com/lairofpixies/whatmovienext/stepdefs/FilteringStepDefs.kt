@@ -19,11 +19,14 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import dagger.hilt.android.testing.HiltAndroidTest
+import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
 
 @HiltAndroidTest
@@ -44,4 +47,18 @@ class FilteringStepDefs(
                 .performClick()
         }
     }
+
+    @And("the user enters {string} in the input {string}")
+    fun theUserEntersInTheInput(
+        value: String,
+        label: String,
+    ) = composeRule.composeStep {
+        onNodeWithText(label).performTextInput(value)
+    }
+
+    @And("the user clicks on {string}")
+    fun theUserClicksOn(buttonName: String) =
+        composeRule.composeStep {
+            onNodeWithText(buttonName).performClick()
+        }
 }

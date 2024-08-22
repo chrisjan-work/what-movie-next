@@ -27,6 +27,7 @@ import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.data.TestPreset.forApp
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
+import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.navigation.Routes
@@ -64,6 +65,7 @@ class MovieListViewModelTest {
     private lateinit var navHostControllerMock: NavHostController
     private lateinit var sortProcessor: SortProcessor
     private lateinit var filterProcessor: FilterProcessor
+    private lateinit var presetMapper: PresetMapper
     private lateinit var movieRepository: MovieRepository
     private lateinit var presetRepository: PresetRepository
 
@@ -79,11 +81,18 @@ class MovieListViewModelTest {
         navHostControllerMock = mockk(relaxed = true)
         sortProcessor = SortProcessor(mockk(relaxed = true))
         filterProcessor = FilterProcessor()
+        presetMapper = mockk()
     }
 
     private fun construct() {
         listViewModel =
-            MovieListViewModel(movieRepository, presetRepository, sortProcessor, filterProcessor)
+            MovieListViewModel(
+                movieRepository,
+                presetRepository,
+                sortProcessor,
+                filterProcessor,
+                presetMapper,
+            )
         listViewModel.attachMainViewModel(mainViewModelMock)
         listViewModel.attachNavHostController(navHostControllerMock)
     }
@@ -291,4 +300,10 @@ class MovieListViewModelTest {
             construct()
             assertEquals(false, listViewModel.canSpinRoulette())
         }
+
+    @Test
+    fun `forward preset mapper`() {
+        construct()
+        assertEquals(presetMapper, listViewModel.presetMapper())
+    }
 }

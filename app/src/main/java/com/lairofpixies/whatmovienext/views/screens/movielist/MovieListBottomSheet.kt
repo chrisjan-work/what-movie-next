@@ -54,12 +54,17 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
+import com.lairofpixies.whatmovienext.util.printableRuntimePacked
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import com.lairofpixies.whatmovienext.views.state.BottomMenuOption
 import com.lairofpixies.whatmovienext.views.state.BottomMenuState
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
+import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
+import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
@@ -74,6 +79,8 @@ fun MovieListBottomSheet(
     updateSortingSetup: (SortingSetup) -> Unit,
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
+    presetMapper: PresetMapper,
+    showPopup: (PopupInfo) -> Unit,
     closeBottomMenu: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -120,6 +127,8 @@ fun MovieListBottomSheet(
                 updateSortingSetup = updateSortingSetup,
                 listFilters = listFilters,
                 onListFiltersChanged = onListFiltersChanged,
+                presetMapper = presetMapper,
+                showPopup = showPopup,
             )
         },
         sheetPeekHeight = 0.dp,
@@ -189,6 +198,8 @@ fun BottomSheetMenu(
     updateSortingSetup: (SortingSetup) -> Unit,
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
+    presetMapper: PresetMapper,
+    showPopup: (PopupInfo) -> Unit,
 ) {
     when (bottomMenuOption) {
         BottomMenuOption.Sorting ->
@@ -203,6 +214,8 @@ fun BottomSheetMenu(
             FilteringMenu(
                 listFilters = listFilters,
                 onListFiltersChanged = onListFiltersChanged,
+                presetMapper = presetMapper,
+                showPopup = showPopup,
             )
     }
 }
@@ -302,6 +315,8 @@ fun SortingButton(
 fun FilteringMenu(
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
+    presetMapper: PresetMapper,
+    showPopup: (PopupInfo) -> Unit,
 ) {
     FlowRow(
         modifier =
@@ -311,23 +326,39 @@ fun FilteringMenu(
                 .testTag(UiTags.Menus.SORTING),
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-        ListModeButton(listFilters, onListFiltersChanged)
+        ListModeButton(
+            listFilters.listMode,
+            onListModeChanged = { listMode ->
+                onListFiltersChanged(listFilters.copy(listMode = listMode))
+            },
+        )
+        MinMaxButton(
+            label = stringResource(R.string.by_runtime),
+            filterValues = listFilters.runtime,
+            range = PresetMapper.MIN_RUNTIME..PresetMapper.MAX_RUNTIME,
+            onFilterValuesChanged = { minMaxFilter ->
+                onListFiltersChanged(listFilters.copy(runtime = minMaxFilter))
+            },
+            valueToText = { presetMapper.runtimeToString(it) },
+            textToValue = { presetMapper.inputToRuntime(it) },
+            showPopup = showPopup,
+        )
     }
 }
 
 @Composable
 fun ListModeButton(
-    listFilters: ListFilters,
-    onListFiltersChanged: (ListFilters) -> Unit,
+    listMode: ListMode,
+    onListModeChanged: (ListMode) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val buttonSpec =
-        when (listFilters.listMode) {
+        when (listMode) {
             ListMode.ALL -> ButtonSpec.AllMoviesFilter
             ListMode.PENDING -> ButtonSpec.PendingFilter
             ListMode.WATCHED -> ButtonSpec.WatchedFilter
         }
-    val isSelected = listFilters.listMode != ListMode.ALL
+    val isSelected = listMode != ListMode.ALL
     val borderColor =
         if (isSelected) {
             MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
@@ -344,11 +375,7 @@ fun ListModeButton(
                     color = borderColor,
                     shape = RoundedCornerShape(8.dp),
                 ).clickable {
-                    onListFiltersChanged(
-                        listFilters.let {
-                            it.copy(listMode = it.listMode.next())
-                        },
-                    )
+                    onListModeChanged(listMode.next())
                 }.testTag(tag = UiTags.Buttons.LIST_MODE),
     ) {
         Text(
@@ -372,6 +399,76 @@ fun ListModeButton(
                 Modifier
                     .padding(8.dp)
                     .size(12.dp)
+                    .align(Alignment.CenterEnd),
+        )
+    }
+}
+
+@Composable
+fun MinMaxButton(
+    label: String,
+    filterValues: MinMaxFilter,
+    range: IntRange,
+    onFilterValuesChanged: (MinMaxFilter) -> Unit,
+    valueToText: (Int?) -> String,
+    textToValue: (String) -> Int?,
+    showPopup: (PopupInfo) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val isSelected = filterValues.isActive
+    val borderColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+        } else {
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+        }
+
+    val minText = filterValues.min?.let { printableRuntimePacked(it) } ?: ""
+    val maxText = filterValues.max?.let { printableRuntimePacked(it) } ?: ""
+    Box(
+        modifier =
+            modifier
+                .padding(3.dp)
+                .size(width = 180.dp, height = 32.dp)
+                .border(
+                    width = 1.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(8.dp),
+                ).clickable {
+                    showPopup(
+                        PopupInfo.NumberChooser(
+                            label = label,
+                            filterValues = filterValues,
+                            range = range,
+                            valueToText = valueToText,
+                            textToValue = textToValue,
+                            onConfirm = onFilterValuesChanged,
+                        ),
+                    )
+                }.testTag(tag = UiTags.Buttons.RUNTIME_FILTER),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            fontStyle = if (isSelected) FontStyle.Normal else FontStyle.Italic,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Light,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            maxLines = 1,
+            modifier =
+                Modifier
+                    .padding(8.dp)
+                    .align(Alignment.CenterStart),
+        )
+        Text(
+            text = "$minText - $maxText",
+            style = MaterialTheme.typography.bodySmall,
+            fontStyle = if (isSelected) FontStyle.Normal else FontStyle.Italic,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Light,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            maxLines = 1,
+            modifier =
+                Modifier
+                    .padding(8.dp)
                     .align(Alignment.CenterEnd),
         )
     }

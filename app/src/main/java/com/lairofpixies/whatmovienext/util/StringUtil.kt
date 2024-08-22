@@ -111,3 +111,14 @@ fun printableRuntime(
         in 1..59 -> "$pre$runtimeMinutes min$pos"
         else -> "$pre${runtimeMinutes / 60}h ${runtimeMinutes % 60}min$pos"
     }
+
+fun printableRuntimePacked(
+    runtimeMinutes: Int,
+    pre: String = "",
+    pos: String = "",
+): String =
+    when (runtimeMinutes) {
+        0 -> "0m"
+        in 1..59 -> "$pre${runtimeMinutes}m$pos"
+        else -> "$pre${runtimeMinutes / 60}h${runtimeMinutes % 60}m$pos"
+    }

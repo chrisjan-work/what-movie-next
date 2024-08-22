@@ -131,4 +131,33 @@ class StringUtilKtTest {
             printableRuntime(60, "abcd-", "-efg"),
         )
     }
+
+    @Test
+    fun `printable running time packed`() {
+        // empty
+        assertEquals(
+            "0m",
+            printableRuntimePacked(0),
+        )
+        // minutes
+        assertEquals(
+            "23m",
+            printableRuntimePacked(23),
+        )
+        // hours
+        assertEquals(
+            "2h3m",
+            printableRuntimePacked(123),
+        )
+        // pre+min+pos
+        assertEquals(
+            "abcd-2m-efg",
+            printableRuntimePacked(2, "abcd-", "-efg"),
+        )
+        // pre+hour+pos
+        assertEquals(
+            "abcd-1h0m-efg",
+            printableRuntimePacked(60, "abcd-", "-efg"),
+        )
+    }
 }
