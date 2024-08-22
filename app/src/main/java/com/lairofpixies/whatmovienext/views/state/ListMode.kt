@@ -20,8 +20,8 @@ package com.lairofpixies.whatmovienext.views.state
 
 enum class ListMode {
     ALL,
-    WATCHED,
     PENDING,
+    WATCHED,
     ;
 
     fun next(): ListMode = entries[(ordinal + 1) % entries.size]
