@@ -134,7 +134,7 @@ class PresetMapperTest {
             )
 
         cases.forEach { case ->
-            assertEquals(case.second, presetMapper.yearToInput(case.first))
+            assertEquals(case.second, presetMapper.numberToInput(case.first))
         }
     }
 
@@ -150,7 +150,7 @@ class PresetMapperTest {
             )
 
         cases.forEach { case ->
-            assertEquals(case.second, presetMapper.yearToButton(case.first))
+            assertEquals(case.second, presetMapper.numberToButton(case.first))
         }
     }
 
@@ -173,6 +173,27 @@ class PresetMapperTest {
 
         cases.forEach { case ->
             assertEquals(case.second, presetMapper.inputToYear(case.first))
+        }
+    }
+
+    @Test
+    fun `convert input to score`() {
+        val cases =
+            listOf(
+                "asdf" to null,
+                "-" to null,
+                "0" to 0,
+                "-10" to 0,
+                "1" to 1,
+                "53" to 53,
+                "100" to 100,
+                "101" to 100,
+                "2045" to 100,
+                "   44  " to 44,
+            )
+
+        cases.forEach { case ->
+            assertEquals(case.second, presetMapper.inputToScore(case.first))
         }
     }
 }

@@ -121,9 +121,9 @@ class PresetMapper
                 }
             }?.coerceIn(VALID_RUNTIME_RANGE)
 
-        fun yearToInput(year: Int?) = year?.toString() ?: "-"
+        fun numberToInput(year: Int?) = year?.toString() ?: "-"
 
-        fun yearToButton(year: Int?) = year?.toString() ?: ""
+        fun numberToButton(year: Int?) = year?.toString() ?: ""
 
         fun inputToYear(yearInput: String): Int? {
             val year = yearInput.trim().toIntOrNull() ?: return null
@@ -134,8 +134,11 @@ class PresetMapper
             }
         }
 
+        fun inputToScore(scoreInput: String): Int? = scoreInput.trim().toIntOrNull()?.coerceIn(VALID_SCORE_RANGE)
+
         companion object {
             val VALID_RUNTIME_RANGE = 0..60 * 24
             val VALID_YEAR_RANGE = 1900..2100
+            val VALID_SCORE_RANGE = 0..100
         }
     }

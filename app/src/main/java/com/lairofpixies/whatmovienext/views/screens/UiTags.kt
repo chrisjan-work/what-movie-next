@@ -35,6 +35,8 @@ object UiTags {
         const val LIST_MODE = "ListModeButton"
         const val RUNTIME_FILTER = "RuntimeFilterButton"
         const val YEAR_FILTER = "YearFilterButton"
+        const val RT_SCORE_FILTER = "RtScoreFilter"
+        const val MC_SCORE_FILTER = "McScoreFilter"
         const val ROULETTE = "RouletteButton"
         const val ARCHIVE_ACTION = "ArchiveAction"
         const val ARCHIVE_SHORTCUT = "ArchiveShortcut"

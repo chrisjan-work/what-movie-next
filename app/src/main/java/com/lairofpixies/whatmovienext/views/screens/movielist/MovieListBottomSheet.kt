@@ -353,11 +353,35 @@ fun FilteringMenu(
             onFilterValuesChanged = { minMaxFilter ->
                 onListFiltersChanged(listFilters.copy(year = minMaxFilter))
             },
-            valueToTextInput = { presetMapper.yearToInput(it) },
-            valueToTextButton = { presetMapper.yearToButton(it) },
+            valueToTextInput = { presetMapper.numberToInput(it) },
+            valueToTextButton = { presetMapper.numberToButton(it) },
             textToValue = { presetMapper.inputToYear(it) },
             showPopup = showPopup,
             modifier = Modifier.testTag(tag = UiTags.Buttons.YEAR_FILTER),
+        )
+        MinMaxButton(
+            label = stringResource(R.string.by_metacritic_score),
+            filterValues = listFilters.mcScore,
+            onFilterValuesChanged = { minMaxFilter ->
+                onListFiltersChanged(listFilters.copy(mcScore = minMaxFilter))
+            },
+            valueToTextInput = { presetMapper.numberToInput(it) },
+            valueToTextButton = { presetMapper.numberToButton(it) },
+            textToValue = { presetMapper.inputToScore(it) },
+            showPopup = showPopup,
+            modifier = Modifier.testTag(tag = UiTags.Buttons.MC_SCORE_FILTER),
+        )
+        MinMaxButton(
+            label = stringResource(R.string.by_rotten_tomatoes_score),
+            filterValues = listFilters.rtScore,
+            onFilterValuesChanged = { minMaxFilter ->
+                onListFiltersChanged(listFilters.copy(rtScore = minMaxFilter))
+            },
+            valueToTextInput = { presetMapper.numberToInput(it) },
+            valueToTextButton = { presetMapper.numberToButton(it) },
+            textToValue = { presetMapper.inputToScore(it) },
+            showPopup = showPopup,
+            modifier = Modifier.testTag(tag = UiTags.Buttons.RT_SCORE_FILTER),
         )
     }
 }

@@ -103,3 +103,41 @@ Feature: Filtering
     Then the entry "Mid 50s" is not available
     Then the entry "Mid 80s" is visible
     Then the entry "Oughts" is not available
+
+  Scenario: filter by rotten tomatoes score
+    Given a list with an entry "bad"
+    And the db entry "bad" has "ratings" set as "30,40"
+    And a list with an entry "ok"
+    And the db entry "ok" has "ratings" set as "65,65"
+    And a list with an entry "masterpiece"
+    And the db entry "masterpiece" has "ratings" set as "99,95"
+    Then the entry "bad" is visible
+    And the entry "ok" is visible
+    And the entry "masterpiece" is visible
+    When the user clicks on Arrange and Filter
+    And the user clicks on "rt score"
+    And the user enters "35" in the input "at least"
+    And the user enters "97" in the input "at most"
+    And the user clicks on "Update"
+    Then the entry "bad" is not available
+    Then the entry "ok" is visible
+    Then the entry "masterpiece" is not available
+
+  Scenario: filter by metacritic score
+    Given a list with an entry "bad"
+    And the db entry "bad" has "ratings" set as "40,30"
+    And a list with an entry "ok"
+    And the db entry "ok" has "ratings" set as "65,65"
+    And a list with an entry "masterpiece"
+    And the db entry "masterpiece" has "ratings" set as "90,98"
+    Then the entry "bad" is visible
+    And the entry "ok" is visible
+    And the entry "masterpiece" is visible
+    When the user clicks on Arrange and Filter
+    And the user clicks on "m score"
+    And the user enters "35" in the input "at least"
+    And the user enters "97" in the input "at most"
+    And the user clicks on "Update"
+    Then the entry "bad" is not available
+    Then the entry "ok" is visible
+    Then the entry "masterpiece" is not available
