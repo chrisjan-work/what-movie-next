@@ -44,8 +44,8 @@ class FilteringStepDefs(
     @Inject
     lateinit var configSynchronizer: ConfigSynchronizer
 
-    @Given("the db contains the genres {string}")
-    fun theDbContainsTheGenres(genreList: String) {
+    @Given("the tmdb api offers the genres {string}")
+    fun theTmdbApiOffersTheGenres(genreList: String) {
         testContext.movieApi.fakeGenres = {
             genreList.split(",").mapIndexed { index, genre ->
                 TmdbGenres.TmdbGenre(index + 1L, genre)

@@ -19,12 +19,14 @@
 package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import com.lairofpixies.whatmovienext.models.database.data.DbStaff
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testDbMovieExtended
@@ -417,5 +419,70 @@ class MovieRepositoryImplTest {
 
             // Then
             coVerify { movieDao.deleteMovie(movieToDelete) }
+        }
+
+    @Test
+    fun `get personnel by department`() =
+        runTest {
+            // Given
+            val staffList =
+                listOf(
+                    DbStaff(
+                        role =
+                            DbRole(
+                                roleId = 10,
+                                personId = 10,
+                                movieId = 1,
+                                credit = "Director",
+                                dept = Departments.Directors.department,
+                            ),
+                        person =
+                            DbPerson(
+                                personId = 10,
+                                name = "Aaron",
+                            ),
+                    ),
+                    DbStaff(
+                        role =
+                            DbRole(
+                                roleId = 11,
+                                personId = 11,
+                                movieId = 1,
+                                credit = "Director",
+                                dept = Departments.Directors.department,
+                            ),
+                        person =
+                            DbPerson(
+                                personId = 11,
+                                name = "Betty",
+                            ),
+                    ),
+                    DbStaff(
+                        role =
+                            DbRole(
+                                roleId = 11,
+                                personId = 11,
+                                movieId = 3,
+                                credit = "Director",
+                                dept = Departments.Directors.department,
+                            ),
+                        person =
+                            DbPerson(
+                                personId = 11,
+                                name = "Betty",
+                            ),
+                    ),
+                )
+            coEvery { movieDao.getStaffByDepartment(any()) } returns
+                flowOf(staffList)
+
+            // When
+            initializeSut()
+            val names =
+                movieRepository
+                    .getAllPeopleNamesByDepartment(Departments.Directors)
+
+            // Then
+            assertEquals(listOf("Aaron", "Betty"), names.first())
         }
 }

@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.viewmodels
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
@@ -323,5 +324,20 @@ class MovieListViewModelTest {
 
             // Then
             assertEquals(genres, listViewModel.allGenres.value)
+        }
+
+    @Test
+    fun `expose directors list`() =
+        runTest {
+            // Given
+            val directors = listOf("Woody Allen", "Roman Polanski")
+            every { movieRepository.getAllPeopleNamesByDepartment(Departments.Directors) } returns
+                flowOf(directors)
+
+            // When
+            construct()
+
+            // Then
+            assertEquals(directors, listViewModel.allDirectors.value)
         }
 }

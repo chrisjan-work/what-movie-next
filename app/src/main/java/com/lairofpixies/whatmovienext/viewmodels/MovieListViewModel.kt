@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.data.hasMovie
@@ -69,10 +70,14 @@ class MovieListViewModel
         private val _allGenres = MutableStateFlow(emptyList<String>())
         val allGenres: StateFlow<List<String>> = _allGenres.asStateFlow()
 
+        private val _allDirectors = MutableStateFlow(emptyList<String>())
+        val allDirectors: StateFlow<List<String>> = _allDirectors.asStateFlow()
+
         init {
             connectArchivedMovies()
             connectPresets()
             connectGenres()
+            connectDirectors()
         }
 
         private fun connectArchivedMovies() {
@@ -99,6 +104,16 @@ class MovieListViewModel
                     .allGenreNames()
                     .collect { genres ->
                         _allGenres.value = genres
+                    }
+            }
+        }
+
+        private fun connectDirectors() {
+            viewModelScope.launch {
+                movieRepository
+                    .getAllPeopleNamesByDepartment(Departments.Directors)
+                    .collect { directors ->
+                        _allDirectors.value = directors
                     }
             }
         }
