@@ -51,9 +51,9 @@ Feature: Filtering
     And the db entry "Sharknado" has "runtime" set as "116"
     Then the entry "Sharknado" is visible
     When the user clicks on Arrange and Filter
-    And the user clicks on "runtime"
+    And the user clicks on "runtime" in filter tab
     And the user enters "120" in the input "at least"
-    And the user clicks on "Update"
+    And the user clicks on "Update" in number popup
     Then the entry "Sharknado" is not available
 
   Scenario: filter by maximum runtime
@@ -61,9 +61,9 @@ Feature: Filtering
     And the db entry "Sharknado" has "runtime" set as "116"
     Then the entry "Sharknado" is visible
     When the user clicks on Arrange and Filter
-    And the user clicks on "runtime"
+    And the user clicks on "runtime" in filter tab
     And the user enters "100" in the input "at most"
-    And the user clicks on "Update"
+    And the user clicks on "Update" in number popup
     Then the entry "Sharknado" is not available
 
   Scenario: filter by some runtimes
@@ -77,10 +77,10 @@ Feature: Filtering
     And the entry "Medium" is visible
     And the entry "Large" is visible
     When the user clicks on Arrange and Filter
-    And the user clicks on "runtime"
+    And the user clicks on "runtime" in filter tab
     And the user enters "110" in the input "at least"
     And the user enters "130" in the input "at most"
-    And the user clicks on "Update"
+    And the user clicks on "Update" in number popup
     Then the entry "Short" is not available
     And the entry "Medium" is visible
     And the entry "Large" is not available
@@ -96,10 +96,10 @@ Feature: Filtering
     And the entry "Mid 80s" is visible
     And the entry "Oughts" is visible
     When the user clicks on Arrange and Filter
-    And the user clicks on "year"
+    And the user clicks on "year" in filter tab
     And the user enters "1960" in the input "at least"
     And the user enters "2000" in the input "at most"
-    And the user clicks on "Update"
+    And the user clicks on "Update" in number popup
     Then the entry "Mid 50s" is not available
     Then the entry "Mid 80s" is visible
     Then the entry "Oughts" is not available
@@ -115,10 +115,10 @@ Feature: Filtering
     And the entry "ok" is visible
     And the entry "masterpiece" is visible
     When the user clicks on Arrange and Filter
-    And the user clicks on "rt score"
+    And the user clicks on "rt score" in filter tab
     And the user enters "35" in the input "at least"
     And the user enters "97" in the input "at most"
-    And the user clicks on "Update"
+    And the user clicks on "Update" in number popup
     Then the entry "bad" is not available
     Then the entry "ok" is visible
     Then the entry "masterpiece" is not available
@@ -134,10 +134,30 @@ Feature: Filtering
     And the entry "ok" is visible
     And the entry "masterpiece" is visible
     When the user clicks on Arrange and Filter
-    And the user clicks on "m score"
+    And the user clicks on "m score" in filter tab
     And the user enters "35" in the input "at least"
     And the user enters "97" in the input "at most"
-    And the user clicks on "Update"
+    And the user clicks on "Update" in number popup
     Then the entry "bad" is not available
     Then the entry "ok" is visible
     Then the entry "masterpiece" is not available
+
+  Scenario: filter by genre
+    Given the db contains the genres "Action,Comedy,Horror"
+    And a list with an entry "fist of the dragon"
+    And the db entry "fist of the dragon" has "genres" set as "Action"
+    And a list with an entry "sausage of the dragon"
+    And the db entry "sausage of the dragon" has "genres" set as "Comedy,Action"
+    And a list with an entry "death valley"
+    And the db entry "death valley" has "genres" set as "Horror"
+    Then the entry "fist of the dragon" is visible
+    And the entry "sausage of the dragon" is visible
+    And the entry "death valley" is visible
+    When the user clicks on Arrange and Filter
+    And the user clicks on "genre" in filter tab
+    And the user clicks on "Comedy" in word popup
+    And the user clicks on "Horror" in word popup
+    And the user clicks on "Update" in word popup
+    Then the entry "fist of the dragon" is not available
+    Then the entry "sausage of the dragon" is visible
+    Then the entry "death valley" is visible

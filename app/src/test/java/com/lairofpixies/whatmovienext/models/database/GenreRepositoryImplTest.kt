@@ -24,6 +24,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -167,5 +168,19 @@ class GenreRepositoryImplTest {
 
             // Then
             assertEquals(listOf("Horror"), result)
+        }
+
+    @Test
+    fun `export all genres`() =
+        runTest {
+            // Given
+            every { genreDao.getAllGenres() } returns genreFlow()
+            initializeSut()
+
+            // When
+            val result = genreRepository.allGenreNames().first()
+
+            // Then
+            assertEquals(listOf("Horror", "Mockumentary"), result)
         }
 }

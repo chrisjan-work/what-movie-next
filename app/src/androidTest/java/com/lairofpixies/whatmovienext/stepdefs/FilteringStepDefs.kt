@@ -22,12 +22,17 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
+import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizer
+import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
+import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 @HiltAndroidTest
 class FilteringStepDefs(
@@ -35,6 +40,21 @@ class FilteringStepDefs(
 ) {
     private val composeRule
         get() = testContext.composeRuleHolder.composeRule
+
+    @Inject
+    lateinit var configSynchronizer: ConfigSynchronizer
+
+    @Given("the db contains the genres {string}")
+    fun theDbContainsTheGenres(genreList: String) {
+        testContext.movieApi.fakeGenres = {
+            genreList.split(",").mapIndexed { index, genre ->
+                TmdbGenres.TmdbGenre(index + 1L, genre)
+            }
+        }
+        runBlocking {
+            configSynchronizer.checkNow()
+        }
+    }
 
     @Given("the user clicks on Arrange and Filter")
     fun theUserClicksOnArrangeAndFilter() {
@@ -56,9 +76,31 @@ class FilteringStepDefs(
         onNodeWithText(label).performTextInput(value)
     }
 
-    @And("the user clicks on {string}")
-    fun theUserClicksOn(buttonName: String) =
+    @And("the user clicks on genre {string}")
+    fun theUserClicksOnGenre(buttonName: String) =
         composeRule.composeStep {
-            onNodeWithText(buttonName).performClick()
+            onNodeWithTextUnderTag(buttonName, UiTags.Popups.WORD_SELECT)
+                .performClick()
+        }
+
+    @And("the user clicks on {string} in word popup")
+    fun theUserClicksOnInWordPopup(buttonName: String) =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(buttonName, UiTags.Popups.WORD_SELECT)
+                .performClick()
+        }
+
+    @And("the user clicks on {string} in filter tab")
+    fun theUserClicksOnInFilterTab(buttonName: String) =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(buttonName, UiTags.Menus.FILTERING)
+                .performClick()
+        }
+
+    @And("the user clicks on {string} in number popup")
+    fun theUserClicksOnInNumberPopup(buttonName: String) =
+        composeRule.composeStep {
+            onNodeWithTextUnderTag(buttonName, UiTags.Popups.NUMBER_SELECT)
+                .performClick()
         }
 }

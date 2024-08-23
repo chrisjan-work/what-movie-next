@@ -23,6 +23,7 @@ import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.data.hasMovie
+import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
@@ -47,6 +48,7 @@ class MovieListViewModel
     constructor(
         private val movieRepository: MovieRepository,
         private val presetRepository: PresetRepository,
+        private val genreRepository: GenreRepository,
         private val sortProcessor: SortProcessor,
         private val filterProcessor: FilterProcessor,
         private val presetMapper: PresetMapper,
@@ -57,15 +59,20 @@ class MovieListViewModel
         private val _hasArchivedMovies = MutableStateFlow(false)
         val hasArchivedMovies: StateFlow<Boolean> = _hasArchivedMovies.asStateFlow()
 
-        private val _bottomMenuState = MutableStateFlow(BottomMenuState(BottomMenuOption.Sorting, false))
+        private val _bottomMenuState =
+            MutableStateFlow(BottomMenuState(BottomMenuOption.Sorting, false))
         val bottomMenuState: StateFlow<BottomMenuState> = _bottomMenuState.asStateFlow()
 
         private val _currentPreset = MutableStateFlow(Preset.Default)
         val currentPreset: StateFlow<Preset> = _currentPreset.asStateFlow()
 
+        private val _allGenres = MutableStateFlow(emptyList<String>())
+        val allGenres: StateFlow<List<String>> = _allGenres.asStateFlow()
+
         init {
             connectArchivedMovies()
             connectPresets()
+            connectGenres()
         }
 
         private fun connectArchivedMovies() {
@@ -82,6 +89,16 @@ class MovieListViewModel
                     .getPreset(Preset.FIXED_ID)
                     .collect { presetOrNull ->
                         _currentPreset.value = presetOrNull ?: Preset.Default
+                    }
+            }
+        }
+
+        private fun connectGenres() {
+            viewModelScope.launch {
+                genreRepository
+                    .allGenreNames()
+                    .collect { genres ->
+                        _allGenres.value = genres
                     }
             }
         }

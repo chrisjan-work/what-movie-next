@@ -91,6 +91,7 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
             closeBottomMenu = { listViewModel.closeBottomMenu() },
             listFilters = currentPreset.listFilters,
             onListFiltersChanged = { listViewModel.setListFilters(it) },
+            allGenres = listViewModel.allGenres.collectAsState().value,
             presetMapper = listViewModel.presetMapper(),
             showPopup = { listViewModel.showPopup(it) },
         )

@@ -42,4 +42,11 @@ sealed class PopupInfo {
         val textToValue: (String) -> Int?,
         val onConfirm: (MinMaxFilter) -> Unit,
     ) : PopupInfo()
+
+    data class WordChooser(
+        val label: String,
+        val filterValues: WordFilter,
+        val candidates: List<String>,
+        val onConfirm: (WordFilter) -> Unit,
+    ) : PopupInfo()
 }

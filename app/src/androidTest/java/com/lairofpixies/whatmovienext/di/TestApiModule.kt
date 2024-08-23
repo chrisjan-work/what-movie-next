@@ -217,7 +217,7 @@ object TestApiModule {
     @Singleton
     fun provideConfigSynchronizer(
         appPreferences: AppPreferences,
-        tmdbApi: TmdbApi,
+        tmdbApi: TestTmdbApi,
         genreRepository: GenreRepository,
         remoteMapper: RemoteMapper,
         connectivityTracker: ConnectivityTracker,

@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowDownward
@@ -56,6 +57,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
@@ -71,6 +73,7 @@ import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
+import com.lairofpixies.whatmovienext.views.state.WordFilter
 import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,6 +85,7 @@ fun MovieListBottomSheet(
     updateSortingSetup: (SortingSetup) -> Unit,
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
+    allGenres: List<String>,
     presetMapper: PresetMapper,
     showPopup: (PopupInfo) -> Unit,
     closeBottomMenu: () -> Unit,
@@ -130,6 +134,7 @@ fun MovieListBottomSheet(
                 updateSortingSetup = updateSortingSetup,
                 listFilters = listFilters,
                 onListFiltersChanged = onListFiltersChanged,
+                allGenres = allGenres,
                 presetMapper = presetMapper,
                 showPopup = showPopup,
             )
@@ -201,6 +206,7 @@ fun BottomSheetMenu(
     updateSortingSetup: (SortingSetup) -> Unit,
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
+    allGenres: List<String>,
     presetMapper: PresetMapper,
     showPopup: (PopupInfo) -> Unit,
 ) {
@@ -218,6 +224,7 @@ fun BottomSheetMenu(
                 listFilters = listFilters,
                 onListFiltersChanged = onListFiltersChanged,
                 presetMapper = presetMapper,
+                allGenres = allGenres,
                 showPopup = showPopup,
             )
     }
@@ -319,15 +326,16 @@ fun FilteringMenu(
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
     presetMapper: PresetMapper,
+    allGenres: List<String>,
     showPopup: (PopupInfo) -> Unit,
 ) {
     FlowRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp, start = 4.dp, end = 4.dp, top = 8.dp)
-                .testTag(UiTags.Menus.SORTING),
-        horizontalArrangement = Arrangement.SpaceEvenly,
+                .padding(bottom = 16.dp, start = 6.dp, end = 6.dp, top = 8.dp)
+                .testTag(UiTags.Menus.FILTERING),
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         ListModeButton(
             listFilters.listMode,
@@ -382,6 +390,16 @@ fun FilteringMenu(
             textToValue = { presetMapper.inputToScore(it) },
             showPopup = showPopup,
             modifier = Modifier.testTag(tag = UiTags.Buttons.RT_SCORE_FILTER),
+        )
+        WordSelectButton(
+            label = stringResource(R.string.by_genre),
+            filterValues = listFilters.genres,
+            candidates = allGenres,
+            onFilterValuesChanged = { wordFilter ->
+                onListFiltersChanged(listFilters.copy(genres = wordFilter))
+            },
+            showPopup = showPopup,
+            modifier = Modifier.testTag(tag = UiTags.Buttons.GENRES_FILTER),
         )
     }
 }
@@ -505,6 +523,74 @@ fun MinMaxButton(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             textAlign = TextAlign.End,
             maxLines = 1,
+        )
+    }
+}
+
+@Composable
+fun WordSelectButton(
+    label: String,
+    filterValues: WordFilter,
+    onFilterValuesChanged: (WordFilter) -> Unit,
+    candidates: List<String>,
+    showPopup: (PopupInfo) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val isSelected = filterValues.isActive
+    val borderColor =
+        if (isSelected) {
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+        } else {
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
+        }
+
+    Row(
+        modifier =
+            modifier
+                .padding(3.dp)
+                .sizeIn(minWidth = 120.dp, minHeight = 32.dp)
+                .border(
+                    width = 1.dp,
+                    color = borderColor,
+                    shape = RoundedCornerShape(8.dp),
+                ).padding(6.dp)
+                .clickable {
+                    if (filterValues.isActive) {
+                        onFilterValuesChanged(filterValues.copy(isEnabled = false))
+                    } else {
+                        showPopup(
+                            PopupInfo.WordChooser(
+                                label = label,
+                                filterValues = filterValues,
+                                candidates = candidates,
+                                onConfirm = onFilterValuesChanged,
+                            ),
+                        )
+                    }
+                },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            fontStyle = if (isSelected) FontStyle.Normal else FontStyle.Italic,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Light,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            textAlign = TextAlign.Start,
+            maxLines = 1,
+        )
+        Spacer(modifier = Modifier.sizeIn(minWidth = 8.dp))
+        Text(
+            text = filterValues.words.joinToString(","),
+            style = MaterialTheme.typography.bodySmall,
+            fontStyle = if (isSelected) FontStyle.Normal else FontStyle.Italic,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Light,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            textAlign = TextAlign.End,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.width(64.dp),
         )
     }
 }
