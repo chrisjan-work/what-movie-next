@@ -47,7 +47,7 @@ class PresetMapperTest {
     }
 
     @Test
-    fun `convert runtime to output`() {
+    fun `convert runtime to text for input`() {
         val cases =
             listOf(
                 null to "-",
@@ -64,7 +64,29 @@ class PresetMapperTest {
             )
 
         cases.forEach { case ->
-            assertEquals(case.second, presetMapper.runtimeToString(case.first))
+            assertEquals(case.second, presetMapper.runtimeToInput(case.first))
+        }
+    }
+
+    @Test
+    fun `convert runtime to text for button`() {
+        val cases =
+            listOf(
+                null to "",
+                0 to "0m",
+                1 to "1m",
+                12 to "12m",
+                180 to "3h0m",
+                210 to "3h30m",
+                90 to "1h30m",
+                85 to "1h25m",
+                135 to "2h15m",
+                30 to "30m",
+                105 to "1h45m",
+            )
+
+        cases.forEach { case ->
+            assertEquals(case.second, presetMapper.runtimeToButton(case.first))
         }
     }
 
@@ -92,10 +114,65 @@ class PresetMapperTest {
                 "0.5h" to 30,
                 "1.75H" to 105,
                 "3 h" to 180,
+                "100h" to 1440,
             )
 
         cases.forEach { case ->
             assertEquals(case.second, presetMapper.inputToRuntime(case.first))
+        }
+    }
+
+    @Test
+    fun `convert year to text for input`() {
+        val cases =
+            listOf(
+                null to "-",
+                0 to "0",
+                1900 to "1900",
+                1989 to "1989",
+                2011 to "2011",
+            )
+
+        cases.forEach { case ->
+            assertEquals(case.second, presetMapper.yearToInput(case.first))
+        }
+    }
+
+    @Test
+    fun `convert year to text for button`() {
+        val cases =
+            listOf(
+                null to "",
+                0 to "0",
+                1900 to "1900",
+                1989 to "1989",
+                2011 to "2011",
+            )
+
+        cases.forEach { case ->
+            assertEquals(case.second, presetMapper.yearToButton(case.first))
+        }
+    }
+
+    @Test
+    fun `convert input to year`() {
+        val cases =
+            listOf(
+                "asdf" to null,
+                "-" to null,
+                "0" to 0,
+                "1" to 1901,
+                "100" to 1900,
+                "120" to 1900,
+                "1950" to 1950,
+                "2010" to 2010,
+                "2045" to 2045,
+                "3000" to 2100,
+                "  1999   " to 1999,
+            )
+
+        cases.forEach { case ->
+            assertEquals(case.second, presetMapper.inputToYear(case.first))
         }
     }
 }

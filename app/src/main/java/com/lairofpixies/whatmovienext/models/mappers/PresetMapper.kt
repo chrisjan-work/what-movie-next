@@ -77,7 +77,7 @@ class PresetMapper
                 )
             }
 
-        fun runtimeToString(runtime: Int?): String =
+        fun runtimeToInput(runtime: Int?): String =
             when (runtime) {
                 null -> "-"
                 0 -> "0"
@@ -85,35 +85,57 @@ class PresetMapper
                 else -> "${runtime / 60}h ${runtime % 60}min"
             }
 
-        fun inputToRuntime(runtimeInput: String): Int? {
-            if (runtimeInput.isEmpty()) return null
-
-            // decimal hours
-            val decimalHourRegex = """(\d+(?:\.\d+)?)\s*h$""".toRegex(RegexOption.IGNORE_CASE)
-            decimalHourRegex.find(runtimeInput)?.let { matchResult ->
-                val decimalHours = matchResult.groupValues[1].toDouble()
-                val hours = decimalHours.toInt()
-                val minutes = ((decimalHours - hours) * 60).toInt()
-                return hours * 60 + minutes
+        fun runtimeToButton(runtime: Int?): String =
+            when (runtime) {
+                null -> ""
+                0 -> "0m"
+                in 1..59 -> "${runtime}m"
+                else -> "${runtime / 60}h${runtime % 60}m"
             }
 
-            // hours + minutes or just minutes
-            val regex =
-                """(?:(\d+)\s*[hH:])?\s*(?:(\d+)(?:m|M|MIN)?)?""".toRegex(RegexOption.IGNORE_CASE)
-            val matchResult = regex.find(runtimeInput)
+        fun inputToRuntime(runtimeInput: String): Int? =
+            run {
+                if (runtimeInput.isEmpty()) return@run null
 
-            val hours = matchResult?.groupValues?.get(1)?.toIntOrNull() ?: 0
-            val minutes = matchResult?.groupValues?.get(2)?.toIntOrNull() ?: 0
+                // decimal hours
+                val decimalHourRegex = """(\d+(?:\.\d+)?)\s*h$""".toRegex(RegexOption.IGNORE_CASE)
+                decimalHourRegex.find(runtimeInput)?.let { matchResult ->
+                    val decimalHours = matchResult.groupValues[1].toDouble()
+                    val hours = decimalHours.toInt()
+                    val minutes = ((decimalHours - hours) * 60).toInt()
+                    return@run hours * 60 + minutes
+                }
 
-            return if (hours == 0 && minutes == 0) {
-                runtimeInput.toIntOrNull()
-            } else {
-                hours * 60 + minutes
+                // hours + minutes , or just minutes
+                val regex =
+                    """(?:(\d+)\s*[hH:])?\s*(?:(\d+)(?:m|M|MIN)?)?""".toRegex(RegexOption.IGNORE_CASE)
+                val matchResult = regex.find(runtimeInput)
+
+                val hours = matchResult?.groupValues?.get(1)?.toIntOrNull() ?: 0
+                val minutes = matchResult?.groupValues?.get(2)?.toIntOrNull() ?: 0
+
+                return@run if (hours == 0 && minutes == 0) {
+                    runtimeInput.toIntOrNull()
+                } else {
+                    hours * 60 + minutes
+                }
+            }?.coerceIn(VALID_RUNTIME_RANGE)
+
+        fun yearToInput(year: Int?) = year?.toString() ?: "-"
+
+        fun yearToButton(year: Int?) = year?.toString() ?: ""
+
+        fun inputToYear(yearInput: String): Int? {
+            val year = yearInput.trim().toIntOrNull() ?: return null
+            return when {
+                year == 0 -> 0
+                year < 100 -> 1900 + year
+                else -> year.coerceIn(VALID_YEAR_RANGE)
             }
         }
 
         companion object {
-            const val MIN_RUNTIME = 0
-            const val MAX_RUNTIME = 60 * 24
+            val VALID_RUNTIME_RANGE = 0..60 * 24
+            val VALID_YEAR_RANGE = 1900..2100
         }
     }

@@ -82,5 +82,24 @@ Feature: Filtering
     And the user enters "130" in the input "at most"
     And the user clicks on "Update"
     Then the entry "Short" is not available
-    Then the entry "Medium" is visible
-    Then the entry "Large" is not available
+    And the entry "Medium" is visible
+    And the entry "Large" is not available
+
+  Scenario: filter by year
+    Given a list with an entry "Mid 50s"
+    And the db entry "Mid 50s" has "year" set as "1954"
+    And a list with an entry "Mid 80s"
+    And the db entry "Mid 80s" has "year" set as "1988"
+    And a list with an entry "Oughts"
+    And the db entry "Oughts" has "year" set as "2002"
+    Then the entry "Mid 50s" is visible
+    And the entry "Mid 80s" is visible
+    And the entry "Oughts" is visible
+    When the user clicks on Arrange and Filter
+    And the user clicks on "year"
+    And the user enters "1960" in the input "at least"
+    And the user enters "2000" in the input "at most"
+    And the user clicks on "Update"
+    Then the entry "Mid 50s" is not available
+    Then the entry "Mid 80s" is visible
+    Then the entry "Oughts" is not available
