@@ -492,6 +492,18 @@ fun MinMaxButton(
             MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
         }
 
+    val launchPopup: () -> Unit = {
+        showPopup(
+            PopupInfo.NumberChooser(
+                label = label,
+                filterValues = filterValues,
+                valueToText = valueToTextInput,
+                textToValue = textToValue,
+                onConfirm = onFilterValuesChanged,
+            ),
+        )
+    }
+
     Row(
         modifier =
             modifier
@@ -503,19 +515,7 @@ fun MinMaxButton(
                     shape = RoundedCornerShape(8.dp),
                 ).padding(6.dp)
                 .clickable {
-                    if (filterValues.isActive) {
-                        onFilterValuesChanged(filterValues.copy(isEnabled = false))
-                    } else {
-                        showPopup(
-                            PopupInfo.NumberChooser(
-                                label = label,
-                                filterValues = filterValues,
-                                valueToText = valueToTextInput,
-                                textToValue = textToValue,
-                                onConfirm = onFilterValuesChanged,
-                            ),
-                        )
-                    }
+                    launchPopup()
                 },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -528,6 +528,14 @@ fun MinMaxButton(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             textAlign = TextAlign.Start,
             maxLines = 1,
+            modifier =
+                Modifier.clickable {
+                    if (filterValues.isNotEmpty) {
+                        onFilterValuesChanged(filterValues.copy(isEnabled = !filterValues.isEnabled))
+                    } else {
+                        launchPopup()
+                    }
+                },
         )
         Spacer(modifier = Modifier.sizeIn(minWidth = 8.dp))
         Text(
@@ -559,6 +567,17 @@ fun WordSelectButton(
             MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
         }
 
+    val launchPopup: () -> Unit = {
+        showPopup(
+            PopupInfo.WordChooser(
+                label = label,
+                filterValues = filterValues,
+                candidates = candidates,
+                onConfirm = onFilterValuesChanged,
+            ),
+        )
+    }
+
     Row(
         modifier =
             modifier
@@ -570,18 +589,7 @@ fun WordSelectButton(
                     shape = RoundedCornerShape(8.dp),
                 ).padding(6.dp)
                 .clickable {
-                    if (filterValues.isActive) {
-                        onFilterValuesChanged(filterValues.copy(isEnabled = false))
-                    } else {
-                        showPopup(
-                            PopupInfo.WordChooser(
-                                label = label,
-                                filterValues = filterValues,
-                                candidates = candidates,
-                                onConfirm = onFilterValuesChanged,
-                            ),
-                        )
-                    }
+                    launchPopup()
                 },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -594,6 +602,14 @@ fun WordSelectButton(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             textAlign = TextAlign.Start,
             maxLines = 1,
+            modifier =
+                Modifier.clickable {
+                    if (filterValues.isNotEmpty) {
+                        onFilterValuesChanged(filterValues.copy(isEnabled = !filterValues.isEnabled))
+                    } else {
+                        launchPopup()
+                    }
+                },
         )
         Spacer(modifier = Modifier.sizeIn(minWidth = 8.dp))
         Text(

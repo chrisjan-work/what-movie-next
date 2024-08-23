@@ -33,12 +33,14 @@ data class MinMaxFilter(
     val max: Int?,
     val isEnabled: Boolean,
 ) {
-    val isActive: Boolean = isEnabled && (min != null || max != null)
+    val isNotEmpty = min != null || max != null
+    val isActive: Boolean = isEnabled && isNotEmpty
 }
 
 data class WordFilter(
     val words: List<String>,
     val isEnabled: Boolean,
 ) {
-    val isActive: Boolean = isEnabled && words.isNotEmpty()
+    val isNotEmpty = words.isNotEmpty()
+    val isActive: Boolean = isEnabled && isNotEmpty
 }
