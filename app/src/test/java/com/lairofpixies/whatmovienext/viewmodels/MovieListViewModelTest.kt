@@ -25,6 +25,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.data.TestPreset.forApp
+import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
@@ -68,6 +69,7 @@ class MovieListViewModelTest {
     private lateinit var presetMapper: PresetMapper
     private lateinit var movieRepository: MovieRepository
     private lateinit var presetRepository: PresetRepository
+    private lateinit var genreRepository: GenreRepository
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
 
@@ -81,7 +83,8 @@ class MovieListViewModelTest {
         navHostControllerMock = mockk(relaxed = true)
         sortProcessor = SortProcessor(mockk(relaxed = true))
         filterProcessor = FilterProcessor()
-        presetMapper = mockk()
+        presetMapper = mockk(relaxed = true)
+        genreRepository = mockk(relaxed = true)
     }
 
     private fun construct() {
@@ -89,6 +92,7 @@ class MovieListViewModelTest {
             MovieListViewModel(
                 movieRepository,
                 presetRepository,
+                genreRepository,
                 sortProcessor,
                 filterProcessor,
                 presetMapper,
@@ -305,4 +309,19 @@ class MovieListViewModelTest {
         construct()
         assertEquals(presetMapper, listViewModel.presetMapper())
     }
+
+    @Test
+    fun `expose genre list`() =
+        runTest {
+            // Given
+            val genres = listOf("Action", "Comedy", "Drama")
+            every { genreRepository.allGenreNames() } returns
+                flowOf(genres)
+
+            // When
+            construct()
+
+            // Then
+            assertEquals(genres, listViewModel.allGenres.value)
+        }
 }

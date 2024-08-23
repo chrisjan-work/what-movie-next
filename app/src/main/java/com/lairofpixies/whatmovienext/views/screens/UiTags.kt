@@ -37,6 +37,7 @@ object UiTags {
         const val YEAR_FILTER = "YearFilterButton"
         const val RT_SCORE_FILTER = "RtScoreFilter"
         const val MC_SCORE_FILTER = "McScoreFilter"
+        const val GENRES_FILTER = "GenresFilter"
         const val ROULETTE = "RouletteButton"
         const val ARCHIVE_ACTION = "ArchiveAction"
         const val ARCHIVE_SHORTCUT = "ArchiveShortcut"
@@ -48,10 +49,13 @@ object UiTags {
         const val SEARCHING = "Searching"
         const val SEARCH_EMPTY = "SearchReturnedNothing"
         const val CONNECTION_FAILED = "OnlineConnectionError"
+        const val NUMBER_SELECT = "NumberSelect"
+        const val WORD_SELECT = "WordSelect"
     }
 
     object Menus {
         const val SORTING = "SortingMenu"
+        const val FILTERING = "FilteringMenu"
     }
 
     object Items {

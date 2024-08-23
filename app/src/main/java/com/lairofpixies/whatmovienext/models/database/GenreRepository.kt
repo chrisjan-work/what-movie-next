@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
+import kotlinx.coroutines.flow.Flow
 
 interface GenreRepository {
     suspend fun isEmpty(): Boolean
@@ -26,4 +27,6 @@ interface GenreRepository {
     suspend fun appendGenres(genres: List<DbGenre>)
 
     fun genreNamesByTmdbIds(tmdbIds: List<Long>): List<String>
+
+    fun allGenreNames(): Flow<List<String>>
 }

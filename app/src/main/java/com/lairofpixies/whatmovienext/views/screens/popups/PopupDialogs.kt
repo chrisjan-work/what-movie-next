@@ -80,10 +80,21 @@ fun PopupDialogs(
 
         is PopupInfo.NumberChooser ->
             NumberChooserDialog(
+                modifier = modifier.testTag(UiTags.Popups.NUMBER_SELECT),
                 label = popupInfo.label,
                 filterValues = popupInfo.filterValues,
                 valueToText = popupInfo.valueToText,
                 textToValue = popupInfo.textToValue,
+                onConfirm = popupInfo.onConfirm,
+                onDismiss = onDismiss,
+            )
+
+        is PopupInfo.WordChooser ->
+            WordChooserDialog(
+                modifier = modifier.testTag(UiTags.Popups.WORD_SELECT),
+                label = popupInfo.label,
+                filterValues = popupInfo.filterValues,
+                candidates = popupInfo.candidates,
                 onConfirm = popupInfo.onConfirm,
                 onDismiss = onDismiss,
             )

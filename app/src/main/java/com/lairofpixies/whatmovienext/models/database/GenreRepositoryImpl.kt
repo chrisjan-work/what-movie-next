@@ -23,6 +23,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -91,4 +92,6 @@ class GenreRepositoryImpl(
             .filterKeys { it in tmdbIds }
             .values
             .toList()
+
+    override fun allGenreNames(): Flow<List<String>> = inMemDb.map { it.values.toList() }
 }
