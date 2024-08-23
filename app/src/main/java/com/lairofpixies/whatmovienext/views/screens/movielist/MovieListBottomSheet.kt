@@ -86,6 +86,7 @@ fun MovieListBottomSheet(
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
     allGenres: List<String>,
+    allDirectors: List<String>,
     presetMapper: PresetMapper,
     showPopup: (PopupInfo) -> Unit,
     closeBottomMenu: () -> Unit,
@@ -135,6 +136,7 @@ fun MovieListBottomSheet(
                 listFilters = listFilters,
                 onListFiltersChanged = onListFiltersChanged,
                 allGenres = allGenres,
+                allDirectors = allDirectors,
                 presetMapper = presetMapper,
                 showPopup = showPopup,
             )
@@ -207,6 +209,7 @@ fun BottomSheetMenu(
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
     allGenres: List<String>,
+    allDirectors: List<String>,
     presetMapper: PresetMapper,
     showPopup: (PopupInfo) -> Unit,
 ) {
@@ -225,6 +228,7 @@ fun BottomSheetMenu(
                 onListFiltersChanged = onListFiltersChanged,
                 presetMapper = presetMapper,
                 allGenres = allGenres,
+                allDirectors = allDirectors,
                 showPopup = showPopup,
             )
     }
@@ -327,6 +331,7 @@ fun FilteringMenu(
     onListFiltersChanged: (ListFilters) -> Unit,
     presetMapper: PresetMapper,
     allGenres: List<String>,
+    allDirectors: List<String>,
     showPopup: (PopupInfo) -> Unit,
 ) {
     FlowRow(
@@ -343,17 +348,25 @@ fun FilteringMenu(
                 onListFiltersChanged(listFilters.copy(listMode = listMode))
             },
         )
-        MinMaxButton(
-            label = stringResource(R.string.by_runtime),
-            filterValues = listFilters.runtime,
-            onFilterValuesChanged = { minMaxFilter ->
-                onListFiltersChanged(listFilters.copy(runtime = minMaxFilter))
+        WordSelectButton(
+            label = stringResource(R.string.by_genre),
+            filterValues = listFilters.genres,
+            candidates = allGenres,
+            onFilterValuesChanged = { wordFilter ->
+                onListFiltersChanged(listFilters.copy(genres = wordFilter))
             },
-            valueToTextInput = { presetMapper.runtimeToInput(it) },
-            valueToTextButton = { presetMapper.runtimeToButton(it) },
-            textToValue = { presetMapper.inputToRuntime(it) },
             showPopup = showPopup,
-            modifier = Modifier.testTag(tag = UiTags.Buttons.RUNTIME_FILTER),
+            modifier = Modifier.testTag(tag = UiTags.Buttons.GENRES_FILTER),
+        )
+        WordSelectButton(
+            label = stringResource(R.string.by_director),
+            filterValues = listFilters.directors,
+            candidates = allDirectors,
+            onFilterValuesChanged = { wordFilter ->
+                onListFiltersChanged(listFilters.copy(directors = wordFilter))
+            },
+            showPopup = showPopup,
+            modifier = Modifier.testTag(tag = UiTags.Buttons.DIRECTORS_FILTER),
         )
         MinMaxButton(
             label = stringResource(R.string.by_year),
@@ -391,15 +404,17 @@ fun FilteringMenu(
             showPopup = showPopup,
             modifier = Modifier.testTag(tag = UiTags.Buttons.RT_SCORE_FILTER),
         )
-        WordSelectButton(
-            label = stringResource(R.string.by_genre),
-            filterValues = listFilters.genres,
-            candidates = allGenres,
-            onFilterValuesChanged = { wordFilter ->
-                onListFiltersChanged(listFilters.copy(genres = wordFilter))
+        MinMaxButton(
+            label = stringResource(R.string.by_runtime),
+            filterValues = listFilters.runtime,
+            onFilterValuesChanged = { minMaxFilter ->
+                onListFiltersChanged(listFilters.copy(runtime = minMaxFilter))
             },
+            valueToTextInput = { presetMapper.runtimeToInput(it) },
+            valueToTextButton = { presetMapper.runtimeToButton(it) },
+            textToValue = { presetMapper.inputToRuntime(it) },
             showPopup = showPopup,
-            modifier = Modifier.testTag(tag = UiTags.Buttons.GENRES_FILTER),
+            modifier = Modifier.testTag(tag = UiTags.Buttons.RUNTIME_FILTER),
         )
     }
 }
@@ -427,7 +442,7 @@ fun ListModeButton(
         modifier =
             modifier
                 .padding(3.dp)
-                .sizeIn(minWidth = 100.dp, minHeight = 32.dp)
+                .sizeIn(minWidth = 126.dp, minHeight = 32.dp)
                 .border(
                     width = 1.dp,
                     color = borderColor,
@@ -481,7 +496,7 @@ fun MinMaxButton(
         modifier =
             modifier
                 .padding(3.dp)
-                .sizeIn(minWidth = 120.dp, minHeight = 32.dp)
+                .sizeIn(minWidth = 126.dp, minHeight = 32.dp)
                 .border(
                     width = 1.dp,
                     color = borderColor,
@@ -548,7 +563,7 @@ fun WordSelectButton(
         modifier =
             modifier
                 .padding(3.dp)
-                .sizeIn(minWidth = 120.dp, minHeight = 32.dp)
+                .size(width = 126.dp, height = 32.dp)
                 .border(
                     width = 1.dp,
                     color = borderColor,

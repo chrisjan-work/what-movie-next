@@ -28,6 +28,7 @@ import androidx.room.Update
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
+import com.lairofpixies.whatmovienext.models.database.data.DbStaff
 import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
 import kotlinx.coroutines.flow.Flow
 
@@ -93,4 +94,8 @@ interface MovieDao {
     @Transaction
     @Query("SELECT * FROM dbmovie WHERE tmdbId = :tmdbId")
     suspend fun fetchMovieByTmdbId(tmdbId: Long): DbStaffedMovie?
+
+    @Transaction
+    @Query("SELECT * FROM dbrole WHERE dept = :dept")
+    fun getStaffByDepartment(dept: String): Flow<List<DbStaff>>
 }

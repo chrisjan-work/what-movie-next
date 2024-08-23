@@ -38,6 +38,7 @@ object UiTags {
         const val RT_SCORE_FILTER = "RtScoreFilter"
         const val MC_SCORE_FILTER = "McScoreFilter"
         const val GENRES_FILTER = "GenresFilter"
+        const val DIRECTORS_FILTER = "DirectorsFilter"
         const val ROULETTE = "RouletteButton"
         const val ARCHIVE_ACTION = "ArchiveAction"
         const val ARCHIVE_SHORTCUT = "ArchiveShortcut"

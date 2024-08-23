@@ -18,6 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.models.database
 
+import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -458,5 +459,73 @@ class MovieDatabaseTest {
                     staff = listOf(dbStaff),
                 )
             assertEquals(expected, result)
+        }
+
+    @Test
+    fun `get staff by department`() =
+        runTest {
+            // Given
+            val dbMovie = DbMovie(movieId = 1, title = "production")
+            val staffList =
+                listOf(
+                    DbStaff(
+                        role =
+                            DbRole(
+                                roleId = 10,
+                                personId = 10,
+                                movieId = 1,
+                                credit = "Actor",
+                                dept = Departments.Actors.department,
+                            ),
+                        person =
+                            DbPerson(
+                                personId = 10,
+                                name = "Aaron",
+                            ),
+                    ),
+                    DbStaff(
+                        role =
+                            DbRole(
+                                roleId = 11,
+                                personId = 11,
+                                movieId = 1,
+                                credit = "Director",
+                                dept = Departments.Directors.department,
+                            ),
+                        person =
+                            DbPerson(
+                                personId = 11,
+                                name = "Betty",
+                            ),
+                    ),
+                    DbStaff(
+                        role =
+                            DbRole(
+                                roleId = 12,
+                                personId = 12,
+                                movieId = 1,
+                                credit = "Writer",
+                                dept = Departments.Writers.department,
+                            ),
+                        person =
+                            DbPerson(
+                                personId = 12,
+                                name = "Carol",
+                            ),
+                    ),
+                )
+            movieDao.insertMovie(dbMovie)
+            movieDao.insertPeople(staffList.map { it.person })
+            movieDao.insertRoles(staffList.map { it.role })
+
+            // When
+            val actors = movieDao.getStaffByDepartment(Departments.Actors.department).first()
+            val directors = movieDao.getStaffByDepartment(Departments.Directors.department).first()
+            val writers = movieDao.getStaffByDepartment(Departments.Writers.department).first()
+
+            // Then
+            assertEquals(listOf(staffList[0]), actors)
+            assertEquals(listOf(staffList[1]), directors)
+            assertEquals(listOf(staffList[2]), writers)
         }
 }

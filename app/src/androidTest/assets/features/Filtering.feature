@@ -143,7 +143,7 @@ Feature: Filtering
     Then the entry "masterpiece" is not available
 
   Scenario: filter by genre
-    Given the db contains the genres "Action,Comedy,Horror"
+    Given the tmdb api offers the genres "Action,Comedy,Horror"
     And a list with an entry "fist of the dragon"
     And the db entry "fist of the dragon" has "genres" set as "Action"
     And a list with an entry "sausage of the dragon"

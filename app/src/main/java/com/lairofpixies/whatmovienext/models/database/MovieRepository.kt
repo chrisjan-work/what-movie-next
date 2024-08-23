@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -32,6 +33,8 @@ interface MovieRepository {
     val isEmpty: Flow<Boolean>
 
     fun singleCardMovie(movieId: Long): Flow<AsyncMovie>
+
+    fun getAllPeopleNamesByDepartment(department: Departments): Flow<List<String>>
 
     // write
     suspend fun storeMovie(movie: Movie.ForCard): Job

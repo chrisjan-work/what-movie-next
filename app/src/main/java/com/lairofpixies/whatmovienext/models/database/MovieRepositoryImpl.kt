@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
@@ -75,6 +76,16 @@ class MovieRepositoryImpl(
                     ?.let { dbMapper.toCardMovie(it) }
                     ?.let { AsyncMovie.Single(it) }
                     ?: AsyncMovie.Empty
+            }.flowOn(ioDispatcher)
+
+    override fun getAllPeopleNamesByDepartment(department: Departments): Flow<List<String>> =
+        dao
+            .getStaffByDepartment(department.department)
+            .map { staffList ->
+                staffList
+                    .map { staff ->
+                        staff.person.name
+                    }.distinct()
             }.flowOn(ioDispatcher)
 
     override suspend fun storeMovie(movie: Movie.ForCard) =
