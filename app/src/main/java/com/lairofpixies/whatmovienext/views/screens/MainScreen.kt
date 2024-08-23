@@ -28,6 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.lairofpixies.whatmovienext.ui.theme.WhatMovieNextTheme
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.navigation.NavigationHost
+import com.lairofpixies.whatmovienext.views.screens.popups.PopupDialogs
 
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
