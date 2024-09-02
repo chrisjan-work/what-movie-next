@@ -53,7 +53,7 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
             },
             topBar = { trigger ->
                 MovieListTopBar(
-                    trigger = trigger,
+                    triggerBar = trigger,
                     isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
                     onOpenArchive = {
                         listViewModel.onNavigateTo(Routes.ArchiveView)
@@ -61,6 +61,7 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
                     quickFind = listViewModel.quickFind.collectAsState().value,
                     onQuickFindTextUpdated = { listViewModel.updateQuickFindText(it) },
                     onQuickFindTrigger = { listViewModel.jumpToNextQuickFind() },
+                    focusEvent = listViewModel.quickFindOpenAction,
                 )
             },
         ) { _, onScrollEvent ->

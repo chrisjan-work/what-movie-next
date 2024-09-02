@@ -40,9 +40,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
@@ -54,28 +57,41 @@ import com.lairofpixies.whatmovienext.views.components.CustomTopBar
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import com.lairofpixies.whatmovienext.views.state.QuickFind
+import kotlinx.coroutines.flow.Flow
 import kotlin.math.min
 
 @Composable
 fun MovieListTopBar(
-    trigger: MutableState<Boolean>,
+    triggerBar: MutableState<Boolean>,
     isArchiveVisitable: Boolean,
     onOpenArchive: () -> Unit,
     quickFind: QuickFind,
     onQuickFindTextUpdated: (String) -> Unit,
     onQuickFindTrigger: () -> Unit,
+    focusEvent: Flow<Boolean>,
     modifier: Modifier = Modifier,
 ) {
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(trigger.value) {
-        if (!trigger.value) {
+    LaunchedEffect(triggerBar.value) {
+        if (!triggerBar.value) {
             softwareKeyboardController?.hide()
         }
     }
 
+    LaunchedEffect(focusEvent) {
+        focusEvent.collect { activate ->
+            if (activate) {
+                triggerBar.value = true
+                focusRequester.requestFocus()
+                softwareKeyboardController?.show()
+            }
+        }
+    }
+
     CustomTopBar(
-        trigger = trigger,
+        trigger = triggerBar,
         modifier = modifier,
     ) {
         Row(
@@ -89,10 +105,11 @@ fun MovieListTopBar(
                 onSearch = onQuickFindTrigger,
                 onClose = {
                     onQuickFindTextUpdated("")
-                    trigger.value = false
+                    triggerBar.value = false
                 },
                 currentMatch = quickFind.matchIndex,
                 matchCount = quickFind.matches.size,
+                focusRequester = focusRequester,
                 modifier = Modifier.weight(1f),
             )
             Icon(
@@ -118,6 +135,7 @@ fun CustomSearchBar(
     onClose: () -> Unit,
     matchCount: Int,
     currentMatch: Int,
+    focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
     BasicTextField(
@@ -126,7 +144,8 @@ fun CustomSearchBar(
         modifier =
             modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .height(32.dp),
+                .height(32.dp)
+                .focusRequester(focusRequester),
         textStyle = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground),
         singleLine = true,
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
