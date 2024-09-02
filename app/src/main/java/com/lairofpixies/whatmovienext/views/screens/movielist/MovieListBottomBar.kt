@@ -39,6 +39,9 @@ fun MovieListBottomBar(
                 onCreateNewMovie = {
                     listViewModel.onNavigateTo(Routes.CreateMovieView)
                 },
+                onQuickFindClicked = {
+                    listViewModel.onOpenQuickFind()
+                },
                 onArrangeClicked = {
                     listViewModel.onOpenBottomMenu(null)
                 },
@@ -53,10 +56,13 @@ fun MovieListBottomBar(
 fun bottomItemsForMovieList(
     isRouleteActive: Boolean,
     onCreateNewMovie: () -> Unit,
+    onQuickFindClicked: () -> Unit,
     onArrangeClicked: () -> Unit,
     onRouletteClicked: () -> Unit,
 ): List<CustomBarItem> {
     val createItem = CustomBarItem(ButtonSpec.CreateMovieShortcut, onCreateNewMovie)
+
+    val findItem = CustomBarItem(ButtonSpec.QuickFindAction, onQuickFindClicked)
 
     val rouletteItem =
         CustomBarItem(
@@ -75,6 +81,7 @@ fun bottomItemsForMovieList(
 
     return listOfNotNull(
         arrangeItem,
+        findItem,
         rouletteItem,
         createItem,
     )

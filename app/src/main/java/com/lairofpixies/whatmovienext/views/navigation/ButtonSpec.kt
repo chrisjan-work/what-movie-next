@@ -33,6 +33,7 @@ import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.RestoreFromTrash
 import androidx.compose.material.icons.outlined.Rule
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.TravelExplore
@@ -147,5 +148,10 @@ sealed class ButtonSpec(
     data object RouletteAction : ButtonSpec(
         labelRes = R.string.roulette,
         icon = Icons.Outlined.Casino,
+    )
+
+    data object QuickFindAction : ButtonSpec(
+        labelRes = R.string.find,
+        icon = Icons.Outlined.Search,
     )
 }

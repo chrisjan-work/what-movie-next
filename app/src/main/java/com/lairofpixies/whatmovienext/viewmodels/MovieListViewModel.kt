@@ -38,8 +38,10 @@ import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.QuickFind
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -76,6 +78,9 @@ class MovieListViewModel
 
         private val _quickFind = MutableStateFlow(QuickFind.Default)
         val quickFind: StateFlow<QuickFind> = _quickFind.asStateFlow()
+
+        private val _quickFindOpenAction = MutableSharedFlow<Boolean>()
+        val quickFindOpenAction = _quickFindOpenAction.asSharedFlow()
 
         init {
             connectArchivedMovies()
@@ -232,6 +237,12 @@ class MovieListViewModel
                         _quickFind.value = copy(matchIndex = (matchIndex + 1) % matches.size)
                     }
                 }
+            }
+        }
+
+        fun onOpenQuickFind() {
+            viewModelScope.launch {
+                _quickFindOpenAction.emit(true)
             }
         }
     }

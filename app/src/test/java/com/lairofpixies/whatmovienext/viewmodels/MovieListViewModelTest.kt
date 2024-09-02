@@ -49,6 +49,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -525,5 +526,22 @@ class MovieListViewModelTest {
                 QuickFind("match", 1, listOf(1, 3)),
                 listViewModel.quickFind.value,
             )
+        }
+
+    @Test
+    fun `forward open quickfind input`() =
+        runTest {
+            // Given
+            construct()
+            var clickCount = 0
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                listViewModel.quickFindOpenAction.collect { clickCount++ }
+            }
+
+            // When
+            listViewModel.onOpenQuickFind()
+
+            // Then
+            assertEquals(1, clickCount)
         }
 }
