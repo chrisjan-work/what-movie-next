@@ -36,6 +36,8 @@ interface MovieRepository {
 
     fun getAllPeopleNamesByDepartment(department: Departments): Flow<List<String>>
 
+    fun getAllGenresFromMovies(): Flow<List<String>>
+
     // write
     suspend fun storeMovie(movie: Movie.ForCard): Job
 

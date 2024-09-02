@@ -485,4 +485,25 @@ class MovieRepositoryImplTest {
             // Then
             assertEquals(listOf("Aaron", "Betty"), names.first())
         }
+
+    @Test
+    fun `extract genres from stored movies`() =
+        runTest {
+            // Given
+            val movies =
+                listOf(
+                    DbMovie(title = "one", genres = "Action"),
+                    DbMovie(title = "two", genres = "Action,Adventure"),
+                    DbMovie(title = "three", genres = "Drama,Horror"),
+                )
+            coEvery { movieDao.getAllMovies() } returns
+                flowOf(movies)
+
+            // When
+            initializeSut()
+            val genres = movieRepository.getAllGenresFromMovies().first()
+
+            // Then
+            assertEquals(listOf("Action", "Adventure", "Drama", "Horror"), genres)
+        }
 }

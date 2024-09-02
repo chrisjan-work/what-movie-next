@@ -88,6 +88,16 @@ class MovieRepositoryImpl(
                     }.distinct()
             }.flowOn(ioDispatcher)
 
+    override fun getAllGenresFromMovies(): Flow<List<String>> =
+        dao
+            .getAllMovies()
+            .map { dbMovies ->
+                dbMovies
+                    .flatMap { dbMovie ->
+                        dbMapper.toGenres(dbMovie.genres)
+                    }.distinct()
+            }.flowOn(ioDispatcher)
+
     override suspend fun storeMovie(movie: Movie.ForCard) =
         repositoryScope.launch {
             val oldMovie = dao.fetchMovieByTmdbId(movie.searchData.tmdbId)
