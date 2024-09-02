@@ -27,19 +27,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun ScrollableLazyColumn(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    onScrollEvent: () -> Unit,
+    onScrollEvent: (Boolean) -> Unit,
     lazyListState: LazyListState = rememberLazyListState(),
     content: LazyListScope.() -> Unit,
 ) {
+    val topPaddingPx = with(LocalDensity.current) { contentPadding.calculateTopPadding().toPx() }
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemScrollOffset }.collect {
-            onScrollEvent()
+            val shouldShow =
+                lazyListState.firstVisibleItemIndex == 0 && lazyListState.firstVisibleItemScrollOffset < topPaddingPx
+            onScrollEvent(shouldShow)
         }
     }
 

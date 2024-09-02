@@ -21,6 +21,8 @@ package com.lairofpixies.whatmovienext.stepdefs
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -210,12 +212,14 @@ class MovieListStepDefs(
 
     @And("the user navigates to the archive")
     fun theUserNavigatesToTheArchive() {
-        // pull-to-refresh to show top bar
+        // show top bar
         composeRule.composeStep {
-            onNodeWithTag(UiTags.Screens.MOVIE_LIST)
-                .performTouchInput {
-                    swipeDown()
-                }
+            if (onNodeWithTag(UiTags.Buttons.ARCHIVE_SHORTCUT).isNotDisplayed()) {
+                onNodeWithTag(UiTags.Screens.MOVIE_LIST)
+                    .performTouchInput {
+                        longClick()
+                    }
+            }
         }
 
         // click on button

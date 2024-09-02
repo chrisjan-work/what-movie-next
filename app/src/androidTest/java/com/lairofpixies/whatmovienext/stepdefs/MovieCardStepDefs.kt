@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.stepdefs
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
@@ -116,11 +117,11 @@ class MovieCardStepDefs(
 
     @When("the user archives the current entry")
     fun theUserArchivesTheCurrentEntry() {
-        // pull-to-refresh to show top bar
+        // long click to show top bar
         composeRule.composeStep {
             onNodeWithTag(UiTags.Screens.MOVIE_CARD)
                 .performTouchInput {
-                    swipeDown()
+                    longClick()
                 }
         }
 

@@ -34,13 +34,13 @@ fun ScrollableColumn(
     modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    onScrollEvent: () -> Unit,
+    onScrollEvent: (Boolean) -> Unit,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     val scrollState = rememberScrollState()
     LaunchedEffect(scrollState.value) {
         snapshotFlow { scrollState.value }.collect {
-            onScrollEvent()
+            onScrollEvent(false)
         }
     }
 

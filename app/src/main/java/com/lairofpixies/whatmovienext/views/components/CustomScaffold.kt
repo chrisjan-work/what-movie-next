@@ -42,7 +42,7 @@ fun CustomScaffold(
     bottomBar: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     topBar: @Composable (MutableState<Boolean>) -> Unit = {},
-    content: @Composable (PaddingValues, () -> Unit) -> Unit,
+    content: @Composable (PaddingValues, (Boolean) -> Unit) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val topbarState = remember { mutableStateOf(false) }
@@ -60,9 +60,9 @@ fun CustomScaffold(
     val refreshState =
         rememberPullRefreshState(isRefreshing.value, onRefresh = onSwitchTopBar)
 
-    val onScrollEvent: () -> Unit = {
+    val onScrollEvent: (Boolean) -> Unit = { show ->
         if (!isRefreshing.value) {
-            topbarState.value = false
+            topbarState.value = show
         }
     }
 
