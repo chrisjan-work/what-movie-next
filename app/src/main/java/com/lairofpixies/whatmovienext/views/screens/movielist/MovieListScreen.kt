@@ -58,6 +58,9 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
                     onOpenArchive = {
                         listViewModel.onNavigateTo(Routes.ArchiveView)
                     },
+                    quickFind = listViewModel.quickFind.collectAsState().value,
+                    onQuickFindTextUpdated = { listViewModel.updateQuickFindText(it) },
+                    onQuickFindTrigger = { listViewModel.jumpToNextQuickFind() },
                 )
             },
         ) { _, onScrollEvent ->
@@ -67,6 +70,11 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
                         .collectAsState()
                         .value
                         .toList(),
+                selectedMovieIndex =
+                    listViewModel.quickFind
+                        .collectAsState()
+                        .value
+                        .movieIndex,
                 onMovieClicked = { movieId ->
                     listViewModel.onNavigateWithParam(
                         Routes.SingleMovieView,

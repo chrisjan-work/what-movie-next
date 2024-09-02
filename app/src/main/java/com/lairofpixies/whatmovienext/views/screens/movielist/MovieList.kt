@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.RemoveRedEye
@@ -42,10 +43,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,23 +65,47 @@ import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.printableYear
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
 import com.lairofpixies.whatmovienext.views.components.ScrollableLazyColumn
+import com.lairofpixies.whatmovienext.views.components.TOP_BAR_SPACE
 import com.lairofpixies.whatmovienext.views.screens.UiTags
+import kotlinx.coroutines.delay
 
 @Composable
 fun MovieList(
     filteredMovies: List<Movie.ForList>,
+    selectedMovieIndex: Int?,
     onMovieClicked: (Long) -> Unit,
     onScrollEvent: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val selectionScrollOffset = with(LocalDensity.current) { 120.dp.roundToPx() }
+    val topBarOffset = with(LocalDensity.current) { TOP_BAR_SPACE.roundToPx() }
+    val lazyListState = rememberLazyListState(0, topBarOffset)
+    val manualScrolling = remember { mutableStateOf(true) }
+
+    LaunchedEffect(selectedMovieIndex) {
+        selectedMovieIndex?.let {
+            // avoid triggering scroll event in this case
+            manualScrolling.value = false
+            lazyListState.scrollToItem(selectedMovieIndex, -selectionScrollOffset)
+            delay(100)
+            manualScrolling.value = true
+        }
+    }
+
     ScrollableLazyColumn(
         modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
-        contentPadding = PaddingValues(bottom = 120.dp),
-        onScrollEvent = onScrollEvent,
+        contentPadding = PaddingValues(top = TOP_BAR_SPACE, bottom = 120.dp),
+        lazyListState = lazyListState,
+        onScrollEvent = {
+            if (manualScrolling.value) {
+                onScrollEvent()
+            }
+        },
     ) {
         itemsIndexed(filteredMovies) { movieIndex, movie ->
             MovieListItem(
                 movie,
+                isSelected = selectedMovieIndex == movieIndex,
                 modifier = modifier.testTag("${UiTags.Items.MOVIE_LIST_ITEM}_$movieIndex"),
             ) { onMovieClicked(movie.appData.movieId) }
         }
@@ -86,6 +115,7 @@ fun MovieList(
 @Composable
 fun MovieListItem(
     movie: Movie.ForList,
+    isSelected: Boolean,
     modifier: Modifier = Modifier,
     onItemClicked: () -> Unit = {},
 ) {
@@ -95,6 +125,13 @@ fun MovieListItem(
         } else {
             MaterialTheme.colorScheme.background
         }
+    val borderColor =
+        if (!isSelected) {
+            MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)
+        } else {
+            MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+        }
+
     Row(
         modifier =
             modifier
@@ -107,7 +144,7 @@ fun MovieListItem(
                     border =
                         BorderStroke(
                             1.dp,
-                            MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                            borderColor,
                         ),
                     shape = RoundedCornerShape(8.dp),
                 ).padding(6.dp),

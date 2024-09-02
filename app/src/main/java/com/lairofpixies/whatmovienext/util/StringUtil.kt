@@ -111,3 +111,29 @@ fun printableRuntime(
         in 1..59 -> "$pre$runtimeMinutes min$pos"
         else -> "$pre${runtimeMinutes / 60}h ${runtimeMinutes % 60}min$pos"
     }
+
+fun quickMatchAll(
+    query: String,
+    candidate: String,
+): Boolean =
+    query
+        .trim()
+        .split(" ")
+        .filter { it.isNotBlank() }
+        .let { wordList ->
+            wordList.isNotEmpty() &&
+                wordList.all { candidate.contains(it, ignoreCase = true) }
+        }
+
+fun quickMatchAny(
+    query: String,
+    candidate: String,
+): Boolean =
+    query
+        .trim()
+        .split(" ")
+        .filter { it.isNotBlank() }
+        .let { wordList ->
+            wordList.isNotEmpty() &&
+                wordList.any { candidate.contains(it, ignoreCase = true) }
+        }

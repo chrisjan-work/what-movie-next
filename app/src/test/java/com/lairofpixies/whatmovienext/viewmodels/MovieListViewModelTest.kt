@@ -35,6 +35,7 @@ import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.BottomMenuOption
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
+import com.lairofpixies.whatmovienext.views.state.QuickFind
 import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
@@ -351,5 +352,178 @@ class MovieListViewModelTest {
             // Then
             val sortedDirectors = listOf("Zack Aaron", "Peter Peterovitsch Bean", "Max Mustermann")
             assertEquals(sortedDirectors, listViewModel.allDirectors.value)
+        }
+
+    @Test
+    fun `quickfind updates for title matching`() =
+        runTest {
+            // Given
+            every { mainViewModelMock.listedMovies } returns
+                MutableStateFlow(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            forList(id = 0, title = "nope"),
+                            forList(id = 1, title = "the abcd of literature"),
+                            forList(id = 2, title = "skipme"),
+                            forList(id = 3, title = "an abc"),
+                            forList(id = 4, title = "tail"),
+                        ),
+                    ),
+                )
+            construct()
+
+            // When
+            listViewModel.updateQuickFindText("abc")
+            assertEquals(
+                QuickFind("abc", 0, listOf(1, 3)),
+                listViewModel.quickFind.value,
+            )
+
+            listViewModel.updateQuickFindText("abcd")
+            assertEquals(
+                QuickFind("abcd", 0, listOf(1)),
+                listViewModel.quickFind.value,
+            )
+
+            listViewModel.updateQuickFindText("an bc")
+            assertEquals(
+                QuickFind("an bc", 0, listOf(3)),
+                listViewModel.quickFind.value,
+            )
+
+            listViewModel.updateQuickFindText("")
+            assertEquals(
+                QuickFind.Default,
+                listViewModel.quickFind.value,
+            )
+        }
+
+    @Test
+    fun `quickfind updates for match details`() =
+        runTest {
+            // Given
+            every { mainViewModelMock.listedMovies } returns
+                MutableStateFlow(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            forList(id = 0, title = "skipme"),
+                            forList(id = 1, title = "bytitle"),
+                            forList(
+                                id = 2,
+                                title = "bygenresingle",
+                                genres = listOf("singlegenre"),
+                            ),
+                            forList(
+                                id = 3,
+                                title = "bygenreany",
+                                genres = listOf("miss", "match"),
+                            ),
+                            forList(
+                                id = 4,
+                                title = "bydirector",
+                                directors = listOf("jack", "jill"),
+                            ),
+                        ),
+                    ),
+                )
+            construct()
+
+            // When
+            listViewModel.updateQuickFindText("bytitle")
+            assertEquals(
+                QuickFind("bytitle", 0, listOf(1)),
+                listViewModel.quickFind.value,
+            )
+
+            listViewModel.updateQuickFindText("singlegenre")
+            assertEquals(
+                QuickFind("singlegenre", 0, listOf(2)),
+                listViewModel.quickFind.value,
+            )
+            listViewModel.updateQuickFindText("another match")
+            assertEquals(
+                QuickFind("another match", 0, listOf(3)),
+                listViewModel.quickFind.value,
+            )
+
+            listViewModel.updateQuickFindText("jack")
+            assertEquals(
+                QuickFind("jack", 0, listOf(4)),
+                listViewModel.quickFind.value,
+            )
+
+            listViewModel.updateQuickFindText("jack jill")
+            assertEquals(
+                QuickFind("jack jill", 0, emptyList()),
+                listViewModel.quickFind.value,
+            )
+        }
+
+    @Test
+    fun `quickfind next`() =
+        runTest {
+            // Given
+            every { mainViewModelMock.listedMovies } returns
+                MutableStateFlow(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            forList(id = 0, title = "nope"),
+                            forList(id = 1, title = "first match"),
+                            forList(id = 2, title = "second match"),
+                            forList(id = 3, title = "miss"),
+                        ),
+                    ),
+                )
+            construct()
+            listViewModel.updateQuickFindText("match")
+            assertEquals(
+                QuickFind("match", 0, listOf(1, 2)),
+                listViewModel.quickFind.value,
+            )
+
+            // When
+            listViewModel.jumpToNextQuickFind()
+            assertEquals(
+                QuickFind("match", 1, listOf(1, 2)),
+                listViewModel.quickFind.value,
+            )
+
+            listViewModel.jumpToNextQuickFind()
+            assertEquals(
+                QuickFind("match", 0, listOf(1, 2)),
+                listViewModel.quickFind.value,
+            )
+        }
+
+    @Test
+    fun `quickfind stay selected`() =
+        runTest {
+            // Given
+            every { mainViewModelMock.listedMovies } returns
+                MutableStateFlow(
+                    AsyncMovie.Multiple(
+                        listOf(
+                            forList(id = 0, title = "nope"),
+                            forList(id = 1, title = "first match"),
+                            forList(id = 2, title = "middle catch"),
+                            forList(id = 3, title = "second match"),
+                        ),
+                    ),
+                )
+            construct()
+            listViewModel.updateQuickFindText("atch")
+            listViewModel.jumpToNextQuickFind()
+            listViewModel.jumpToNextQuickFind()
+            assertEquals(
+                QuickFind("atch", 2, listOf(1, 2, 3)),
+                listViewModel.quickFind.value,
+            )
+
+            // When
+            listViewModel.updateQuickFindText("match")
+            assertEquals(
+                QuickFind("match", 1, listOf(1, 3)),
+                listViewModel.quickFind.value,
+            )
         }
 }

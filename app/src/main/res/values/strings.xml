@@ -76,4 +76,6 @@
     <string name="by_rotten_tomatoes_score">rt score</string>
     <string name="by_metacritic_score">m score</string>
     <string name="results">Results</string>
+    <string name="find">Find</string>
+    <string name="clear_find">Clear Find</string>
 </resources>
