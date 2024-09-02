@@ -46,7 +46,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -126,20 +125,6 @@ class SearchViewModelTest {
             // Then
             assertEquals(searchQuery, result)
         }
-
-    @Test
-    @Ignore("to be implemented later")
-    fun `store search query in database`() {
-        // Given
-        val searchQuery = SearchQuery(title = "Once upon a time", creationTime = 1000)
-        searchViewModel.updateSearchQuery(searchQuery)
-
-        // When
-        searchViewModel.onSaveQueryAction()
-
-        // Then
-        // TODO
-    }
 
     @Test
     fun `search and find a movie`() =

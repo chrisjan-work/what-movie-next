@@ -144,21 +144,3 @@ Feature: Search Online
     Given the online repo returns an entry with title "Requiem for a Dream" and genre id "200"
     When the user searches for the title "Dream"
     Then the search results contains an entry with title "Dream Scenario" and genre "Comedy"
-
-#  # TODO
-#  Scenario: App is offline
-#    Given the user initiates a new entry
-#    When the device is offline
-#    Then the app indicates that it is offline
-#    When the user attempts to search for a movie
-#    Then a dialog is shown informing that search is disabled while offline
-#
-#  # TODO
-#  Scenario: Switching on- and offline modes
-#    Given the user initiates a new entry
-#    When the device is offline
-#    Then the app indicates that it is offline
-#    When the connection is switched on
-#    Then the search button is enabled
-#    When the connection is switched off
-#    Then the app indicates that it is offline

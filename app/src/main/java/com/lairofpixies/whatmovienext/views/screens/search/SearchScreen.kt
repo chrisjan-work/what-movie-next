@@ -61,7 +61,6 @@ fun SearchScreen(searchViewModel: SearchViewModel) {
                     searchViewModel.updateSearchQuery(searchQuery)
                 },
                 onSearchAction = { searchViewModel.startSearch() },
-                onSaveQueryAction = { searchViewModel.onSaveQueryAction() },
                 onCancelAction = { searchViewModel.onLeaveAction() },
                 onCloseKeyboard = onCloseKeyboard,
                 focusRequester = focusRequester,

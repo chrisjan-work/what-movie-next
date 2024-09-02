@@ -52,7 +52,6 @@ fun SearchEditor(
     query: SearchQuery,
     onUpdateQuery: (SearchQuery) -> Unit,
     onSearchAction: () -> Unit,
-    onSaveQueryAction: () -> Unit,
     onCancelAction: () -> Unit,
     onCloseKeyboard: () -> Unit,
     focusRequester: FocusRequester,
@@ -67,7 +66,6 @@ fun SearchEditor(
                         bottomItemsForSearchEditor(
                             searchEnabled = query.title.isNotBlank(),
                             onCancelAction = onCancelAction,
-                            onSaveAction = onSaveQueryAction,
                             onSearchAction = onSearchAction,
                         ),
                 )
@@ -145,11 +143,9 @@ fun EditableTitleField(
 fun bottomItemsForSearchEditor(
     searchEnabled: Boolean,
     onCancelAction: () -> Unit,
-    onSaveAction: () -> Unit,
     onSearchAction: () -> Unit,
 ): List<CustomBarItem> =
     listOf(
         CustomBarItem(ButtonSpec.CancelAction, onCancelAction),
-        CustomBarItem(ButtonSpec.SaveAction, enabled = false, onClick = onSaveAction),
         CustomBarItem(ButtonSpec.SearchAction, searchEnabled, onClick = onSearchAction),
     )
