@@ -126,17 +126,17 @@ fun NumberChooserDialog(
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    horizontalArrangement = Arrangement.End,
                     modifier = Modifier.align(Alignment.End).fillMaxWidth(),
                 ) {
-                    OutlinedButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.cancel))
-                    }
-                    OutlinedButton(onClick = {
-                        currentValues.value = MinMaxFilter(null, null, false)
-                        minInputText.value = "-"
-                        maxInputText.value = "-"
-                    }) {
+                    OutlinedButton(
+                        onClick = {
+                            currentValues.value = MinMaxFilter(null, null, false)
+                            minInputText.value = "-"
+                            maxInputText.value = "-"
+                        },
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp),
+                    ) {
                         Text(stringResource(R.string.reset))
                     }
                     Button(
@@ -150,6 +150,7 @@ fun NumberChooserDialog(
                             onConfirm(currentValues.value)
                             onDismiss()
                         },
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp),
                     ) {
                         Text(stringResource(R.string.update))
                     }
