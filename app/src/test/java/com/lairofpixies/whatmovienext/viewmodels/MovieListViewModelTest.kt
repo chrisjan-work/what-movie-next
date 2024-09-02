@@ -80,7 +80,10 @@ class MovieListViewModelTest {
         movieRepository = mockk(relaxed = true)
         presetRepository = mockk(relaxed = true)
 
-        mainViewModelMock = mockk(relaxed = true)
+        mainViewModelMock =
+            mockk(relaxed = true) {
+                every { listedMovies } returns MutableStateFlow(AsyncMovie.Empty)
+            }
         navHostControllerMock = mockk(relaxed = true)
         sortProcessor = SortProcessor(mockk(relaxed = true))
         filterProcessor = FilterProcessor()
@@ -273,7 +276,7 @@ class MovieListViewModelTest {
                 )
             construct()
             listViewModel.randomizer = Random(100)
-            assertEquals(true, listViewModel.canSpinRoulette())
+            assertEquals(true, listViewModel.canSpinRoulette.value)
 
             // randomizer with fixed seed will produce fixed sequence
             val expectedSequence: List<Long> = listOf(3, 3, 3, 2, 1, 2)
@@ -300,7 +303,7 @@ class MovieListViewModelTest {
             every { mainViewModelMock.listedMovies } returns
                 MutableStateFlow(AsyncMovie.Empty)
             construct()
-            assertEquals(false, listViewModel.canSpinRoulette())
+            assertEquals(false, listViewModel.canSpinRoulette.value)
         }
 
     @Test
