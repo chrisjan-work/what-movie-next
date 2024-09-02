@@ -115,6 +115,6 @@ fun bottomItemsForChoiceView(
     listOf(
         CustomBarItem(ButtonSpec.CancelAction, onCancelAction),
         CustomBarItem(ButtonSpec.EditShortcut, onEditSearchAction),
-        CustomBarItem(ButtonSpec.SearchAction, onShowResultsAction),
+        CustomBarItem(ButtonSpec.ResultsAction, onShowResultsAction),
         CustomBarItem(ButtonSpec.SaveAction, onSaveMovieAction),
     )

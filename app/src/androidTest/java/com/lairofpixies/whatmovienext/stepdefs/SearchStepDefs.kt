@@ -299,7 +299,7 @@ class SearchStepDefs(
     @When("the user clicks on back to results button")
     fun theUserClicksOnBackToResultsButton() =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(stringResource(R.string.lookup), UiTags.Screens.SELECTION_VIEW)
+            onNodeWithTextUnderTag(stringResource(R.string.results), UiTags.Screens.SELECTION_VIEW)
                 .performClick()
         }
 

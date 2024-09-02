@@ -75,4 +75,5 @@
     <string name="at_most">at most</string>
     <string name="by_rotten_tomatoes_score">rt score</string>
     <string name="by_metacritic_score">m score</string>
+    <string name="results">Results</string>
 </resources>
