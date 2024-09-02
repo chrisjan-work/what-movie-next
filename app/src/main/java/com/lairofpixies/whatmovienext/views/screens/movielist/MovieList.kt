@@ -74,7 +74,7 @@ fun MovieList(
     filteredMovies: List<Movie.ForList>,
     selectedMovieIndex: Int?,
     onMovieClicked: (Long) -> Unit,
-    onScrollEvent: () -> Unit,
+    onScrollEvent: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val selectionScrollOffset = with(LocalDensity.current) { 120.dp.roundToPx() }
@@ -84,10 +84,9 @@ fun MovieList(
 
     LaunchedEffect(selectedMovieIndex) {
         selectedMovieIndex?.let {
-            // avoid triggering scroll event in this case
             manualScrolling.value = false
             lazyListState.scrollToItem(selectedMovieIndex, -selectionScrollOffset)
-            delay(100)
+            delay(100L)
             manualScrolling.value = true
         }
     }
@@ -96,9 +95,9 @@ fun MovieList(
         modifier = modifier.testTag(UiTags.Screens.MOVIE_LIST),
         contentPadding = PaddingValues(top = TOP_BAR_SPACE, bottom = 120.dp),
         lazyListState = lazyListState,
-        onScrollEvent = {
+        onScrollEvent = { show ->
             if (manualScrolling.value) {
-                onScrollEvent()
+                onScrollEvent(show)
             }
         },
     ) {
