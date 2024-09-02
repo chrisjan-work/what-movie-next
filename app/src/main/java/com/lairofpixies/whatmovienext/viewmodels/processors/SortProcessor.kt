@@ -47,7 +47,6 @@ class SortProcessor
                     SortingCriteria.Year ->
                         unsorted.sortedBy { it.searchData.year ?: 0 }
 
-                    // TODO: sort by watchdate instead of watchcount? if so, where does the "unwatched" go, beginning or end?
                     SortingCriteria.WatchCount ->
                         unsorted.sortedBy { it.appData.watchDates.size }
 

@@ -142,7 +142,6 @@ fun bottomItemsForMovieCard(
             null
         }
 
-    // TODO: enter dates here
     val seenItem =
         if (movie.appData.watchDates.isEmpty()) {
             CustomBarItem(ButtonSpec.PendingMovieState) {

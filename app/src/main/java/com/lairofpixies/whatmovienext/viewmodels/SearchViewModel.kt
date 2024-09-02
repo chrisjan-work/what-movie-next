@@ -87,10 +87,6 @@ class SearchViewModel
             _currentQuery.value = query
         }
 
-        fun onSaveQueryAction() {
-            TODO()
-        }
-
         fun startSearch() {
             clearSearchResults()
             if (currentQuery.value.title.isBlank()) {
