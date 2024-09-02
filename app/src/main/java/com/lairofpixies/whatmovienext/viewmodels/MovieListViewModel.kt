@@ -113,7 +113,8 @@ class MovieListViewModel
                 movieRepository
                     .getAllPeopleNamesByDepartment(Departments.Directors)
                     .collect { directors ->
-                        _allDirectors.value = directors
+                        // sort by family name (assumption: it's the last of the space-separated words)
+                        _allDirectors.value = directors.sortedBy { it.split(" ").last() }
                     }
             }
         }

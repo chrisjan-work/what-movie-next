@@ -340,4 +340,20 @@ class MovieListViewModelTest {
             // Then
             assertEquals(directors, listViewModel.allDirectors.value)
         }
+
+    @Test
+    fun `sort directors by family name`() =
+        runTest {
+            // Given
+            val directors = listOf("Max Mustermann", "Peter Peterovitsch Bean", "Zack Aaron")
+            every { movieRepository.getAllPeopleNamesByDepartment(Departments.Directors) } returns
+                flowOf(directors)
+
+            // When
+            construct()
+
+            // Then
+            val sortedDirectors = listOf("Zack Aaron", "Peter Peterovitsch Bean", "Max Mustermann")
+            assertEquals(sortedDirectors, listViewModel.allDirectors.value)
+        }
 }
