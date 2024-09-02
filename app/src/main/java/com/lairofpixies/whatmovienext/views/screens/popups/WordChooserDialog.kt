@@ -89,7 +89,8 @@ fun WordChooserDialog(
                     modifier =
                         modifier
                             .heightIn(max = 250.dp)
-                            .verticalScroll(rememberScrollState()),
+                            .verticalScroll(rememberScrollState())
+                            .padding(8.dp),
                     horizontalArrangement = Arrangement.Start,
                 ) {
                     candidates.forEach { genre ->
@@ -109,18 +110,18 @@ fun WordChooserDialog(
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    horizontalArrangement = Arrangement.End,
                     modifier =
                         Modifier
                             .align(Alignment.End)
                             .fillMaxWidth(),
                 ) {
-                    OutlinedButton(onClick = onDismiss) {
-                        Text(stringResource(R.string.cancel))
-                    }
-                    OutlinedButton(onClick = {
-                        currentWords.value = emptyList()
-                    }) {
+                    OutlinedButton(
+                        onClick = {
+                            currentWords.value = emptyList()
+                        },
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp),
+                    ) {
                         Text(stringResource(R.string.reset))
                     }
                     Button(
@@ -128,6 +129,7 @@ fun WordChooserDialog(
                             onConfirm(WordFilter(currentWords.value, true))
                             onDismiss()
                         },
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp),
                     ) {
                         Text(stringResource(R.string.update))
                     }
