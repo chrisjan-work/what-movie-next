@@ -25,7 +25,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -41,7 +41,7 @@ const val TOP_BAR_REFRESH_TIME_MS = 1000L
 fun CustomScaffold(
     bottomBar: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    topBar: @Composable (State<Boolean>) -> Unit = {},
+    topBar: @Composable (MutableState<Boolean>) -> Unit = {},
     content: @Composable (PaddingValues, () -> Unit) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()

@@ -131,4 +131,74 @@ class StringUtilKtTest {
             printableRuntime(60, "abcd-", "-efg"),
         )
     }
+
+    @Test
+    fun `match strings all words required`() {
+        // same
+        assertEquals(true, quickMatchAll("abc", "abc"))
+        // substring beginning
+        assertEquals(true, quickMatchAll("ab", "abc"))
+        // substring middle
+        assertEquals(true, quickMatchAll("bc", "abcd"))
+        // too long
+        assertEquals(false, quickMatchAll("abc", "ab"))
+        // mismatch
+        assertEquals(false, quickMatchAll("bc", "acbd"))
+        // gaps
+        assertEquals(false, quickMatchAll("bd", "abcde"))
+        // ignore case
+        assertEquals(true, quickMatchAll("AB", "ab"))
+        assertEquals(true, quickMatchAll("aB", "Ab"))
+        assertEquals(true, quickMatchAll("ab", "aB"))
+        // match all words
+        assertEquals(true, quickMatchAll("ab cd", "acdemabdy"))
+        // miss one word, rejected
+        assertEquals(false, quickMatchAll("ab cd", "addemabdy"))
+        assertEquals(false, quickMatchAll("ab cd", "acdemadby"))
+        // three words
+        assertEquals(true, quickMatchAll("aaa b ccc", "acccaabaaa"))
+        // words in candidate
+        assertEquals(true, quickMatchAll("abc", "cda aaabccc eeee"))
+        // empty string
+        assertEquals(false, quickMatchAll("", "abcd"))
+        // space string
+        assertEquals(false, quickMatchAll("   ", "a b    c"))
+        // double spaces
+        assertEquals(true, quickMatchAll("ab  cd", "abcd"))
+    }
+
+    @Test
+    fun `match strings any word accepted`() {
+        // same
+        assertEquals(true, quickMatchAny("abc", "abc"))
+        // substring beginning
+        assertEquals(true, quickMatchAny("ab", "abc"))
+        // substring middle
+        assertEquals(true, quickMatchAny("bc", "abcd"))
+        // too long
+        assertEquals(false, quickMatchAny("abc", "ab"))
+        // mismatch
+        assertEquals(false, quickMatchAny("bc", "acbd"))
+        // gaps
+        assertEquals(false, quickMatchAny("bd", "abcde"))
+        // ignore case
+        assertEquals(true, quickMatchAny("AB", "ab"))
+        assertEquals(true, quickMatchAny("aB", "Ab"))
+        assertEquals(true, quickMatchAny("ab", "aB"))
+        // match all words
+        assertEquals(true, quickMatchAny("ab cd", "acdemabdy"))
+        // miss one word, still accepted
+        assertEquals(true, quickMatchAny("ab cd", "addemabdy"))
+        assertEquals(true, quickMatchAny("ab cd", "acdemadby"))
+        // three words
+        assertEquals(true, quickMatchAny("aaa b ccc", "acccaabaaa"))
+        // words in candidate
+        assertEquals(true, quickMatchAny("abc", "cda aaabccc eeee"))
+        // empty string
+        assertEquals(false, quickMatchAny("", "abcd"))
+        // space string
+        assertEquals(false, quickMatchAny("   ", "a b    c"))
+        // double spaces
+        assertEquals(true, quickMatchAny("ab  cd", "abcd"))
+    }
 }

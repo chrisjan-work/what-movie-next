@@ -33,13 +33,15 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
 
+val TOP_BAR_SPACE = 48.dp
+
 @Composable
 fun CustomTopBar(
     trigger: State<Boolean>,
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val topBarHeightPx = with(LocalDensity.current) { 56.dp.toPx() }
+    val topBarHeightPx = with(LocalDensity.current) { TOP_BAR_SPACE.toPx() }
     val topBarOffset =
         animateIntOffsetAsState(
             targetValue =

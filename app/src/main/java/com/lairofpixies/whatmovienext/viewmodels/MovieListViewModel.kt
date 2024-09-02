@@ -27,12 +27,15 @@ import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
+import com.lairofpixies.whatmovienext.util.quickMatchAll
+import com.lairofpixies.whatmovienext.util.quickMatchAny
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.BottomMenuOption
 import com.lairofpixies.whatmovienext.views.state.BottomMenuState
 import com.lairofpixies.whatmovienext.views.state.ListFilters
+import com.lairofpixies.whatmovienext.views.state.QuickFind
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,6 +73,9 @@ class MovieListViewModel
 
         private val _allDirectors = MutableStateFlow(emptyList<String>())
         val allDirectors: StateFlow<List<String>> = _allDirectors.asStateFlow()
+
+        private val _quickFind = MutableStateFlow(QuickFind.Default)
+        val quickFind: StateFlow<QuickFind> = _quickFind.asStateFlow()
 
         init {
             connectArchivedMovies()
@@ -131,6 +137,7 @@ class MovieListViewModel
                             sortProcessor.sortMovies(filteredMovies, preset.sortingSetup)
                         }.collect { sortedMovies ->
                             mainViewModel.updateMovies(sortedMovies)
+                            updateQuickFindText(quickFind.value.query)
                         }
                 }
             }
@@ -188,4 +195,43 @@ class MovieListViewModel
         }
 
         fun presetMapper() = presetMapper
+
+        fun updateQuickFindText(query: String) {
+            viewModelScope.launch {
+                if (query.isNotBlank()) {
+                    // get a list of indices of the matched movies
+                    val movieList =
+                        mainViewModel?.listedMovies?.value?.toList<Movie.ForList>() ?: emptyList()
+                    val matches =
+                        movieList
+                            .withIndex()
+                            .filter { indexedMovie ->
+                                val movie = indexedMovie.value
+                                quickMatchAll(query, movie.searchData.title) ||
+                                    movie.searchData.genres.any { quickMatchAny(query, it) } ||
+                                    movie.detailData.directorNames.any { quickMatchAll(query, it) }
+                            }.map { it.index }
+
+                    // if a movie was already matched, update matchIndex
+                    val matchIndex =
+                        quickFind.value.movieIndex?.let {
+                            matches.indexOf(it).takeIf { matchIndex -> matchIndex != -1 }
+                        } ?: 0
+
+                    _quickFind.value = QuickFind(query, matchIndex, matches)
+                } else {
+                    _quickFind.value = QuickFind.Default
+                }
+            }
+        }
+
+        fun jumpToNextQuickFind() {
+            viewModelScope.launch {
+                with(quickFind.value) {
+                    if (matches.isNotEmpty()) {
+                        _quickFind.value = copy(matchIndex = (matchIndex + 1) % matches.size)
+                    }
+                }
+            }
+        }
     }
