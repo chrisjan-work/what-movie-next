@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.views.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
 import androidx.compose.material.icons.automirrored.outlined.Rule
 import androidx.compose.material.icons.outlined.AddCircle
 import androidx.compose.material.icons.outlined.Cancel
@@ -79,6 +80,11 @@ sealed class ButtonSpec(
     data object SearchAction : ButtonSpec(
         labelRes = R.string.lookup,
         icon = Icons.Outlined.TravelExplore,
+    )
+
+    data object ResultsAction : ButtonSpec(
+        labelRes = R.string.results,
+        icon = Icons.AutoMirrored.Outlined.FormatListBulleted,
     )
 
     data object CancelAction : ButtonSpec(
