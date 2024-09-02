@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.views.screens.movielist
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
@@ -35,7 +36,7 @@ fun MovieListBottomBar(
     CustomBottomBar(
         items =
             bottomItemsForMovieList(
-                isRouleteActive = listViewModel.canSpinRoulette(),
+                isRouleteActive = listViewModel.canSpinRoulette.collectAsState().value,
                 onCreateNewMovie = {
                     listViewModel.onNavigateTo(Routes.CreateMovieView)
                 },

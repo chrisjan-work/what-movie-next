@@ -82,6 +82,9 @@ class MovieListViewModel
         private val _quickFindOpenAction = MutableSharedFlow<Boolean>()
         val quickFindOpenAction = _quickFindOpenAction.asSharedFlow()
 
+        private val _canSpinRoulette = MutableStateFlow(false)
+        val canSpinRoulette = _canSpinRoulette.asStateFlow()
+
         init {
             connectArchivedMovies()
             connectPresets()
@@ -145,6 +148,12 @@ class MovieListViewModel
                             updateQuickFindText(quickFind.value.query)
                         }
                 }
+
+                viewModelScope.launch {
+                    listedMovies.collect { movies ->
+                        _canSpinRoulette.value = movies.hasMovie()
+                    }
+                }
             }
         }
 
@@ -180,16 +189,9 @@ class MovieListViewModel
             }
         }
 
-        fun canSpinRoulette(): Boolean =
-            mainViewModel
-                ?.listedMovies
-                ?.value
-                ?.hasMovie()
-                ?: false
-
         fun onNavigateToRandomMovie() {
             val mainViewModel = mainViewModel ?: return
-            if (canSpinRoulette()) {
+            if (canSpinRoulette.value) {
                 val movieList =
                     mainViewModel.listedMovies.value
                         .toList<Movie.ForList>()
