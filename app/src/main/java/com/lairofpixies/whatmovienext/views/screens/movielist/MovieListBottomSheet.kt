@@ -62,10 +62,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
+import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.screens.UiTags
 import com.lairofpixies.whatmovienext.views.state.BottomMenuOption
-import com.lairofpixies.whatmovienext.views.state.BottomMenuState
 import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
@@ -74,22 +74,11 @@ import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import com.lairofpixies.whatmovienext.views.state.WordFilter
-import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieListBottomSheet(
-    bottomMenuState: StateFlow<BottomMenuState>,
-    selectMenu: (BottomMenuOption) -> Unit,
-    sortingSetup: SortingSetup,
-    updateSortingSetup: (SortingSetup) -> Unit,
-    listFilters: ListFilters,
-    onListFiltersChanged: (ListFilters) -> Unit,
-    allGenres: List<String>,
-    allDirectors: List<String>,
-    presetMapper: PresetMapper,
-    showPopup: (PopupInfo) -> Unit,
-    closeBottomMenu: () -> Unit,
+    listViewModel: MovieListViewModel,
     modifier: Modifier = Modifier,
 ) {
     val scaffoldState =
@@ -102,8 +91,8 @@ fun MovieListBottomSheet(
         )
 
     // react to viewmodel menu requests
-    LaunchedEffect(bottomMenuState) {
-        bottomMenuState.collect { (_, isOpen) ->
+    LaunchedEffect(listViewModel.bottomMenuState) {
+        listViewModel.bottomMenuState.collect { (_, isOpen) ->
             if (!isOpen && scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded) {
                 scaffoldState.bottomSheetState.hide()
             } else if (isOpen && scaffoldState.bottomSheetState.currentValue != SheetValue.Expanded) {
@@ -115,8 +104,8 @@ fun MovieListBottomSheet(
     // notify viewmodel if sheet has been closed
     LaunchedEffect(scaffoldState.bottomSheetState.currentValue) {
         snapshotFlow { scaffoldState.bottomSheetState.currentValue }.collect {
-            if (it != SheetValue.Expanded && bottomMenuState.value.isOpen) {
-                closeBottomMenu()
+            if (it != SheetValue.Expanded && listViewModel.bottomMenuState.value.isOpen) {
+                listViewModel.closeBottomMenu()
             }
         }
     }
@@ -126,19 +115,14 @@ fun MovieListBottomSheet(
         scaffoldState = scaffoldState,
         sheetContent = {
             BottomSheetTabs(
-                bottomMenuOption = bottomMenuState.collectAsState().value.bottomMenuOption,
-                selectMenu = selectMenu,
+                bottomMenuOption =
+                    listViewModel.bottomMenuState
+                        .collectAsState()
+                        .value.bottomMenuOption,
+                selectMenu = { listViewModel.onOpenBottomMenu(it) },
             )
             BottomSheetMenu(
-                bottomMenuOption = bottomMenuState.collectAsState().value.bottomMenuOption,
-                sortingSetup = sortingSetup,
-                updateSortingSetup = updateSortingSetup,
-                listFilters = listFilters,
-                onListFiltersChanged = onListFiltersChanged,
-                allGenres = allGenres,
-                allDirectors = allDirectors,
-                presetMapper = presetMapper,
-                showPopup = showPopup,
+                listViewModel,
             )
         },
         sheetPeekHeight = 0.dp,
@@ -202,35 +186,34 @@ fun BottomMenuTab(
 }
 
 @Composable
-fun BottomSheetMenu(
-    bottomMenuOption: BottomMenuOption,
-    sortingSetup: SortingSetup,
-    updateSortingSetup: (SortingSetup) -> Unit,
-    listFilters: ListFilters,
-    onListFiltersChanged: (ListFilters) -> Unit,
-    allGenres: List<String>,
-    allDirectors: List<String>,
-    presetMapper: PresetMapper,
-    showPopup: (PopupInfo) -> Unit,
-) {
+fun BottomSheetMenu(listViewModel: MovieListViewModel) {
+    val bottomMenuOption =
+        listViewModel.bottomMenuState
+            .collectAsState()
+            .value.bottomMenuOption
+    val currentPreset = listViewModel.currentPreset.collectAsState().value
+
     when (bottomMenuOption) {
         BottomMenuOption.Sorting ->
             SortingMenu(
-                sortingSetup = sortingSetup,
+                sortingSetup = currentPreset.sortingSetup,
                 onSelectAction = { criteria, direction ->
-                    updateSortingSetup(SortingSetup(criteria, direction))
+                    listViewModel.updateSortingSetup(SortingSetup(criteria, direction))
                 },
             )
 
-        BottomMenuOption.Filtering ->
+        BottomMenuOption.Filtering -> {
+            val allGenres = listViewModel.allGenres.collectAsState().value
+            val allDirectors = listViewModel.allDirectors.collectAsState().value
             FilteringMenu(
-                listFilters = listFilters,
-                onListFiltersChanged = onListFiltersChanged,
-                presetMapper = presetMapper,
+                listFilters = currentPreset.listFilters,
+                onListFiltersChanged = { listViewModel.setListFilters(it) },
+                presetMapper = listViewModel.presetMapper(),
                 allGenres = allGenres,
                 allDirectors = allDirectors,
-                showPopup = showPopup,
+                showPopup = { listViewModel.showPopup(it) },
             )
+        }
     }
 }
 
