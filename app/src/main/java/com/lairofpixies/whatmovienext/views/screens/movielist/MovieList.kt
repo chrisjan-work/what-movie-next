@@ -73,6 +73,7 @@ import kotlinx.coroutines.delay
 fun MovieList(
     filteredMovies: List<Movie.ForList>,
     selectedMovieIndex: Int?,
+    allSelectedMovies: List<Int>,
     onMovieClicked: (Long) -> Unit,
     onScrollEvent: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -104,7 +105,7 @@ fun MovieList(
         itemsIndexed(filteredMovies) { movieIndex, movie ->
             MovieListItem(
                 movie,
-                isSelected = selectedMovieIndex == movieIndex,
+                isSelected = movieIndex in allSelectedMovies,
                 modifier = modifier.testTag("${UiTags.Items.MOVIE_LIST_ITEM}_$movieIndex"),
             ) { onMovieClicked(movie.appData.movieId) }
         }

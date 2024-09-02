@@ -76,6 +76,11 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
                         .collectAsState()
                         .value
                         .movieIndex,
+                allSelectedMovies =
+                    listViewModel.quickFind
+                        .collectAsState()
+                        .value
+                        .matches,
                 onMovieClicked = { movieId ->
                     listViewModel.onNavigateWithParam(
                         Routes.SingleMovieView,
