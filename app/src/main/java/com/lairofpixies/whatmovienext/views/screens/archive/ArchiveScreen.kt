@@ -18,25 +18,32 @@
  */
 package com.lairofpixies.whatmovienext.views.screens.archive
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isMissing
 import com.lairofpixies.whatmovienext.viewmodels.ArchiveViewModel
-import com.lairofpixies.whatmovienext.views.components.DebugTitle
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
@@ -87,21 +94,21 @@ fun Archive(
     remove: (Movie.ForList) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
+    LazyColumn(
+        modifier
+            .background(MaterialTheme.colorScheme.background)
+            .padding(4.dp)
+            .fillMaxSize(),
     ) {
-        DebugTitle("Archive")
-        LazyColumn {
-            items(archivedMovies) { movie ->
-                ArchivedMovieListItem(
-                    movie = movie,
-                    isSelected = movie in selection,
-                ) { isSelected ->
-                    if (isSelected) {
-                        append(movie)
-                    } else {
-                        remove(movie)
-                    }
+        items(archivedMovies) { movie ->
+            ArchivedMovieListItem(
+                movie = movie,
+                isSelected = movie in selection,
+            ) { isSelected ->
+                if (isSelected) {
+                    append(movie)
+                } else {
+                    remove(movie)
                 }
             }
         }
@@ -114,30 +121,58 @@ fun ArchivedMovieListItem(
     isSelected: Boolean,
     onSelectionChanged: (Boolean) -> Unit,
 ) {
-    val selectedColor =
+    val borderColor =
         if (isSelected) {
-            Color.DarkGray
+            MaterialTheme.colorScheme.outline.copy(alpha = 0.7f)
         } else {
-            Color.Black
+            MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
         }
 
-    val negativeSelectedColor =
+    val backgroundColor =
         if (isSelected) {
-            Color.Gray
+            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
         } else {
-            Color.White
+            MaterialTheme.colorScheme.background
         }
 
-    Text(
+    Column(
         modifier =
             Modifier
-                .background(negativeSelectedColor)
                 .clickable {
                     onSelectionChanged(!isSelected)
-                },
-        color = selectedColor,
-        text = movie.searchData.title,
-    )
+                }.fillMaxWidth()
+                .padding(2.dp)
+                .border(
+                    border =
+                        BorderStroke(
+                            1.dp,
+                            borderColor,
+                        ),
+                    shape = RoundedCornerShape(8.dp),
+                ).background(backgroundColor)
+                .padding(6.dp),
+    ) {
+        Text(
+            text = movie.searchData.title,
+            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+
+        movie.searchData.year?.let { year ->
+            Text(
+                text = year.toString(),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        if (movie.searchData.genres.isNotEmpty()) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = movie.searchData.genres.joinToString(" / "),
+                style = MaterialTheme.typography.bodySmall,
+                fontStyle = FontStyle.Italic,
+            )
+        }
+    }
 }
 
 fun bottomItemsForArchive(
