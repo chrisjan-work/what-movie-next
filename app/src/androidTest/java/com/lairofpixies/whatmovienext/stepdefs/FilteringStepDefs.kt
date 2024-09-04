@@ -44,6 +44,8 @@ class FilteringStepDefs(
     @Inject
     lateinit var configSynchronizer: ConfigSynchronizer
 
+    private val movieListStepDefs = MovieListStepDefs(testContext)
+
     @Given("the tmdb api offers the genres {string}")
     fun theTmdbApiOffersTheGenres(genreList: String) {
         testContext.movieApi.fakeGenres = {
@@ -58,6 +60,7 @@ class FilteringStepDefs(
 
     @Given("the user clicks on Arrange and Filter")
     fun theUserClicksOnArrangeAndFilter() {
+        movieListStepDefs.navigateBackIfInQueryEditor()
         composeRule.composeStep {
             onNodeWithTag(UiTags.Buttons.ARRANGE_MENU)
                 .performClick()

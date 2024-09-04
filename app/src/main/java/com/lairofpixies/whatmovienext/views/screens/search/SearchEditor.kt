@@ -22,11 +22,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -49,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
@@ -87,7 +86,7 @@ fun SearchEditor(
                         .padding(innerPadding)
                         .verticalScroll(rememberScrollState()),
             ) {
-                Spacer(Modifier.size(48.dp))
+                BigText(stringResource(R.string.add_new_movie))
                 EditableTitleField(
                     query.title,
                     onTitleChanged = { onUpdateQuery(query.copy(title = it)) },
@@ -98,6 +97,20 @@ fun SearchEditor(
             }
         }
     }
+}
+
+@Composable
+fun BigText(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onBackground,
+        textAlign = TextAlign.Center,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 24.dp, horizontal = 12.dp),
+    )
 }
 
 @Composable

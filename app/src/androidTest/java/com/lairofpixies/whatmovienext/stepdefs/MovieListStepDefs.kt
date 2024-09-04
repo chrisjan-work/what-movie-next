@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.stepdefs
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithTag
@@ -50,6 +51,15 @@ class MovieListStepDefs(
     private val composeRule
         get() = testContext.composeRuleHolder.composeRule
 
+    fun navigateBackIfInQueryEditor() {
+        with(composeRule) {
+            waitForIdle()
+            if (onNodeWithTag(UiTags.Screens.QUERY_EDITOR).isDisplayed()) {
+                theUserPressesTheBackButton()
+            }
+        }
+    }
+
     @Given("a list with an entry {string}")
     fun aListWithAnEntry(movieTitle: String) {
         runBlocking {
@@ -57,7 +67,7 @@ class MovieListStepDefs(
                 .movieDao()
                 .insertMovie(DbMovie(title = movieTitle, dbWatchDates = ""))
         }
-        composeRule.waitForIdle()
+        navigateBackIfInQueryEditor()
     }
 
     @Given("a list with an entry {string} that is marked as watched")
@@ -67,7 +77,7 @@ class MovieListStepDefs(
                 .movieDao()
                 .insertMovie(DbMovie(title = movieTitle, dbWatchDates = "1000"))
         }
-        composeRule.waitForIdle()
+        navigateBackIfInQueryEditor()
     }
 
     @Given("an empty list of films")
@@ -178,7 +188,7 @@ class MovieListStepDefs(
         runBlocking {
             testContext.appDatabase.movieDao().insertMovies(movieList)
         }
-        composeRule.waitForIdle()
+        navigateBackIfInQueryEditor()
     }
 
     @When("the user scrolls down to {string}")

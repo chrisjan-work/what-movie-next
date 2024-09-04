@@ -20,7 +20,8 @@ Feature: Archive
   Archive and delete or restore entries
 
   Scenario: Archive entry
-    Given a list with an entry "Gone with the Wind"
+    Given a list with an entry "Placeholder"
+    And a list with an entry "Gone with the Wind"
     When the user opens the entry "Gone with the Wind"
     And the user archives the current entry
     Then the entry "Gone with the Wind" is not available
@@ -28,6 +29,7 @@ Feature: Archive
     Then the entry "Gone with the Wind" is visible in the archive
 
   Scenario: Delete entry forever
+    Given a list with an entry "Placeholder"
     Given a list with an entry "The Room"
     And a list with an entry "The Disaster Artist"
     When the user archives the entry "The Room"
@@ -42,6 +44,7 @@ Feature: Archive
     Then the entry "The Room" is not available
 
   Scenario: Attempt to delete entry but cancel
+    Given a list with an entry "Placeholder"
     Given a list with an entry "The Room"
     When the user archives the entry "The Room"
     And the user navigates to the archive
@@ -52,6 +55,7 @@ Feature: Archive
     Then the entry "The Room" is visible in the archive
 
   Scenario: Restore entry from archive
+    Given a list with an entry "Placeholder"
     Given a list with an entry "Hellraiser"
     And a list with an entry "Ghost Rider"
     When the user archives the entry "Hellraiser"

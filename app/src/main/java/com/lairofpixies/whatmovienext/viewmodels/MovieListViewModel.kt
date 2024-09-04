@@ -38,6 +38,7 @@ import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.QuickFind
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -59,6 +60,8 @@ class MovieListViewModel
     ) : ScreenViewModel() {
         lateinit var listedMovies: StateFlow<AsyncMovie>
             private set
+
+        val isEmpty: Flow<Boolean> = movieRepository.isEmpty
 
         private val _hasArchivedMovies = MutableStateFlow(false)
         val hasArchivedMovies: StateFlow<Boolean> = _hasArchivedMovies.asStateFlow()

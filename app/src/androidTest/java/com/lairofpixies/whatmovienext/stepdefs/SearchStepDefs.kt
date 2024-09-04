@@ -26,6 +26,7 @@ import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.filterToOne
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -216,8 +217,10 @@ class SearchStepDefs(
     @When("the user initiates a new query")
     fun theUserInitiatesANewQuery() =
         composeRule.composeStep {
-            onNodeWithContentDescription(stringResource(R.string.add_new_movie))
-                .performClick()
+            if (onNodeWithTag(UiTags.Screens.QUERY_EDITOR).isNotDisplayed() && onNodeWithTag(UiTags.Screens.MOVIE_LIST).isDisplayed()) {
+                onNodeWithContentDescription(stringResource(R.string.add_new_movie))
+                    .performClick()
+            }
         }
 
     @Then("the query editor is open")

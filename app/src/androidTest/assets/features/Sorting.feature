@@ -19,10 +19,12 @@
 Feature: Sorting movie list
 
   Scenario: Open menu
+    Given a list with an entry "Placeholder"
     When the user clicks on Arrange
     Then the sorting menu is visible
 
   Scenario: Close menu
+    Given a list with an entry "Placeholder"
     Given the user clicks on Arrange
     When the user presses the back button
     Then the sorting menu is not visible
