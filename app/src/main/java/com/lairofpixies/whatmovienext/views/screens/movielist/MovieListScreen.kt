@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.components.CustomScaffold
 import com.lairofpixies.whatmovienext.views.navigation.Routes
@@ -55,6 +56,12 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
                 MovieListTopBar(
                     triggerBar = trigger,
                     isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
+                    movieCount =
+                        listViewModel.listedMovies
+                            .collectAsState()
+                            .value
+                            .toList<Movie.ForList>()
+                            .size,
                     onOpenArchive = {
                         listViewModel.onNavigateTo(Routes.ArchiveView)
                     },
