@@ -132,7 +132,7 @@ fun quickMatchAny(
     query
         .trim()
         .split(" ")
-        .filter { it.isNotBlank() }
+        .filter { it.length > 1 }
         .let { wordList ->
             wordList.isNotEmpty() &&
                 wordList.any { candidate.contains(it, ignoreCase = true) }
