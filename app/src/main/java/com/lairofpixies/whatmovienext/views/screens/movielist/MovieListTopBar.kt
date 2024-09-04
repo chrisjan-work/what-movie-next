@@ -63,6 +63,7 @@ import kotlin.math.min
 @Composable
 fun MovieListTopBar(
     triggerBar: MutableState<Boolean>,
+    movieCount: Int,
     isArchiveVisitable: Boolean,
     onOpenArchive: () -> Unit,
     quickFind: QuickFind,
@@ -109,6 +110,7 @@ fun MovieListTopBar(
                 },
                 currentMatch = quickFind.matchIndex,
                 matchCount = quickFind.matches.size,
+                total = movieCount,
                 focusRequester = focusRequester,
                 modifier = Modifier.weight(1f),
             )
@@ -135,6 +137,7 @@ fun CustomSearchBar(
     onClose: () -> Unit,
     matchCount: Int,
     currentMatch: Int,
+    total: Int,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
@@ -164,7 +167,14 @@ fun CustomSearchBar(
             ) {
                 Icon(
                     imageVector = if (query.isEmpty()) Icons.Outlined.Search else Icons.Outlined.Close,
-                    contentDescription = if (query.isEmpty()) stringResource(R.string.find) else stringResource(R.string.clear_find),
+                    contentDescription =
+                        if (query.isEmpty()) {
+                            stringResource(R.string.find)
+                        } else {
+                            stringResource(
+                                R.string.clear_find,
+                            )
+                        },
                     modifier =
                         Modifier
                             .size(20.dp)
@@ -185,15 +195,19 @@ fun CustomSearchBar(
                     }
                     innerTextField()
                 }
-                if (query.isNotEmpty()) {
-                    val currentMatchDisplay = min(currentMatch + 1, matchCount)
-                    Text(
-                        text = "$currentMatchDisplay/$matchCount",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.clickable { onSearch() },
-                    )
-                }
+                val currentMatchDisplay =
+                    if (query.isNotEmpty()) {
+                        "${min(currentMatch + 1, matchCount)}/$matchCount"
+                    } else {
+                        "/$total"
+                    }
+
+                Text(
+                    text = currentMatchDisplay,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.clickable { onSearch() },
+                )
             }
         },
     )
