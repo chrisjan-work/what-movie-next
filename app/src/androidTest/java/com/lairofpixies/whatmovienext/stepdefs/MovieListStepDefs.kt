@@ -28,7 +28,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeDown
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
