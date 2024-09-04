@@ -20,7 +20,7 @@ Feature: Filtering
   mark films as pending/watched
 
   Scenario: New entries are marked as pending by default
-    Given an empty list of films
+    Given a list with an entry "Placeholder"
     And the user clicks on Arrange and Filter
     And the list is in mode "All movies"
     And the user presses the back button

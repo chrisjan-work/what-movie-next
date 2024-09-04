@@ -39,12 +39,16 @@ class SortingStepDefs(
     private val composeRule
         get() = testContext.composeRuleHolder.composeRule
 
+    private val movieListStepDefs = MovieListStepDefs(testContext)
+
     @Given("the user clicks on Arrange")
-    fun theUserClicksOnArrange() =
+    fun theUserClicksOnArrange() {
+        movieListStepDefs.navigateBackIfInQueryEditor()
         composeRule.composeStep {
             onNodeWithTag(UiTags.Buttons.ARRANGE_MENU)
                 .performClick()
         }
+    }
 
     @Then("the sorting menu is visible")
     fun theSortingMenuIsVisible() =
