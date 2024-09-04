@@ -18,31 +18,40 @@
  */
 package com.lairofpixies.whatmovienext.views.screens.search
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
-import com.lairofpixies.whatmovienext.views.components.DebugTitle
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
 import com.lairofpixies.whatmovienext.views.navigation.CustomBottomBar
@@ -78,7 +87,7 @@ fun SearchEditor(
                         .padding(innerPadding)
                         .verticalScroll(rememberScrollState()),
             ) {
-                DebugTitle("Search Movie")
+                Spacer(Modifier.size(48.dp))
                 EditableTitleField(
                     query.title,
                     onTitleChanged = { onUpdateQuery(query.copy(title = it)) },
@@ -123,7 +132,18 @@ fun EditableTitleField(
             onTitleChanged(it.text)
         },
         label = { Text(stringResource(id = R.string.title)) },
-        modifier = Modifier.focusRequester(focusRequester),
+        modifier =
+            Modifier
+                .focusRequester(focusRequester)
+                .fillMaxWidth()
+                .padding(8.dp)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    shape = RoundedCornerShape(8.dp),
+                ).background(TextFieldDefaults.colors().focusedContainerColor)
+                .padding(6.dp)
+                .clip(RoundedCornerShape(8.dp)),
         keyboardOptions =
             KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done,
