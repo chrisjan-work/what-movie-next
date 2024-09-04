@@ -132,6 +132,7 @@ fun EditableTitleField(
             onTitleChanged(it.text)
         },
         label = { Text(stringResource(id = R.string.title)) },
+        maxLines = 1,
         modifier =
             Modifier
                 .focusRequester(focusRequester)
