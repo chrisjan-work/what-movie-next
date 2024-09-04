@@ -158,6 +158,9 @@ dependencies {
 
     // coil
     implementation(libs.coil.compose)
+
+    // splash screen
+    implementation(libs.androidx.core.splashscreen)
 }
 
 buildscript {
