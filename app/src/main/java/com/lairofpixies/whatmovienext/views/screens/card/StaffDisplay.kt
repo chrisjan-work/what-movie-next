@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
+import com.lairofpixies.whatmovienext.views.components.CopyableText
 
 @Composable
 fun DirectorsRoster(
@@ -196,13 +197,13 @@ fun MiniProfile(
             modifier,
         )
         Spacer(modifier = Modifier.height(6.dp))
-        Text(
+        CopyableText(
             text = person.name,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
             textAlign = TextAlign.Center,
         )
-        Text(
+        CopyableText(
             text = person.credit,
             style = MaterialTheme.typography.bodySmall,
             fontStyle = FontStyle.Italic,

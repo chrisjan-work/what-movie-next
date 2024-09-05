@@ -52,6 +52,7 @@ import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.toAnnotatedString
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
+import com.lairofpixies.whatmovienext.views.components.CopyableText
 import com.lairofpixies.whatmovienext.views.components.CustomScaffold
 import com.lairofpixies.whatmovienext.views.components.ScrollableColumn
 import com.lairofpixies.whatmovienext.views.navigation.CustomBarItem
@@ -182,14 +183,14 @@ fun TitlesDisplay(
     originalTitle: String,
     modifier: Modifier = Modifier,
 ) {
-    Text(
+    CopyableText(
         text = title,
         fontWeight = FontWeight.SemiBold,
         style = MaterialTheme.typography.titleLarge,
         modifier = modifier.padding(start = 8.dp, end = 8.dp),
     )
     if (originalTitle.isNotBlank() && originalTitle != title) {
-        Text(
+        CopyableText(
             text = originalTitle,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
@@ -204,7 +205,7 @@ fun YearDisplay(
     modifier: Modifier = Modifier,
 ) {
     if (year != null) {
-        Text(
+        CopyableText(
             text = year.toString(),
             style = MaterialTheme.typography.titleMedium,
             modifier = modifier.padding(start = 8.dp, end = 8.dp),
@@ -219,7 +220,7 @@ fun RuntimeAndGenresDisplay(
     modifier: Modifier = Modifier,
 ) {
     val dot = stringResource(id = R.string.middle_dot)
-    Text(
+    CopyableText(
         text =
             printableRuntime(runtimeMinutes = runtime, pos = "  $dot  ") +
                 genres.joinToString(" / "),
@@ -235,7 +236,7 @@ fun TaglineDisplay(
     modifier: Modifier = Modifier,
 ) {
     if (tagline.isNotBlank()) {
-        Text(
+        CopyableText(
             text = tagline,
             fontWeight = FontWeight.Medium,
             style = MaterialTheme.typography.titleMedium,
@@ -249,7 +250,7 @@ fun PlotDisplay(
     plot: String,
     modifier: Modifier = Modifier,
 ) {
-    Text(
+    CopyableText(
         text = plot,
         textAlign = TextAlign.Start,
         fontStyle = FontStyle.Italic,
