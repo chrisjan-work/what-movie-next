@@ -31,10 +31,12 @@ import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.viewmodels.ScreenViewModel
 import com.lairofpixies.whatmovienext.viewmodels.SearchViewModel
+import com.lairofpixies.whatmovienext.viewmodels.SharedMovieViewModel
 import com.lairofpixies.whatmovienext.views.screens.archive.ArchiveScreen
 import com.lairofpixies.whatmovienext.views.screens.card.MovieCardScreen
 import com.lairofpixies.whatmovienext.views.screens.movielist.MovieListScreen
 import com.lairofpixies.whatmovienext.views.screens.search.SearchScreen
+import com.lairofpixies.whatmovienext.views.screens.shared.SharedMovieScreen
 
 @Composable
 fun NavigationHost(
@@ -73,6 +75,21 @@ fun NavigationHost(
             val createViewModel = hiltViewModel<SearchViewModel>().connect()
             SearchScreen(
                 searchViewModel = createViewModel,
+            )
+        }
+        composable(
+            route = Routes.SharedMovieView.route,
+            arguments =
+                listOf(
+                    navArgument(Routes.SharedMovieView.argumentOrEmpty) {
+                        type = NavType.LongType
+                    },
+                ),
+        ) { entry ->
+            val sharedMovieViewModel = hiltViewModel<SharedMovieViewModel>().connect()
+            SharedMovieScreen(
+                tmdbId = entry.arguments?.getLong(Routes.SharedMovieView.argumentOrEmpty),
+                sharedMovieViewModel = sharedMovieViewModel,
             )
         }
         composable(Routes.ArchiveView.route) {

@@ -112,13 +112,11 @@ class MainViewModel
                         return@launch
                     }
 
-                // find in db
                 val movieId = movieRepository.fetchMovieIdFromTmdbId(tmdbId)
                 if (movieId != null) {
                     onNavigateWithParam(Routes.SingleMovieView, movieId, popToHome = true)
                 } else {
-                    // TODO
-                    onNavigateWithParam(Routes.SearchMovieView, tmdbId, popToHome = true)
+                    onNavigateWithParam(Routes.SharedMovieView, tmdbId, popToHome = true)
                 }
             }
         }

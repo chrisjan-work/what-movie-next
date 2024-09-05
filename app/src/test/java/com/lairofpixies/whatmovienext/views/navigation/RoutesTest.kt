@@ -49,17 +49,17 @@ class RoutesTest {
 
     @Test
     fun `route for movie search`() {
-        assertEquals("movie_search/{tmdbId}", Routes.SearchMovieView.route)
+        assertEquals("movie_shared/{tmdbId}", Routes.SharedMovieView.route)
     }
 
     @Test
     fun `route for movie search with argument`() {
-        assertEquals("movie_search/123", Routes.SearchMovieView.route(123))
+        assertEquals("movie_shared/123", Routes.SharedMovieView.route(123))
     }
 
     @Test
     fun `argument for movie search`() {
-        assertEquals("tmdbId", Routes.SearchMovieView.argumentOrEmpty)
+        assertEquals("tmdbId", Routes.SharedMovieView.argumentOrEmpty)
     }
 
     @Test
