@@ -31,8 +31,9 @@ import com.lairofpixies.whatmovienext.views.navigation.NavigationHost
 import com.lairofpixies.whatmovienext.views.screens.popups.PopupDialogs
 
 @Composable
-fun MainScreen(viewModel: MainViewModel) {
+fun MainScreen(mainViewModel: MainViewModel) {
     val navController = rememberNavController()
+    mainViewModel.attachNavHostController(navController)
 
     WhatMovieNextTheme {
         Surface(
@@ -41,13 +42,13 @@ fun MainScreen(viewModel: MainViewModel) {
         ) {
             NavigationHost(
                 navController = navController,
-                mainViewModel = viewModel,
+                mainViewModel = mainViewModel,
             )
 
             PopupDialogs(
-                popupInfo = viewModel.popupInfo.collectAsState().value,
+                popupInfo = mainViewModel.popupInfo.collectAsState().value,
             ) {
-                viewModel.closePopup()
+                mainViewModel.closePopup()
             }
         }
     }

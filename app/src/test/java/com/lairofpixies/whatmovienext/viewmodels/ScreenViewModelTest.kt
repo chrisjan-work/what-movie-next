@@ -18,11 +18,7 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
-import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
-import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +26,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -48,8 +43,6 @@ class ScreenViewModelTest {
     }
 
     private lateinit var screenViewModel: TestScreenViewModel
-
-    private lateinit var navHostControllerMock: NavHostController
     private lateinit var mainViewModelMock: MainViewModel
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
@@ -58,10 +51,8 @@ class ScreenViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
-        navHostControllerMock = mockk(relaxed = true)
         mainViewModelMock = mockk(relaxed = true)
         screenViewModel = TestScreenViewModel()
-        screenViewModel.attachNavHostController(navHostControllerMock)
         screenViewModel.attachMainViewModel(mainViewModelMock)
     }
 
@@ -74,60 +65,6 @@ class ScreenViewModelTest {
     fun `access main view model from subclasses if needed`() {
         screenViewModel.verifyMainViewModel(mainViewModelMock)
     }
-
-    @Test
-    fun `onCancelAction navigates to the home route`() =
-        runTest {
-            // When
-            screenViewModel.onLeaveAction()
-
-            // Then
-            coVerify {
-                navHostControllerMock.navigate(
-                    Routes.HOME.route,
-                    any<NavOptionsBuilder.() -> Unit>(),
-                )
-            }
-        }
-
-    @Test
-    fun `navigate to movie list route`() =
-        runTest {
-            // When
-            screenViewModel.onNavigateTo(Routes.AllMoviesView)
-
-            // Then
-            coVerify {
-                navHostControllerMock.navigate(Routes.AllMoviesView.route)
-            }
-        }
-
-    @Test
-    fun `navigate to archive route`() =
-        runTest {
-            // When
-            screenViewModel.onNavigateTo(Routes.ArchiveView)
-
-            // Then
-            coVerify {
-                navHostControllerMock.navigate(Routes.ArchiveView.route)
-            }
-        }
-
-    @Test
-    fun `navigate to edit card route with given id`() =
-        runTest {
-            // When
-            screenViewModel.onNavigateWithParam(Routes.EditMovieView, 84, false)
-
-            // Then
-            coVerify {
-                navHostControllerMock.navigate(
-                    Routes.EditMovieView.route(84),
-                    any<NavOptionsBuilder.() -> Unit>(),
-                )
-            }
-        }
 
     @Test
     fun `forward showpopup calls`() {

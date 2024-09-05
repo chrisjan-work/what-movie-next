@@ -20,9 +20,13 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,11 +38,17 @@ import kotlin.reflect.KClass
 class MainViewModel
     @Inject
     constructor() : ViewModel() {
+        private lateinit var navHostController: NavHostController
+
         private val _listedMovies = MutableStateFlow<AsyncMovie>(AsyncMovie.Loading)
         val listedMovies: StateFlow<AsyncMovie> = _listedMovies.asStateFlow()
 
         private val _popupInfo: MutableStateFlow<PopupInfo> = MutableStateFlow(PopupInfo.None)
         val popupInfo: StateFlow<PopupInfo> = _popupInfo.asStateFlow()
+
+        fun attachNavHostController(navHostController: NavHostController) {
+            this.navHostController = navHostController
+        }
 
         fun showPopup(popupInfo: PopupInfo) {
             _popupInfo.value = popupInfo
@@ -51,6 +61,37 @@ class MainViewModel
         fun closePopupOfType(popupType: KClass<out PopupInfo>) {
             if (popupType.isInstance(_popupInfo.value)) {
                 closePopup()
+            }
+        }
+
+        fun onLeaveAction() =
+            CoroutineScope(Dispatchers.Main).launch {
+                navHostController.navigate(Routes.HOME.route) {
+                    popUpTo(Routes.HOME.route) {
+                        inclusive = true
+                    }
+                }
+            }
+
+        fun onNavigateTo(destination: Routes) {
+            CoroutineScope(Dispatchers.Main).launch {
+                navHostController.navigate(destination.route)
+            }
+        }
+
+        fun onNavigateWithParam(
+            destination: Routes,
+            parameter: Long,
+            popToHome: Boolean = false,
+        ) {
+            CoroutineScope(Dispatchers.Main).launch {
+                navHostController.navigate(destination.route(parameter)) {
+                    if (popToHome) {
+                        popUpTo(Routes.HOME.route) {
+                            inclusive = false
+                        }
+                    }
+                }
             }
         }
 
