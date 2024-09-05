@@ -98,6 +98,6 @@ class MovieCardViewModel
                 ?.searchData
                 ?.tmdbId
                 ?.let { id ->
-                    "${BuildConfig.SHARE_URL}/$id"
+                    "${BuildConfig.SHARE_SCHEME}://${BuildConfig.SHARE_HOST}/$id"
                 } ?: ""
     }

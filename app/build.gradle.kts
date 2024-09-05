@@ -47,11 +47,11 @@ android {
         buildConfigField("Long", "CACHE_EXPIRATION_TIME_MILLIS", "${oneWeek}L")
 
         val shareScheme = "whatmovienext"
-        val sharePath = "movie"
-        val shareUrl = "$shareScheme://$sharePath"
-        buildConfigField("String", "SHARE_URL", "\"$shareUrl\"")
+        val shareHost = "movie"
+        buildConfigField("String", "SHARE_SCHEME", "\"$shareScheme\"")
+        buildConfigField("String", "SHARE_HOST", "\"$shareHost\"")
         manifestPlaceholders["shareScheme"] = shareScheme
-        manifestPlaceholders["sharePath"] = sharePath
+        manifestPlaceholders["shareHost"] = shareHost
     }
 
     buildTypes {
