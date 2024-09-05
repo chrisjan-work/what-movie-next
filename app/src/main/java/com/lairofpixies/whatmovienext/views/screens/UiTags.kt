@@ -41,6 +41,7 @@ object UiTags {
         const val DIRECTORS_FILTER = "DirectorsFilter"
         const val ROULETTE = "RouletteButton"
         const val ARCHIVE_ACTION = "ArchiveAction"
+        const val SHARE_ACTION = "ShareAction"
         const val ARCHIVE_SHORTCUT = "ArchiveShortcut"
     }
 

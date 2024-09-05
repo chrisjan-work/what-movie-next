@@ -34,6 +34,7 @@ import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.RestoreFromTrash
 import androidx.compose.material.icons.outlined.Rule
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.TravelExplore
@@ -71,6 +72,11 @@ sealed class ButtonSpec(
     data object SaveAction : ButtonSpec(
         labelRes = R.string.save,
         icon = Icons.Outlined.Check,
+    )
+
+    data object ShareAction : ButtonSpec(
+        labelRes = R.string.share,
+        icon = Icons.Outlined.Share,
     )
 
     data object ArchiveAction : ButtonSpec(

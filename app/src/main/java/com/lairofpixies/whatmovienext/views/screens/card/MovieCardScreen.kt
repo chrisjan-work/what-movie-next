@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.isMissing
+import com.lairofpixies.whatmovienext.util.shareText
 import com.lairofpixies.whatmovienext.viewmodels.MovieCardViewModel
 import com.lairofpixies.whatmovienext.views.components.CustomTopBar
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
@@ -51,6 +53,7 @@ fun MovieCardScreen(
     movieId: Long?,
     cardViewModel: MovieCardViewModel,
 ) {
+    val context = LocalContext.current
     val partialMovie = cardViewModel.currentMovie.collectAsState().value
 
     LaunchedEffect(movieId) {
@@ -58,7 +61,6 @@ fun MovieCardScreen(
     }
 
     if (partialMovie.isMissing()) {
-        val context = LocalContext.current
         Toast
             .makeText(context, context.getString(R.string.movie_not_found), Toast.LENGTH_SHORT)
             .show()
@@ -86,6 +88,10 @@ fun MovieCardScreen(
             topBar = { trigger ->
                 MovieCardTopBar(
                     trigger = trigger,
+                    shareable = cardViewModel.canShare(),
+                    onShareAction = {
+                        shareText(context, cardViewModel.shareableLink())
+                    },
                     onArchiveAction = {
                         cardViewModel.archiveCurrentMovie()
                         cardViewModel.onLeaveAction()
@@ -107,6 +113,8 @@ fun MovieCardScreen(
 @Composable
 fun MovieCardTopBar(
     trigger: State<Boolean>,
+    shareable: Boolean,
+    onShareAction: () -> Unit,
     onArchiveAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -114,18 +122,34 @@ fun MovieCardTopBar(
         trigger = trigger,
         modifier = modifier,
     ) {
-        Icon(
-            ButtonSpec.ArchiveAction.icon,
-            contentDescription = stringResource(ButtonSpec.ArchiveAction.labelRes),
-            modifier =
-                Modifier
-                    .align(Alignment.CenterEnd)
-                    .padding(8.dp)
-                    .alpha(0.8f)
-                    .clickable { onArchiveAction() }
-                    .testTag(UiTags.Buttons.ARCHIVE_ACTION),
-            tint = MaterialTheme.colorScheme.onBackground,
-        )
+        Row(
+            Modifier
+                .align(Alignment.CenterEnd),
+        ) {
+            Icon(
+                ButtonSpec.ShareAction.icon,
+                contentDescription = stringResource(ButtonSpec.ShareAction.labelRes),
+                modifier =
+                    Modifier
+                        .padding(8.dp)
+                        .alpha(if (shareable) 0.8f else 0.2f)
+                        .clickable { if (shareable) onShareAction() }
+                        .testTag(UiTags.Buttons.SHARE_ACTION),
+                tint = MaterialTheme.colorScheme.onBackground,
+            )
+
+            Icon(
+                ButtonSpec.ArchiveAction.icon,
+                contentDescription = stringResource(ButtonSpec.ArchiveAction.labelRes),
+                modifier =
+                    Modifier
+                        .padding(8.dp)
+                        .alpha(0.8f)
+                        .clickable { onArchiveAction() }
+                        .testTag(UiTags.Buttons.ARCHIVE_ACTION),
+                tint = MaterialTheme.colorScheme.onBackground,
+            )
+        }
     }
 }
 
