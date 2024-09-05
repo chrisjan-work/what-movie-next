@@ -45,6 +45,13 @@ android {
         buildConfigField("String", "CUCUMBER_TAG_EXPRESSION", extractCucumberTags())
         val oneWeek: Long = 1000 * 60 * 60 * 24 * 7
         buildConfigField("Long", "CACHE_EXPIRATION_TIME_MILLIS", "${oneWeek}L")
+
+        val shareScheme = "whatmovienext"
+        val sharePath = "movie"
+        val shareUrl = "$shareScheme://$sharePath"
+        buildConfigField("String", "SHARE_URL", "\"$shareUrl\"")
+        manifestPlaceholders["shareScheme"] = shareScheme
+        manifestPlaceholders["sharePath"] = sharePath
     }
 
     buildTypes {

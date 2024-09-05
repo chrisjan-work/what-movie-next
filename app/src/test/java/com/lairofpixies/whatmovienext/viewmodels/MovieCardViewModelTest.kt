@@ -181,4 +181,43 @@ class MovieCardViewModelTest {
                 )
             assertEquals(false, cardViewModel.canSpinRoulette())
         }
+
+    @Test
+    fun `create share link`() =
+        runTest {
+            // Given
+            val partialMovie =
+                AsyncMovie.Single(
+                    forCard(id = 10, title = "single movie", tmdbId = 111L),
+                )
+            every { repo.singleCardMovie(10) } returns
+                flowOf(partialMovie)
+
+            // When
+            cardViewModel.startFetchingMovie(10)
+            val result = cardViewModel.shareableLink()
+
+            // Then
+            assertEquals("whatmovienext://movie/111", result)
+        }
+
+    @Test
+    fun `can share`() =
+        runTest {
+            // Given
+            val partialMovie =
+                AsyncMovie.Single(
+                    forCard(id = 10, title = "single movie", tmdbId = 111L),
+                )
+            every { repo.singleCardMovie(10) } returns flowOf(partialMovie)
+
+            // When
+            val notShareable = cardViewModel.canShare()
+            cardViewModel.startFetchingMovie(10)
+            val shareable = cardViewModel.canShare()
+
+            // Then
+            assertEquals(false, notShareable)
+            assertEquals(true, shareable)
+        }
 }

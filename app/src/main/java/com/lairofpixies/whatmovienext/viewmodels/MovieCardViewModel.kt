@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.viewModelScope
+import com.lairofpixies.whatmovienext.BuildConfig
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -88,4 +89,15 @@ class MovieCardViewModel
                 onNavigateWithParam(Routes.SingleMovieView, movie.appData.movieId, popToHome = true)
             }
         }
+
+        fun canShare(): Boolean = currentMovie.value is AsyncMovie.Single
+
+        fun shareableLink(): String =
+            (currentMovie.value as? AsyncMovie.Single)
+                ?.movie
+                ?.searchData
+                ?.tmdbId
+                ?.let { id ->
+                    "${BuildConfig.SHARE_URL}/$id"
+                } ?: ""
     }
