@@ -38,6 +38,8 @@ interface MovieRepository {
 
     fun getAllGenresFromMovies(): Flow<List<String>>
 
+    suspend fun fetchMovieIdFromTmdbId(tmdbId: Long): Long?
+
     // write
     suspend fun storeMovie(movie: Movie.ForCard): Job
 

@@ -48,18 +48,18 @@ class RoutesTest {
     }
 
     @Test
-    fun `route for movie edit`() {
-        assertEquals("movie_edit/{movieId}", Routes.EditMovieView.route)
+    fun `route for movie search`() {
+        assertEquals("movie_search/{tmdbId}", Routes.SearchMovieView.route)
     }
 
     @Test
-    fun `route for movie edit with argument`() {
-        assertEquals("movie_edit/123", Routes.EditMovieView.route(123))
+    fun `route for movie search with argument`() {
+        assertEquals("movie_search/123", Routes.SearchMovieView.route(123))
     }
 
     @Test
-    fun `argument for movie edit`() {
-        assertEquals("movieId", Routes.EditMovieView.argumentOrEmpty)
+    fun `argument for movie search`() {
+        assertEquals("tmdbId", Routes.SearchMovieView.argumentOrEmpty)
     }
 
     @Test

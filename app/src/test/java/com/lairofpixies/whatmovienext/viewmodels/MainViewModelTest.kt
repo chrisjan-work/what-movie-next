@@ -20,8 +20,10 @@ package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
+import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +41,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
     private lateinit var navHostControllerMock: NavHostController
+    private lateinit var movieRepositoryMock: MovieRepository
 
     private lateinit var mainViewModel: MainViewModel
 
@@ -48,7 +51,8 @@ class MainViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         navHostControllerMock = mockk(relaxed = true)
-        mainViewModel = MainViewModel()
+        movieRepositoryMock = mockk(relaxed = true)
+        mainViewModel = MainViewModel(movieRepositoryMock)
         mainViewModel.attachNavHostController(navHostControllerMock)
     }
 
@@ -143,17 +147,58 @@ class MainViewModelTest {
         }
 
     @Test
-    fun `navigate to edit card route with given id`() =
+    fun `navigate to search result route with given id`() =
         runTest {
             // When
-            mainViewModel.onNavigateWithParam(Routes.EditMovieView, 84, false)
+            mainViewModel.onNavigateWithParam(Routes.SearchMovieView, 84, false)
 
             // Then
             coVerify {
                 navHostControllerMock.navigate(
-                    Routes.EditMovieView.route(84),
+                    Routes.SearchMovieView.route(84),
                     any<NavOptionsBuilder.() -> Unit>(),
                 )
             }
+        }
+
+    @Test
+    fun `navigate to existing movie given tmdbid`() =
+        runTest {
+            // Given
+            coEvery { movieRepositoryMock.fetchMovieIdFromTmdbId(111) } returns 77
+            // When
+            mainViewModel.loadAndNavigateTo("/111")
+            // Then
+            coVerify {
+                navHostControllerMock.navigate(
+                    Routes.SingleMovieView.route(77),
+                    any<NavOptionsBuilder.() -> Unit>(),
+                )
+            }
+        }
+
+    @Test
+    fun `navigate to search movie given tmdbid`() =
+        runTest {
+            // Given
+            coEvery { movieRepositoryMock.fetchMovieIdFromTmdbId(111) } returns null
+            // When
+            mainViewModel.loadAndNavigateTo("/111")
+            // Then
+            coVerify {
+                navHostControllerMock.navigate(
+                    Routes.SearchMovieView.route(111),
+                    any<NavOptionsBuilder.() -> Unit>(),
+                )
+            }
+        }
+
+    @Test
+    fun `show error when trying to navigate to invalid route`() =
+        runTest {
+            // When
+            mainViewModel.loadAndNavigateTo("/asdf")
+            // Then
+            assertEquals(PopupInfo.MovieNotFound, mainViewModel.popupInfo.value)
         }
 }

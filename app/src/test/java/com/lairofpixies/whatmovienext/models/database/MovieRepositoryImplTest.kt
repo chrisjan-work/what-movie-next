@@ -27,6 +27,7 @@ import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.models.database.data.DbStaff
+import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testDbMovieExtended
@@ -505,5 +506,20 @@ class MovieRepositoryImplTest {
 
             // Then
             assertEquals(listOf("Action", "Adventure", "Drama", "Horror"), genres)
+        }
+
+    @Test
+    fun `get movie Id from tmdb Id`() =
+        runTest {
+            // Given
+            coEvery { movieDao.fetchMovieByTmdbId(333) } returns
+                DbStaffedMovie(DbMovie(movieId = 44, title = "fortyfour"), emptyList())
+
+            // When
+            initializeSut()
+            val result = movieRepository.fetchMovieIdFromTmdbId(333)
+
+            // Then
+            assertEquals(44L, result)
         }
 }

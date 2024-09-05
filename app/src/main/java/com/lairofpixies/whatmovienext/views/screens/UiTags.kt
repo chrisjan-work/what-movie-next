@@ -49,6 +49,7 @@ object UiTags {
         const val CONFIRM_DELETION = "ConfirmDeletion"
         const val SEARCHING = "Searching"
         const val SEARCH_EMPTY = "SearchReturnedNothing"
+        const val MOVIE_NOT_FOUND = "MovieNotFound"
         const val CONNECTION_FAILED = "OnlineConnectionError"
         const val NUMBER_SELECT = "NumberSelect"
         const val WORD_SELECT = "WordSelect"
