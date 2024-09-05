@@ -18,8 +18,6 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
@@ -50,7 +48,6 @@ import kotlin.random.Random
 class MovieCardViewModelTest {
     private lateinit var repo: MovieRepository
     private lateinit var mainViewModelMock: MainViewModel
-    private lateinit var navHostControllerMock: NavHostController
     private lateinit var cardViewModel: MovieCardViewModel
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
@@ -60,11 +57,9 @@ class MovieCardViewModelTest {
         Dispatchers.setMain(testDispatcher)
         repo = mockk(relaxed = true)
         mainViewModelMock = mockk(relaxed = true)
-        navHostControllerMock = mockk(relaxed = true)
 
         cardViewModel = MovieCardViewModel(repo)
         cardViewModel.attachMainViewModel(mainViewModelMock)
-        cardViewModel.attachNavHostController(navHostControllerMock)
     }
 
     @After
@@ -158,16 +153,17 @@ class MovieCardViewModelTest {
             var lastId = 0L
 
             expectedSequence.forEach { expectedId ->
-                clearMocks(navHostControllerMock)
+                clearMocks(mainViewModelMock, answers = false, recordedCalls = true)
                 // When
                 cardViewModel.onNavigateToRandomMovie(lastId)
                 lastId = expectedId
 
                 // Then
                 verify {
-                    navHostControllerMock.navigate(
-                        Routes.SingleMovieView.route(expectedId),
-                        any<NavOptionsBuilder.() -> Unit>(),
+                    mainViewModelMock.onNavigateWithParam(
+                        Routes.SingleMovieView,
+                        expectedId,
+                        popToHome = true,
                     )
                 }
             }

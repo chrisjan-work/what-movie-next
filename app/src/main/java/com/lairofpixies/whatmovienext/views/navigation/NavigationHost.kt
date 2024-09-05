@@ -43,7 +43,6 @@ fun NavigationHost(
 ) {
     fun <T : ScreenViewModel> T.connect() =
         apply {
-            attachNavHostController(navController)
             attachMainViewModel(mainViewModel)
         }
 

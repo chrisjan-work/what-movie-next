@@ -19,8 +19,6 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.PagedMovies
 import com.lairofpixies.whatmovienext.models.data.SearchQuery
@@ -28,7 +26,6 @@ import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forSearch
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
-import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import com.lairofpixies.whatmovienext.views.state.SearchState
 import io.mockk.clearMocks
@@ -53,7 +50,6 @@ class SearchViewModelTest {
     private lateinit var searchViewModel: SearchViewModel
     private lateinit var dbRepoMock: MovieRepository
     private lateinit var apiRepoMock: ApiRepository
-    private lateinit var navHostControllerMock: NavHostController
     private lateinit var mainViewModelMock: MainViewModel
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
@@ -63,12 +59,10 @@ class SearchViewModelTest {
         Dispatchers.setMain(testDispatcher)
         dbRepoMock = mockk(relaxed = true)
         apiRepoMock = mockk(relaxed = true)
-        navHostControllerMock = mockk(relaxed = true)
         mainViewModelMock = mockk(relaxed = true)
 
         searchViewModel =
             SearchViewModel(dbRepoMock, apiRepoMock).apply {
-                attachNavHostController(navHostControllerMock)
                 attachMainViewModel(mainViewModelMock)
             }
     }
@@ -392,12 +386,7 @@ class SearchViewModelTest {
 
             // Then
             coVerify { dbRepoMock.storeMovie(movieToSave) }
-            coVerify {
-                navHostControllerMock.navigate(
-                    Routes.HOME.route,
-                    any<NavOptionsBuilder.() -> Unit>(),
-                )
-            }
+            coVerify { mainViewModelMock.onLeaveAction() }
         }
 
     @Test
@@ -409,12 +398,7 @@ class SearchViewModelTest {
         searchViewModel.handleBackButton()
 
         // Then
-        coVerify {
-            navHostControllerMock.navigate(
-                Routes.HOME.route,
-                any<NavOptionsBuilder.() -> Unit>(),
-            )
-        }
+        coVerify { mainViewModelMock.onLeaveAction() }
     }
 
     @Test

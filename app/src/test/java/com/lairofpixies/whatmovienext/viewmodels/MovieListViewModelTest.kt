@@ -18,8 +18,6 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
@@ -65,7 +63,6 @@ import kotlin.random.Random
 class MovieListViewModelTest {
     private lateinit var listViewModel: MovieListViewModel
     private lateinit var mainViewModelMock: MainViewModel
-    private lateinit var navHostControllerMock: NavHostController
     private lateinit var sortProcessor: SortProcessor
     private lateinit var filterProcessor: FilterProcessor
     private lateinit var presetMapper: PresetMapper
@@ -84,7 +81,6 @@ class MovieListViewModelTest {
             mockk(relaxed = true) {
                 every { listedMovies } returns MutableStateFlow(AsyncMovie.Empty)
             }
-        navHostControllerMock = mockk(relaxed = true)
         sortProcessor = SortProcessor(mockk(relaxed = true))
         filterProcessor = FilterProcessor()
         presetMapper = mockk(relaxed = true)
@@ -100,7 +96,6 @@ class MovieListViewModelTest {
                 presetMapper,
             )
         listViewModel.attachMainViewModel(mainViewModelMock)
-        listViewModel.attachNavHostController(navHostControllerMock)
     }
 
     @After
@@ -282,15 +277,16 @@ class MovieListViewModelTest {
             val expectedSequence: List<Long> = listOf(3, 3, 3, 2, 1, 2)
 
             expectedSequence.forEach { expectedId ->
-                clearMocks(navHostControllerMock)
+                clearMocks(mainViewModelMock, answers = false, recordedCalls = true)
                 // When
                 listViewModel.onNavigateToRandomMovie()
 
                 // Then
                 verify {
-                    navHostControllerMock.navigate(
-                        Routes.SingleMovieView.route(expectedId),
-                        any<NavOptionsBuilder.() -> Unit>(),
+                    mainViewModelMock.onNavigateWithParam(
+                        Routes.SingleMovieView,
+                        expectedId,
+                        popToHome = true,
                     )
                 }
             }

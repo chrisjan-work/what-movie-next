@@ -19,12 +19,8 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 import kotlin.reflect.KClass
@@ -33,48 +29,22 @@ open class ScreenViewModel protected constructor() : ViewModel() {
     @Inject
     lateinit var randomizer: Random
 
-    private lateinit var navHostController: NavHostController
     protected var mainViewModel: MainViewModel? = null
         private set
-
-    open fun attachNavHostController(navHostController: NavHostController) {
-        this.navHostController = navHostController
-    }
 
     open fun attachMainViewModel(mainViewModel: MainViewModel) {
         this.mainViewModel = mainViewModel
     }
 
-    fun onLeaveAction() =
-        CoroutineScope(Dispatchers.Main).launch {
-            navHostController.navigate(Routes.HOME.route) {
-                popUpTo(Routes.HOME.route) {
-                    inclusive = true
-                }
-            }
-        }
+    fun onLeaveAction() = mainViewModel?.onLeaveAction()
 
-    fun onNavigateTo(destination: Routes) {
-        CoroutineScope(Dispatchers.Main).launch {
-            navHostController.navigate(destination.route)
-        }
-    }
+    fun onNavigateTo(destination: Routes) = mainViewModel?.onNavigateTo(destination)
 
     fun onNavigateWithParam(
         destination: Routes,
         parameter: Long,
         popToHome: Boolean = false,
-    ) {
-        CoroutineScope(Dispatchers.Main).launch {
-            navHostController.navigate(destination.route(parameter)) {
-                if (popToHome) {
-                    popUpTo(Routes.HOME.route) {
-                        inclusive = false
-                    }
-                }
-            }
-        }
-    }
+    ) = mainViewModel?.onNavigateWithParam(destination, parameter, popToHome)
 
     fun showPopup(popupInfo: PopupInfo) = mainViewModel?.showPopup(popupInfo)
 
