@@ -150,12 +150,12 @@ class MainViewModelTest {
     fun `navigate to search result route with given id`() =
         runTest {
             // When
-            mainViewModel.onNavigateWithParam(Routes.SearchMovieView, 84, false)
+            mainViewModel.onNavigateWithParam(Routes.SharedMovieView, 84, false)
 
             // Then
             coVerify {
                 navHostControllerMock.navigate(
-                    Routes.SearchMovieView.route(84),
+                    Routes.SharedMovieView.route(84),
                     any<NavOptionsBuilder.() -> Unit>(),
                 )
             }
@@ -187,7 +187,7 @@ class MainViewModelTest {
             // Then
             coVerify {
                 navHostControllerMock.navigate(
-                    Routes.SearchMovieView.route(111),
+                    Routes.SharedMovieView.route(111),
                     any<NavOptionsBuilder.() -> Unit>(),
                 )
             }

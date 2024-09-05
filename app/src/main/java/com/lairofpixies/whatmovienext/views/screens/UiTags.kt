@@ -25,6 +25,7 @@ object UiTags {
         const val QUERY_EDITOR = "QueryEditor"
         const val SEARCH_RESULTS = "SearchResults"
         const val SELECTION_VIEW = "SelectionView"
+        const val SHARED_VIEW = "SharedMovie"
         const val ARCHIVE = "Archive"
     }
 
