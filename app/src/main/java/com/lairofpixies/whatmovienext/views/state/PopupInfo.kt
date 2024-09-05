@@ -33,6 +33,8 @@ sealed class PopupInfo {
 
     data object SearchEmpty : PopupInfo()
 
+    data object MovieNotFound : PopupInfo()
+
     data object ConnectionFailed : PopupInfo()
 
     data class NumberChooser(

@@ -70,6 +70,14 @@ fun PopupDialogs(
                 onDismiss = onDismiss,
             )
 
+        is PopupInfo.MovieNotFound ->
+            SingleButtonDialog(
+                modifier = modifier.testTag(UiTags.Popups.MOVIE_NOT_FOUND),
+                titleRes = R.string.movie_not_found,
+                contentRes = R.string.wrong_link,
+                onDismiss = onDismiss,
+            )
+
         is PopupInfo.ConnectionFailed ->
             SingleButtonDialog(
                 modifier = modifier.testTag(UiTags.Popups.CONNECTION_FAILED),

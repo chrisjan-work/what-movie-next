@@ -78,4 +78,5 @@
     <string name="results">Results</string>
     <string name="find">Find</string>
     <string name="clear_find">Clear Find</string>
+    <string name="wrong_link">Could not identify the movie</string>
 </resources>

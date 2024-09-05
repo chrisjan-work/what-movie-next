@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
+import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +38,9 @@ import kotlin.reflect.KClass
 @HiltViewModel
 class MainViewModel
     @Inject
-    constructor() : ViewModel() {
+    constructor(
+        val movieRepository: MovieRepository,
+    ) : ViewModel() {
         private lateinit var navHostController: NavHostController
 
         private val _listedMovies = MutableStateFlow<AsyncMovie>(AsyncMovie.Loading)
@@ -98,6 +101,25 @@ class MainViewModel
         internal fun updateMovies(movies: AsyncMovie) {
             viewModelScope.launch {
                 _listedMovies.value = movies
+            }
+        }
+
+        fun loadAndNavigateTo(linkRoute: String) {
+            viewModelScope.launch {
+                val tmdbId =
+                    Regex("\\d+").find(linkRoute)?.value?.toLongOrNull() ?: run {
+                        showPopup(PopupInfo.MovieNotFound)
+                        return@launch
+                    }
+
+                // find in db
+                val movieId = movieRepository.fetchMovieIdFromTmdbId(tmdbId)
+                if (movieId != null) {
+                    onNavigateWithParam(Routes.SingleMovieView, movieId, popToHome = false)
+                } else {
+                    // TODO
+                    onNavigateWithParam(Routes.SearchMovieView, tmdbId, popToHome = false)
+                }
             }
         }
     }

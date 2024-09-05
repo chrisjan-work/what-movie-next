@@ -25,7 +25,7 @@ enum class Routes(
     AllMoviesView(path = "movies"),
     SingleMovieView(path = "movie_details", argument = "movieId"),
     CreateMovieView(path = "movie_create"),
-    EditMovieView(path = "movie_edit", argument = "movieId"),
+    SearchMovieView(path = "movie_search", argument = "tmdbId"),
     ArchiveView(path = "archive"),
     ;
 
