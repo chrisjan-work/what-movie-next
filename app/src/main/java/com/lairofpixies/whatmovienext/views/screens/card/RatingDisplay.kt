@@ -60,7 +60,7 @@ fun RatingDisplay(
                 text = mcRating.displayValue,
                 contentDescription =
                     stringResource(
-                        R.string.metacritic_rating,
+                        R.string.metacritic_score_value,
                         mcRating.percentValue,
                     ),
                 modifier = modifier.alpha(0.8f),
@@ -72,7 +72,7 @@ fun RatingDisplay(
                 text = rtRating.displayValue,
                 contentDescription =
                     stringResource(
-                        R.string.rotten_tomatoes_rating,
+                        R.string.rotten_tomatoes_score_value,
                         rtRating.percentValue,
                     ),
                 modifier = modifier.alpha(0.8f),

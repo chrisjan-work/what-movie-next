@@ -63,7 +63,7 @@
     <string name="by_genre">genre</string>
     <string name="by_runtime">runtime</string>
     <string name="by_director">director</string>
-    <string name="by_rating">avg. score</string>
+    <string name="by_avg_score">avg. score</string>
     <string name="by_seen_state">seen</string>
     <string name="shuffle">shuffle</string>
     <string name="roulette">Roulette</string>
@@ -91,12 +91,12 @@
     <string name="read_year_and_runtime">Year: %1$s. Runtime: %2$s</string>
     <string name="not_known">not known</string>
     <string name="read_runtime_and_genres">Runtime: %1$s. Genres: %2$s.</string>
-    <string name="metacritic_rating">"Metacritic rating: %d"</string>
-    <string name="rotten_tomatoes_rating">"Rotten Tomatoes rating: %d"</string>
+    <string name="metacritic_score_value">"Metacritic score: %d"</string>
+    <string name="rotten_tomatoes_score_value">"Rotten Tomatoes score: %d"</string>
     <string name="year_value">Year: %d</string>
     <string name="sort_by">Sort by %s.</string>
     <string name="sort_by_seen_or_not">Separate between seen and to watch.</string>
-    <string name="sort_by_average_rating">Sort by average score.</string>
+    <string name="sort_by_average_score">Sort by average score.</string>
     <string name="is_selected">Selected</string>
     <string name="is_unselected">Unselected</string>
     <string name="ascending">Ascending order</string>
