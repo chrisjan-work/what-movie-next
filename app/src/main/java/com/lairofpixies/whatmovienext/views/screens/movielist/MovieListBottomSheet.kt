@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
+import com.lairofpixies.whatmovienext.util.dpf
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.screens.UiTags
@@ -136,7 +137,7 @@ fun BottomSheetTabs(
     bottomMenuOption: BottomMenuOption,
     selectMenu: (BottomMenuOption) -> Unit,
 ) {
-    val tabHeight = 24.dp
+    val tabHeight = 24.dpf
     TabRow(
         selectedTabIndex = bottomMenuOption.ordinal,
         modifier = Modifier.height(tabHeight),
@@ -167,7 +168,7 @@ fun BottomMenuTab(
     select: () -> Unit,
     buttonSpec: ButtonSpec,
     modifier: Modifier = Modifier,
-    height: Dp = 24.dp,
+    height: Dp = 24.dpf,
 ) {
     val label = stringResource(buttonSpec.labelRes)
     LeadingIconTab(
@@ -261,7 +262,7 @@ fun SortingButton(
         modifier =
             modifier
                 .padding(3.dp)
-                .size(width = 120.dp, height = 32.dp)
+                .size(width = 110.dpf, height = 28.dpf)
                 .border(
                     width = 1.dp,
                     color = borderColor,
@@ -280,12 +281,13 @@ fun SortingButton(
             fontStyle = if (isSelected) FontStyle.Normal else FontStyle.Italic,
             fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Light,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+            textAlign = TextAlign.Start,
             maxLines = 1,
             modifier =
                 Modifier
-                    .padding(8.dp)
-                    .size(100.dp)
-                    .align(Alignment.CenterStart),
+                    .padding(5.dpf)
+                    .padding(start = 2.dpf, end = 2.dpf)
+                    .size(100.dpf),
         )
         // do not show arrow for random
         if (isSelected && criteria != SortingCriteria.Random) {
@@ -425,7 +427,7 @@ fun ListModeButton(
         modifier =
             modifier
                 .padding(3.dp)
-                .sizeIn(minWidth = 126.dp, minHeight = 32.dp)
+                .sizeIn(minWidth = 126.dp, minHeight = 28.dpf)
                 .border(
                     width = 1.dp,
                     color = borderColor,
@@ -491,7 +493,7 @@ fun MinMaxButton(
         modifier =
             modifier
                 .padding(3.dp)
-                .sizeIn(minWidth = 126.dp, minHeight = 32.dp)
+                .sizeIn(minWidth = 126.dp, minHeight = 28.dpf)
                 .border(
                     width = 1.dp,
                     color = borderColor,
@@ -565,7 +567,7 @@ fun WordSelectButton(
         modifier =
             modifier
                 .padding(3.dp)
-                .size(width = 126.dp, height = 32.dp)
+                .size(width = 126.dpf, height = 28.dpf)
                 .border(
                     width = 1.dp,
                     color = borderColor,
@@ -594,7 +596,7 @@ fun WordSelectButton(
                     }
                 },
         )
-        Spacer(modifier = Modifier.sizeIn(minWidth = 8.dp))
+        Spacer(modifier = Modifier.weight(1f))
         Text(
             text = filterValues.words.joinToString(","),
             style = MaterialTheme.typography.bodySmall,
@@ -604,7 +606,7 @@ fun WordSelectButton(
             textAlign = TextAlign.End,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.width(64.dp),
+            modifier = Modifier.width(64.dpf),
         )
     }
 }
