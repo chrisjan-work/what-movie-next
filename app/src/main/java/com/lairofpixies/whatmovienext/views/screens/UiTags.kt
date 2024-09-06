@@ -43,7 +43,18 @@ object UiTags {
         const val ROULETTE = "RouletteButton"
         const val ARCHIVE_ACTION = "ArchiveAction"
         const val SHARE_ACTION = "ShareAction"
+        const val ADD_NEW_MOVIE_ACTION = "AddNewMovie"
+        const val QUICK_FIND_ACTION = "QuickFind"
         const val ARCHIVE_SHORTCUT = "ArchiveShortcut"
+        const val SORT_BY_CREATION_TIME = "SortByCreationTime"
+        const val SORT_BY_TITLE = "SortByTitle"
+        const val SORT_BY_YEAR = "SortByYear"
+        const val SORT_BY_SEEN = "SortBySeen"
+        const val SORT_BY_GENRE = "SortByGenre"
+        const val SORT_BY_RUNTIME = "SortByRuntime"
+        const val SORT_BY_DIRECTOR = "SortByDirector"
+        const val SORT_BY_SCORE = "SortByScore"
+        const val SHUFFLE_ACTION = "ShuffleAction"
     }
 
     object Popups {

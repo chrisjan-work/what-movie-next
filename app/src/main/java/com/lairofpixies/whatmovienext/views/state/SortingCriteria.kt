@@ -20,20 +20,22 @@ package com.lairofpixies.whatmovienext.views.state
 
 import androidx.annotation.StringRes
 import com.lairofpixies.whatmovienext.R
+import com.lairofpixies.whatmovienext.views.screens.UiTags
 
 enum class SortingCriteria(
     @StringRes val display: Int,
+    val tag: String,
     @StringRes val readable: Int? = null,
 ) {
-    CreationTime(R.string.by_date_added),
-    Title(R.string.by_title),
-    Year(R.string.by_year),
-    WatchCount(R.string.by_seen_state, R.string.sort_by_seen_or_not),
-    Genre(R.string.by_genre),
-    Runtime(R.string.by_runtime),
-    Director(R.string.by_director),
-    MeanRating(R.string.by_avg_score, R.string.sort_by_average_score),
-    Random(R.string.shuffle, R.string.shuffle),
+    CreationTime(R.string.by_date_added, UiTags.Buttons.SORT_BY_CREATION_TIME),
+    Title(R.string.by_title, UiTags.Buttons.SORT_BY_TITLE),
+    Year(R.string.by_year, UiTags.Buttons.SORT_BY_YEAR),
+    WatchCount(R.string.by_seen_state, UiTags.Buttons.SORT_BY_SEEN, R.string.sort_by_seen_or_not),
+    Genre(R.string.by_genre, UiTags.Buttons.SORT_BY_GENRE),
+    Runtime(R.string.by_runtime, UiTags.Buttons.SORT_BY_RUNTIME),
+    Director(R.string.by_director, UiTags.Buttons.SORT_BY_DIRECTOR),
+    MeanRating(R.string.by_avg_score, UiTags.Buttons.SORT_BY_SCORE, R.string.sort_by_average_score),
+    Random(R.string.shuffle, UiTags.Buttons.SHUFFLE_ACTION, R.string.shuffle),
     ;
 
     companion object {

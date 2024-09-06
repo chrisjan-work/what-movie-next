@@ -28,7 +28,6 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.onChildren
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
@@ -218,7 +217,7 @@ class SearchStepDefs(
     fun theUserInitiatesANewQuery() =
         composeRule.composeStep {
             if (onNodeWithTag(UiTags.Screens.QUERY_EDITOR).isNotDisplayed() && onNodeWithTag(UiTags.Screens.MOVIE_LIST).isDisplayed()) {
-                onNodeWithContentDescription(stringResource(R.string.add_new_movie))
+                onNodeWithTag(UiTags.Buttons.ADD_NEW_MOVIE_ACTION)
                     .performClick()
             }
         }
