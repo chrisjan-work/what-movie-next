@@ -23,16 +23,17 @@ import com.lairofpixies.whatmovienext.R
 
 enum class SortingCriteria(
     @StringRes val display: Int,
+    @StringRes val readable: Int? = null,
 ) {
     CreationTime(R.string.by_date_added),
     Title(R.string.by_title),
     Year(R.string.by_year),
-    WatchCount(R.string.by_seen_times),
+    WatchCount(R.string.by_seen_state, R.string.sort_by_seen_or_not),
     Genre(R.string.by_genre),
     Runtime(R.string.by_runtime),
     Director(R.string.by_director),
-    MeanRating(R.string.by_rating),
-    Random(R.string.random),
+    MeanRating(R.string.by_rating, R.string.sort_by_average_rating),
+    Random(R.string.shuffle, R.string.shuffle),
     ;
 
     companion object {
