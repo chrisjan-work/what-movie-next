@@ -42,18 +42,18 @@
     <string name="search_empty_title">No data found</string>
     <string name="search_in_progress">Looking up in online database…</string>
     <string name="sources">Sources:</string>
-    <string name="tmdb_credits"><![CDATA[<a href=\"https://www.themoviedb.org/\">TMDB</a>]]></string>
-    <string name="omdb_credits"><![CDATA[<a href=\"https://www.omdbapi.com/\">OMDB</a>]]></string>
-    <string name="wikidata_credits"><![CDATA[<a href=\"https://www.wikidata.org/\">Wikidata</a>]]></string>
+    <string name="tmdb_credits" translatable="false"><![CDATA[<a href=\"https://www.themoviedb.org/\">TMDB</a>]]></string>
+    <string name="omdb_credits" translatable="false"><![CDATA[<a href=\"https://www.omdbapi.com/\">OMDB</a>]]></string>
+    <string name="wikidata_credits" translatable="false"><![CDATA[<a href=\"https://www.wikidata.org/\">Wikidata</a>]]></string>
     <string name="direction_and_writing">Direction and Writing</string>
     <string name="cast">Cast</string>
-    <string name="middle_dot">•</string>
+    <string name="middle_dot" translatable="false">•</string>
     <string name="directed_by_short">Dir.</string>
-    <string name="imdb_url">https://www.imdb.com/title/</string>
-    <string name="tmdb_url">https://www.themoviedb.org/movie/</string>
+    <string name="imdb_url" translatable="false">https://www.imdb.com/title/</string>
+    <string name="tmdb_url" translatable="false">https://www.themoviedb.org/movie/</string>
     <string name="external_links">External links</string>
-    <string name="rotten_tomatoes_url">https://www.rottentomatoes.com/</string>
-    <string name="metacritic_url">https://www.metacritic.com/</string>
+    <string name="rotten_tomatoes_url" translatable="false">https://www.rottentomatoes.com/</string>
+    <string name="metacritic_url" translatable="false">https://www.metacritic.com/</string>
     <string name="connection_failed_title">Network problem</string>
     <string name="missing_title_title">Missing title</string>
     <string name="sort">Sort</string>
@@ -83,10 +83,10 @@
     <string name="missing_image">Missing image</string>
     <string name="poster_for_movie">Poster for %s</string>
     <string name="browse_movie_at_page">Browse %1$s at %2$s.</string>
-    <string name="the_movie_database">The Movie Database</string>
-    <string name="internet_movie_database">Internet Movie Database</string>
-    <string name="rotten_tomatoes">Rotten Tomatoes</string>
-    <string name="metacritic">Metacritic</string>
+    <string name="the_movie_database" translatable="false">The Movie Database</string>
+    <string name="internet_movie_database" translatable="false">Internet Movie Database</string>
+    <string name="rotten_tomatoes" translatable="false">Rotten Tomatoes</string>
+    <string name="metacritic" translatable="false">Metacritic</string>
     <string name="directed_by_full">"Directed by "</string>
     <string name="read_year_and_runtime">Year: %1$s. Runtime: %2$s</string>
     <string name="not_known">not known</string>
