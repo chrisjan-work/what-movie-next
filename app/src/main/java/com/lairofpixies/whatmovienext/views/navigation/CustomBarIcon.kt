@@ -43,7 +43,7 @@ fun CustomBarIcon(
     ) {
         Icon(
             imageVector = specification.icon,
-            contentDescription = label,
+            contentDescription = null,
             modifier = modifier.padding(start = 16.dp, end = 16.dp),
         )
         Text(
