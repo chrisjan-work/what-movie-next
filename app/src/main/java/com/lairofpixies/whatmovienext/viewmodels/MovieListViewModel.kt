@@ -61,6 +61,9 @@ class MovieListViewModel
         lateinit var listedMovies: StateFlow<AsyncMovie>
             private set
 
+        private val _databaseMovieCount = MutableStateFlow(0)
+        val databaseMovieCount: StateFlow<Int> = _databaseMovieCount.asStateFlow()
+
         val isEmpty: Flow<Boolean> = movieRepository.isEmpty
 
         private val _hasArchivedMovies = MutableStateFlow(false)
@@ -150,6 +153,12 @@ class MovieListViewModel
                             mainViewModel.updateMovies(sortedMovies)
                             updateQuickFindText(quickFind.value.query)
                         }
+                }
+
+                viewModelScope.launch {
+                    movieRepository.listedMovies.collect { allMovies ->
+                        _databaseMovieCount.value = allMovies.toList<Movie.ForList>().size
+                    }
                 }
 
                 viewModelScope.launch {

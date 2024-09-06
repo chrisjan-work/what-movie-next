@@ -63,7 +63,8 @@ import kotlin.math.min
 @Composable
 fun MovieListTopBar(
     triggerBar: MutableState<Boolean>,
-    movieCount: Int,
+    visibleMovieCount: Int,
+    databaseMovieCount: Int,
     isArchiveVisitable: Boolean,
     onOpenArchive: () -> Unit,
     quickFind: QuickFind,
@@ -110,9 +111,14 @@ fun MovieListTopBar(
                 },
                 currentMatch = quickFind.matchIndex,
                 matchCount = quickFind.matches.size,
-                total = movieCount,
                 focusRequester = focusRequester,
                 modifier = Modifier.weight(1f),
+            )
+            val movieCounts = "$visibleMovieCount/$databaseMovieCount"
+            Text(
+                text = movieCounts,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface,
             )
             Icon(
                 ButtonSpec.ArchiveShortcut.icon,
@@ -135,9 +141,8 @@ fun CustomSearchBar(
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
     onClose: () -> Unit,
-    matchCount: Int,
     currentMatch: Int,
-    total: Int,
+    matchCount: Int,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
 ) {
@@ -195,19 +200,15 @@ fun CustomSearchBar(
                     }
                     innerTextField()
                 }
-                val currentMatchDisplay =
-                    if (query.isNotEmpty()) {
-                        "${min(currentMatch + 1, matchCount)}/$matchCount"
-                    } else {
-                        "/$total"
-                    }
-
-                Text(
-                    text = currentMatchDisplay,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.clickable { onSearch() },
-                )
+                if (query.isNotEmpty()) {
+                    val currentMatchDisplay = "${min(currentMatch + 1, matchCount)}/$matchCount"
+                    Text(
+                        text = currentMatchDisplay,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clickable { onSearch() },
+                    )
+                }
             }
         },
     )

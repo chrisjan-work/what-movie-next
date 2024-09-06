@@ -65,12 +65,13 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
                 MovieListTopBar(
                     triggerBar = trigger,
                     isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
-                    movieCount =
+                    visibleMovieCount =
                         listViewModel.listedMovies
                             .collectAsState()
                             .value
                             .toList<Movie.ForList>()
                             .size,
+                    databaseMovieCount = listViewModel.databaseMovieCount.collectAsState().value,
                     onOpenArchive = {
                         listViewModel.onNavigateTo(Routes.ArchiveView)
                     },
