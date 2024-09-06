@@ -43,6 +43,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.util.printableRuntime
+import com.lairofpixies.whatmovienext.util.readableRuntime
 import com.lairofpixies.whatmovienext.util.toAnnotatedString
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
 import com.lairofpixies.whatmovienext.views.components.CopyableText
@@ -209,10 +212,14 @@ fun YearDisplay(
     modifier: Modifier = Modifier,
 ) {
     if (year != null) {
+        val readYear = stringResource(R.string.year, year)
         CopyableText(
             text = year.toString(),
             style = MaterialTheme.typography.titleMedium,
-            modifier = modifier.padding(start = 8.dp, end = 8.dp),
+            modifier =
+                modifier
+                    .padding(start = 8.dp, end = 8.dp)
+                    .semantics { contentDescription = readYear },
         )
     }
 }
@@ -224,13 +231,22 @@ fun RuntimeAndGenresDisplay(
     modifier: Modifier = Modifier,
 ) {
     val dot = stringResource(id = R.string.middle_dot)
+    val readText =
+        stringResource(
+            R.string.read_runtime_and_genres,
+            readableRuntime(runtime),
+            genres.joinToString(", "),
+        )
     CopyableText(
         text =
             printableRuntime(runtimeMinutes = runtime, pos = "  $dot  ") +
                 genres.joinToString(" / "),
         fontStyle = FontStyle.Italic,
         style = MaterialTheme.typography.bodySmall,
-        modifier = modifier.padding(start = 8.dp, end = 8.dp),
+        modifier =
+            modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .semantics { contentDescription = readText },
     )
 }
 

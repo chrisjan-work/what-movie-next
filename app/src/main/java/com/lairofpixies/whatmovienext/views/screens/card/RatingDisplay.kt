@@ -38,6 +38,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
@@ -54,8 +57,12 @@ fun RatingDisplay(
         if (mcRating.isNotNegative()) {
             RatingRow(
                 logo = R.drawable.metacritic,
-                text =
-                    mcRating.displayValue,
+                text = mcRating.displayValue,
+                contentDescription =
+                    stringResource(
+                        R.string.metacritic_rating,
+                        mcRating.percentValue,
+                    ),
                 modifier = modifier.alpha(0.8f),
             )
         }
@@ -63,6 +70,11 @@ fun RatingDisplay(
             RatingRow(
                 logo = R.drawable.rotten_tomatoes,
                 text = rtRating.displayValue,
+                contentDescription =
+                    stringResource(
+                        R.string.rotten_tomatoes_rating,
+                        rtRating.percentValue,
+                    ),
                 modifier = modifier.alpha(0.8f),
             )
         }
@@ -73,15 +85,21 @@ fun RatingDisplay(
 fun RatingRow(
     @DrawableRes logo: Int,
     text: String,
+    contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(start = 8.dp, end = 8.dp),
+        modifier =
+            modifier
+                .padding(start = 8.dp, end = 8.dp)
+                .semantics(mergeDescendants = true) {
+                    this.contentDescription = contentDescription
+                },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
             painter = painterResource(id = logo),
-            contentDescription = "",
+            contentDescription = null,
             modifier =
                 modifier
                     .padding(4.dp)
@@ -95,7 +113,8 @@ fun RatingRow(
             modifier =
                 modifier
                     .padding(top = 12.dp, start = 4.dp, end = 4.dp)
-                    .height(height = 30.dp),
+                    .height(height = 30.dp)
+                    .clearAndSetSemantics {},
         )
     }
 }
@@ -117,14 +136,24 @@ fun MovieLinks(
     Row(modifier = modifier.padding(start = 8.dp, end = 8.dp)) {
         ClickableLogo(
             logo = R.drawable.tmdb,
-            contentDescription = stringResource(R.string.browse_movie_at_page, title, stringResource(R.string.the_movie_database)),
+            contentDescription =
+                stringResource(
+                    R.string.browse_movie_at_page,
+                    title,
+                    stringResource(R.string.the_movie_database),
+                ),
             url = stringResource(R.string.tmdb_url) + tmdbId,
             modifier = modifier,
         )
         if (!imdbId.isNullOrBlank()) {
             ClickableLogo(
                 logo = R.drawable.imdb,
-                contentDescription = stringResource(R.string.browse_movie_at_page, title, stringResource(R.string.internet_movie_database)),
+                contentDescription =
+                    stringResource(
+                        R.string.browse_movie_at_page,
+                        title,
+                        stringResource(R.string.internet_movie_database),
+                    ),
                 url = stringResource(R.string.imdb_url) + imdbId,
                 modifier = modifier,
             )
@@ -132,7 +161,12 @@ fun MovieLinks(
         if (rtId.isNotBlank()) {
             ClickableLogo(
                 logo = R.drawable.rotten_tomatoes,
-                contentDescription = stringResource(R.string.browse_movie_at_page, title, stringResource(R.string.rotten_tomatoes)),
+                contentDescription =
+                    stringResource(
+                        R.string.browse_movie_at_page,
+                        title,
+                        stringResource(R.string.rotten_tomatoes),
+                    ),
                 url = stringResource(R.string.rotten_tomatoes_url) + rtId,
                 modifier = modifier,
             )
@@ -140,7 +174,12 @@ fun MovieLinks(
         if (mcId.isNotBlank()) {
             ClickableLogo(
                 logo = R.drawable.metacritic,
-                contentDescription = stringResource(R.string.browse_movie_at_page, title, stringResource(R.string.metacritic)),
+                contentDescription =
+                    stringResource(
+                        R.string.browse_movie_at_page,
+                        title,
+                        stringResource(R.string.metacritic),
+                    ),
                 url = stringResource(R.string.metacritic_url) + mcId,
                 modifier = modifier,
             )

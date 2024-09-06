@@ -20,11 +20,15 @@ package com.lairofpixies.whatmovienext.util
 
 import android.text.Html
 import android.text.style.URLSpan
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
+import com.lairofpixies.whatmovienext.R
 import java.net.URI
 
 private const val DELIMITER = ','
@@ -112,6 +116,19 @@ fun printableRuntime(
         else -> "$pre${runtimeMinutes / 60}h ${runtimeMinutes % 60}min$pos"
     }
 
+@Composable
+fun readableRuntime(runtimeMinutes: Int): String =
+    when (runtimeMinutes) {
+        0 -> stringResource(R.string.not_known)
+        in 1..59 -> pluralStringResource(R.plurals.minutes, runtimeMinutes)
+        else -> {
+            val hours = runtimeMinutes / 60
+            val minutes = runtimeMinutes % 60
+            pluralStringResource(R.plurals.hours, hours, hours) + ", " +
+                pluralStringResource(R.plurals.minutes, minutes, minutes)
+        }
+    }
+
 fun quickMatchAll(
     query: String,
     candidate: String,
@@ -129,6 +146,7 @@ fun quickMatchAny(
     query: String,
     candidate: String,
 ): Boolean =
+
     query
         .trim()
         .split(" ")

@@ -54,6 +54,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -63,6 +65,7 @@ import com.lairofpixies.whatmovienext.models.data.Rating
 import com.lairofpixies.whatmovienext.models.data.isNotNegative
 import com.lairofpixies.whatmovienext.util.printableRuntime
 import com.lairofpixies.whatmovienext.util.printableYear
+import com.lairofpixies.whatmovienext.util.readableRuntime
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
 import com.lairofpixies.whatmovienext.views.components.ScrollableLazyColumn
 import com.lairofpixies.whatmovienext.views.components.TOP_BAR_SPACE
@@ -152,7 +155,7 @@ fun MovieListItem(
         val maxWidth = if (movie.appData.watchDates.isNotEmpty()) 260.dp else 320.dp
         ThumbnailPic(
             thumbnailUrl = movie.searchData.thumbnailUrl,
-            contentDescription = stringResource(R.string.poster_for_movie, movie.searchData.title),
+            contentDescription = null,
             modifier =
                 Modifier
                     .align(Alignment.CenterVertically),
@@ -189,10 +192,12 @@ fun MovieListItem(
             if (movie.detailData.directorNames.isNotEmpty()) {
                 val names = movie.detailData.directorNames.joinToString(", ")
                 val intro = stringResource(R.string.directed_by_short)
+                val voiceIntro = stringResource(R.string.directed_by_full)
                 Text(
                     text = "$intro: $names",
                     style = MaterialTheme.typography.bodySmall,
                     fontStyle = FontStyle.Italic,
+                    modifier = Modifier.semantics { contentDescription = "$voiceIntro $names" },
                 )
             }
         }
@@ -209,7 +214,7 @@ fun MovieListItem(
 @Composable
 fun ThumbnailPic(
     thumbnailUrl: String,
-    contentDescription: String,
+    contentDescription: String?,
     modifier: Modifier = Modifier,
 ) {
     AsyncPic(
@@ -230,10 +235,19 @@ fun YearAndRuntimeDisplay(
     modifier: Modifier = Modifier,
 ) {
     val dot = stringResource(id = R.string.middle_dot)
+    val readableText =
+        stringResource(
+            R.string.read_year_and_runtime,
+            year ?: stringResource(R.string.not_known),
+            readableRuntime(runtimeMinutes),
+        )
     Text(
         text = printableYear(year, pos = "  $dot  ") + printableRuntime(runtimeMinutes),
         style = MaterialTheme.typography.bodySmall,
-        modifier = modifier,
+        modifier =
+            modifier.semantics {
+                contentDescription = readableText
+            },
     )
 }
 
@@ -246,7 +260,7 @@ fun SeenDisplay(
         val seenIcon = Icons.Outlined.RemoveRedEye
         Icon(
             imageVector = seenIcon,
-            contentDescription = "",
+            contentDescription = stringResource(R.string.seen),
             modifier =
                 modifier
                     .padding(2.dp)
@@ -272,25 +286,31 @@ fun RatingsDisplay(
     modifier: Modifier = Modifier,
 ) {
     Row {
-        if (mcRating.isNotNegative()) {
-            RatingIcon(
-                R.drawable.metacritic,
-                modifier = modifier,
-            )
-            RatingDisplay(
-                mcRating?.displayValue ?: "?",
-                modifier = modifier,
-            )
+        if (mcRating != null && mcRating.isNotNegative()) {
+            val readMcRating = stringResource(R.string.metacritic_rating, mcRating.percentValue)
+            Row(modifier = modifier.semantics { contentDescription = readMcRating }) {
+                RatingIcon(
+                    R.drawable.metacritic,
+                    modifier = modifier,
+                )
+                RatingDisplay(
+                    mcRating.displayValue,
+                    modifier = modifier,
+                )
+            }
         }
-        if (rtRating.isNotNegative()) {
-            RatingIcon(
-                R.drawable.rotten_tomatoes,
-                modifier = modifier,
-            )
-            RatingDisplay(
-                rtRating?.displayValue ?: "?",
-                modifier = modifier,
-            )
+        if (rtRating != null && rtRating.isNotNegative()) {
+            val readRtRating = stringResource(R.string.rotten_tomatoes_rating, rtRating.percentValue)
+            Row(modifier = modifier.semantics { contentDescription = readRtRating }) {
+                RatingIcon(
+                    R.drawable.rotten_tomatoes,
+                    modifier = modifier,
+                )
+                RatingDisplay(
+                    rtRating.displayValue,
+                    modifier = modifier,
+                )
+            }
         }
     }
 }
@@ -302,7 +322,7 @@ fun RatingIcon(
 ) {
     Image(
         painterResource(resource),
-        contentDescription = "",
+        contentDescription = null,
         modifier =
             modifier
                 .padding(2.dp)
