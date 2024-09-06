@@ -53,7 +53,7 @@ import com.lairofpixies.whatmovienext.views.state.AsyncPicState.Success
 @Composable
 fun AsyncPic(
     url: String,
-    contentDescription: String,
+    contentDescription: String?,
     placeholderIcon: ImageVector,
     width: Dp,
     height: Dp,

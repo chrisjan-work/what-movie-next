@@ -82,9 +82,24 @@
     <string name="share">Share</string>
     <string name="missing_image">Missing image</string>
     <string name="poster_for_movie">Poster for %s</string>
-    <string name="browse_movie_at_page">Browse %s at %s.</string>
+    <string name="browse_movie_at_page">Browse %1$s at %2$s.</string>
     <string name="the_movie_database">The Movie Database</string>
     <string name="internet_movie_database">Internet Movie Database</string>
     <string name="rotten_tomatoes">Rotten Tomatoes</string>
     <string name="metacritic">Metacritic</string>
+    <string name="directed_by_full">"Directed by "</string>
+    <string name="read_year_and_runtime">Year: %1$s. Runtime: %2$s</string>
+    <string name="not_known">not known</string>
+    <string name="read_runtime_and_genres">Runtime: %1$s. Genres: %2$s.</string>
+    <string name="metacritic_rating">"Metacritic rating: %d"</string>
+    <string name="rotten_tomatoes_rating">"Rotten Tomatoes rating: %d"</string>
+    <string name="year">Year: %d</string>
+    <plurals name="minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hour</item>
+        <item quantity="other">%d hours</item>
+    </plurals>
 </resources>
