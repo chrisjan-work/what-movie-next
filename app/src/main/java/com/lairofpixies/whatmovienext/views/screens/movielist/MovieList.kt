@@ -287,7 +287,7 @@ fun RatingsDisplay(
 ) {
     Row {
         if (mcRating != null && mcRating.isNotNegative()) {
-            val readMcRating = stringResource(R.string.metacritic_rating, mcRating.percentValue)
+            val readMcRating = stringResource(R.string.metacritic_score_value, mcRating.percentValue)
             Row(modifier = modifier.semantics { contentDescription = readMcRating }) {
                 RatingIcon(
                     R.drawable.metacritic,
@@ -300,7 +300,7 @@ fun RatingsDisplay(
             }
         }
         if (rtRating != null && rtRating.isNotNegative()) {
-            val readRtRating = stringResource(R.string.rotten_tomatoes_rating, rtRating.percentValue)
+            val readRtRating = stringResource(R.string.rotten_tomatoes_score_value, rtRating.percentValue)
             Row(modifier = modifier.semantics { contentDescription = readRtRating }) {
                 RatingIcon(
                     R.drawable.rotten_tomatoes,

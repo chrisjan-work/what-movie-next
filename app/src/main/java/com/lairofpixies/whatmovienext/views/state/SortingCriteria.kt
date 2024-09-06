@@ -32,7 +32,7 @@ enum class SortingCriteria(
     Genre(R.string.by_genre),
     Runtime(R.string.by_runtime),
     Director(R.string.by_director),
-    MeanRating(R.string.by_rating, R.string.sort_by_average_rating),
+    MeanRating(R.string.by_avg_score, R.string.sort_by_average_score),
     Random(R.string.shuffle, R.string.shuffle),
     ;
 
