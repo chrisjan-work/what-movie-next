@@ -152,6 +152,7 @@ fun MovieListItem(
         val maxWidth = if (movie.appData.watchDates.isNotEmpty()) 260.dp else 320.dp
         ThumbnailPic(
             thumbnailUrl = movie.searchData.thumbnailUrl,
+            contentDescription = stringResource(R.string.poster_for_movie, movie.searchData.title),
             modifier =
                 Modifier
                     .align(Alignment.CenterVertically),
@@ -208,10 +209,12 @@ fun MovieListItem(
 @Composable
 fun ThumbnailPic(
     thumbnailUrl: String,
+    contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
     AsyncPic(
         url = thumbnailUrl,
+        contentDescription = contentDescription,
         placeholderIcon = Icons.Outlined.Theaters,
         width = 76.dp,
         height = 116.dp,

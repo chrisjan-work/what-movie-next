@@ -195,6 +195,7 @@ fun MiniProfile(
     ) {
         FacePic(
             person.faceUrl,
+            contentDescription = person.name,
             modifier,
         )
         Spacer(modifier = Modifier.height(6.dp))
@@ -217,10 +218,12 @@ fun MiniProfile(
 @Composable
 fun FacePic(
     faceUrl: String,
+    contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
     AsyncPic(
         url = faceUrl,
+        contentDescription = contentDescription,
         placeholderIcon = Icons.Outlined.PersonPin,
         width = 66.dpf,
         height = 85.dpf,

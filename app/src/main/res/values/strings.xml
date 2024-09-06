@@ -80,4 +80,6 @@
     <string name="clear_find">Clear Find</string>
     <string name="wrong_link">Could not identify the movie</string>
     <string name="share">Share</string>
+    <string name="missing_image">Missing image</string>
+    <string name="poster_for_movie">Poster for %s</string>
 </resources>

@@ -95,6 +95,7 @@ fun MovieCard(
             ) {
                 CoverPic(
                     coverUrl = movie.searchData.coverUrl,
+                    contentDescription = stringResource(R.string.poster_for_movie, movie.searchData.title),
                     modifier =
                         Modifier
                             .align(Alignment.CenterHorizontally)
@@ -165,10 +166,12 @@ fun MovieCard(
 @Composable
 fun CoverPic(
     coverUrl: String,
+    contentDescription: String,
     modifier: Modifier = Modifier,
 ) {
     AsyncPic(
         url = coverUrl,
+        contentDescription = contentDescription,
         placeholderIcon = Icons.Outlined.Theaters,
         width = 320.dp,
         height = 480.dp,

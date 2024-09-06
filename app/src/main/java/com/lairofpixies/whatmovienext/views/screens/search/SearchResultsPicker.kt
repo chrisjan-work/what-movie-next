@@ -42,9 +42,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.views.screens.movielist.ThumbnailPic
@@ -120,6 +122,7 @@ fun SearchResultItem(
     ) {
         ThumbnailPic(
             thumbnailUrl = data.thumbnailUrl,
+            contentDescription = stringResource(R.string.poster_for_movie, data.title),
             modifier =
                 Modifier
                     .align(Alignment.CenterVertically),

@@ -37,11 +37,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.views.state.AsyncPicState
 import com.lairofpixies.whatmovienext.views.state.AsyncPicState.Loading
 import com.lairofpixies.whatmovienext.views.state.AsyncPicState.Missing
@@ -51,6 +53,7 @@ import com.lairofpixies.whatmovienext.views.state.AsyncPicState.Success
 @Composable
 fun AsyncPic(
     url: String,
+    contentDescription: String,
     placeholderIcon: ImageVector,
     width: Dp,
     height: Dp,
@@ -75,6 +78,7 @@ fun AsyncPic(
                 asyncPicState = asyncPicState.value,
                 icon = placeholderIcon,
                 cornerRadius = cornerRadius,
+                contentDescription = stringResource(R.string.missing_image),
                 modifier = Modifier,
             )
         }
@@ -87,7 +91,7 @@ fun AsyncPic(
                         .data(url)
                         .diskCachePolicy(CachePolicy.ENABLED)
                         .build(),
-                contentDescription = "",
+                contentDescription = contentDescription,
                 onState = { state ->
                     asyncPicState.value =
                         when (state) {
@@ -110,6 +114,7 @@ fun AsyncPic(
 @Composable
 fun PicPlaceholder(
     asyncPicState: AsyncPicState,
+    contentDescription: String,
     icon: ImageVector,
     cornerRadius: Dp,
     modifier: Modifier = Modifier,
@@ -135,7 +140,7 @@ fun PicPlaceholder(
         } else { // Missing
             Icon(
                 imageVector = icon,
-                contentDescription = "",
+                contentDescription = contentDescription,
                 modifier =
                     modifier.fillMaxSize(fraction = 0.67f),
                 tint = MaterialTheme.colorScheme.background.copy(alpha = 0.7f),
