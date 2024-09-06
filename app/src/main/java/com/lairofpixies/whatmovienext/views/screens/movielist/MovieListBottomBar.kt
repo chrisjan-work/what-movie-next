@@ -61,9 +61,19 @@ fun bottomItemsForMovieList(
     onArrangeClicked: () -> Unit,
     onRouletteClicked: () -> Unit,
 ): List<CustomBarItem> {
-    val createItem = CustomBarItem(ButtonSpec.CreateMovieShortcut, onCreateNewMovie)
+    val createItem =
+        CustomBarItem(
+            ButtonSpec.CreateMovieShortcut,
+            tag = UiTags.Buttons.ADD_NEW_MOVIE_ACTION,
+            onClick = onCreateNewMovie,
+        )
 
-    val findItem = CustomBarItem(ButtonSpec.QuickFindAction, onQuickFindClicked)
+    val findItem =
+        CustomBarItem(
+            ButtonSpec.QuickFindAction,
+            tag = UiTags.Buttons.QUICK_FIND_ACTION,
+            onClick = onQuickFindClicked,
+        )
 
     val rouletteItem =
         CustomBarItem(

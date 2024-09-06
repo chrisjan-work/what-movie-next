@@ -25,8 +25,8 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
-import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
 import com.lairofpixies.whatmovienext.views.screens.UiTags
+import cucumber.api.PendingException
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
@@ -67,19 +67,27 @@ class SortingStepDefs(
     @And("the user sorts by {string}")
     fun theUserSortsBy(label: String) =
         composeRule.composeStep {
-            onNodeWithTextUnderTag(label, UiTags.Menus.SORTING).performClick()
+            val filterTag =
+                when (label) {
+                    "title" -> UiTags.Buttons.SORT_BY_TITLE
+                    "date added" -> UiTags.Buttons.SORT_BY_CREATION_TIME
+                    "year" -> UiTags.Buttons.SORT_BY_YEAR
+                    "genre" -> UiTags.Buttons.SORT_BY_GENRE
+                    "runtime" -> UiTags.Buttons.SORT_BY_RUNTIME
+                    "director" -> UiTags.Buttons.SORT_BY_DIRECTOR
+                    "avg. score" -> UiTags.Buttons.SORT_BY_SCORE
+                    else -> throw PendingException("Unknown filter button \"$label\"")
+                }
+            onNodeWithTag(filterTag).performClick()
         }
 
     @And("the user taps on sort by {string} {string} times")
     fun theUserTapsOnSortByTimes(
         label: String,
         number: String,
-    ) = composeRule.composeStep {
-        number.toIntOrNull()?.let { count ->
-            repeat(count) {
-                onNodeWithTextUnderTag(label, UiTags.Menus.SORTING)
-                    .performClick()
-            }
+    ) = number.toIntOrNull()?.let { count ->
+        repeat(count) {
+            theUserSortsBy(label)
         }
     }
 
