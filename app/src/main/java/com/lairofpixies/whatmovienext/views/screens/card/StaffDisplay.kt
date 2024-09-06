@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.data.Staff
+import com.lairofpixies.whatmovienext.util.dpf
 import com.lairofpixies.whatmovienext.views.components.AsyncPic
 import com.lairofpixies.whatmovienext.views.components.CopyableText
 
@@ -132,7 +133,7 @@ fun StaffRoster(
             }
     }
 
-    Column(modifier = modifier.height(186.dp)) {
+    Column(modifier = modifier.height(186.dpf)) {
         Text(
             text = sectionTitle,
             style = MaterialTheme.typography.titleSmall,
@@ -150,7 +151,7 @@ fun StaffRoster(
             Box(
                 modifier =
                     modifier
-                        .size(48.dp, 186.dp)
+                        .size(48.dpf, 186.dpf)
                         .alpha(startOverlayOpacity.floatValue)
                         .background(
                             Brush.horizontalGradient(
@@ -164,7 +165,7 @@ fun StaffRoster(
             Box(
                 modifier =
                     modifier
-                        .size(48.dp, 186.dp)
+                        .size(48.dpf, 186.dpf)
                         .alpha(endOverlayOpacity.floatValue)
                         .background(
                             Brush.horizontalGradient(
@@ -187,8 +188,8 @@ fun MiniProfile(
     Column(
         modifier =
             modifier
-                .padding(2.dp)
-                .width(104.dp)
+                .padding(2.dpf)
+                .width(104.dpf)
                 .padding(0.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -221,9 +222,9 @@ fun FacePic(
     AsyncPic(
         url = faceUrl,
         placeholderIcon = Icons.Outlined.PersonPin,
-        width = 66.dp,
-        height = 85.dp,
-        cornerRadius = 5.dp,
+        width = 66.dpf,
+        height = 85.dpf,
+        cornerRadius = 5.dpf,
         modifier = modifier,
     )
 }
