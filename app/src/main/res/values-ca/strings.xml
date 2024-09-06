@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ This file is part of What Movie Next.
+
+ Copyright (C) 2024 Christiaan Janssen
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+    <string name="app_name">What Movie Next</string>
+    <string name="close">Tancar</string>
+    <string name="archive">Arxiu</string>
+    <string name="add_new_movie">Nova peli</string>
+    <string name="edit">Editar</string>
+    <string name="title">Títol</string>
+    <string name="error_title_is_required">Falta un títol. Si us plau, proporciona\'n un.</string>
+    <string name="alertdialog_title">Problema</string>
+    <string name="save">Desar</string>
+    <string name="movies">Pelis</string>
+    <string name="cancel">Cancel·lar</string>
+    <string name="to_watch">Pendent</string>
+    <string name="seen">Vista</string>
+    <string name="all_movies">Totes les pelis</string>
+    <string name="restore">Recuperar pelis</string>
+    <string name="delete_forever">Eliminar per sempre</string>
+    <string name="please_confirm_deletion">Vols eliminar les pelis marcades per sempre?</string>
+    <string name="confirm_deletion">Si, eliminar</string>
+    <string name="lookup">Cercar</string>
+    <string name="movie_not_found">Peli no trobada</string>
+    <string name="search_empty_explanation">No s\'han trobat pel·lícules que coincideixin amb els criteris de cerca. Si us plau, intenta una busca diferent o comprova la ortografia.</string>
+    <string name="connection_failed_explanation">Hi ha un problema connectant amb la base de dades online. Si us plau, torna a provar-ho més tard.</string>
+    <string name="search_empty_title">No s\'han trobat dades.</string>
+    <string name="search_in_progress">Mirant a la base de dades online…</string>
+    <string name="sources">Fonts:</string>
+    <string name="direction_and_writing">Direcció i Guió</string>
+    <string name="cast">Repartiment</string>
+    <string name="directed_by_short">Dir.</string>
+    <string name="external_links">Enllaços externs</string>
+    <string name="connection_failed_title">Problema de connexió</string>
+    <string name="missing_title_title">Títol absent</string>
+    <string name="sort">Ordenar</string>
+    <string name="by_title">títol</string>
+    <string name="by_date_added">data d\'entrada</string>
+    <string name="by_year">any</string>
+    <string name="by_genre">gènere</string>
+    <string name="by_runtime">durada</string>
+    <string name="by_director">direcció</string>
+    <string name="by_avg_score">nota mitja</string>
+    <string name="by_seen_state">vista</string>
+    <string name="shuffle">barrejar</string>
+    <string name="roulette">Ruleta</string>
+    <string name="filter">Filtrar</string>
+    <string name="arrange">Organitzar</string>
+    <string name="update">Actualitzar</string>
+    <string name="reset">Esborra</string>
+    <string name="at_least">almenys</string>
+    <string name="at_most">màxim</string>
+    <string name="by_rotten_tomatoes_score">nota rt</string>
+    <string name="by_metacritic_score">nota m</string>
+    <string name="results">Resultats</string>
+    <string name="find">Cerca</string>
+    <string name="clear_find">Netejar cerca</string>
+    <string name="wrong_link">No s\'ha pogut identificar la pel·lícula</string>
+    <string name="share">Compartir</string>
+    <string name="missing_image">Falta imatge</string>
+    <string name="poster_for_movie">Cartell de %s</string>
+    <string name="browse_movie_at_page">Visitar %1$s a %2$s</string>
+    <string name="directed_by_full">Dirigida per</string>
+    <string name="read_year_and_runtime">Any: %1$s. Durada: %2$s</string>
+    <string name="not_known">desconeguda</string>
+    <string name="read_runtime_and_genres">Durada: %1$s. Gèneres: %2$s.</string>
+    <string name="metacritic_score_value">Nota Metacritic: %d</string>
+    <string name="rotten_tomatoes_score_value">Nota Rotten Tomatoes: %d</string>
+    <string name="year_value">Any: %d</string>
+    <string name="sort_by">Ordenar per %s.</string>
+    <string name="sort_by_seen_or_not">Separar entre vista i pendent.</string>
+    <string name="sort_by_average_score">Ordenar per nota mitja.</string>
+    <string name="is_selected">Seleccionat</string>
+    <string name="is_unselected">No seleccionat</string>
+    <string name="ascending">Ordre ascendent</string>
+    <string name="descending">Ordre descendent</string>
+    <string name="is_undefined">Interval no definit.</string>
+    <string name="filter_upto">%1$s fins a %2$s</string>
+    <string name="filter_from">%1$s des de %2$s</string>
+    <string name="filter_between">%1$s entre %2$s i %3$s</string>
+    <string name="year">Any</string>
+    <string name="metacritic_score">Nota Metacrític</string>
+    <string name="rotten_tomatoes_score">Nota Rotten Tomatoes</string>
+    <string name="runtime">Durada</string>
+    <plurals name="minutes">
+        <item quantity="one">%d minut</item>
+        <item quantity="other">%d minuts</item>
+        <item quantity="many">%d minuts</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hora</item>
+        <item quantity="other">%d hores</item>
+        <item quantity="many">%d hores</item>
+    </plurals>
+</resources>
