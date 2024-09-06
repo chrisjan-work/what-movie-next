@@ -102,6 +102,7 @@ fun RatingRow(
 
 @Composable
 fun MovieLinks(
+    title: String,
     tmdbId: String,
     imdbId: String?,
     rtId: String,
@@ -116,12 +117,14 @@ fun MovieLinks(
     Row(modifier = modifier.padding(start = 8.dp, end = 8.dp)) {
         ClickableLogo(
             logo = R.drawable.tmdb,
+            contentDescription = stringResource(R.string.browse_movie_at_page, title, stringResource(R.string.the_movie_database)),
             url = stringResource(R.string.tmdb_url) + tmdbId,
             modifier = modifier,
         )
         if (!imdbId.isNullOrBlank()) {
             ClickableLogo(
                 logo = R.drawable.imdb,
+                contentDescription = stringResource(R.string.browse_movie_at_page, title, stringResource(R.string.internet_movie_database)),
                 url = stringResource(R.string.imdb_url) + imdbId,
                 modifier = modifier,
             )
@@ -129,6 +132,7 @@ fun MovieLinks(
         if (rtId.isNotBlank()) {
             ClickableLogo(
                 logo = R.drawable.rotten_tomatoes,
+                contentDescription = stringResource(R.string.browse_movie_at_page, title, stringResource(R.string.rotten_tomatoes)),
                 url = stringResource(R.string.rotten_tomatoes_url) + rtId,
                 modifier = modifier,
             )
@@ -136,6 +140,7 @@ fun MovieLinks(
         if (mcId.isNotBlank()) {
             ClickableLogo(
                 logo = R.drawable.metacritic,
+                contentDescription = stringResource(R.string.browse_movie_at_page, title, stringResource(R.string.metacritic)),
                 url = stringResource(R.string.metacritic_url) + mcId,
                 modifier = modifier,
             )
@@ -146,6 +151,7 @@ fun MovieLinks(
 @Composable
 fun ClickableLogo(
     @DrawableRes logo: Int,
+    contentDescription: String,
     modifier: Modifier = Modifier,
     url: String? = null,
 ) {
@@ -158,7 +164,7 @@ fun ClickableLogo(
 
     Image(
         painter = painterResource(id = logo),
-        contentDescription = "",
+        contentDescription = contentDescription,
         modifier =
             modifier
                 .padding(4.dp)
