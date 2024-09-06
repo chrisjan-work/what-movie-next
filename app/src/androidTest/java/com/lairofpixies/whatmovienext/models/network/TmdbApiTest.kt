@@ -72,7 +72,7 @@ class TmdbApiTest {
             mockWebServer.enqueue(mockResponse)
 
             // When
-            val result = tmdbApi.findMoviesByTitle("example title")
+            val result = tmdbApi.findMoviesByTitle("example title", language = "en")
 
             // Then
             val expectedMovies =
@@ -152,7 +152,7 @@ class TmdbApiTest {
             mockWebServer.enqueue(mockResponse)
 
             // When
-            val result = tmdbApi.getMovieDetails(tmdbId = 1)
+            val result = tmdbApi.getMovieDetails(tmdbId = 1, language = "en")
 
             // Then
             assertEquals(TmdbMovieExtended(success = false), result)
@@ -200,7 +200,7 @@ class TmdbApiTest {
             mockWebServer.enqueue(mockResponse)
 
             // When
-            val result = tmdbApi.getMovieDetails(tmdbId = 1)
+            val result = tmdbApi.getMovieDetails(tmdbId = 1, language = "en")
 
             // Then
             val expectedMovie =
@@ -255,7 +255,7 @@ class TmdbApiTest {
             mockWebServer.enqueue(mockResponse)
 
             // When
-            tmdbApi.getMovieDetails(tmdbId = 1)
+            tmdbApi.getMovieDetails(tmdbId = 1, language = "en")
             val request = mockWebServer.takeRequest()
 
             // Then

@@ -36,6 +36,7 @@ import com.lairofpixies.whatmovienext.models.network.TestWikidataApi
 import com.lairofpixies.whatmovienext.models.network.TmdbApi
 import com.lairofpixies.whatmovienext.models.network.WikidataApi
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
+import com.lairofpixies.whatmovienext.util.LanguageProvider
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -62,6 +63,7 @@ object TestApiModule {
         tmdbApi: TestTmdbApi,
         omdbApi: TestOmdbApi,
         wikidataApi: TestWikidataApi,
+        languageProvider: LanguageProvider,
         remoteMapper: RemoteMapper,
     ): ApiRepository =
         ApiRepositoryImpl(
@@ -69,6 +71,7 @@ object TestApiModule {
             omdbApi,
             wikidataApi,
             remoteMapper,
+            languageProvider,
             Dispatchers.IO,
         )
 

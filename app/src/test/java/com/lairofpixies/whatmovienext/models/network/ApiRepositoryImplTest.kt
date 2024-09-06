@@ -28,6 +28,7 @@ import com.lairofpixies.whatmovienext.models.mappers.testTmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
+import com.lairofpixies.whatmovienext.util.LanguageProvider
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -53,6 +54,7 @@ class ApiRepositoryImplTest {
     private lateinit var genreRepository: GenreRepository
     private lateinit var remoteMapper: RemoteMapper
     private lateinit var apiRepository: ApiRepository
+    private lateinit var languageProvider: LanguageProvider
 
     @Before
     fun setUp() {
@@ -61,6 +63,7 @@ class ApiRepositoryImplTest {
         wikidataApi = mockk(relaxed = true)
         configRepo = mockk(relaxed = true)
         genreRepository = mockk(relaxed = true)
+        languageProvider = mockk(relaxed = true)
         remoteMapper = RemoteMapper(configRepo, genreRepository)
     }
 
@@ -71,6 +74,7 @@ class ApiRepositoryImplTest {
                 omdbApi,
                 wikidataApi,
                 remoteMapper,
+                languageProvider,
                 ioDispatcher = UnconfinedTestDispatcher(testScheduler),
             )
         advanceUntilIdle()
@@ -80,7 +84,7 @@ class ApiRepositoryImplTest {
     fun `find movies by title, none available`() =
         runTest {
             // Given
-            coEvery { tmdbApi.findMoviesByTitle(any()) } returns TmdbSearchResults(results = emptyList())
+            coEvery { tmdbApi.findMoviesByTitle(any(), any(), any()) } returns TmdbSearchResults(results = emptyList())
             initializeSut()
 
             // When
@@ -94,7 +98,7 @@ class ApiRepositoryImplTest {
     fun `find movies by title, one available`() =
         runTest {
             // Given
-            coEvery { tmdbApi.findMoviesByTitle(any()) } returns
+            coEvery { tmdbApi.findMoviesByTitle(any(), any(), any()) } returns
                 TmdbSearchResults(
                     results =
                         listOf(
@@ -122,7 +126,7 @@ class ApiRepositoryImplTest {
                     TmdbMovieBasic(tmdbId = 2, title = "movie2"),
                     TmdbMovieBasic(tmdbId = 3, title = "movie3"),
                 )
-            coEvery { tmdbApi.findMoviesByTitle(any()) } returns
+            coEvery { tmdbApi.findMoviesByTitle(any(), any(), any()) } returns
                 TmdbSearchResults(results = receivedMovies)
             initializeSut()
 
@@ -149,7 +153,7 @@ class ApiRepositoryImplTest {
                     TmdbMovieBasic(tmdbId = 2, title = "movie2"),
                     TmdbMovieBasic(tmdbId = 3, title = "movie3"),
                 )
-            coEvery { tmdbApi.findMoviesByTitle(any()) } returns
+            coEvery { tmdbApi.findMoviesByTitle(any(), any(), any()) } returns
                 TmdbSearchResults(results = receivedMovies, page = 3, totalPages = 7)
             initializeSut()
 
@@ -179,7 +183,7 @@ class ApiRepositoryImplTest {
                         "".toResponseBody(null),
                     ),
                 )
-            coEvery { tmdbApi.findMoviesByTitle(any()) } throws http404
+            coEvery { tmdbApi.findMoviesByTitle(any(), any(), any()) } throws http404
             initializeSut()
 
             // When
@@ -193,7 +197,7 @@ class ApiRepositoryImplTest {
     fun `get movie details`() =
         runTest {
             // Given
-            coEvery { tmdbApi.getMovieDetails(any()) } returns testTmdbMovieExtended()
+            coEvery { tmdbApi.getMovieDetails(any(), any()) } returns testTmdbMovieExtended()
             coEvery { omdbApi.fetchMovieRatings(any()) } returns testOmdbMovieRatings()
             remoteMapper =
                 mockk(relaxed = true) {
@@ -212,7 +216,7 @@ class ApiRepositoryImplTest {
     fun `get movie details, server error`() =
         runTest {
             // Given
-            coEvery { tmdbApi.getMovieDetails(any()) } returns TmdbMovieExtended(success = false)
+            coEvery { tmdbApi.getMovieDetails(any(), any()) } returns TmdbMovieExtended(success = false)
             initializeSut()
 
             // When
