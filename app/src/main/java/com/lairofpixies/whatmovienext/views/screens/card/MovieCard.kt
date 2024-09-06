@@ -212,7 +212,7 @@ fun YearDisplay(
     modifier: Modifier = Modifier,
 ) {
     if (year != null) {
-        val readYear = stringResource(R.string.year, year)
+        val readYear = stringResource(R.string.year_value, year)
         CopyableText(
             text = year.toString(),
             style = MaterialTheme.typography.titleMedium,
