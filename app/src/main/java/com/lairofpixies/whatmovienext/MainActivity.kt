@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        parseIntent(intent)
+        viewModel.parseIntent(intent)
 
         setContent {
             MainScreen(viewModel)
@@ -45,15 +45,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        parseIntent(intent)
-    }
-
-    private fun parseIntent(intent: Intent?) {
-        val uri = intent?.data ?: return
-        val path = uri.path ?: return
-
-        if (uri.scheme == BuildConfig.SHARE_SCHEME && uri.host == BuildConfig.SHARE_HOST) {
-            viewModel.loadAndNavigateTo(path)
-        }
+        viewModel.parseIntent(intent)
     }
 }
