@@ -120,7 +120,7 @@ fun printableRuntime(
 fun readableRuntime(runtimeMinutes: Int): String =
     when (runtimeMinutes) {
         0 -> stringResource(R.string.not_known)
-        in 1..59 -> pluralStringResource(R.plurals.minutes, runtimeMinutes)
+        in 1..59 -> pluralStringResource(R.plurals.minutes, runtimeMinutes, runtimeMinutes)
         else -> {
             val hours = runtimeMinutes / 60
             val minutes = runtimeMinutes % 60

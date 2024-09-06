@@ -93,7 +93,7 @@
     <string name="read_runtime_and_genres">Runtime: %1$s. Genres: %2$s.</string>
     <string name="metacritic_rating">"Metacritic rating: %d"</string>
     <string name="rotten_tomatoes_rating">"Rotten Tomatoes rating: %d"</string>
-    <string name="year">Year: %d</string>
+    <string name="year_value">Year: %d</string>
     <string name="sort_by">Sort by %s.</string>
     <string name="sort_by_seen_or_not">Separate between seen and to watch.</string>
     <string name="sort_by_average_rating">Sort by average score.</string>
@@ -101,6 +101,14 @@
     <string name="is_unselected">Unselected</string>
     <string name="ascending">Ascending order</string>
     <string name="descending">Descending order</string>
+    <string name="is_undefined">Range not defined.</string>
+    <string name="filter_upto">%1$s up to %2$s</string>
+    <string name="filter_from">%1$s from %2$s</string>
+    <string name="filter_between">%1$s between %2$s and %3$s</string>
+    <string name="year">Year</string>
+    <string name="metacritic_score">Metacritic score</string>
+    <string name="rotten_tomatoes_score">Rotten Tomatoes score</string>
+    <string name="runtime">Runtime</string>
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

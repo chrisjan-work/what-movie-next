@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import com.lairofpixies.whatmovienext.R
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
 import com.lairofpixies.whatmovienext.util.dpf
+import com.lairofpixies.whatmovienext.util.readableRuntime
 import com.lairofpixies.whatmovienext.viewmodels.MovieListViewModel
 import com.lairofpixies.whatmovienext.views.navigation.ButtonSpec
 import com.lairofpixies.whatmovienext.views.screens.UiTags
@@ -379,6 +380,12 @@ fun FilteringMenu(
         MinMaxButton(
             label = stringResource(R.string.by_year),
             filterValues = listFilters.year,
+            localContentDescription =
+                generateContentDescriptionForFilter(
+                    stringResource(R.string.year),
+                    listFilters.year.min?.toString(),
+                    listFilters.year.max?.toString(),
+                ),
             onFilterValuesChanged = { minMaxFilter ->
                 onListFiltersChanged(listFilters.copy(year = minMaxFilter))
             },
@@ -390,6 +397,13 @@ fun FilteringMenu(
         )
         MinMaxButton(
             label = stringResource(R.string.by_metacritic_score),
+            labelContentDescription = stringResource(R.string.metacritic_score),
+            localContentDescription =
+                generateContentDescriptionForFilter(
+                    stringResource(R.string.metacritic_score),
+                    listFilters.mcScore.min?.toString(),
+                    listFilters.mcScore.max?.toString(),
+                ),
             filterValues = listFilters.mcScore,
             onFilterValuesChanged = { minMaxFilter ->
                 onListFiltersChanged(listFilters.copy(mcScore = minMaxFilter))
@@ -402,6 +416,13 @@ fun FilteringMenu(
         )
         MinMaxButton(
             label = stringResource(R.string.by_rotten_tomatoes_score),
+            labelContentDescription = stringResource(R.string.rotten_tomatoes_score),
+            localContentDescription =
+                generateContentDescriptionForFilter(
+                    stringResource(R.string.rotten_tomatoes_score),
+                    listFilters.rtScore.min?.toString(),
+                    listFilters.rtScore.max?.toString(),
+                ),
             filterValues = listFilters.rtScore,
             onFilterValuesChanged = { minMaxFilter ->
                 onListFiltersChanged(listFilters.copy(rtScore = minMaxFilter))
@@ -415,6 +436,12 @@ fun FilteringMenu(
         MinMaxButton(
             label = stringResource(R.string.by_runtime),
             filterValues = listFilters.runtime,
+            localContentDescription =
+                generateContentDescriptionForFilter(
+                    stringResource(R.string.runtime),
+                    listFilters.runtime.min?.let { readableRuntime(it) },
+                    listFilters.runtime.max?.let { readableRuntime(it) },
+                ),
             onFilterValuesChanged = { minMaxFilter ->
                 onListFiltersChanged(listFilters.copy(runtime = minMaxFilter))
             },
@@ -426,6 +453,19 @@ fun FilteringMenu(
         )
     }
 }
+
+@Composable
+fun generateContentDescriptionForFilter(
+    criteriaSt: String,
+    minSt: String?,
+    maxSt: String?,
+): String =
+    when {
+        minSt == null && maxSt == null -> stringResource(R.string.is_undefined)
+        minSt == null -> stringResource(R.string.filter_upto, criteriaSt, maxSt ?: "")
+        maxSt == null -> stringResource(R.string.filter_from, criteriaSt, minSt)
+        else -> stringResource(R.string.filter_between, criteriaSt, minSt, maxSt)
+    }
 
 @Composable
 fun ListModeButton(
@@ -484,6 +524,7 @@ fun ListModeButton(
 @Composable
 fun MinMaxButton(
     label: String,
+    localContentDescription: String,
     filterValues: MinMaxFilter,
     onFilterValuesChanged: (MinMaxFilter) -> Unit,
     valueToTextInput: (Int?) -> String,
@@ -491,6 +532,7 @@ fun MinMaxButton(
     textToValue: (String) -> Int?,
     showPopup: (PopupInfo) -> Unit,
     modifier: Modifier = Modifier,
+    labelContentDescription: String? = null,
 ) {
     val isSelected = filterValues.isActive
     val borderColor =
@@ -503,7 +545,7 @@ fun MinMaxButton(
     val launchPopup: () -> Unit = {
         showPopup(
             PopupInfo.NumberChooser(
-                label = label,
+                label = labelContentDescription ?: label,
                 filterValues = filterValues,
                 valueToText = valueToTextInput,
                 textToValue = textToValue,
@@ -537,13 +579,16 @@ fun MinMaxButton(
             textAlign = TextAlign.Start,
             maxLines = 1,
             modifier =
-                Modifier.clickable {
-                    if (filterValues.isNotEmpty) {
-                        onFilterValuesChanged(filterValues.copy(isEnabled = !filterValues.isEnabled))
-                    } else {
-                        launchPopup()
-                    }
-                },
+                Modifier
+                    .clickable {
+                        if (filterValues.isNotEmpty) {
+                            onFilterValuesChanged(filterValues.copy(isEnabled = !filterValues.isEnabled))
+                        } else {
+                            launchPopup()
+                        }
+                    }.semantics {
+                        contentDescription = labelContentDescription ?: label
+                    },
         )
         Spacer(modifier = Modifier.sizeIn(minWidth = 8.dp))
         Text(
@@ -554,6 +599,10 @@ fun MinMaxButton(
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
             textAlign = TextAlign.End,
             maxLines = 1,
+            modifier =
+                Modifier.semantics {
+                    contentDescription = localContentDescription
+                },
         )
     }
 }
