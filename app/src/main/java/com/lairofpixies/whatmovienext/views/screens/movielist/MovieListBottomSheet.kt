@@ -54,6 +54,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -258,6 +261,25 @@ fun SortingButton(
         } else {
             MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f)
         }
+
+    val readState =
+        when {
+            !isSelected -> stringResource(R.string.is_unselected)
+            direction == SortingDirection.Ascending -> stringResource(R.string.ascending)
+            else -> stringResource(R.string.descending)
+        }
+    val readableText =
+        when {
+            criteria == SortingCriteria.Random ->
+                stringResource(R.string.shuffle) + ". " +
+                    if (isSelected) stringResource(R.string.is_selected) else stringResource(R.string.is_unselected)
+
+            criteria.readable != null ->
+                stringResource(criteria.readable) + readState
+
+            else ->
+                stringResource(R.string.sort_by, stringResource(criteria.display)) + readState
+        }
     Box(
         modifier =
             modifier
@@ -273,7 +295,7 @@ fun SortingButton(
                     } else {
                         onSelectAction(criteria, SortingDirection.Default)
                     }
-                },
+                }.semantics { contentDescription = readableText },
     ) {
         Text(
             text = stringResource(id = criteria.display),
@@ -287,7 +309,8 @@ fun SortingButton(
                 Modifier
                     .padding(5.dpf)
                     .padding(start = 2.dpf, end = 2.dpf)
-                    .size(100.dpf),
+                    .size(100.dpf)
+                    .clearAndSetSemantics {},
         )
         // do not show arrow for random
         if (isSelected && criteria != SortingCriteria.Random) {
@@ -297,7 +320,7 @@ fun SortingButton(
                 } else {
                     Icons.Outlined.ArrowDownward
                 },
-                contentDescription = "",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                 modifier =
                     Modifier
