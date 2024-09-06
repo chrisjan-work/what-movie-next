@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ This file is part of What Movie Next.
+
+ Copyright (C) 2024 Christiaan Janssen
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+    <string name="app_name">What Movie Next</string>
+    <string name="close">Cerrar</string>
+    <string name="archive">Archivo</string>
+    <string name="add_new_movie">Nueva peli</string>
+    <string name="edit">Editar</string>
+    <string name="title">Título</string>
+    <string name="error_title_is_required">Falta un título. Por favor, proporcione uno.</string>
+    <string name="alertdialog_title">Problema</string>
+    <string name="save">Guardar</string>
+    <string name="movies">Pelis</string>
+    <string name="cancel">Cancelar</string>
+    <string name="to_watch">Pendiente</string>
+    <string name="seen">Vista</string>
+    <string name="all_movies">Todas las pelis</string>
+    <string name="restore">Recuperar pelis</string>
+    <string name="delete_forever">Eliminar para siempre</string>
+    <string name="please_confirm_deletion">¿Quieres eliminar las pelis seleccionadas para siempre?</string>
+    <string name="confirm_deletion">Sí, eliminar</string>
+    <string name="lookup">Buscar</string>
+    <string name="movie_not_found">Peli no encontrada</string>
+    <string name="search_empty_explanation">No se han encontrado películas que coincidan con los criterios de búsqueda. Por favor, intenta una búsqueda diferente o comprueba la ortografía.</string>
+    <string name="connection_failed_explanation">Hubo un problema conectando con la base de datos online. Por favor, vuelve a intentarlo más tarde.</string>
+    <string name="search_empty_title">No se encontraron datos.</string>
+    <string name="search_in_progress">Buscando en la base de datos online…</string>
+    <string name="sources">Fuentes:</string>
+    <string name="direction_and_writing">Dirección y Guion</string>
+    <string name="cast">Reparto</string>
+    <string name="directed_by_short">Dir.</string>
+    <string name="external_links">Enlaces externos</string>
+    <string name="connection_failed_title">Problema de conexión</string>
+    <string name="missing_title_title">Título ausente</string>
+    <string name="sort">Ordenar</string>
+    <string name="by_title">título</string>
+    <string name="by_date_added">fecha de inclusión</string>
+    <string name="by_year">año</string>
+    <string name="by_genre">género</string>
+    <string name="by_runtime">duración</string>
+    <string name="by_director">dirección</string>
+    <string name="by_avg_score">nota media</string>
+    <string name="by_seen_state">vista</string>
+    <string name="shuffle">mezclar</string>
+    <string name="roulette">Ruleta</string>
+    <string name="filter">Filtrar</string>
+    <string name="arrange">Organizar</string>
+    <string name="update">Actualizar</string>
+    <string name="reset">Limpiar</string>
+    <string name="at_least">al menos</string>
+    <string name="at_most">máximo</string>
+    <string name="by_rotten_tomatoes_score">nota rt</string>
+    <string name="by_metacritic_score">nota m</string>
+    <string name="results">Resultados</string>
+    <string name="find">Busca</string>
+    <string name="clear_find">Limpiar Búsqueda</string>
+    <string name="wrong_link">No se pudo identificar la película</string>
+    <string name="share">Compartir</string>
+    <string name="missing_image">Falta imagen</string>
+    <string name="poster_for_movie">Póster de %s</string>
+    <string name="browse_movie_at_page">Visitar %1$s en %2$s</string>
+    <string name="directed_by_full">Dirigida por</string>
+    <string name="read_year_and_runtime">Año: %1$s. Duración: %2$s</string>
+    <string name="not_known">desconocida</string>
+    <string name="read_runtime_and_genres">Duración: %1$s. Géneros: %2$s.</string>
+    <string name="metacritic_score_value">Nota Metacritic: %d</string>
+    <string name="rotten_tomatoes_score_value">Nota Rotten Tomatoes: %d</string>
+    <string name="year_value">Año: %d</string>
+    <string name="sort_by">Ordenar por %s.</string>
+    <string name="sort_by_seen_or_not">Separar entre vista y pendiente.</string>
+    <string name="sort_by_average_score">Ordenar por nota media.</string>
+    <string name="is_selected">Seleccionado</string>
+    <string name="is_unselected">No seleccionado</string>
+    <string name="ascending">Orden ascendiente</string>
+    <string name="descending">Orden descendiente</string>
+    <string name="is_undefined">Rango no definido.</string>
+    <string name="filter_upto">%1$s hasta %2$s</string>
+    <string name="filter_from">%1$s desde %2$s</string>
+    <string name="filter_between">%1$s entre %2$s y %3$s</string>
+    <string name="year">Año</string>
+    <string name="metacritic_score">Nota Metacritic</string>
+    <string name="rotten_tomatoes_score">Nota Rotten Tomatoes</string>
+    <string name="runtime">Duración</string>
+    <plurals name="minutes">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minutos</item>
+        <item quantity="many">%d minutos</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d hora</item>
+        <item quantity="other">%d horas</item>
+        <item quantity="many">%d horas</item>
+    </plurals>
+</resources>
