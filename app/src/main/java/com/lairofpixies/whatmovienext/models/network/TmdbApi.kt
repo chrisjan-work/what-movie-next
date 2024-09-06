@@ -31,6 +31,7 @@ interface TmdbApi {
     suspend fun findMoviesByTitle(
         @Query("query") escapedTitle: String,
         @Query("page") page: Int? = null,
+        @Query("language") language: String,
     ): TmdbSearchResults
 
     @GET("configuration")
@@ -42,5 +43,6 @@ interface TmdbApi {
     @GET("movie/{tmdbId}?append_to_response=credits")
     suspend fun getMovieDetails(
         @Path("tmdbId") tmdbId: Long,
+        @Query("language") language: String,
     ): TmdbMovieExtended
 }

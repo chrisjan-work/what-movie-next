@@ -23,6 +23,7 @@ import com.lairofpixies.whatmovienext.models.data.PagedMovies
 import com.lairofpixies.whatmovienext.models.data.RatingPair
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo
+import com.lairofpixies.whatmovienext.util.LanguageProvider
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,7 @@ class ApiRepositoryImpl(
     private val omdbApi: OmdbApi,
     private val wikidataApi: WikidataApi,
     private val remoteMapper: RemoteMapper,
+    private val languageProvider: LanguageProvider,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ApiRepository {
     private val repositoryScope = CoroutineScope(SupervisorJob() + ioDispatcher)
@@ -51,7 +53,7 @@ class ApiRepositoryImpl(
             val remoteMovies =
                 repositoryScope
                     .async {
-                        tmdbApi.findMoviesByTitle(escapeForQuery(title), page)
+                        tmdbApi.findMoviesByTitle(escapeForQuery(title), page, language = languageProvider.current)
                     }.await()
 
             val asyncMovie =
@@ -77,7 +79,7 @@ class ApiRepositoryImpl(
         flow {
             emit(AsyncMovie.Loading)
 
-            val remoteMovie = tmdbApi.getMovieDetails(tmdbId)
+            val remoteMovie = tmdbApi.getMovieDetails(tmdbId, language = languageProvider.current)
             if (remoteMovie.success == false) {
                 emit(AsyncMovie.Failed(Exception("Failed to get movie details")))
                 return@flow

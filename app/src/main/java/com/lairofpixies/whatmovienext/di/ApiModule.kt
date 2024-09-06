@@ -33,6 +33,7 @@ import com.lairofpixies.whatmovienext.models.network.RequestInterceptorFactory
 import com.lairofpixies.whatmovienext.models.network.TmdbApi
 import com.lairofpixies.whatmovienext.models.network.WikidataApi
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
+import com.lairofpixies.whatmovienext.util.LanguageProvider
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -54,12 +55,14 @@ object ApiModule {
         omdbApi: OmdbApi,
         wikidataApi: WikidataApi,
         remoteMapper: RemoteMapper,
+        languageProvider: LanguageProvider,
     ): ApiRepository =
         ApiRepositoryImpl(
             tmdbApi,
             omdbApi,
             wikidataApi,
             remoteMapper,
+            languageProvider,
             Dispatchers.IO,
         )
 

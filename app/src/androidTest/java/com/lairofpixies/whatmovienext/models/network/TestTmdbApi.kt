@@ -50,6 +50,7 @@ class TestTmdbApi
         override suspend fun findMoviesByTitle(
             escapedTitle: String,
             page: Int?,
+            language: String,
         ): TmdbSearchResults = TmdbSearchResults(results = fakeMoviesBasic())
 
         override suspend fun getConfiguration(): TmdbConfiguration =
@@ -64,5 +65,8 @@ class TestTmdbApi
 
         override suspend fun getGenres(): TmdbGenres = TmdbGenres(genres = fakeGenres())
 
-        override suspend fun getMovieDetails(tmdbId: Long): TmdbMovieExtended = fakeMovieExtended()
+        override suspend fun getMovieDetails(
+            tmdbId: Long,
+            language: String,
+        ): TmdbMovieExtended = fakeMovieExtended()
     }
