@@ -82,4 +82,9 @@
     <string name="share">Share</string>
     <string name="missing_image">Missing image</string>
     <string name="poster_for_movie">Poster for %s</string>
+    <string name="browse_movie_at_page">Browse %s at %s.</string>
+    <string name="the_movie_database">The Movie Database</string>
+    <string name="internet_movie_database">Internet Movie Database</string>
+    <string name="rotten_tomatoes">Rotten Tomatoes</string>
+    <string name="metacritic">Metacritic</string>
 </resources>

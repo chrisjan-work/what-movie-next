@@ -140,6 +140,7 @@ fun MovieCard(
                 }
 
                 MovieLinks(
+                    title = movie.searchData.title,
                     tmdbId = movie.searchData.tmdbId.toString(),
                     imdbId = movie.detailData.imdbId,
                     rtId = movie.detailData.rtRating.sourceId,
