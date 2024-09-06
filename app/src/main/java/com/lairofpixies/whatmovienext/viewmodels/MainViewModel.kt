@@ -18,9 +18,11 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
+import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import com.lairofpixies.whatmovienext.BuildConfig
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.views.navigation.Routes
@@ -48,6 +50,8 @@ class MainViewModel
 
         private val _popupInfo: MutableStateFlow<PopupInfo> = MutableStateFlow(PopupInfo.None)
         val popupInfo: StateFlow<PopupInfo> = _popupInfo.asStateFlow()
+
+        private var lastIntent: Intent? = null
 
         fun attachNavHostController(navHostController: NavHostController) {
             this.navHostController = navHostController
@@ -118,6 +122,21 @@ class MainViewModel
                 } else {
                     onNavigateWithParam(Routes.SharedMovieView, tmdbId, popToHome = true)
                 }
+            }
+        }
+
+        fun parseIntent(intent: Intent?) {
+            val uri = intent?.data ?: return
+            val path = uri.path ?: return
+
+            // prevent duplicate re-open
+            if (intent == lastIntent) {
+                return
+            }
+            lastIntent = intent
+
+            if (uri.scheme == BuildConfig.SHARE_SCHEME && uri.host == BuildConfig.SHARE_HOST) {
+                loadAndNavigateTo(path)
             }
         }
     }
