@@ -35,6 +35,7 @@ import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.When
 import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertEquals
 
 @HiltAndroidTest
 class MovieCardStepDefs(
@@ -101,6 +102,7 @@ class MovieCardStepDefs(
         value: String,
     ) {
         val entry = testContext.movieApi.fakeMovieExtended()
+        assertEquals(title, entry.title)
         val updated =
             when (field) {
                 "original title" -> entry.copy(originalTitle = value)
