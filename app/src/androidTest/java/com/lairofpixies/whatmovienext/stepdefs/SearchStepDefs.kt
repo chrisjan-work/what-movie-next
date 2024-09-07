@@ -36,7 +36,6 @@ import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import com.lairofpixies.whatmovienext.R
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
@@ -49,7 +48,6 @@ import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
-import kotlinx.coroutines.runBlocking
 
 @HiltAndroidTest
 class SearchStepDefs(
@@ -90,21 +88,6 @@ class SearchStepDefs(
         )
     }
 
-    @Given("the configuration contains the genre {string} with id {string}")
-    fun theConfigurationContainsTheGenreWithId(
-        name: String,
-        id: String,
-    ) = runBlocking {
-        testContext.appDatabase.genreDao().insert(
-            listOf(
-                DbGenre(
-                    tmdbId = id.toLong(),
-                    name = name,
-                ),
-            ),
-        )
-    }
-
     @Given("the online repo returns an entry with title {string} and genre id {string}")
     fun theOnlineRepoReturnsAnEntryWithTitleAndGenreId(
         title: String,
@@ -126,9 +109,6 @@ class SearchStepDefs(
             throw exception
         }
         testContext.movieApi.fakeMovieExtended = {
-            throw exception
-        }
-        testContext.movieApi.fakeGenres = {
             throw exception
         }
     }

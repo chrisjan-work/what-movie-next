@@ -141,7 +141,7 @@ class SortProcessorTest {
 
     @Test
     fun `sort movies by genre`() {
-        fun generateList(vararg genres: String) = genres.map { forList(genres = it.split(",")) }
+        fun generateList(vararg genres: String) = genres.map { forList(genreNames = it.split(",")) }
         // Given
         val moviesToSort = generateList("Comedy", "Action,Comedy", "Action,Drama")
 

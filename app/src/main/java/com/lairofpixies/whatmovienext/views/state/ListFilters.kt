@@ -24,7 +24,7 @@ data class ListFilters(
     val runtime: MinMaxFilter = MinMaxFilter(null, null, false),
     val rtScore: MinMaxFilter = MinMaxFilter(null, null, false),
     val mcScore: MinMaxFilter = MinMaxFilter(null, null, false),
-    val genres: WordFilter = WordFilter(emptyList(), false),
+    val genres: WordIdFilter = WordIdFilter(emptyList(), false),
     val directors: WordFilter = WordFilter(emptyList(), false),
 )
 
@@ -42,5 +42,13 @@ data class WordFilter(
     val isEnabled: Boolean,
 ) {
     val isNotEmpty = words.isNotEmpty()
+    val isActive: Boolean = isEnabled && isNotEmpty
+}
+
+data class WordIdFilter(
+    val wordIds: List<Long>,
+    val isEnabled: Boolean,
+) {
+    val isNotEmpty = wordIds.isNotEmpty()
     val isActive: Boolean = isEnabled && isNotEmpty
 }

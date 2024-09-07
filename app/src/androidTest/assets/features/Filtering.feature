@@ -143,13 +143,12 @@ Feature: Filtering
     Then the entry "masterpiece" is not available
 
   Scenario: filter by genre
-    Given the tmdb api offers the genres "Action,Comedy,Horror"
     And a list with an entry "fist of the dragon"
-    And the db entry "fist of the dragon" has "genres" set as "Action"
+    And the db entry "fist of the dragon" has "genres" set as "28"
     And a list with an entry "sausage of the dragon"
-    And the db entry "sausage of the dragon" has "genres" set as "Comedy,Action"
+    And the db entry "sausage of the dragon" has "genres" set as "35,28"
     And a list with an entry "death valley"
-    And the db entry "death valley" has "genres" set as "Horror"
+    And the db entry "death valley" has "genres" set as "27"
     Then the entry "fist of the dragon" is visible
     And the entry "sausage of the dragon" is visible
     And the entry "death valley" is visible

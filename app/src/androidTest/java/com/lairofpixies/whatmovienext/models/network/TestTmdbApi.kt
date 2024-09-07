@@ -19,7 +19,6 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
-import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbSearchResults
@@ -30,7 +29,6 @@ class TestTmdbApi
     constructor() : TmdbApi {
         lateinit var fakeMoviesBasic: () -> List<TmdbMovieBasic>
         lateinit var fakeMovieExtended: () -> TmdbMovieExtended
-        lateinit var fakeGenres: () -> List<TmdbGenres.TmdbGenre>
 
         init {
             clearFakeResponses()
@@ -38,7 +36,6 @@ class TestTmdbApi
 
         fun clearFakeResponses() {
             fakeMoviesBasic = { emptyList() }
-            fakeGenres = { emptyList() }
             fakeMovieExtended = { TmdbMovieExtended(success = false) }
         }
 
@@ -62,8 +59,6 @@ class TestTmdbApi
                         profileSizes = listOf("ant", "whale"),
                     ),
             )
-
-        override suspend fun getGenres(): TmdbGenres = TmdbGenres(genres = fakeGenres())
 
         override suspend fun getMovieDetails(
             tmdbId: Long,

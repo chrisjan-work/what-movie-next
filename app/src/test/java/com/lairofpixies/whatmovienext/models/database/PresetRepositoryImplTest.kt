@@ -21,7 +21,9 @@ package com.lairofpixies.whatmovienext.models.database
 import com.lairofpixies.whatmovienext.models.data.TestPreset.forApp
 import com.lairofpixies.whatmovienext.models.data.TestPreset.forDb
 import com.lairofpixies.whatmovienext.models.database.data.DbPreset
+import com.lairofpixies.whatmovienext.models.mappers.GenreMapper
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
+import com.lairofpixies.whatmovienext.models.mappers.testGenreMapper
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -40,13 +42,15 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class PresetRepositoryImplTest {
     private lateinit var presetDao: PresetDao
+    private lateinit var genreMapper: GenreMapper
     private lateinit var presetMapper: PresetMapper
     private lateinit var presetRepository: PresetRepository
 
     @Before
     fun setUp() {
         presetDao = mockk(relaxed = true)
-        presetMapper = PresetMapper()
+        genreMapper = testGenreMapper()
+        presetMapper = PresetMapper(genreMapper)
     }
 
     private fun TestScope.initializeSut() {

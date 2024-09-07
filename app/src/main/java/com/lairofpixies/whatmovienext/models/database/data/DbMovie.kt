@@ -37,7 +37,7 @@ data class DbMovie(
     val coverUrl: String = "",
     val tagline: String = "",
     val plot: String = "",
-    val genres: String = "",
+    val genreIds: String = "",
     val runtimeMinutes: Int = 0,
     val directorNames: String = "",
     val dbWatchDates: String = "",

@@ -107,34 +107,6 @@ class TmdbApiTest {
         }
 
     @Test
-    fun `retrieve genres`() =
-        runTest {
-            // Given
-            val mockResponse =
-                MockResponse()
-                    .setResponseCode(200)
-                    .setBody(
-                        """{ "genres" : [
-                            { "id": 188, "name": "Radio Gugu" },
-                            { "id": 288, "name": "Radio Blabla" }
-                            ]}
-                        """.trimMargin(),
-                    )
-            mockWebServer.enqueue(mockResponse)
-
-            // When
-            val result = tmdbApi.getGenres()
-
-            // Then
-            val expectedGenres =
-                listOf(
-                    TmdbGenres.TmdbGenre(tmdbId = 188, name = "Radio Gugu"),
-                    TmdbGenres.TmdbGenre(tmdbId = 288, name = "Radio Blabla"),
-                )
-            assertEquals(expectedGenres, result.genres)
-        }
-
-    @Test
     fun `request details for wrong movie id`() =
         runTest {
             // Given

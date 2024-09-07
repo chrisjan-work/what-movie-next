@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.models.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbPreset
@@ -29,7 +28,6 @@ import com.lairofpixies.whatmovienext.models.database.data.DbRole
 @Database(
     entities = [
         DbMovie::class,
-        DbGenre::class,
         DbPerson::class,
         DbRole::class,
         DbPreset::class,
@@ -39,8 +37,6 @@ import com.lairofpixies.whatmovienext.models.database.data.DbRole
 )
 abstract class MovieDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
-
-    abstract fun genreDao(): GenreDao
 
     abstract fun presetDao(): PresetDao
 }

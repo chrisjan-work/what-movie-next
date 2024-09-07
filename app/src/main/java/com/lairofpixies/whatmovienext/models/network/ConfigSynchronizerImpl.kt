@@ -19,8 +19,6 @@
 package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.ImagePaths
-import com.lairofpixies.whatmovienext.models.database.GenreRepository
-import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.data.TmdbConfiguration
 import com.lairofpixies.whatmovienext.models.preferences.AppPreferences
 import kotlinx.coroutines.CoroutineDispatcher
@@ -33,8 +31,6 @@ import kotlinx.coroutines.launch
 class ConfigSynchronizerImpl(
     private val appPreferences: AppPreferences,
     private val tmdbApi: TmdbApi,
-    private val genreRepository: GenreRepository,
-    private val remoteMapper: RemoteMapper,
     private val connectivityTracker: ConnectivityTracker,
     private val cacheExpirationTimeMillis: Long,
     ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -56,14 +52,11 @@ class ConfigSynchronizerImpl(
 
         suspend fun lastCheckDateMillis() = appPreferences.lastCheckedDateMillis(0L).firstOrNull() ?: 0L
 
-        suspend fun genreDbIsEmpty() = genreRepository.isEmpty()
-
         repositoryScope.launch {
             val shouldUpdate =
                 when {
                     emptyImagePaths() -> true
                     lastCheckDateMillis() < dateThreshold() -> true
-                    genreDbIsEmpty() -> true
                     else -> false
                 }
             if (shouldUpdate) {
@@ -76,13 +69,7 @@ class ConfigSynchronizerImpl(
         parseConfiguration(tmdbApi.getConfiguration())?.let { fetched ->
             appPreferences.updateImagePaths(fetched)
         }
-        appendRemoteGenres()
         appPreferences.updateLastCheckedDateMillis(System.currentTimeMillis())
-    }
-
-    private suspend fun appendRemoteGenres() {
-        val tmdbGenres = remoteMapper.toDbGenres(tmdbApi.getGenres())
-        genreRepository.appendGenres(tmdbGenres)
     }
 
     private fun parseConfiguration(configuration: TmdbConfiguration?): ImagePaths? =

@@ -25,7 +25,7 @@ Feature: Movie card
     And the db entry "Time Bandits" has "original title" set as "The Time Bandits"
     And the db entry "Time Bandits" has "year" set as "1981"
     And the db entry "Time Bandits" has "runtime" set as "116"
-    And the db entry "Time Bandits" has "genres" set as "Adventure,Comedy,Family,Fantasy"
+    And the db entry "Time Bandits" has "genres" set as "12,35,10751,14"
     And the db entry "Time Bandits" has "tagline" set as "they stole history"
     And the db entry "Time Bandits" has "plot" set as "Time traveling dwarfs meet Sean Connery"
     When the user opens the entry "Time Bandits"
@@ -46,6 +46,7 @@ Feature: Movie card
     And the extended entry "The Fisher King" has "runtime" set as "138"
     And the extended entry "The Fisher King" has "tagline" set as "A Modern Day Retelling of the Arthurian Legend"
     And the extended entry "The Fisher King" has "plot" set as "Search for the Holy Grail"
+    And the extended entry "The Fisher King" has "genres" set as "35,18"
     When the user searches for the title "Fisher"
     And the user clicks on the save button
     And the user opens the entry "The Fisher King"
@@ -55,4 +56,5 @@ Feature: Movie card
     And the card contains the text "2h 18min"
     And the card contains the text "A Modern Day Retelling of the Arthurian Legend"
     And the card contains the text "Search for the Holy Grail"
+    And the card contains the text "Comedy / Drama"
 

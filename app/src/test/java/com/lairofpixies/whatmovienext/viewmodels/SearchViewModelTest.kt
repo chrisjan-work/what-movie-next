@@ -327,7 +327,7 @@ class SearchViewModelTest {
                         year = 1963,
                         thumbnailUrl = "bond.jpg",
                         coverUrl = "james.jpg",
-                        genres = listOf("action"),
+                        genreNames = listOf("action"),
                         imdbId = "tt007",
                         tagline = "with license to...",
                         plot = "Cold War Shenanigans",

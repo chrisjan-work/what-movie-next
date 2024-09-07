@@ -27,17 +27,13 @@ import com.lairofpixies.whatmovienext.models.data.Rating
 import com.lairofpixies.whatmovienext.models.data.Rating.Rater
 import com.lairofpixies.whatmovienext.models.data.RatingPair
 import com.lairofpixies.whatmovienext.models.data.Staff
-import com.lairofpixies.whatmovienext.models.database.GenreRepository
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import com.lairofpixies.whatmovienext.models.network.data.OmdbMovieInfo
-import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended.TmdbCastMember
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieExtended.TmdbCrewMember
 import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo
-import java.lang.NumberFormatException
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -45,7 +41,7 @@ class RemoteMapper
     @Inject
     constructor(
         private val configRepo: ConfigRepository,
-        private val genreRepository: GenreRepository,
+        private val genreMapper: GenreMapper,
     ) {
         fun toSearchMovie(tmdbMovieBasic: TmdbMovieBasic): Movie.ForSearch =
             with(tmdbMovieBasic) {
@@ -58,7 +54,8 @@ class RemoteMapper
                             year = toYear(releaseDate),
                             thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
                             coverUrl = configRepo.getCoverUrl(posterPath),
-                            genres = toGenreNames(genreIds),
+                            genreIds = genreIds,
+                            genreNames = genreMapper.toGenreNames(genreIds),
                         ),
                 )
             }
@@ -68,6 +65,7 @@ class RemoteMapper
             ratings: RatingPair,
         ): Movie.ForCard =
             with(tmdbMovieExtended) {
+                val genreIds = genres?.map { it.tmdbId } ?: emptyList()
                 Movie.ForCard(
                     appData =
                         MovieData.AppData(
@@ -83,7 +81,8 @@ class RemoteMapper
                             year = toYear(releaseDate),
                             thumbnailUrl = configRepo.getThumbnailUrl(posterPath),
                             coverUrl = configRepo.getCoverUrl(posterPath),
-                            genres = toGenreNames(genres?.map { it.tmdbId }),
+                            genreIds = genreIds,
+                            genreNames = genreMapper.toGenreNames(genreIds),
                         ),
                     detailData =
                         MovieData.DetailData(
@@ -147,19 +146,6 @@ class RemoteMapper
         }
 
         fun toDirectorNames(crew: List<TmdbCrewMember>?): List<String> = filterCrew(crew, Departments.Directors).map { it.name }
-
-        fun toDbGenres(tmdbGenres: TmdbGenres): List<DbGenre> =
-            tmdbGenres.genres.map { tmdbGenre ->
-                with(tmdbGenre) {
-                    DbGenre(
-                        tmdbId = tmdbId,
-                        name = name,
-                    )
-                }
-            }
-
-        fun toGenreNames(genreIds: List<Long>?): List<String> =
-            genreIds?.let { genreRepository.genreNamesByTmdbIds(genreIds) } ?: emptyList()
 
         fun toYear(releaseDate: String?): Int? =
             if (!releaseDate.isNullOrBlank()) {

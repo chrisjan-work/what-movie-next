@@ -26,6 +26,7 @@ import com.lairofpixies.whatmovienext.models.data.Preset
 import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
+import com.lairofpixies.whatmovienext.models.mappers.GenreMapper
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
 import com.lairofpixies.whatmovienext.util.quickMatchAll
 import com.lairofpixies.whatmovienext.util.quickMatchAny
@@ -58,6 +59,7 @@ class MovieListViewModel
         private val sortProcessor: SortProcessor,
         private val filterProcessor: FilterProcessor,
         private val presetMapper: PresetMapper,
+        private val genreMapper: GenreMapper,
     ) : ScreenViewModel() {
         lateinit var listedMovies: StateFlow<AsyncMovie>
             private set
@@ -77,9 +79,6 @@ class MovieListViewModel
         private val _currentPreset = MutableStateFlow(Preset.Default)
         val currentPreset: StateFlow<Preset> = _currentPreset.asStateFlow()
 
-        private val _allGenres = MutableStateFlow(emptyList<String>())
-        val allGenres: StateFlow<List<String>> = _allGenres.asStateFlow()
-
         private val _allDirectors = MutableStateFlow(emptyList<String>())
         val allDirectors: StateFlow<List<String>> = _allDirectors.asStateFlow()
 
@@ -98,7 +97,6 @@ class MovieListViewModel
         init {
             connectArchivedMovies()
             connectPresets()
-            connectGenres()
             connectDirectors()
         }
 
@@ -116,16 +114,6 @@ class MovieListViewModel
                     .getPreset(Preset.FIXED_ID)
                     .collect { presetOrNull ->
                         _currentPreset.value = presetOrNull ?: Preset.Default
-                    }
-            }
-        }
-
-        private fun connectGenres() {
-            viewModelScope.launch {
-                movieRepository
-                    .getAllGenresFromMovies()
-                    .collect { genres ->
-                        _allGenres.value = genres.sorted()
                     }
             }
         }
@@ -231,7 +219,7 @@ class MovieListViewModel
                             .filter { indexedMovie ->
                                 val movie = indexedMovie.value
                                 quickMatchAll(query, movie.searchData.title) ||
-                                    movie.searchData.genres.any { quickMatchAny(query, it) } ||
+                                    movie.searchData.genreNames.any { quickMatchAny(query, it) } ||
                                     movie.detailData.directorNames.any { quickMatchAll(query, it) }
                             }.map { it.index }
 
@@ -279,4 +267,6 @@ class MovieListViewModel
         fun importMovies() {
             mainViewModel?.requestImport()
         }
+
+        fun allGenreNamesMap() = genreMapper.allGenreNamesMap()
     }

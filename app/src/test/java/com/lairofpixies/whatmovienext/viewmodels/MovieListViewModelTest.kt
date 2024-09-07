@@ -26,6 +26,7 @@ import com.lairofpixies.whatmovienext.models.data.TestMovie.forList
 import com.lairofpixies.whatmovienext.models.data.TestPreset.forApp
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
+import com.lairofpixies.whatmovienext.models.mappers.GenreMapper
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
@@ -68,6 +69,7 @@ class MovieListViewModelTest {
     private lateinit var filterProcessor: FilterProcessor
     private lateinit var presetMapper: PresetMapper
     private lateinit var movieRepository: MovieRepository
+    private lateinit var genreMapper: GenreMapper
     private lateinit var presetRepository: PresetRepository
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
@@ -77,6 +79,7 @@ class MovieListViewModelTest {
         Dispatchers.setMain(testDispatcher)
         movieRepository = mockk(relaxed = true)
         presetRepository = mockk(relaxed = true)
+        genreMapper = mockk(relaxed = true)
 
         mainViewModelMock =
             mockk(relaxed = true) {
@@ -95,6 +98,7 @@ class MovieListViewModelTest {
                 sortProcessor,
                 filterProcessor,
                 presetMapper,
+                genreMapper,
             )
         listViewModel.attachMainViewModel(mainViewModelMock)
     }
@@ -310,21 +314,6 @@ class MovieListViewModelTest {
     }
 
     @Test
-    fun `expose genre list`() =
-        runTest {
-            // Given
-            val genres = listOf("Action", "Comedy", "Drama")
-            every { movieRepository.getAllGenresFromMovies() } returns
-                flowOf(genres)
-
-            // When
-            construct()
-
-            // Then
-            assertEquals(genres, listViewModel.allGenres.value)
-        }
-
-    @Test
     fun `expose directors list`() =
         runTest {
             // Given
@@ -412,12 +401,12 @@ class MovieListViewModelTest {
                             forList(
                                 id = 2,
                                 title = "bygenresingle",
-                                genres = listOf("singlegenre"),
+                                genreNames = listOf("singlegenre"),
                             ),
                             forList(
                                 id = 3,
                                 title = "bygenreany",
-                                genres = listOf("miss", "match"),
+                                genreNames = listOf("miss", "match"),
                             ),
                             forList(
                                 id = 4,
@@ -579,4 +568,18 @@ class MovieListViewModelTest {
             listViewModel.importMovies()
             coVerify { mainViewModelMock.requestImport() }
         }
+
+    @Test
+    fun `forward genre mapper names map`() {
+        // Given
+        val theMap: Map<Long, String> = mockk()
+        every { genreMapper.allGenreNamesMap() } returns theMap
+        construct()
+
+        // When
+        val forwarded = listViewModel.allGenreNamesMap()
+
+        // Then
+        assertEquals(theMap, forwarded)
+    }
 }

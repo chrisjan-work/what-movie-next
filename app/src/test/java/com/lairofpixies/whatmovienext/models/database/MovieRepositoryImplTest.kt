@@ -30,9 +30,11 @@ import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.models.database.data.DbStaff
 import com.lairofpixies.whatmovienext.models.database.data.DbStaffedMovie
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
+import com.lairofpixies.whatmovienext.models.mappers.GenreMapper
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testDbMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testDbStaffedMovieExtended
+import com.lairofpixies.whatmovienext.models.mappers.testGenreMapper
 import com.lairofpixies.whatmovienext.models.mappers.testListMovieExtended
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -58,12 +60,14 @@ import org.junit.Test
 class MovieRepositoryImplTest {
     private lateinit var movieDao: MovieDao
     private lateinit var dbMapper: DbMapper
+    private lateinit var genreMapper: GenreMapper
     private lateinit var movieRepository: MovieRepository
 
     @Before
     fun setUp() {
         movieDao = mockk(relaxed = true)
-        dbMapper = DbMapper()
+        genreMapper = testGenreMapper()
+        dbMapper = DbMapper(genreMapper)
     }
 
     private fun TestScope.initializeSut() {
@@ -507,27 +511,6 @@ class MovieRepositoryImplTest {
 
             // Then
             assertEquals(listOf("Aaron", "Betty"), names.first())
-        }
-
-    @Test
-    fun `extract genres from stored movies`() =
-        runTest {
-            // Given
-            val movies =
-                listOf(
-                    DbMovie(title = "one", genres = "Action"),
-                    DbMovie(title = "two", genres = "Action,Adventure"),
-                    DbMovie(title = "three", genres = "Drama,Horror"),
-                )
-            coEvery { movieDao.getAllMovies() } returns
-                flowOf(movies)
-
-            // When
-            initializeSut()
-            val genres = movieRepository.getAllGenresFromMovies().first()
-
-            // Then
-            assertEquals(listOf("Action", "Adventure", "Drama", "Horror"), genres)
         }
 
     @Test

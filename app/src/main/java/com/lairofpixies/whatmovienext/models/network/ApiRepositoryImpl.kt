@@ -53,7 +53,11 @@ class ApiRepositoryImpl(
             val remoteMovies =
                 repositoryScope
                     .async {
-                        tmdbApi.findMoviesByTitle(escapeForQuery(title), page, language = languageProvider.current)
+                        tmdbApi.findMoviesByTitle(
+                            escapeForQuery(title),
+                            page,
+                            language = languageProvider.current,
+                        )
                     }.await()
 
             val asyncMovie =

@@ -26,11 +26,14 @@ import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import com.lairofpixies.whatmovienext.views.state.WordFilter
+import com.lairofpixies.whatmovienext.views.state.WordIdFilter
 import javax.inject.Inject
 
 class PresetMapper
     @Inject
-    constructor() {
+    constructor(
+        private val genreMapper: GenreMapper,
+    ) {
         fun toPreset(dbPreset: DbPreset): Preset =
             with(dbPreset) {
                 Preset(
@@ -43,7 +46,7 @@ class PresetMapper
                             runtime = MinMaxFilter(minRuntime, maxRuntime, runtimeEnabled),
                             rtScore = MinMaxFilter(minRtScore, maxRtScore, rtScoreEnabled),
                             mcScore = MinMaxFilter(minMcScore, maxMcScore, mcScoreEnabled),
-                            genres = WordFilter(genres.decodeToList(), genresEnabled),
+                            genres = WordIdFilter(genreMapper.toGenreIds(genres), genresEnabled),
                             directors = WordFilter(directors.decodeToList(), directorsEnabled),
                         ),
                     sortingSetup = SortingSetup(sortingCriteria, sortingDirection),
@@ -70,7 +73,7 @@ class PresetMapper
                     minMcScore = listFilters.mcScore.min,
                     maxMcScore = listFilters.mcScore.max,
                     mcScoreEnabled = listFilters.mcScore.isEnabled,
-                    genres = listFilters.genres.words.encodeToString(),
+                    genres = genreMapper.toDbGenreIds(listFilters.genres.wordIds),
                     genresEnabled = listFilters.genres.isEnabled,
                     directors = listFilters.directors.words.encodeToString(),
                     directorsEnabled = listFilters.directors.isEnabled,

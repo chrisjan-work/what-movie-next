@@ -25,6 +25,7 @@ import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.WordFilter
+import com.lairofpixies.whatmovienext.views.state.WordIdFilter
 import javax.inject.Inject
 
 class FilterProcessor
@@ -45,7 +46,7 @@ class FilterProcessor
                             byNumber(runtime) { it?.detailData?.runtimeMinutes }
                             byNumber(rtScore) { it?.detailData?.rtRating?.percentValue }
                             byNumber(mcScore) { it?.detailData?.mcRating?.percentValue }
-                            byText(genres) { it?.searchData?.genres }
+                            byGenreId(genres) { it?.searchData?.genreIds }
                             byText(directors) { it?.detailData?.directorNames }
                         }
                     }
@@ -91,6 +92,21 @@ class FilterProcessor
                     val offering = getValue(movie)
                     if (offering.isNullOrEmpty()) return@filterInPlace acceptEmpty
                     return@filterInPlace wordFilter.words.any { it in offering }
+                }
+            }
+        }
+
+        @VisibleForTesting
+        fun MutableList<Movie.ForList>.byGenreId(
+            wordFilter: WordIdFilter,
+            acceptEmpty: Boolean = ACCEPT_EMPTY_ENTRIES,
+            getValue: (Movie.ForList?) -> List<Long>?,
+        ) {
+            if (wordFilter.isActive) {
+                filterInPlace { movie ->
+                    val offering = getValue(movie)
+                    if (offering.isNullOrEmpty()) return@filterInPlace acceptEmpty
+                    return@filterInPlace wordFilter.wordIds.any { it in offering }
                 }
             }
         }

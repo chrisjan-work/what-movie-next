@@ -174,14 +174,12 @@ fun BottomSheetMenu(listViewModel: MovieListViewModel) {
             )
 
         BottomMenuOption.Filtering -> {
-            val allGenres = listViewModel.allGenres.collectAsState().value
-            val allDirectors = listViewModel.allDirectors.collectAsState().value
             FilteringMenu(
                 listFilters = currentPreset.listFilters,
                 onListFiltersChanged = { listViewModel.setListFilters(it) },
                 presetMapper = listViewModel.presetMapper(),
-                allGenres = allGenres,
-                allDirectors = allDirectors,
+                allGenres = listViewModel.allGenreNamesMap(),
+                allDirectors = listViewModel.allDirectors.collectAsState().value,
                 showPopup = { listViewModel.showPopup(it) },
             )
         }

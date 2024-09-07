@@ -26,11 +26,13 @@ import org.junit.Before
 import org.junit.Test
 
 class DbMapperTest {
+    private lateinit var genreMapper: GenreMapper
     private lateinit var dbMapper: DbMapper
 
     @Before
     fun setUp() {
-        dbMapper = DbMapper()
+        genreMapper = testGenreMapper()
+        dbMapper = DbMapper(genreMapper)
     }
 
     @Test
@@ -70,22 +72,6 @@ class DbMapperTest {
         // Then
         val expected = testListMovieExtended()
         assertEquals(expected, result)
-    }
-
-    @Test
-    fun toGenres() {
-        // When
-        val result = dbMapper.toGenres("Character Study,Musical")
-        // Then
-        assertEquals(listOf("Character Study", "Musical"), result)
-    }
-
-    @Test
-    fun toDbGenres() {
-        // When
-        val result = dbMapper.toDbGenres(listOf("Character Study", "Musical"))
-        // Then
-        assertEquals("Character Study,Musical", result)
     }
 
     @Test

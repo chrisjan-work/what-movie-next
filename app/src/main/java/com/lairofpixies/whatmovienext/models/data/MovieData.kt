@@ -33,7 +33,8 @@ object MovieData {
         val year: Int? = null,
         val thumbnailUrl: String = "",
         val coverUrl: String = "",
-        val genres: List<String> = emptyList(),
+        val genreIds: List<Long> = emptyList(),
+        val genreNames: List<String> = emptyList(),
     )
 
     data class DetailData(

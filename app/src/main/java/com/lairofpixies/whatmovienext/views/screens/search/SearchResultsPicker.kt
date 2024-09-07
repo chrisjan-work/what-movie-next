@@ -147,10 +147,10 @@ fun SearchResultItem(
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
-            if (data.genres.isNotEmpty()) {
+            if (data.genreNames.isNotEmpty()) {
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = data.genres.joinToString(" / "),
+                    text = data.genreNames.joinToString(" / "),
                     style = MaterialTheme.typography.bodySmall,
                     fontStyle = FontStyle.Italic,
                 )

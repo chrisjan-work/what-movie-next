@@ -51,7 +51,7 @@ class SortProcessor
                         unsorted.sortedBy { it.appData.watchDates.size }
 
                     SortingCriteria.Genre ->
-                        unsorted.sortedBy { it.searchData.genres.joinToString(",") }
+                        unsorted.sortedBy { it.searchData.genreNames.joinToString(",") }
 
                     SortingCriteria.Runtime ->
                         unsorted.sortedBy { it.detailData.runtimeMinutes }

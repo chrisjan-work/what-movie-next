@@ -20,7 +20,7 @@ package com.lairofpixies.whatmovienext.models.network
 
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.TestMovie
-import com.lairofpixies.whatmovienext.models.database.GenreRepository
+import com.lairofpixies.whatmovienext.models.mappers.GenreMapper
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
 import com.lairofpixies.whatmovienext.models.mappers.testOmdbMovieRatings
@@ -51,8 +51,8 @@ class ApiRepositoryImplTest {
     private lateinit var omdbApi: OmdbApi
     private lateinit var wikidataApi: WikidataApi
     private lateinit var configRepo: ConfigRepository
-    private lateinit var genreRepository: GenreRepository
     private lateinit var remoteMapper: RemoteMapper
+    private lateinit var genreMapper: GenreMapper
     private lateinit var apiRepository: ApiRepository
     private lateinit var languageProvider: LanguageProvider
 
@@ -62,9 +62,9 @@ class ApiRepositoryImplTest {
         omdbApi = mockk(relaxed = true)
         wikidataApi = mockk(relaxed = true)
         configRepo = mockk(relaxed = true)
-        genreRepository = mockk(relaxed = true)
+        genreMapper = mockk(relaxed = true)
         languageProvider = mockk(relaxed = true)
-        remoteMapper = RemoteMapper(configRepo, genreRepository)
+        remoteMapper = RemoteMapper(configRepo, genreMapper)
     }
 
     private fun TestScope.initializeSut() {
@@ -84,7 +84,10 @@ class ApiRepositoryImplTest {
     fun `find movies by title, none available`() =
         runTest {
             // Given
-            coEvery { tmdbApi.findMoviesByTitle(any(), any(), any()) } returns TmdbSearchResults(results = emptyList())
+            coEvery { tmdbApi.findMoviesByTitle(any(), any(), any()) } returns
+                TmdbSearchResults(
+                    results = emptyList(),
+                )
             initializeSut()
 
             // When
@@ -201,7 +204,12 @@ class ApiRepositoryImplTest {
             coEvery { omdbApi.fetchMovieRatings(any()) } returns testOmdbMovieRatings()
             remoteMapper =
                 mockk(relaxed = true) {
-                    every { toCardMovie(any<TmdbMovieExtended>(), any()) } returns testCardMovieExtended()
+                    every {
+                        toCardMovie(
+                            any<TmdbMovieExtended>(),
+                            any(),
+                        )
+                    } returns testCardMovieExtended()
                 }
             initializeSut()
 
@@ -216,7 +224,12 @@ class ApiRepositoryImplTest {
     fun `get movie details, server error`() =
         runTest {
             // Given
-            coEvery { tmdbApi.getMovieDetails(any(), any()) } returns TmdbMovieExtended(success = false)
+            coEvery {
+                tmdbApi.getMovieDetails(
+                    any(),
+                    any(),
+                )
+            } returns TmdbMovieExtended(success = false)
             initializeSut()
 
             // When

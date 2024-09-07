@@ -57,6 +57,7 @@ import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import com.lairofpixies.whatmovienext.views.state.WordFilter
+import com.lairofpixies.whatmovienext.views.state.WordIdFilter
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -64,7 +65,7 @@ fun FilteringMenu(
     listFilters: ListFilters,
     onListFiltersChanged: (ListFilters) -> Unit,
     presetMapper: PresetMapper,
-    allGenres: List<String>,
+    allGenres: Map<Long, String>,
     allDirectors: List<String>,
     showPopup: (PopupInfo) -> Unit,
 ) {
@@ -82,7 +83,7 @@ fun FilteringMenu(
                 onListFiltersChanged(listFilters.copy(listMode = listMode))
             },
         )
-        WordSelectButton(
+        GenreSelectButton(
             label = stringResource(R.string.by_genre),
             filterValues = listFilters.genres,
             candidates = allGenres,
@@ -406,4 +407,35 @@ fun WordSelectButton(
             modifier = Modifier.width(64.dpf),
         )
     }
+}
+
+@Composable
+fun GenreSelectButton(
+    label: String,
+    filterValues: WordIdFilter,
+    onFilterValuesChanged: (WordIdFilter) -> Unit,
+    candidates: Map<Long, String>,
+    showPopup: (PopupInfo) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val reverseCandidates = candidates.entries.associateBy({ it.value }, { it.key })
+    WordSelectButton(
+        label = label,
+        filterValues =
+            WordFilter(
+                filterValues.wordIds.mapNotNull { candidates[it] },
+                isEnabled = filterValues.isEnabled,
+            ),
+        onFilterValuesChanged = { wordFilter ->
+            onFilterValuesChanged(
+                filterValues.copy(
+                    wordIds = wordFilter.words.mapNotNull { reverseCandidates[it] },
+                    isEnabled = wordFilter.isEnabled,
+                ),
+            )
+        },
+        candidates = candidates.values.toList(),
+        showPopup = showPopup,
+        modifier = modifier,
+    )
 }

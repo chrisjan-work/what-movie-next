@@ -117,7 +117,7 @@ fun MovieCard(
 
                 RuntimeAndGenresDisplay(
                     runtime = movie.detailData.runtimeMinutes,
-                    genres = movie.searchData.genres,
+                    genres = movie.searchData.genreNames,
                 )
 
                 RatingDisplay(
