@@ -23,7 +23,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.lairofpixies.whatmovienext.models.network.ConfigSynchronizer
-import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.test.CucumberTestContext
 import com.lairofpixies.whatmovienext.test.composeStep
 import com.lairofpixies.whatmovienext.test.onNodeWithTextUnderTag
@@ -31,7 +30,6 @@ import com.lairofpixies.whatmovienext.views.screens.UiTags
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.cucumber.java.en.And
 import io.cucumber.java.en.Given
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -45,18 +43,6 @@ class FilteringStepDefs(
     lateinit var configSynchronizer: ConfigSynchronizer
 
     private val movieListStepDefs = MovieListStepDefs(testContext)
-
-    @Given("the tmdb api offers the genres {string}")
-    fun theTmdbApiOffersTheGenres(genreList: String) {
-        testContext.movieApi.fakeGenres = {
-            genreList.split(",").mapIndexed { index, genre ->
-                TmdbGenres.TmdbGenre(index + 1L, genre)
-            }
-        }
-        runBlocking {
-            configSynchronizer.checkNow()
-        }
-    }
 
     @Given("the user clicks on Arrange and Filter")
     fun theUserClicksOnArrangeAndFilter() {

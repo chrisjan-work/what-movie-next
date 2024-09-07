@@ -86,7 +86,7 @@ Feature: Sorting movie list
     Examples:
       | criteria | data | first | second | third |
       | year     | year | 1970  | 1985   | 2003  |
-      | genre | genres | Action | Comedy | Horror |
+      | genre | genres | 28 | 35 | 27 |
       | runtime | runtime | 90 | 120 | 125 |
       | director | directors | Aaron Sorkin | Michael Bay | Terrence Malick |
       | avg. score | ratings | 10,10 | 20,30 | 50,-1 |

@@ -24,9 +24,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
-import com.lairofpixies.whatmovienext.models.database.GenreDao
-import com.lairofpixies.whatmovienext.models.database.GenreRepository
-import com.lairofpixies.whatmovienext.models.database.GenreRepositoryImpl
 import com.lairofpixies.whatmovienext.models.database.MovieDao
 import com.lairofpixies.whatmovienext.models.database.MovieDatabase
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
@@ -55,13 +52,6 @@ object DBModule {
         dbMapper: DbMapper,
     ): MovieRepository = MovieRepositoryImpl(movieDao, dbMapper, ioDispatcher = Dispatchers.IO)
 
-    @Provides
-    fun provideGenreRepository(genreDao: GenreDao): GenreRepository =
-        GenreRepositoryImpl(
-            genreDao = genreDao,
-            ioDispatcher = Dispatchers.IO,
-        )
-
     @Singleton
     @Provides
     fun provideInternalDatabase(
@@ -76,10 +66,6 @@ object DBModule {
     @Singleton
     @Provides
     fun provideMovieDao(db: MovieDatabase): MovieDao = db.movieDao()
-
-    @Singleton
-    @Provides
-    fun provideGenreDao(db: MovieDatabase): GenreDao = db.genreDao()
 
     @Singleton
     @Provides

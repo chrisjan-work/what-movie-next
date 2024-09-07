@@ -86,17 +86,17 @@ Feature: Search Online
     When the user searches for the title "Failure"
     Then a pop-up is shown informing that an error occurred
 
-   Scenario: Explicit navigate back to last results from selection view
-     Given the online repo returns an entry with title "The Day After Tomorrow"
-     And the online repo returns an entry with title "Edge of Tomorrow"
-     When the user searches for the title "Tomorrow"
-     Then the search results contains an entry with title "The Day After Tomorrow"
-     When the user selects the search result "The Day After Tomorrow"
-     Then the selected movie view is open
-     And the search results are not visible
-     When the user clicks on back to results button
-     Then the selected movie view is not visible
-     And the search results contains an entry with title "The Day After Tomorrow"
+  Scenario: Explicit navigate back to last results from selection view
+    Given the online repo returns an entry with title "The Day After Tomorrow"
+    And the online repo returns an entry with title "Edge of Tomorrow"
+    When the user searches for the title "Tomorrow"
+    Then the search results contains an entry with title "The Day After Tomorrow"
+    When the user selects the search result "The Day After Tomorrow"
+    Then the selected movie view is open
+    And the search results are not visible
+    When the user clicks on back to results button
+    Then the selected movie view is not visible
+    And the search results contains an entry with title "The Day After Tomorrow"
 
   Scenario: Explicit navigate back to query editor from selection view
     Given the online repo returns an entry with title "The Day After Tomorrow"
@@ -138,9 +138,7 @@ Feature: Search Online
     Then the search results contains an entry with title "Man of Steel" and year "2013"
 
   Scenario: search results contain genre
-    Given the configuration contains the genre "Comedy" with id "100"
-    And the configuration contains the genre "Drama" with id "200"
-    Given the online repo returns an entry with title "Dream Scenario" and genre id "100"
-    Given the online repo returns an entry with title "Requiem for a Dream" and genre id "200"
+    Given the online repo returns an entry with title "Dream Scenario" and genre id "35"
+    And the online repo returns an entry with title "Requiem for a Dream" and genre id "18"
     When the user searches for the title "Dream"
     Then the search results contains an entry with title "Dream Scenario" and genre "Comedy"

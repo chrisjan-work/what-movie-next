@@ -20,11 +20,8 @@ package com.lairofpixies.whatmovienext.models.mappers
 
 import com.lairofpixies.whatmovienext.models.data.Rating
 import com.lairofpixies.whatmovienext.models.data.RatingPair
-import com.lairofpixies.whatmovienext.models.database.GenreRepository
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.network.ConfigRepository
 import com.lairofpixies.whatmovienext.models.network.data.OmdbMovieInfo
-import com.lairofpixies.whatmovienext.models.network.data.TmdbGenres
 import com.lairofpixies.whatmovienext.models.network.data.TmdbMovieBasic
 import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo
 import com.lairofpixies.whatmovienext.models.network.data.WikidataMovieInfo.Binding
@@ -38,14 +35,14 @@ import org.junit.Test
 
 class RemoteMapperTest {
     private lateinit var configRepo: ConfigRepository
-    private lateinit var genreRepository: GenreRepository
+    private lateinit var genreMapper: GenreMapper
     private lateinit var remoteMapper: RemoteMapper
 
     @Before
     fun setUp() {
         configRepo = mockk(relaxed = true)
-        genreRepository = mockk(relaxed = true)
-        remoteMapper = RemoteMapper(configRepo, genreRepository)
+        genreMapper = testGenreMapper()
+        remoteMapper = RemoteMapper(configRepo, genreMapper)
     }
 
     @Test
@@ -67,50 +64,6 @@ class RemoteMapperTest {
         val releaseDate = null
         val year = remoteMapper.toYear(releaseDate)
         assertEquals(null, year)
-    }
-
-    @Test
-    fun `map genres from api to db`() {
-        // Given
-        val tmdbGenres =
-            TmdbGenres(
-                genres =
-                    listOf(
-                        TmdbGenres.TmdbGenre(tmdbId = 1, name = "Action"),
-                        TmdbGenres.TmdbGenre(tmdbId = 2, name = "Comedy"),
-                    ),
-            )
-        // When
-        val result = remoteMapper.toDbGenres(tmdbGenres)
-
-        // Then
-        assertEquals(
-            listOf(
-                DbGenre("Action", 1),
-                DbGenre("Comedy", 2),
-            ),
-            result,
-        )
-    }
-
-    @Test
-    fun `map genre names out of ids stored in db`() {
-        // Given
-        val knownGenres =
-            mapOf(
-                1L to "Action",
-                2L to "Comedy",
-            )
-        every { genreRepository.genreNamesByTmdbIds(any()) } answers {
-            val queryIds = firstArg<List<Long>>()
-            queryIds.mapNotNull { knownGenres[it] }
-        }
-
-        // When
-        val result = remoteMapper.toGenreNames(listOf(2, 1, 2))
-
-        // Then
-        assertEquals(listOf("Comedy", "Action", "Comedy"), result)
     }
 
     @Test
@@ -298,16 +251,6 @@ class RemoteMapperTest {
         every { configRepo.getCoverUrl(any()) } answers {
             "localhost/cover/${firstArg<String>()}"
         }
-        val knownGenres =
-            mapOf(
-                1L to "Action",
-                2L to "Comedy",
-            )
-        every { genreRepository.genreNamesByTmdbIds(any()) } answers {
-            val queryIds = firstArg<List<Long>>()
-            queryIds.mapNotNull { knownGenres[it] }
-        }
-
         val tmdbMovieBasic =
             TmdbMovieBasic(
                 tmdbId = 1,
@@ -315,7 +258,7 @@ class RemoteMapperTest {
                 originalTitle = "Irgendetwas",
                 releaseDate = "2002-01-01",
                 posterPath = "abcd",
-                genreIds = listOf(2),
+                genreIds = listOf(35),
             )
 
         // When
@@ -328,7 +271,7 @@ class RemoteMapperTest {
         assertEquals(2002, searchData.year)
         assertEquals("localhost/thumb/abcd", searchData.thumbnailUrl)
         assertEquals("localhost/cover/abcd", searchData.coverUrl)
-        assertEquals(listOf("Comedy"), searchData.genres)
+        assertEquals(listOf(35L), searchData.genreIds)
     }
 
     @Test
@@ -337,7 +280,6 @@ class RemoteMapperTest {
         every { configRepo.getCoverUrl("/terminator2.jpg") } returns "cover.jpg"
         every { configRepo.getThumbnailUrl("/terminator2.jpg") } returns "thumbnail.jpg"
         every { configRepo.getFaceUrl(any()) } answers { firstArg() }
-        every { genreRepository.genreNamesByTmdbIds(listOf(188)) } returns listOf("Action")
 
         // When
         val ratings = testRatingMap()

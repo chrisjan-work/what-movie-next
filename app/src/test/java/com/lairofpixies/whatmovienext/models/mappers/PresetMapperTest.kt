@@ -25,11 +25,13 @@ import org.junit.Before
 import org.junit.Test
 
 class PresetMapperTest {
+    private lateinit var genreMapper: GenreMapper
     private lateinit var presetMapper: PresetMapper
 
     @Before
     fun setUp() {
-        presetMapper = PresetMapper()
+        genreMapper = testGenreMapper()
+        presetMapper = PresetMapper(genreMapper)
     }
 
     @Test

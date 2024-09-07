@@ -19,7 +19,6 @@
 package com.lairofpixies.whatmovienext.di
 
 import com.lairofpixies.whatmovienext.BuildConfig
-import com.lairofpixies.whatmovienext.models.database.GenreRepository
 import com.lairofpixies.whatmovienext.models.mappers.RemoteMapper
 import com.lairofpixies.whatmovienext.models.network.ApiRepository
 import com.lairofpixies.whatmovienext.models.network.ApiRepositoryImpl
@@ -146,15 +145,11 @@ object ApiModule {
     fun provideConfigSynchronizer(
         appPreferences: AppPreferences,
         tmdbApi: TmdbApi,
-        genreRepository: GenreRepository,
-        remoteMapper: RemoteMapper,
         connectivityTracker: ConnectivityTracker,
     ): ConfigSynchronizer =
         ConfigSynchronizerImpl(
             appPreferences = appPreferences,
             tmdbApi = tmdbApi,
-            genreRepository = genreRepository,
-            remoteMapper = remoteMapper,
             connectivityTracker = connectivityTracker,
             cacheExpirationTimeMillis = BuildConfig.CACHE_EXPIRATION_TIME_MILLIS,
             ioDispatcher = Dispatchers.IO,

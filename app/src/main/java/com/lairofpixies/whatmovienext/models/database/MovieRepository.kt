@@ -36,8 +36,6 @@ interface MovieRepository {
 
     fun getAllPeopleNamesByDepartment(department: Departments): Flow<List<String>>
 
-    fun getAllGenresFromMovies(): Flow<List<String>>
-
     suspend fun fetchMovieIdFromTmdbId(tmdbId: Long): Long?
 
     suspend fun retrieveFullMovieDump(): List<Movie.ForCard>

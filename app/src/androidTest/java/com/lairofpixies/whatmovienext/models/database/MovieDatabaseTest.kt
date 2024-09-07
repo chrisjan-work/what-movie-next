@@ -20,7 +20,6 @@ package com.lairofpixies.whatmovienext.models.database
 
 import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.MovieData
-import com.lairofpixies.whatmovienext.models.database.data.DbGenre
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
@@ -48,9 +47,6 @@ class MovieDatabaseTest {
 
     @Inject
     lateinit var movieDao: MovieDao
-
-    @Inject
-    lateinit var genreDao: GenreDao
 
     @Before
     fun setUp() {
@@ -327,33 +323,6 @@ class MovieDatabaseTest {
             // Then
             assertEquals(emptyList<DbMovie>(), movieDao.getArchivedMovies().first())
             assertEquals(emptyList<DbMovie>(), movieDao.getAllMovies().first())
-        }
-
-    @Test
-    fun `genres CRUD`() =
-        runTest {
-            // Given
-            val exampleGenres =
-                listOf(
-                    DbGenre(name = "Action", tmdbId = 100),
-                    DbGenre(name = "Adventure", tmdbId = 101),
-                    DbGenre(name = "Comedy", tmdbId = 105),
-                )
-
-            // When
-            genreDao.insert(exampleGenres)
-            genreDao.update(listOf(DbGenre(tmdbId = 88, name = "Action")))
-            genreDao.delete(listOf(exampleGenres[1]))
-            val result = genreDao.getAllGenres().first()
-
-            // Then
-            assertEquals(
-                listOf(
-                    DbGenre(name = "Action", tmdbId = 88),
-                    DbGenre(name = "Comedy", tmdbId = 105),
-                ),
-                result,
-            )
         }
 
     @Test

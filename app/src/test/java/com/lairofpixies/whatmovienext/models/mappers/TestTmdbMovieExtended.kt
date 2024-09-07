@@ -48,7 +48,7 @@ fun testTmdbMovieExtended(): TmdbMovieExtended =
         tagline = "Hasta la vista, baby.",
         summary = "robots from the future",
         runtime = 137,
-        genres = listOf(TmdbGenres.TmdbGenre(tmdbId = 188, name = "Action")),
+        genres = listOf(TmdbGenres.TmdbGenre(tmdbId = 28, name = "Action")),
         credits =
             TmdbMovieExtended.TmdbCredits(
                 cast =
@@ -142,7 +142,8 @@ fun testCardMovieExtended(movieId: Long = NEW_ID): Movie.ForCard =
                 year = 1991,
                 thumbnailUrl = "thumbnail.jpg",
                 coverUrl = "cover.jpg",
-                genres = listOf("Action"),
+                genreIds = listOf(28L),
+                genreNames = listOf("Action"),
             ),
         detailData =
             MovieData.DetailData(
@@ -212,7 +213,8 @@ fun testListMovieExtended(): Movie.ForList =
                 year = 1991,
                 thumbnailUrl = "thumbnail.jpg",
                 coverUrl = "cover.jpg",
-                genres = listOf("Action"),
+                genreIds = listOf(28L),
+                genreNames = listOf("Action"),
             ),
         detailData =
             MovieData.DetailData(
@@ -249,7 +251,7 @@ fun testDbMovieExtended(movieId: Long = NEW_ID): DbMovie =
         year = 1991,
         thumbnailUrl = "thumbnail.jpg",
         coverUrl = "cover.jpg",
-        genres = "Action",
+        genreIds = "28",
         tagline = "Hasta la vista, baby.",
         plot = "robots from the future",
         runtimeMinutes = 137,

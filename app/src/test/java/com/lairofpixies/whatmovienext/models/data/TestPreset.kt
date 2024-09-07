@@ -26,6 +26,7 @@ import com.lairofpixies.whatmovienext.views.state.SortingCriteria
 import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import com.lairofpixies.whatmovienext.views.state.WordFilter
+import com.lairofpixies.whatmovienext.views.state.WordIdFilter
 
 object TestPreset {
     fun forApp() =
@@ -40,7 +41,7 @@ object TestPreset {
                     runtime = MinMaxFilter(90, 130, true),
                     rtScore = MinMaxFilter(50, 100, true),
                     mcScore = MinMaxFilter(60, 80, true),
-                    genres = WordFilter(listOf("Action", "Adventure"), true),
+                    genres = WordIdFilter(listOf(28L, 12L), true),
                     directors = WordFilter(listOf("John Cassavetes", "Frank Capra"), true),
                 ),
         )
@@ -64,7 +65,7 @@ object TestPreset {
             minMcScore = 60,
             maxMcScore = 80,
             mcScoreEnabled = true,
-            genres = "Action,Adventure",
+            genres = "28,12",
             genresEnabled = true,
             directors = "John Cassavetes,Frank Capra",
             directorsEnabled = true,

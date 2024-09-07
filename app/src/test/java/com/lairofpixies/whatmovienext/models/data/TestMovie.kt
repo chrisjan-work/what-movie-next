@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.models.data
 
 import com.lairofpixies.whatmovienext.models.data.MovieData.UNKNOWN_ID
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
+import io.mockk.mockk
 
 object TestMovie {
     fun forSearch(
@@ -29,7 +30,8 @@ object TestMovie {
         year: Int? = null,
         thumbnailUrl: String = "",
         coverUrl: String = "",
-        genres: List<String> = emptyList(),
+        genreIds: List<Long> = emptyList(),
+        genreNames: List<String> = emptyList(),
     ) = Movie.ForSearch(
         searchData =
             MovieData.SearchData(
@@ -39,7 +41,8 @@ object TestMovie {
                 year = year,
                 thumbnailUrl = thumbnailUrl,
                 coverUrl = coverUrl,
-                genres = genres,
+                genreIds = genreIds,
+                genreNames = genreNames,
             ),
     )
 
@@ -54,7 +57,8 @@ object TestMovie {
         year: Int = 0,
         thumbnailUrl: String = "",
         coverUrl: String = "",
-        genres: List<String> = emptyList(),
+        genreIds: List<Long> = emptyList(),
+        genreNames: List<String> = emptyList(),
         imdbId: String = "",
         tagline: String = "",
         plot: String = "",
@@ -80,7 +84,8 @@ object TestMovie {
                 year = year,
                 thumbnailUrl = thumbnailUrl,
                 coverUrl = coverUrl,
-                genres = genres,
+                genreIds = genreIds,
+                genreNames = genreNames,
             ),
         detailData =
             MovieData.DetailData(
@@ -89,8 +94,8 @@ object TestMovie {
                 plot = plot,
                 runtimeMinutes = runtimeMinutes,
                 directorNames = directors,
-                rtRating = DbMapper().toRtRating(rtId, rtRating),
-                mcRating = DbMapper().toMcRating(mcId, mcRating),
+                rtRating = DbMapper(mockk()).toRtRating(rtId, rtRating),
+                mcRating = DbMapper(mockk()).toMcRating(mcId, mcRating),
             ),
     )
 
@@ -105,7 +110,8 @@ object TestMovie {
         year: Int = 0,
         thumbnailUrl: String = "",
         coverUrl: String = "",
-        genres: List<String> = emptyList(),
+        genreIds: List<Long> = emptyList(),
+        genreNames: List<String> = emptyList(),
         imdbId: String = "",
         tagline: String = "",
         plot: String = "",
@@ -128,7 +134,8 @@ object TestMovie {
                 year = year,
                 thumbnailUrl = thumbnailUrl,
                 coverUrl = coverUrl,
-                genres = genres,
+                genreIds = genreIds,
+                genreNames = genreNames,
             ),
         detailData =
             MovieData.DetailData(

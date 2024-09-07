@@ -182,9 +182,9 @@ fun MovieListItem(
                 modifier = Modifier.alpha(0.8f),
             )
             Spacer(modifier = Modifier.weight(1f))
-            if (movie.searchData.genres.isNotEmpty()) {
+            if (movie.searchData.genreNames.isNotEmpty()) {
                 Text(
-                    text = movie.searchData.genres.joinToString(" / "),
+                    text = movie.searchData.genreNames.joinToString(" / "),
                     style = MaterialTheme.typography.bodySmall,
                     fontStyle = FontStyle.Italic,
                 )

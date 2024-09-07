@@ -164,10 +164,10 @@ fun ArchivedMovieListItem(
                 style = MaterialTheme.typography.bodySmall,
             )
         }
-        if (movie.searchData.genres.isNotEmpty()) {
+        if (movie.searchData.genreNames.isNotEmpty()) {
             Spacer(modifier = Modifier.weight(1f))
             Text(
-                text = movie.searchData.genres.joinToString(" / "),
+                text = movie.searchData.genreNames.joinToString(" / "),
                 style = MaterialTheme.typography.bodySmall,
                 fontStyle = FontStyle.Italic,
             )

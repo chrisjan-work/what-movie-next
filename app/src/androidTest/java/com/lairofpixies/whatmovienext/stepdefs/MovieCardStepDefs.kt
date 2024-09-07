@@ -72,7 +72,7 @@ class MovieCardStepDefs(
                 "original title" -> copy(originalTitle = value)
                 "year" -> copy(year = value.toInt())
                 "runtime" -> copy(runtimeMinutes = value.toInt())
-                "genres" -> copy(genres = value)
+                "genres" -> copy(genreIds = value)
                 "tagline" -> copy(tagline = value)
                 "plot" -> copy(plot = value)
                 "creation time" -> copy(creationTime = value.toLong())
@@ -108,9 +108,15 @@ class MovieCardStepDefs(
                 "original title" -> entry.copy(originalTitle = value)
                 "year" -> entry.copy(releaseDate = "$value-01-01")
                 "runtime" -> entry.copy(runtime = value.toInt())
-                "genres" -> entry.copy(genres = listOf(TmdbGenres.TmdbGenre(1, value)))
                 "tagline" -> entry.copy(tagline = value)
                 "plot" -> entry.copy(summary = value)
+                "genres" ->
+                    entry.copy(
+                        genres =
+                            value.split(",").map {
+                                TmdbGenres.TmdbGenre(it.toLong(), "")
+                            },
+                    )
                 else -> throw PendingException("Unknown field \"$field\"")
             }
         testContext.movieApi.fakeMovieExtended = { updated }

@@ -34,9 +34,12 @@ import javax.inject.Inject
 
 class DbMapper
     @Inject
-    constructor() {
+    constructor(
+        private val genreMapper: GenreMapper,
+    ) {
         fun toCardMovie(staffedMovie: DbStaffedMovie): Movie.ForCard =
             with(staffedMovie.movie) {
+                val genreIds = genreMapper.toGenreIds(genreIds)
                 Movie.ForCard(
                     appData =
                         MovieData.AppData(
@@ -53,7 +56,8 @@ class DbMapper
                             year = year,
                             thumbnailUrl = thumbnailUrl,
                             coverUrl = coverUrl,
-                            genres = toGenres(genres),
+                            genreIds = genreIds,
+                            genreNames = genreMapper.toGenreNames(genreIds),
                         ),
                     detailData =
                         MovieData.DetailData(
@@ -106,6 +110,7 @@ class DbMapper
 
         fun toListMovie(dbMovie: DbMovie): Movie.ForList =
             with(dbMovie) {
+                val genreIds = genreMapper.toGenreIds(genreIds)
                 Movie.ForList(
                     appData =
                         MovieData.AppData(
@@ -122,7 +127,8 @@ class DbMapper
                             year = year,
                             thumbnailUrl = thumbnailUrl,
                             coverUrl = coverUrl,
-                            genres = toGenres(genres),
+                            genreIds = genreIds,
+                            genreNames = genreMapper.toGenreNames(genreIds),
                         ),
                     detailData =
                         MovieData.DetailData(
@@ -151,7 +157,7 @@ class DbMapper
                     coverUrl = searchData.coverUrl,
                     tagline = detailData.tagline,
                     plot = detailData.plot,
-                    genres = toDbGenres(searchData.genres),
+                    genreIds = genreMapper.toDbGenreIds(searchData.genreIds),
                     runtimeMinutes = detailData.runtimeMinutes,
                     directorNames = toDbDirectorNames(detailData.directorNames),
                     rtId = detailData.rtRating.sourceId,
@@ -190,10 +196,6 @@ class DbMapper
                     )
                 }
             }
-
-        fun toGenres(dbGenres: String): List<String> = dbGenres.decodeToList()
-
-        fun toDbGenres(genres: List<String>): String = genres.encodeToString()
 
         fun toDirectorNames(names: String): List<String> = names.decodeToList()
 

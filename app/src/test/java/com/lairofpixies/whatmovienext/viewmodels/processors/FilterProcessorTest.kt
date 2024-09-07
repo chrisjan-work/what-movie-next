@@ -24,6 +24,7 @@ import com.lairofpixies.whatmovienext.views.state.ListFilters
 import com.lairofpixies.whatmovienext.views.state.ListMode
 import com.lairofpixies.whatmovienext.views.state.MinMaxFilter
 import com.lairofpixies.whatmovienext.views.state.WordFilter
+import com.lairofpixies.whatmovienext.views.state.WordIdFilter
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -372,20 +373,20 @@ class FilterProcessorTest {
         }
 
     @Test
-    fun `filter by genre`() {
+    fun `filter by genre name`() {
         // Given
         val inputMovies =
             listOf(
-                forList(title = "one", genres = listOf("Action")),
-                forList(title = "two", genres = listOf("Action", "Drama")),
-                forList(title = "three", genres = listOf("Mystery")),
+                forList(title = "one", genreNames = listOf("Action")),
+                forList(title = "two", genreNames = listOf("Action", "Drama")),
+                forList(title = "three", genreNames = listOf("Mystery")),
             )
 
         // When
         fun filterBy(vararg genres: String) =
             inputMovies.toMutableList().apply {
                 with(filterProcessor) {
-                    byText(WordFilter(genres.toList(), true)) { it?.searchData?.genres }
+                    byText(WordFilter(genres.toList(), true)) { it?.searchData?.genreNames }
                 }
             }
 
@@ -396,7 +397,44 @@ class FilterProcessorTest {
         val disabled =
             inputMovies.toMutableList().apply {
                 with(filterProcessor) {
-                    byText(WordFilter(listOf("Action"), false)) { it?.searchData?.genres }
+                    byText(WordFilter(listOf("Action"), false)) { it?.searchData?.genreNames }
+                }
+            }
+
+        // Then
+        assertEquals(inputMovies.take(2), action)
+        assertEquals(inputMovies.take(2), actionOrDrama)
+        assertEquals(inputMovies.takeLast(2), dramaOrMystery)
+        assertEquals(inputMovies, anything)
+        assertEquals(inputMovies, disabled)
+    }
+
+    @Test
+    fun `filter by genre id`() {
+        // Given
+        val inputMovies =
+            listOf(
+                forList(title = "one", genreIds = listOf(28)),
+                forList(title = "two", genreIds = listOf(28, 18)),
+                forList(title = "three", genreIds = listOf(9648)),
+            )
+
+        // When
+        fun filterBy(vararg genres: Long) =
+            inputMovies.toMutableList().apply {
+                with(filterProcessor) {
+                    byGenreId(WordIdFilter(genres.toList(), true)) { it?.searchData?.genreIds }
+                }
+            }
+
+        val action = filterBy(28)
+        val actionOrDrama = filterBy(28, 18)
+        val dramaOrMystery = filterBy(9648, 18)
+        val anything = filterBy()
+        val disabled =
+            inputMovies.toMutableList().apply {
+                with(filterProcessor) {
+                    byGenreId(WordIdFilter(listOf(28), false)) { it?.searchData?.genreIds }
                 }
             }
 
@@ -460,7 +498,8 @@ class FilterProcessorTest {
                 rtRating = 70,
                 mcRating = 70,
                 directors = listOf("Joe"),
-                genres = listOf("Comedy"),
+                genreIds = listOf(35),
+                genreNames = listOf("Comedy"),
             )
         val movieList =
             AsyncMovie.Multiple(
@@ -507,7 +546,7 @@ class FilterProcessorTest {
                             ),
                     ),
                     survivor.copy(detailData = survivor.detailData.copy(directorNames = listOf("Jack"))),
-                    survivor.copy(searchData = survivor.searchData.copy(genres = listOf("Horror"))),
+                    survivor.copy(searchData = survivor.searchData.copy(genreIds = listOf(27), genreNames = listOf("Horror"))),
                 ),
             )
         val listFilters =
@@ -517,7 +556,7 @@ class FilterProcessorTest {
                 runtime = MinMaxFilter(100, 120, true),
                 rtScore = MinMaxFilter(50, 80, true),
                 mcScore = MinMaxFilter(50, 80, true),
-                genres = WordFilter(listOf("Comedy"), true),
+                genres = WordIdFilter(listOf(35), true),
                 directors = WordFilter(listOf("Joe"), true),
             )
         // When

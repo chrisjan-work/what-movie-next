@@ -100,16 +100,6 @@ class MovieRepositoryImpl(
                     }.distinct()
             }.flowOn(ioDispatcher)
 
-    override fun getAllGenresFromMovies(): Flow<List<String>> =
-        dao
-            .getAllMovies()
-            .map { dbMovies ->
-                dbMovies
-                    .flatMap { dbMovie ->
-                        dbMapper.toGenres(dbMovie.genres)
-                    }.distinct()
-            }.flowOn(ioDispatcher)
-
     override suspend fun fetchMovieIdFromTmdbId(tmdbId: Long): Long? =
         repositoryScope
             .async {
@@ -125,12 +115,12 @@ class MovieRepositoryImpl(
                     // if movie was already saved
                     // update it while keeping the old app data
                     // but unarchive it if it was archived
-                    val mappedOldMovie: Movie.ForCard = dbMapper.toCardMovie(oldMovie)
+                    val oldAppData: MovieData.AppData = dbMapper.toCardMovie(oldMovie).appData
                     val movieToSave =
                         dbMapper.toDbMovie(
                             movie.copy(
                                 appData =
-                                    mappedOldMovie.appData.copy(isArchived = false),
+                                    oldAppData.copy(isArchived = false),
                             ),
                         )
                     dao.updateMovie(movieToSave)
