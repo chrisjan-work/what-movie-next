@@ -107,4 +107,5 @@
         <item quantity="other">%d horas</item>
         <item quantity="many">%d horas</item>
     </plurals>
+    <string name="settings">Ajustes</string>
 </resources>

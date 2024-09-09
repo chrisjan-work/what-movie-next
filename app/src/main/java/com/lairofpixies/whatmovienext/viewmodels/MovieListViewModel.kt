@@ -91,6 +91,9 @@ class MovieListViewModel
         private val _canSpinRoulette = MutableStateFlow(false)
         val canSpinRoulette = _canSpinRoulette.asStateFlow()
 
+        private val _dropdownShown = MutableStateFlow(false)
+        val dropdownShown = _dropdownShown.asStateFlow()
+
         init {
             connectArchivedMovies()
             connectPresets()
@@ -257,6 +260,12 @@ class MovieListViewModel
         fun onOpenQuickFind() {
             viewModelScope.launch {
                 _quickFindOpenAction.emit(true)
+            }
+        }
+
+        fun setDropdownShown(shown: Boolean) {
+            viewModelScope.launch {
+                _dropdownShown.value = shown
             }
         }
     }

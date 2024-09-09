@@ -41,6 +41,7 @@ object UiTags {
         const val GENRES_FILTER = "GenresFilter"
         const val DIRECTORS_FILTER = "DirectorsFilter"
         const val ROULETTE = "RouletteButton"
+        const val SETTINGS_ACTION = "Settings"
         const val ARCHIVE_ACTION = "ArchiveAction"
         const val SHARE_ACTION = "ShareAction"
         const val ADD_NEW_MOVIE_ACTION = "AddNewMovie"
@@ -71,6 +72,7 @@ object UiTags {
     object Menus {
         const val SORTING = "SortingMenu"
         const val FILTERING = "FilteringMenu"
+        const val TOP_BAR = "TopBar"
     }
 
     object Items {

@@ -109,6 +109,7 @@
     <string name="metacritic_score">Metacritic score</string>
     <string name="rotten_tomatoes_score">Rotten Tomatoes score</string>
     <string name="runtime">Runtime</string>
+    <string name="settings">Settings</string>
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

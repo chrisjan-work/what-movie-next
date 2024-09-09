@@ -33,11 +33,12 @@ import com.lairofpixies.whatmovienext.views.navigation.Routes
 
 @Composable
 fun MovieListScreen(listViewModel: MovieListViewModel) {
-    val isMenuShown =
+    val isBottomMenuShown =
         listViewModel.bottomMenuState
             .collectAsState()
             .value.isOpen
-    BackHandler(isMenuShown) {
+
+    BackHandler(isBottomMenuShown) {
         listViewModel.closeBottomMenu()
     }
 
@@ -64,7 +65,6 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
             topBar = { trigger ->
                 MovieListTopBar(
                     triggerBar = trigger,
-                    isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
                     visibleMovieCount =
                         listViewModel.listedMovies
                             .collectAsState()
@@ -72,9 +72,7 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
                             .toList<Movie.ForList>()
                             .size,
                     databaseMovieCount = listViewModel.databaseMovieCount.collectAsState().value,
-                    onOpenArchive = {
-                        listViewModel.onNavigateTo(Routes.ArchiveView)
-                    },
+                    onToggleSettings = { listViewModel.setDropdownShown(!listViewModel.dropdownShown.value) },
                     quickFind = listViewModel.quickFind.collectAsState().value,
                     onQuickFindTextUpdated = { listViewModel.updateQuickFindText(it) },
                     onQuickFindTrigger = { listViewModel.jumpToNextQuickFind() },
@@ -110,6 +108,16 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
                         .fillMaxSize(),
             )
         }
+
+        MovieListDrowDown(
+            isExpanded = listViewModel.dropdownShown.collectAsState().value,
+            setExpanded = { listViewModel.setDropdownShown(it) },
+            isArchiveVisitable = listViewModel.hasArchivedMovies.collectAsState().value,
+            onOpenArchive = {
+                listViewModel.onNavigateTo(Routes.ArchiveView)
+            },
+            modifier = Modifier,
+        )
 
         MovieListBottomSheet(
             listViewModel,

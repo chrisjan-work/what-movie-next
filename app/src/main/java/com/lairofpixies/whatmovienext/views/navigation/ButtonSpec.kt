@@ -32,8 +32,8 @@ import androidx.compose.material.icons.outlined.FolderDelete
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.RestoreFromTrash
-import androidx.compose.material.icons.outlined.Rule
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.SwapVert
@@ -65,6 +65,11 @@ sealed class ButtonSpec(
     data object ArchiveShortcut : ButtonSpec(
         labelRes = R.string.archive,
         icon = Icons.Outlined.FolderDelete,
+    )
+
+    data object SettingsAction : ButtonSpec(
+        labelRes = R.string.settings,
+        icon = Icons.Outlined.Settings,
     )
 
     // Direct actions (save, archive, etc)

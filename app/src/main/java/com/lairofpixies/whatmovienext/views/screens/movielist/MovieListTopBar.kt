@@ -65,8 +65,7 @@ fun MovieListTopBar(
     triggerBar: MutableState<Boolean>,
     visibleMovieCount: Int,
     databaseMovieCount: Int,
-    isArchiveVisitable: Boolean,
-    onOpenArchive: () -> Unit,
+    onToggleSettings: () -> Unit,
     quickFind: QuickFind,
     onQuickFindTextUpdated: (String) -> Unit,
     onQuickFindTrigger: () -> Unit,
@@ -94,7 +93,7 @@ fun MovieListTopBar(
 
     CustomTopBar(
         trigger = triggerBar,
-        modifier = modifier,
+        modifier = modifier.testTag(UiTags.Menus.TOP_BAR),
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -121,14 +120,14 @@ fun MovieListTopBar(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Icon(
-                ButtonSpec.ArchiveShortcut.icon,
-                contentDescription = stringResource(ButtonSpec.ArchiveShortcut.labelRes),
+                ButtonSpec.SettingsAction.icon,
+                contentDescription = stringResource(ButtonSpec.SettingsAction.labelRes),
                 modifier =
                     Modifier
                         .padding(8.dp)
-                        .alpha(if (isArchiveVisitable) 0.8f else 0.4f)
-                        .clickable { if (isArchiveVisitable) onOpenArchive() }
-                        .testTag(UiTags.Buttons.ARCHIVE_SHORTCUT),
+                        .alpha(0.8f)
+                        .clickable { onToggleSettings() }
+                        .testTag(UiTags.Buttons.SETTINGS_ACTION),
                 tint = MaterialTheme.colorScheme.onBackground,
             )
         }
