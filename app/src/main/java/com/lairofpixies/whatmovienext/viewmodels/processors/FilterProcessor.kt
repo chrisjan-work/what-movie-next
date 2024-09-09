@@ -42,12 +42,12 @@ class FilterProcessor
                     .apply {
                         with(listFilters) {
                             byListMode(listMode)
-                            byNumber(year) { it?.searchData?.year }
-                            byNumber(runtime) { it?.detailData?.runtimeMinutes }
-                            byNumber(rtScore) { it?.detailData?.rtRating?.percentValue }
-                            byNumber(mcScore) { it?.detailData?.mcRating?.percentValue }
-                            byGenreId(genres) { it?.searchData?.genreIds }
-                            byText(directors) { it?.detailData?.directorNames }
+                            byYear(year)
+                            byNumber(runtime) { it.detailData.runtimeMinutes }
+                            byNumber(rtScore) { it.detailData.rtRating.percentValue }
+                            byNumber(mcScore) { it.detailData.mcRating.percentValue }
+                            byGenreId(genres) { it.searchData.genreIds }
+                            byText(directors) { it.detailData.directorNames }
                         }
                     }
 
@@ -68,12 +68,23 @@ class FilterProcessor
         @VisibleForTesting
         fun MutableList<Movie.ForList>.byNumber(
             criteria: MinMaxFilter,
-            acceptEmpty: Boolean = ACCEPT_EMPTY_ENTRIES,
-            getValue: (Movie.ForList?) -> Int?,
+            getValue: (Movie.ForList) -> Int,
         ) {
             if (criteria.isActive) {
                 filterInPlace { movie ->
-                    val value = getValue(movie) ?: return@filterInPlace acceptEmpty
+                    val value = getValue(movie)
+                    val minInclusive = criteria.min ?: value
+                    val maxInclusive = criteria.max ?: value
+                    return@filterInPlace value in minInclusive..maxInclusive
+                }
+            }
+        }
+
+        @VisibleForTesting
+        fun MutableList<Movie.ForList>.byYear(criteria: MinMaxFilter) {
+            if (criteria.isActive) {
+                filterInPlace { movie ->
+                    val value = movie.searchData.year ?: return@filterInPlace true
                     val minInclusive = criteria.min ?: value
                     val maxInclusive = criteria.max ?: value
                     return@filterInPlace value in minInclusive..maxInclusive
@@ -84,13 +95,11 @@ class FilterProcessor
         @VisibleForTesting
         fun MutableList<Movie.ForList>.byText(
             wordFilter: WordFilter,
-            acceptEmpty: Boolean = ACCEPT_EMPTY_ENTRIES,
-            getValue: (Movie.ForList?) -> List<String>?,
+            getValue: (Movie.ForList) -> List<String>,
         ) {
             if (wordFilter.isActive) {
                 filterInPlace { movie ->
                     val offering = getValue(movie)
-                    if (offering.isNullOrEmpty()) return@filterInPlace acceptEmpty
                     return@filterInPlace wordFilter.words.any { it in offering }
                 }
             }
@@ -99,19 +108,13 @@ class FilterProcessor
         @VisibleForTesting
         fun MutableList<Movie.ForList>.byGenreId(
             wordFilter: WordIdFilter,
-            acceptEmpty: Boolean = ACCEPT_EMPTY_ENTRIES,
-            getValue: (Movie.ForList?) -> List<Long>?,
+            getValue: (Movie.ForList) -> List<Long>,
         ) {
             if (wordFilter.isActive) {
                 filterInPlace { movie ->
                     val offering = getValue(movie)
-                    if (offering.isNullOrEmpty()) return@filterInPlace acceptEmpty
                     return@filterInPlace wordFilter.wordIds.any { it in offering }
                 }
             }
-        }
-
-        companion object {
-            const val ACCEPT_EMPTY_ENTRIES = true
         }
     }
