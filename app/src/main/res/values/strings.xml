@@ -19,7 +19,8 @@
 <resources>
     <string name="app_name">What Movie Next</string>
     <string name="close">Close</string>
-    <string name="archive">Archive</string>
+    <string name="visit_archive">Archive</string>
+    <string name="to_archive">Archive</string>
     <string name="add_new_movie">Add movie</string>
     <string name="edit">Edit</string>
     <string name="title">Title</string>
@@ -87,12 +88,12 @@
     <string name="internet_movie_database" translatable="false">Internet Movie Database</string>
     <string name="rotten_tomatoes" translatable="false">Rotten Tomatoes</string>
     <string name="metacritic" translatable="false">Metacritic</string>
-    <string name="directed_by_full">"Directed by "</string>
+    <string name="directed_by_full">Directed by</string>
     <string name="read_year_and_runtime">Year: %1$s. Runtime: %2$s</string>
     <string name="not_known">not known</string>
     <string name="read_runtime_and_genres">Runtime: %1$s. Genres: %2$s.</string>
-    <string name="metacritic_score_value">"Metacritic score: %d"</string>
-    <string name="rotten_tomatoes_score_value">"Rotten Tomatoes score: %d"</string>
+    <string name="metacritic_score_value">Metacritic score: %d</string>
+    <string name="rotten_tomatoes_score_value">Rotten Tomatoes score: %d</string>
     <string name="year_value">Year: %d</string>
     <string name="sort_by">Sort by %s.</string>
     <string name="sort_by_seen_or_not">Separate between seen and to watch.</string>

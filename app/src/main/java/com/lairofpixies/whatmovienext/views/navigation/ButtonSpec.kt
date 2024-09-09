@@ -70,7 +70,7 @@ sealed class ButtonSpec(
     )
 
     data object ArchiveShortcut : ButtonSpec(
-        labelRes = R.string.archive,
+        labelRes = R.string.visit_archive,
         icon = Icons.Outlined.FolderDelete,
     )
 
@@ -97,7 +97,7 @@ sealed class ButtonSpec(
     )
 
     data object ArchiveAction : ButtonSpec(
-        labelRes = R.string.archive,
+        labelRes = R.string.to_archive,
         icon = Icons.Outlined.Delete,
     )
 

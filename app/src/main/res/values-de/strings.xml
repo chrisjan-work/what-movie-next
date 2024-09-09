@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+ This file is part of What Movie Next.
+
+ Copyright (C) 2024 Christiaan Janssen
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+    <string name="app_name">What Movie Next</string>
+    <string name="close">Schließen</string>
+    <string name="visit_archive">Archiv</string>
+    <string name="add_new_movie">Film hinzufügen</string>
+    <string name="to_archive">Archivieren</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="title">Titel</string>
+    <string name="error_title_is_required">Es fehlt ein Titel. Bitte geben Sie einen an.</string>
+    <string name="alertdialog_title">Problem</string>
+    <string name="save">Speichern</string>
+    <string name="movies">Filme</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="to_watch">Zum Ansehen</string>
+    <string name="seen">Gesehen</string>
+    <string name="all_movies">Alle Filme</string>
+    <string name="restore">Wederherstellen</string>
+    <string name="delete_forever">Für immer löschen</string>
+    <string name="please_confirm_deletion">Die ausgewählten Filme für immer löschen?</string>
+    <string name="confirm_deletion">Ja, löschen</string>
+    <string name="lookup">Nachschauen</string>
+    <string name="movie_not_found">Film nicht gefunden</string>
+    <string name="search_empty_explanation">Es wurden keine Filme gefunden, die den Suchkriterien entsprechen. Bitte eine andere Abfrage versuchen, oder die Schreibweise überprüfen.</string>
+    <string name="connection_failed_explanation">Beim Versuch, eine Verbindung zur Online-Datenbank herzustellen, ist ein Fehler aufgetreten. Bitte es später noch einmal versuchen.</string>
+    <string name="search_empty_title">Keine Daten gefunden</string>
+    <string name="looking_up_database">Nachschlagen in der Online-Datenbank…</string>
+    <string name="sources">Quellen:</string>
+    <string name="direction_and_writing">Regie und Drehbuch</string>
+    <string name="cast">Besetzung</string>
+    <string name="directed_by_short">Reg.</string>
+    <string name="external_links">Externe Links</string>
+    <string name="connection_failed_title">Netzwerk-Problem</string>
+    <string name="missing_title_title">Fehlender Titel</string>
+    <string name="sort">Sortieren</string>
+    <string name="by_title">Titel</string>
+    <string name="by_date_added">Datum der Aufnahme</string>
+    <string name="by_year">Jahr</string>
+    <string name="by_genre">Genre</string>
+    <string name="by_runtime">Laufzeit</string>
+    <string name="by_director">Regie</string>
+    <string name="by_avg_score">Durch. Wert</string>
+    <string name="by_seen_state">Gesehen</string>
+    <string name="shuffle">mischen</string>
+    <string name="roulette">Roulette</string>
+    <string name="filter">Filter</string>
+    <string name="arrange">Ordnen</string>
+    <string name="update">Einstellen</string>
+    <string name="reset">Zurücksetzen</string>
+    <string name="at_least">zumindest</string>
+    <string name="at_most">höchstens</string>
+    <string name="by_rotten_tomatoes_score">rt Wert</string>
+    <string name="by_metacritic_score">m Wert</string>
+    <string name="results">Ergebnisse</string>
+    <string name="find">Finden</string>
+    <string name="clear_find">Suche löschen</string>
+    <string name="wrong_link">Der Film könnte nicht identifiziert werden.</string>
+    <string name="share">Teilen</string>
+    <string name="missing_image">Fehlendes Bild</string>
+    <string name="poster_for_movie">Plakat für %s</string>
+    <string name="browse_movie_at_page">%1$s auf %2$s ansehen.</string>
+    <string name="directed_by_full">Unter der Regie von</string>
+    <string name="read_year_and_runtime">Jahr: %1$s. Laufzeit: %2$s</string>
+    <string name="not_known">nicht bekannt</string>
+    <string name="read_runtime_and_genres">Laufzeit: %1$s. Genres: %2$s.</string>
+    <string name="metacritic_score_value">Metacritic-Wertung: %d</string>
+    <string name="rotten_tomatoes_score_value">Rotten Tomatoes-Wertung: %d</string>
+    <string name="year_value">Jahr: %d</string>
+    <string name="sort_by">Sortieren nach %s.</string>
+    <string name="sort_by_seen_or_not">Zwischen gesehen und zu sehen trennen.</string>
+    <string name="sort_by_average_score">Sortieren nach Durchschnittsbewertung.</string>
+    <string name="is_selected">Ausgewählt</string>
+    <string name="is_unselected">Nicht ausgewählt</string>
+    <string name="ascending">Aufsteigende Reihenfolge</string>
+    <string name="descending">Absteigende Reihenfolge</string>
+    <string name="is_undefined">Bereich nicht definiert.</string>
+    <string name="filter_upto">%1$s bis zu %2$s</string>
+    <string name="filter_from">%1$s von %2$s</string>
+    <string name="filter_between">%1$s zwischen %2$s und %3$s</string>
+    <string name="year">Jahr</string>
+    <string name="metacritic_score">Metacritic Wertung</string>
+    <string name="rotten_tomatoes_score">Rotten Tomatoes Wertung</string>
+    <string name="runtime">Laufzeit</string>
+    <string name="settings">Einstellungen</string>
+    <string name="export_list">Daten importieren</string>
+    <string name="import_list">Daten exportieren</string>
+    <string name="list_saved">Filmdaten Exportiert</string>
+    <string name="export_saved_title">Exportieren abgeschlossen</string>
+    <string name="export_failed">Exportieren fehlgeschlagen</string>
+    <string name="processing_movie_data">Verarbeitung der Daten…</string>
+    <string name="list_loaded">Daten erfolgreich importiert</string>
+    <string name="import_finished_title">Daten importiert</string>
+    <string name="import_failed">Importieren von Daten fehlgeschlagen</string>
+    <string name="genre_28">Action</string>
+    <string name="genre_12">Abenteuer</string>
+    <string name="genre_16">Animation</string>
+    <string name="genre_35">Komödie</string>
+    <string name="genre_80">Krimi</string>
+    <string name="genre_99">Dokumentation</string>
+    <string name="genre_18">Drama</string>
+    <string name="genre_10751">Familie</string>
+    <string name="genre_14">Fantasy</string>
+    <string name="genre_36">Geschichte</string>
+    <string name="genre_27">Horror</string>
+    <string name="genre_10402">Musik</string>
+    <string name="genre_9648">Mystery</string>
+    <string name="genre_10749">Romanze</string>
+    <string name="genre_878">Science Fiction</string>
+    <string name="genre_10770">TV Film</string>
+    <string name="genre_53">Thriller</string>
+    <string name="genre_10752">Krieg</string>
+    <string name="genre_37">Western</string>
+    <plurals name="minutes">
+        <item quantity="one">%d Minute</item>
+        <item quantity="other">%d Minuten</item>
+    </plurals>
+    <plurals name="hours">
+        <item quantity="one">%d Stunde</item>
+        <item quantity="other">%d Stunden</item>
+    </plurals>
+</resources>

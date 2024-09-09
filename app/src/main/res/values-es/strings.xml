@@ -19,7 +19,8 @@
 <resources>
     <string name="app_name">What Movie Next</string>
     <string name="close">Cerrar</string>
-    <string name="archive">Archivo</string>
+    <string name="visit_archive">Archivo</string>
+    <string name="to_archive">Archivar</string>
     <string name="add_new_movie">Nueva peli</string>
     <string name="edit">Editar</string>
     <string name="title">Título</string>
