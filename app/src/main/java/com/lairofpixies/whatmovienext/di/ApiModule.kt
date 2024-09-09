@@ -67,20 +67,21 @@ object ApiModule {
         )
 
     @Provides
+    fun provideMoshi(): Moshi =
+        Moshi
+            .Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+    @Provides
     @Singleton
-    fun provideTmdbApi(): TmdbApi {
+    fun provideTmdbApi(moshi: Moshi): TmdbApi {
         val interceptor = RequestInterceptorFactory.tmdbInterceptor()
 
         val okHttpClient: OkHttpClient =
             OkHttpClient
                 .Builder()
                 .addInterceptor(interceptor)
-                .build()
-
-        val moshi =
-            Moshi
-                .Builder()
-                .add(KotlinJsonAdapterFactory())
                 .build()
 
         return Retrofit
@@ -94,19 +95,13 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideOmdbApi(): OmdbApi {
+    fun provideOmdbApi(moshi: Moshi): OmdbApi {
         val interceptor = RequestInterceptorFactory.omdbInterceptor()
 
         val okHttpClient: OkHttpClient =
             OkHttpClient
                 .Builder()
                 .addInterceptor(interceptor)
-                .build()
-
-        val moshi =
-            Moshi
-                .Builder()
-                .add(KotlinJsonAdapterFactory())
                 .build()
 
         return Retrofit
@@ -120,19 +115,13 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun provideWikidataApi(): WikidataApi {
+    fun provideWikidataApi(moshi: Moshi): WikidataApi {
         val interceptor = RequestInterceptorFactory.wikidataInterceptor()
 
         val okHttpClient: OkHttpClient =
             OkHttpClient
                 .Builder()
                 .addInterceptor(interceptor)
-                .build()
-
-        val moshi =
-            Moshi
-                .Builder()
-                .add(KotlinJsonAdapterFactory())
                 .build()
 
         return Retrofit
