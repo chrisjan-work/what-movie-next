@@ -92,6 +92,10 @@ interface MovieDao {
     fun getStaffedMovie(movieId: Long): Flow<DbStaffedMovie?>
 
     @Transaction
+    @Query("SELECT * FROM dbmovie")
+    suspend fun allStaffedMovies(): List<DbStaffedMovie>
+
+    @Transaction
     @Query("SELECT * FROM dbmovie WHERE tmdbId = :tmdbId")
     suspend fun fetchMovieByTmdbId(tmdbId: Long): DbStaffedMovie?
 

@@ -79,6 +79,16 @@ class MovieRepositoryImpl(
                     ?: AsyncMovie.Empty
             }.flowOn(ioDispatcher)
 
+    override suspend fun retrieveFullMovieDump(): List<Movie.ForCard> =
+        repositoryScope
+            .async {
+                dao
+                    .allStaffedMovies()
+                    .map { dbMovie ->
+                        dbMapper.toCardMovie(dbMovie)
+                    }
+            }.await()
+
     override fun getAllPeopleNamesByDepartment(department: Departments): Flow<List<String>> =
         dao
             .getStaffByDepartment(department.department)

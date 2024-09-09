@@ -528,4 +528,47 @@ class MovieDatabaseTest {
             assertEquals(listOf(staffList[1]), directors)
             assertEquals(listOf(staffList[2]), writers)
         }
+
+    @Test
+    fun `dump movie table`() =
+        runTest {
+            // Given
+            val dbMovie =
+                DbMovie(
+                    movieId = 10,
+                    title = "Casino",
+                    dbWatchDates = "",
+                )
+            val dbStaff =
+                DbStaff(
+                    role =
+                        DbRole(
+                            roleId = 100,
+                            personId = 1000,
+                            movieId = 10,
+                            credit = "director",
+                            dept = "directing",
+                            order = 1,
+                        ),
+                    person =
+                        DbPerson(
+                            personId = 1000,
+                            name = "John Woo",
+                        ),
+                )
+            movieDao.insertMovie(dbMovie)
+            movieDao.insertPeople(listOf(dbStaff.person))
+            movieDao.insertRoles(listOf(dbStaff.role))
+
+            // When
+            val result = movieDao.allStaffedMovies()
+
+            // Then
+            val expected =
+                DbStaffedMovie(
+                    movie = dbMovie,
+                    staff = listOf(dbStaff),
+                )
+            assertEquals(listOf(expected), result)
+        }
 }

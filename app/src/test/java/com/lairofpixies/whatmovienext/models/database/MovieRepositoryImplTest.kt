@@ -215,6 +215,21 @@ class MovieRepositoryImplTest {
         }
 
     @Test
+    fun `all movies with details`() =
+        runTest {
+            // Given
+            coEvery { movieDao.allStaffedMovies() } returns
+                listOf(testDbStaffedMovieExtended(678))
+
+            // When
+            initializeSut()
+            val result = movieRepository.retrieveFullMovieDump()
+
+            // Then
+            assertEquals(listOf(testCardMovieExtended(678)), result)
+        }
+
+    @Test
     fun `check if table is empty`() =
         runTest {
             // When it's empty
