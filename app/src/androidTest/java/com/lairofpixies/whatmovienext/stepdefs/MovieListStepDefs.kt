@@ -223,7 +223,7 @@ class MovieListStepDefs(
     fun theUserNavigatesToTheArchive() {
         // show top bar
         composeRule.composeStep {
-            if (onNodeWithTag(UiTags.Buttons.ARCHIVE_SHORTCUT).isNotDisplayed()) {
+            if (onNodeWithTag(UiTags.Menus.TOP_BAR).isNotDisplayed()) {
                 onNodeWithTag(UiTags.Screens.MOVIE_LIST)
                     .performTouchInput {
                         longClick()
@@ -231,7 +231,14 @@ class MovieListStepDefs(
             }
         }
 
-        // click on button
+        // click on settings
+        composeRule.composeStep {
+            if (onNodeWithTag(UiTags.Buttons.ARCHIVE_SHORTCUT).isNotDisplayed()) {
+                onNodeWithTag(UiTags.Buttons.SETTINGS_ACTION).performClick()
+            }
+        }
+
+        // click on archive
         composeRule.composeStep {
             onNodeWithTag(UiTags.Buttons.ARCHIVE_SHORTCUT)
                 .performClick()

@@ -543,4 +543,23 @@ class MovieListViewModelTest {
             // Then
             assertEquals(1, clickCount)
         }
+
+    @Test
+    fun `dropdown menu`() =
+        runTest {
+            // Given
+            construct()
+
+            // When
+            val defaultValue = listViewModel.dropdownShown.value
+            listViewModel.setDropdownShown(true)
+            val isTrue = listViewModel.dropdownShown.value
+            listViewModel.setDropdownShown(false)
+            val isFalse = listViewModel.dropdownShown.value
+
+            // Then
+            assertEquals(false, defaultValue)
+            assertEquals(true, isTrue)
+            assertEquals(false, isFalse)
+        }
 }
