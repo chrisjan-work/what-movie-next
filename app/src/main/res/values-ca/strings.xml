@@ -19,7 +19,8 @@
 <resources>
     <string name="app_name">What Movie Next</string>
     <string name="close">Tancar</string>
-    <string name="archive">Arxiu</string>
+    <string name="visit_archive">Arxiu</string>
+    <string name="to_archive">Arxivar</string>
     <string name="add_new_movie">Nova peli</string>
     <string name="edit">Editar</string>
     <string name="title">Títol</string>
