@@ -40,6 +40,8 @@ interface MovieRepository {
 
     suspend fun fetchMovieIdFromTmdbId(tmdbId: Long): Long?
 
+    suspend fun retrieveFullMovieDump(): List<Movie.ForCard>
+
     // write
     suspend fun storeMovie(movie: Movie.ForCard): Job
 
