@@ -128,21 +128,23 @@ object TestApiModule {
     }
 
     @Provides
+    fun provideMoshi(): Moshi =
+        Moshi
+            .Builder()
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+    @Provides
     @Singleton
     fun provideTmdbApi(
         mockWebServer: MockWebServer,
+        moshi: Moshi,
         okHttpClient: OkHttpClient,
     ): TmdbApi {
         val tmdbOkHttpClient =
             okHttpClient
                 .newBuilder()
                 .addInterceptor(RequestInterceptorFactory.tmdbInterceptor())
-                .build()
-
-        val moshi =
-            Moshi
-                .Builder()
-                .add(KotlinJsonAdapterFactory())
                 .build()
 
         return Retrofit
@@ -158,18 +160,13 @@ object TestApiModule {
     @Singleton
     fun provideOmdbApi(
         mockWebServer: MockWebServer,
+        moshi: Moshi,
         okHttpClient: OkHttpClient,
     ): OmdbApi {
         val omdbOkHttpClient =
             okHttpClient
                 .newBuilder()
                 .addInterceptor(RequestInterceptorFactory.omdbInterceptor())
-                .build()
-
-        val moshi =
-            Moshi
-                .Builder()
-                .add(KotlinJsonAdapterFactory())
                 .build()
 
         return Retrofit
@@ -185,18 +182,13 @@ object TestApiModule {
     @Singleton
     fun provideWikidataApi(
         mockWebServer: MockWebServer,
+        moshi: Moshi,
         okHttpClient: OkHttpClient,
     ): WikidataApi {
         val wikidataOkHttpClient =
             okHttpClient
                 .newBuilder()
                 .addInterceptor(RequestInterceptorFactory.wikidataInterceptor())
-                .build()
-
-        val moshi =
-            Moshi
-                .Builder()
-                .add(KotlinJsonAdapterFactory())
                 .build()
 
         return Retrofit

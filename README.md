@@ -72,6 +72,7 @@ Languages and Frameworks
 
  * [Retrofit](https://square.github.io/retrofit/)
  * [OkHttp](https://square.github.io/okhttp/)
+ * [Moshi](https://github.com/square/moshi)
  * [ConnectivityManager](https://developer.android.com/reference/android/net/ConnectivityManager)
 
 **Database**
