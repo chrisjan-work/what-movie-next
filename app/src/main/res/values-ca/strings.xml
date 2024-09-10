@@ -108,6 +108,9 @@
         <item quantity="many">%d hores</item>
     </plurals>
     <string name="settings">Configuració</string>
-    <string name="import_list">Importar llista</string>
-    <string name="export_list">Exportar llista</string>
+    <string name="import_list">Importar dades</string>
+    <string name="export_list">Exportar dades</string>
+    <string name="list_saved">Dades de les pel·lícules exportades</string>
+    <string name="export_saved_title">Exportació acabada</string>
+    <string name="export_failed">L\'exportació ha fallat</string>
 </resources>

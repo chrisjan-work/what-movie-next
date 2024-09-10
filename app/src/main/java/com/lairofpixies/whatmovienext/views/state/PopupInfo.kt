@@ -51,4 +51,8 @@ sealed class PopupInfo {
         val candidates: List<String>,
         val onConfirm: (WordFilter) -> Unit,
     ) : PopupInfo()
+
+    data object ExportSaved : PopupInfo()
+
+    data object ExportSaveFailed : PopupInfo()
 }

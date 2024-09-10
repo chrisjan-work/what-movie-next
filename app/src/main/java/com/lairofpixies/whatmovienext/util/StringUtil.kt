@@ -30,6 +30,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import com.lairofpixies.whatmovienext.R
 import java.net.URI
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 private const val DELIMITER = ','
 private const val ESCAPE_CHAR = '\\'
@@ -155,3 +157,9 @@ fun quickMatchAny(
             wordList.isNotEmpty() &&
                 wordList.any { candidate.contains(it, ignoreCase = true) }
         }
+
+fun todayAndNow(currentDateTime: LocalDateTime = LocalDateTime.now()): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss")
+    val formattedDate = currentDateTime.format(formatter)
+    return formattedDate
+}

@@ -108,6 +108,9 @@
         <item quantity="many">%d horas</item>
     </plurals>
     <string name="settings">Ajustes</string>
-    <string name="import_list">Importar lista</string>
-    <string name="export_list">Exportar lista</string>
+    <string name="import_list">Importar datos</string>
+    <string name="export_list">Exportar datos</string>
+    <string name="list_saved">Datos de las películas exportados</string>
+    <string name="export_saved_title">Exportación finalizada</string>
+    <string name="export_failed">Exportación fallida</string>
 </resources>

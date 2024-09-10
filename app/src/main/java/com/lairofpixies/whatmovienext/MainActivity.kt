@@ -22,29 +22,51 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.lairofpixies.whatmovienext.viewmodels.MainViewModel
 import com.lairofpixies.whatmovienext.views.screens.MainScreen
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val viewModel: MainViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        viewModel.parseIntent(intent)
+        connectExporter()
+
+        mainViewModel.parseIntent(intent)
 
         setContent {
-            MainScreen(viewModel)
+            MainScreen(mainViewModel)
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        viewModel.parseIntent(intent)
+        mainViewModel.parseIntent(intent)
     }
+
+    private fun connectExporter() {
+        MainScope().launch {
+            mainViewModel.exportRequest.collect { suggestedFilename ->
+                exportLauncher.launch(suggestedFilename)
+            }
+        }
+    }
+
+    private val exportLauncher =
+        registerForActivityResult(
+            contract = ActivityResultContracts.CreateDocument("application/json"),
+        ) { uri ->
+            uri?.let {
+                mainViewModel.saveJsonData(this@MainActivity, uri)
+            }
+        }
 }

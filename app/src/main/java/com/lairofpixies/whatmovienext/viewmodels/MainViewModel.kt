@@ -19,21 +19,28 @@
 package com.lairofpixies.whatmovienext.viewmodels
 
 import android.content.Intent
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.lairofpixies.whatmovienext.BuildConfig
+import com.lairofpixies.whatmovienext.MainActivity
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.models.serializer.MovieSerializer
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -42,6 +49,7 @@ class MainViewModel
     @Inject
     constructor(
         val movieRepository: MovieRepository,
+        private val movieSerializer: MovieSerializer,
     ) : ViewModel() {
         private lateinit var navHostController: NavHostController
 
@@ -50,6 +58,9 @@ class MainViewModel
 
         private val _popupInfo: MutableStateFlow<PopupInfo> = MutableStateFlow(PopupInfo.None)
         val popupInfo: StateFlow<PopupInfo> = _popupInfo.asStateFlow()
+
+        private val _exportRequest = MutableSharedFlow<String>()
+        val exportRequest = _exportRequest.asSharedFlow()
 
         private var lastIntent: Intent? = null
 
@@ -137,6 +148,33 @@ class MainViewModel
 
             if (uri.scheme == BuildConfig.SHARE_SCHEME && uri.host == BuildConfig.SHARE_HOST) {
                 loadAndNavigateTo(path)
+            }
+        }
+
+        fun requestExport(suggestedFilename: String) {
+            viewModelScope.launch {
+                _exportRequest.emit(suggestedFilename)
+            }
+        }
+
+        fun saveJsonData(
+            activity: MainActivity,
+            uri: Uri,
+            ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        ) {
+            viewModelScope.launch(ioDispatcher) {
+                val jsonToSave = movieSerializer.fullMoviesJson()
+                val result: PopupInfo =
+                    try {
+                        activity.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                            outputStream.write(jsonToSave.toByteArray())
+                        }
+                        PopupInfo.ExportSaved
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        PopupInfo.ExportSaveFailed
+                    }
+                showPopup(result)
             }
         }
     }

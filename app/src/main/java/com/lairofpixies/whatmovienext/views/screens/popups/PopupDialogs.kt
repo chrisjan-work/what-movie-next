@@ -106,5 +106,18 @@ fun PopupDialogs(
                 onConfirm = popupInfo.onConfirm,
                 onDismiss = onDismiss,
             )
+
+        is PopupInfo.ExportSaved ->
+            SingleButtonDialog(
+                contentRes = R.string.list_saved,
+                onDismiss = onDismiss,
+                titleRes = R.string.export_saved_title,
+            )
+
+        is PopupInfo.ExportSaveFailed ->
+            SingleButtonDialog(
+                contentRes = R.string.export_failed,
+                onDismiss = onDismiss,
+            )
     }
 }

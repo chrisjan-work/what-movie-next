@@ -27,9 +27,9 @@ import com.lairofpixies.whatmovienext.models.data.hasMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
-import com.lairofpixies.whatmovienext.models.serializer.MovieSerializer
 import com.lairofpixies.whatmovienext.util.quickMatchAll
 import com.lairofpixies.whatmovienext.util.quickMatchAny
+import com.lairofpixies.whatmovienext.util.todayAndNow
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.navigation.Routes
@@ -58,7 +58,6 @@ class MovieListViewModel
         private val sortProcessor: SortProcessor,
         private val filterProcessor: FilterProcessor,
         private val presetMapper: PresetMapper,
-        private val movieSerializer: MovieSerializer,
     ) : ScreenViewModel() {
         lateinit var listedMovies: StateFlow<AsyncMovie>
             private set
@@ -272,9 +271,11 @@ class MovieListViewModel
         }
 
         fun exportAllMovies() {
-            viewModelScope.launch {
-                val json = movieSerializer.fullMoviesJson()
-                // TODO store json in disk
+            mainViewModel?.let { vm ->
+                viewModelScope.launch {
+                    val suggestedFileName = "WhatMovieNext_" + todayAndNow() + ".json"
+                    vm.requestExport(suggestedFileName)
+                }
             }
         }
     }
