@@ -40,7 +40,7 @@
     <string name="search_empty_explanation">No movies were found that match the search criteria. Please try a different query or check the spelling.</string>
     <string name="connection_failed_explanation">There was an error trying to connect to the online database. Please try again later.</string>
     <string name="search_empty_title">No data found</string>
-    <string name="search_in_progress">Looking up in online database…</string>
+    <string name="looking_up_database">Looking up in online database…</string>
     <string name="sources">Sources:</string>
     <string name="tmdb_credits" translatable="false"><![CDATA[<a href=\"https://www.themoviedb.org/\">TMDB</a>]]></string>
     <string name="omdb_credits" translatable="false"><![CDATA[<a href=\"https://www.omdbapi.com/\">OMDB</a>]]></string>
@@ -115,6 +115,10 @@
     <string name="list_saved">Movie data exported"</string>
     <string name="export_saved_title">Export successful</string>
     <string name="export_failed">Movie data exporting failed</string>
+    <string name="processing_movie_data">Processing movie data…</string>
+    <string name="list_loaded">Successfully imported movie data</string>
+    <string name="import_finished_title">Data imported</string>
+    <string name="import_failed">Importing data failed</string>
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

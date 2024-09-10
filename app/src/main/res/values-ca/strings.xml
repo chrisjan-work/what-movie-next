@@ -40,7 +40,7 @@
     <string name="search_empty_explanation">No s\'han trobat pel·lícules que coincideixin amb els criteris de cerca. Si us plau, intenta una busca diferent o comprova la ortografia.</string>
     <string name="connection_failed_explanation">Hi ha un problema connectant amb la base de dades online. Si us plau, torna a provar-ho més tard.</string>
     <string name="search_empty_title">No s\'han trobat dades.</string>
-    <string name="search_in_progress">Mirant a la base de dades online…</string>
+    <string name="looking_up_database">Mirant a la base de dades online…</string>
     <string name="sources">Fonts:</string>
     <string name="direction_and_writing">Direcció i Guió</string>
     <string name="cast">Repartiment</string>
@@ -113,4 +113,8 @@
     <string name="list_saved">Dades de les pel·lícules exportades</string>
     <string name="export_saved_title">Exportació acabada</string>
     <string name="export_failed">L\'exportació ha fallat</string>
+    <string name="processing_movie_data">Processant dades de pel·lícules…</string>
+    <string name="list_loaded">Dades importades correctament</string>
+    <string name="import_finished_title">Dades importades</string>
+    <string name="import_failed">Fallida provant d\'importar les dades</string>
 </resources>

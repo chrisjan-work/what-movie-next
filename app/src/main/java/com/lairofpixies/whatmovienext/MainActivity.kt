@@ -19,6 +19,7 @@
 package com.lairofpixies.whatmovienext
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -39,7 +40,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
 
-        connectExporter()
+        connectImportExport()
 
         mainViewModel.parseIntent(intent)
 
@@ -53,20 +54,37 @@ class MainActivity : ComponentActivity() {
         mainViewModel.parseIntent(intent)
     }
 
-    private fun connectExporter() {
+    private fun connectImportExport() {
         MainScope().launch {
             mainViewModel.exportRequest.collect { suggestedFilename ->
                 exportLauncher.launch(suggestedFilename)
+            }
+        }
+
+        MainScope().launch {
+            mainViewModel.importRequest.collect {
+                importLauncher.launch(arrayOf(MIMETYPE_JSON))
             }
         }
     }
 
     private val exportLauncher =
         registerForActivityResult(
-            contract = ActivityResultContracts.CreateDocument("application/json"),
+            contract = ActivityResultContracts.CreateDocument(MIMETYPE_JSON),
         ) { uri ->
             uri?.let {
                 mainViewModel.saveJsonData(this@MainActivity, uri)
             }
         }
+
+    private val importLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            uri?.let {
+                mainViewModel.importJsonData(this@MainActivity, uri)
+            }
+        }
+
+    companion object {
+        const val MIMETYPE_JSON = "application/json"
+    }
 }

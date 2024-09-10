@@ -119,6 +119,9 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
             onExport = {
                 listViewModel.exportAllMovies()
             },
+            onImport = {
+                listViewModel.importMovies()
+            },
             modifier = Modifier,
         )
 

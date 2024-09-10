@@ -40,7 +40,7 @@
     <string name="search_empty_explanation">No se han encontrado películas que coincidan con los criterios de búsqueda. Por favor, intenta una búsqueda diferente o comprueba la ortografía.</string>
     <string name="connection_failed_explanation">Hubo un problema conectando con la base de datos online. Por favor, vuelve a intentarlo más tarde.</string>
     <string name="search_empty_title">No se encontraron datos.</string>
-    <string name="search_in_progress">Buscando en la base de datos online…</string>
+    <string name="looking_up_database">Buscando en la base de datos online…</string>
     <string name="sources">Fuentes:</string>
     <string name="direction_and_writing">Dirección y Guion</string>
     <string name="cast">Reparto</string>
@@ -113,4 +113,8 @@
     <string name="list_saved">Datos de las películas exportados</string>
     <string name="export_saved_title">Exportación finalizada</string>
     <string name="export_failed">Exportación fallida</string>
+    <string name="processing_movie_data">Procesando datos…</string>
+    <string name="list_loaded">Datos importados correctamente</string>
+    <string name="import_finished_title">Datos importados</string>
+    <string name="import_failed">Fallo al importar datos</string>
 </resources>

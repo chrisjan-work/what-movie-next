@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.models.database
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.data.Staff
 import com.lairofpixies.whatmovienext.models.data.TestMovie.forCard
 import com.lairofpixies.whatmovienext.models.database.data.DbMovie
@@ -253,13 +254,19 @@ class MovieRepositoryImplTest {
 
             // When
             initializeSut()
-            movieRepository.storeMovie(forCard(title = "first"))
+            movieRepository.storeMovie(forCard(title = "first", id = 111))
 
             // Then
             coVerify { movieDao.insertMovie(any()) }
             assertEquals(
                 "first",
                 dbMovie.captured.title,
+            )
+            // make sure id is new
+            // reusing id should only happen with duplicated tmdbids
+            assertEquals(
+                MovieData.NEW_ID,
+                dbMovie.captured.movieId,
             )
         }
 
