@@ -110,6 +110,8 @@
     <string name="rotten_tomatoes_score">Rotten Tomatoes score</string>
     <string name="runtime">Runtime</string>
     <string name="settings">Settings</string>
+    <string name="export_list">Export list</string>
+    <string name="import_list">Import list</string>
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

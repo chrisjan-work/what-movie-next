@@ -108,4 +108,6 @@
         <item quantity="many">%d horas</item>
     </plurals>
     <string name="settings">Ajustes</string>
+    <string name="import_list">Importar lista</string>
+    <string name="export_list">Exportar lista</string>
 </resources>

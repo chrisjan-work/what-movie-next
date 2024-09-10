@@ -116,6 +116,9 @@ fun MovieListScreen(listViewModel: MovieListViewModel) {
             onOpenArchive = {
                 listViewModel.onNavigateTo(Routes.ArchiveView)
             },
+            onExport = {
+                listViewModel.exportAllMovies()
+            },
             modifier = Modifier,
         )
 
