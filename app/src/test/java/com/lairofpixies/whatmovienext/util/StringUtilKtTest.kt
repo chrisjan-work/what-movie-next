@@ -20,6 +20,7 @@ package com.lairofpixies.whatmovienext.util
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.time.LocalDateTime
 
 class StringUtilKtTest {
     @Test
@@ -200,5 +201,11 @@ class StringUtilKtTest {
         assertEquals(false, quickMatchAny("   ", "a b    c"))
         // double spaces
         assertEquals(true, quickMatchAny("ab  cd", "abcd"))
+    }
+
+    @Test
+    fun `date to String`() {
+        val testDate = LocalDateTime.of(2024, 6, 10, 11, 30)
+        assertEquals("2024_06_10_11_30_00", todayAndNow(testDate))
     }
 }

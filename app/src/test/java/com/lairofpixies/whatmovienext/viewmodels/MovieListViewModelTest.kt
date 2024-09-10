@@ -27,7 +27,6 @@ import com.lairofpixies.whatmovienext.models.data.TestPreset.forApp
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.database.PresetRepository
 import com.lairofpixies.whatmovienext.models.mappers.PresetMapper
-import com.lairofpixies.whatmovienext.models.serializer.MovieSerializer
 import com.lairofpixies.whatmovienext.viewmodels.processors.FilterProcessor
 import com.lairofpixies.whatmovienext.viewmodels.processors.SortProcessor
 import com.lairofpixies.whatmovienext.views.navigation.Routes
@@ -40,6 +39,7 @@ import com.lairofpixies.whatmovienext.views.state.SortingDirection
 import com.lairofpixies.whatmovienext.views.state.SortingSetup
 import io.mockk.clearMocks
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -69,7 +69,6 @@ class MovieListViewModelTest {
     private lateinit var presetMapper: PresetMapper
     private lateinit var movieRepository: MovieRepository
     private lateinit var presetRepository: PresetRepository
-    private lateinit var movieSerializer: MovieSerializer
 
     private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
 
@@ -86,7 +85,6 @@ class MovieListViewModelTest {
         sortProcessor = SortProcessor(mockk(relaxed = true))
         filterProcessor = FilterProcessor()
         presetMapper = mockk(relaxed = true)
-        movieSerializer = mockk(relaxed = true)
     }
 
     private fun construct() {
@@ -97,7 +95,6 @@ class MovieListViewModelTest {
                 sortProcessor,
                 filterProcessor,
                 presetMapper,
-                movieSerializer,
             )
         listViewModel.attachMainViewModel(mainViewModelMock)
     }
@@ -565,5 +562,13 @@ class MovieListViewModelTest {
             assertEquals(false, defaultValue)
             assertEquals(true, isTrue)
             assertEquals(false, isFalse)
+        }
+
+    @Test
+    fun `trigger data export`() =
+        runTest {
+            construct()
+            listViewModel.exportAllMovies()
+            coVerify { mainViewModelMock.requestExport(any()) }
         }
 }

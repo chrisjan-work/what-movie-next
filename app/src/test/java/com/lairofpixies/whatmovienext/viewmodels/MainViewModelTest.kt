@@ -18,16 +18,21 @@
  */
 package com.lairofpixies.whatmovienext.viewmodels
 
+import android.net.Uri
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
+import com.lairofpixies.whatmovienext.MainActivity
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
+import com.lairofpixies.whatmovienext.models.serializer.MovieSerializer
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -37,11 +42,13 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainViewModelTest {
     private lateinit var navHostControllerMock: NavHostController
     private lateinit var movieRepositoryMock: MovieRepository
+    private lateinit var serializerMock: MovieSerializer
 
     private lateinit var mainViewModel: MainViewModel
 
@@ -52,7 +59,8 @@ class MainViewModelTest {
         Dispatchers.setMain(testDispatcher)
         navHostControllerMock = mockk(relaxed = true)
         movieRepositoryMock = mockk(relaxed = true)
-        mainViewModel = MainViewModel(movieRepositoryMock)
+        serializerMock = mockk(relaxed = true)
+        mainViewModel = MainViewModel(movieRepositoryMock, serializerMock)
         mainViewModel.attachNavHostController(navHostControllerMock)
     }
 
@@ -200,5 +208,56 @@ class MainViewModelTest {
             mainViewModel.loadAndNavigateTo("/asdf")
             // Then
             assertEquals(PopupInfo.MovieNotFound, mainViewModel.popupInfo.value)
+        }
+
+    @Test
+    fun `trigger export request`() =
+        runTest {
+            // Given
+            var file: String = ""
+            backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+                mainViewModel.exportRequest.collect { file = it }
+            }
+            val testFilename = "abcd.json"
+
+            // When
+            mainViewModel.requestExport(testFilename)
+
+            // Then
+            assertEquals(testFilename, file)
+        }
+
+    @Test
+    fun `export movie data to json file`() =
+        runTest {
+            // Given
+            val mockActivity: MainActivity = mockk(relaxed = true)
+            val uri: Uri = mockk()
+            coEvery { serializerMock.fullMoviesJson() } returns "{}"
+
+            // When
+            mainViewModel.saveJsonData(mockActivity, uri, testDispatcher)
+
+            // Then
+            assertEquals(PopupInfo.ExportSaved, mainViewModel.popupInfo.value)
+        }
+
+    @Test
+    fun `export movie data fails for some reason`() =
+        runTest {
+            // Given
+            val mockActivity: MainActivity = mockk(relaxed = true)
+            val uri: Uri = mockk()
+            coEvery { serializerMock.fullMoviesJson() } returns "{}"
+            coEvery { mockActivity.contentResolver } returns
+                mockk {
+                    every { openOutputStream(any()) } throws IOException()
+                }
+
+            // When
+            mainViewModel.saveJsonData(mockActivity, uri, testDispatcher)
+
+            // Then
+            assertEquals(PopupInfo.ExportSaveFailed, mainViewModel.popupInfo.value)
         }
 }
