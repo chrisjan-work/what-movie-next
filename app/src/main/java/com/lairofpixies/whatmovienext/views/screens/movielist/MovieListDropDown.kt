@@ -74,6 +74,25 @@ fun MovieListDrowDown(
                     },
         )
         DropdownMenuItem(
+            text = { Text(importLabel) },
+            onClick = {
+                setExpanded(false)
+                onImport()
+            },
+            leadingIcon = {
+                Icon(
+                    ButtonSpec.ImportShortcut.icon,
+                    contentDescription = null,
+                )
+            },
+            modifier =
+            Modifier
+                .testTag(UiTags.Buttons.IMPORT_SHORTCUT)
+                .semantics(mergeDescendants = true) {
+                    contentDescription = importLabel
+                },
+        )
+        DropdownMenuItem(
             text = { Text(exportLabel) },
             onClick = {
                 setExpanded(false)
@@ -92,24 +111,6 @@ fun MovieListDrowDown(
                         contentDescription = exportLabel
                     },
         )
-        DropdownMenuItem(
-            text = { Text(importLabel) },
-            onClick = {
-                setExpanded(false)
-                onImport()
-            },
-            leadingIcon = {
-                Icon(
-                    ButtonSpec.ImportShortcut.icon,
-                    contentDescription = null,
-                )
-            },
-            modifier =
-                Modifier
-                    .testTag(UiTags.Buttons.IMPORT_SHORTCUT)
-                    .semantics(mergeDescendants = true) {
-                        contentDescription = importLabel
-                    },
-        )
+
     }
 }
