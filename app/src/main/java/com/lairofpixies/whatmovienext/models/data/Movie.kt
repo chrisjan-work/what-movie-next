@@ -41,3 +41,5 @@ sealed class Movie {
         override val staffData: MovieData.StaffData,
     ) : Movie()
 }
+
+typealias MovieDump = List<Movie.ForCard>

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.Casino
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FolderDelete
 import androidx.compose.material.icons.outlined.GridView
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.SwapVert
 import androidx.compose.material.icons.outlined.TravelExplore
+import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.lairofpixies.whatmovienext.R
@@ -62,14 +64,24 @@ sealed class ButtonSpec(
         icon = Icons.Outlined.Edit,
     )
 
+    data object SettingsAction : ButtonSpec(
+        labelRes = R.string.settings,
+        icon = Icons.Outlined.Settings,
+    )
+
     data object ArchiveShortcut : ButtonSpec(
         labelRes = R.string.archive,
         icon = Icons.Outlined.FolderDelete,
     )
 
-    data object SettingsAction : ButtonSpec(
-        labelRes = R.string.settings,
-        icon = Icons.Outlined.Settings,
+    data object ExportShortcut : ButtonSpec(
+        labelRes = R.string.export_list,
+        icon = Icons.Outlined.Upload,
+    )
+
+    data object ImportShortcut : ButtonSpec(
+        labelRes = R.string.import_list,
+        icon = Icons.Outlined.Download,
     )
 
     // Direct actions (save, archive, etc)
