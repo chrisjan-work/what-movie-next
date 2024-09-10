@@ -21,7 +21,7 @@ package com.lairofpixies.whatmovienext.di
 import com.lairofpixies.whatmovienext.models.data.Movie
 import com.lairofpixies.whatmovienext.models.data.MovieDump
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.models.serializer.MovieSerializer
+import com.lairofpixies.whatmovienext.models.serializer.JsonImportExport
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -38,11 +38,11 @@ object DataModule {
         moshi.adapter(Types.newParameterizedType(List::class.java, Movie.ForCard::class.java))
 
     @Provides
-    fun provideMovieSerializer(
+    fun provideJsonImportExport(
         movieRepository: MovieRepository,
         adapter: JsonAdapter<MovieDump>,
-    ): MovieSerializer =
-        MovieSerializer(
+    ): JsonImportExport =
+        JsonImportExport(
             movieRepository = movieRepository,
             adapter = adapter,
         )

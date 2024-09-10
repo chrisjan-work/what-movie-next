@@ -26,8 +26,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import java.lang.Exception
 
-class MovieSerializer(
+class JsonImportExport(
     private val movieRepository: MovieRepository,
     private val adapter: JsonAdapter<MovieDump>,
     defaultDispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -39,5 +40,20 @@ class MovieSerializer(
             .async {
                 val movieDump = movieRepository.retrieveFullMovieDump()
                 adapter.toJson(movieDump)
+            }.await()
+
+    suspend fun storeMoviesFromJson(json: String): Boolean =
+        serializerScope
+            .async {
+                try {
+                    val movieDump = adapter.fromJson(json) ?: return@async false
+                    movieDump.forEach { movie ->
+                        movieRepository.storeMovie(movie)
+                    }
+                    true
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    false
+                }
             }.await()
 }

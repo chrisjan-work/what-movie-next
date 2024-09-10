@@ -48,6 +48,7 @@ object UiTags {
         const val QUICK_FIND_ACTION = "QuickFind"
         const val ARCHIVE_SHORTCUT = "ArchiveShortcut"
         const val EXPORT_SHORTCUT = "ExportShortcut"
+        const val IMPORT_SHORTCUT = "ImportShortcut"
         const val SORT_BY_CREATION_TIME = "SortByCreationTime"
         const val SORT_BY_TITLE = "SortByTitle"
         const val SORT_BY_YEAR = "SortByYear"

@@ -40,10 +40,12 @@ fun MovieListDrowDown(
     isArchiveVisitable: Boolean,
     onOpenArchive: () -> Unit,
     onExport: () -> Unit,
+    onImport: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val archiveLabel = stringResource(ButtonSpec.ArchiveShortcut.labelRes)
     val exportLabel = stringResource(ButtonSpec.ExportShortcut.labelRes)
+    val importLabel = stringResource(ButtonSpec.ImportShortcut.labelRes)
 
     DropdownMenu(
         expanded = isExpanded,
@@ -90,6 +92,24 @@ fun MovieListDrowDown(
                         contentDescription = exportLabel
                     },
         )
-        // Export option
+        DropdownMenuItem(
+            text = { Text(importLabel) },
+            onClick = {
+                setExpanded(false)
+                onImport()
+            },
+            leadingIcon = {
+                Icon(
+                    ButtonSpec.ImportShortcut.icon,
+                    contentDescription = null,
+                )
+            },
+            modifier =
+                Modifier
+                    .testTag(UiTags.Buttons.IMPORT_SHORTCUT)
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = importLabel
+                    },
+        )
     }
 }

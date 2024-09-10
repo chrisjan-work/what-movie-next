@@ -21,6 +21,7 @@ package com.lairofpixies.whatmovienext.models.database
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.data.Departments
 import com.lairofpixies.whatmovienext.models.data.Movie
+import com.lairofpixies.whatmovienext.models.data.MovieData
 import com.lairofpixies.whatmovienext.models.database.data.DbPerson
 import com.lairofpixies.whatmovienext.models.database.data.DbRole
 import com.lairofpixies.whatmovienext.models.mappers.DbMapper
@@ -135,7 +136,13 @@ class MovieRepositoryImpl(
                     dao.updateMovie(movieToSave)
                     movieToSave.movieId
                 } else {
-                    dao.insertMovie(dbMapper.toDbMovie(movie))
+                    dao.insertMovie(
+                        dbMapper.toDbMovie(
+                            movie.copy(
+                                appData = movie.appData.copy(movieId = MovieData.NEW_ID),
+                            ),
+                        ),
+                    )
                 }
 
             // then insert the cast and crew

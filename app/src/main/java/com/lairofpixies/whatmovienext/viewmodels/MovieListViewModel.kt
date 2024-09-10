@@ -271,11 +271,12 @@ class MovieListViewModel
         }
 
         fun exportAllMovies() {
-            mainViewModel?.let { vm ->
-                viewModelScope.launch {
-                    val suggestedFileName = "WhatMovieNext_" + todayAndNow() + ".json"
-                    vm.requestExport(suggestedFileName)
-                }
-            }
+            mainViewModel?.requestExport(
+                suggestedFilename = "WhatMovieNext_" + todayAndNow() + ".json",
+            )
+        }
+
+        fun importMovies() {
+            mainViewModel?.requestImport()
         }
     }

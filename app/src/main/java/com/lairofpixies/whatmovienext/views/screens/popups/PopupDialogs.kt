@@ -55,7 +55,7 @@ fun PopupDialogs(
         is PopupInfo.Searching ->
             ProgressDialog(
                 modifier = modifier.testTag(UiTags.Popups.SEARCHING),
-                contentRes = R.string.search_in_progress,
+                contentRes = R.string.looking_up_database,
                 onDismiss = {
                     popupInfo.onCancel()
                     onDismiss()
@@ -107,6 +107,16 @@ fun PopupDialogs(
                 onDismiss = onDismiss,
             )
 
+        is PopupInfo.Loading ->
+            ProgressDialog(
+                modifier = modifier.testTag(UiTags.Popups.SEARCHING),
+                contentRes = R.string.processing_movie_data,
+                onDismiss = {
+                    popupInfo.onCancel()
+                    onDismiss()
+                },
+            )
+
         is PopupInfo.ExportSaved ->
             SingleButtonDialog(
                 contentRes = R.string.list_saved,
@@ -117,6 +127,19 @@ fun PopupDialogs(
         is PopupInfo.ExportSaveFailed ->
             SingleButtonDialog(
                 contentRes = R.string.export_failed,
+                onDismiss = onDismiss,
+            )
+
+        is PopupInfo.ImportSuccessful ->
+            SingleButtonDialog(
+                contentRes = R.string.list_loaded,
+                onDismiss = onDismiss,
+                titleRes = R.string.import_finished_title,
+            )
+
+        is PopupInfo.ImportFailed ->
+            SingleButtonDialog(
+                contentRes = R.string.import_failed,
                 onDismiss = onDismiss,
             )
     }

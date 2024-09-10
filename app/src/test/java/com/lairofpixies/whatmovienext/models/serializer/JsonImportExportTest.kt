@@ -23,6 +23,7 @@ import com.lairofpixies.whatmovienext.models.database.MovieRepository
 import com.lairofpixies.whatmovienext.models.mappers.testCardMovieExtended
 import com.squareup.moshi.JsonAdapter
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,11 +33,12 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.io.IOException
 
-class MovieSerializerTest {
+class JsonImportExportTest {
     private lateinit var movieRepository: MovieRepository
     private lateinit var adapter: JsonAdapter<MovieDump>
-    private lateinit var movieSerializer: MovieSerializer
+    private lateinit var jsonImportExport: JsonImportExport
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -46,8 +48,8 @@ class MovieSerializerTest {
         movieRepository = mockk(relaxed = true)
         adapter = mockk(relaxed = true)
 
-        movieSerializer =
-            MovieSerializer(
+        jsonImportExport =
+            JsonImportExport(
                 movieRepository,
                 adapter,
                 testDispatcher,
@@ -59,7 +61,7 @@ class MovieSerializerTest {
     }
 
     @Test
-    fun fullMoviesJson() =
+    fun `get all movies with details in json format`() =
         runTest {
             // Given
             val movieDump = listOf(testCardMovieExtended())
@@ -67,10 +69,38 @@ class MovieSerializerTest {
             every { adapter.toJson(movieDump) } returns "testJson"
 
             // When
-            val result = movieSerializer.fullMoviesJson()
+            val result = jsonImportExport.fullMoviesJson()
 
             // Then
             val expected = "testJson"
             assertEquals(expected, result)
+        }
+
+    @Test
+    fun `store movies successfully`() =
+        runTest {
+            // Given
+            val movieDump = listOf(testCardMovieExtended())
+            every { adapter.fromJson(any<String>()) } returns movieDump
+
+            // When
+            val result = jsonImportExport.storeMoviesFromJson("testJson")
+
+            // Then
+            assertEquals(true, result)
+            coVerify { movieRepository.storeMovie(movieDump.first()) }
+        }
+
+    @Test
+    fun `fail to store movies for wrong json`() =
+        runTest {
+            // Given
+            every { adapter.fromJson(any<String>()) } throws IOException()
+
+            // When
+            val result = jsonImportExport.storeMoviesFromJson("testJson")
+
+            // Then
+            assertEquals(false, result)
         }
 }

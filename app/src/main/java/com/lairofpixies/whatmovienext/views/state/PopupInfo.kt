@@ -55,4 +55,12 @@ sealed class PopupInfo {
     data object ExportSaved : PopupInfo()
 
     data object ExportSaveFailed : PopupInfo()
+
+    data class Loading(
+        val onCancel: () -> Unit,
+    ) : PopupInfo()
+
+    data object ImportSuccessful : PopupInfo()
+
+    data object ImportFailed : PopupInfo()
 }

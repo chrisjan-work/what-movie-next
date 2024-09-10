@@ -23,7 +23,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import com.lairofpixies.whatmovienext.MainActivity
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.models.serializer.MovieSerializer
+import com.lairofpixies.whatmovienext.models.serializer.JsonImportExport
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import io.mockk.coEvery
@@ -48,7 +48,8 @@ import java.io.IOException
 class MainViewModelTest {
     private lateinit var navHostControllerMock: NavHostController
     private lateinit var movieRepositoryMock: MovieRepository
-    private lateinit var serializerMock: MovieSerializer
+    private lateinit var jsonImportExportMock: JsonImportExport
+    private lateinit var mockActivity: MainActivity
 
     private lateinit var mainViewModel: MainViewModel
 
@@ -59,8 +60,9 @@ class MainViewModelTest {
         Dispatchers.setMain(testDispatcher)
         navHostControllerMock = mockk(relaxed = true)
         movieRepositoryMock = mockk(relaxed = true)
-        serializerMock = mockk(relaxed = true)
-        mainViewModel = MainViewModel(movieRepositoryMock, serializerMock)
+        jsonImportExportMock = mockk(relaxed = true)
+        mockActivity = mockk(relaxed = true)
+        mainViewModel = MainViewModel(movieRepositoryMock, jsonImportExportMock)
         mainViewModel.attachNavHostController(navHostControllerMock)
     }
 
@@ -231,9 +233,8 @@ class MainViewModelTest {
     fun `export movie data to json file`() =
         runTest {
             // Given
-            val mockActivity: MainActivity = mockk(relaxed = true)
             val uri: Uri = mockk()
-            coEvery { serializerMock.fullMoviesJson() } returns "{}"
+            coEvery { jsonImportExportMock.fullMoviesJson() } returns "{}"
 
             // When
             mainViewModel.saveJsonData(mockActivity, uri, testDispatcher)
@@ -246,9 +247,8 @@ class MainViewModelTest {
     fun `export movie data fails for some reason`() =
         runTest {
             // Given
-            val mockActivity: MainActivity = mockk(relaxed = true)
             val uri: Uri = mockk()
-            coEvery { serializerMock.fullMoviesJson() } returns "{}"
+            coEvery { jsonImportExportMock.fullMoviesJson() } returns "{}"
             coEvery { mockActivity.contentResolver } returns
                 mockk {
                     every { openOutputStream(any()) } throws IOException()
@@ -259,5 +259,62 @@ class MainViewModelTest {
 
             // Then
             assertEquals(PopupInfo.ExportSaveFailed, mainViewModel.popupInfo.value)
+        }
+
+    @Test
+    fun `import movie data successfully`() =
+        runTest {
+            // Given
+            every { mockActivity.contentResolver } returns
+                mockk {
+                    every { openInputStream(any()) } returns "{}".byteInputStream()
+                }
+
+            val uri: Uri = mockk()
+            coEvery { jsonImportExportMock.storeMoviesFromJson(any()) } returns true
+
+            // When
+            mainViewModel.importJsonData(mockActivity, uri, testDispatcher)
+
+            // Then
+            assertEquals(PopupInfo.ImportSuccessful, mainViewModel.popupInfo.value)
+        }
+
+    @Test
+    fun `import movie data failing due to bad json`() =
+        runTest {
+            // Given
+            every { mockActivity.contentResolver } returns
+                mockk {
+                    every { openInputStream(any()) } returns "fail".byteInputStream()
+                }
+
+            val uri: Uri = mockk()
+            coEvery { jsonImportExportMock.storeMoviesFromJson(any()) } returns false
+
+            // When
+            mainViewModel.importJsonData(mockActivity, uri, testDispatcher)
+
+            // Then
+            assertEquals(PopupInfo.ImportFailed, mainViewModel.popupInfo.value)
+        }
+
+    @Test
+    fun `import movie data failing due to file error`() =
+        runTest {
+            // Given
+            every { mockActivity.contentResolver } returns
+                mockk {
+                    every { openInputStream(any()) } throws IOException()
+                }
+
+            val uri: Uri = mockk()
+            coEvery { jsonImportExportMock.storeMoviesFromJson(any()) } returns false
+
+            // When
+            mainViewModel.importJsonData(mockActivity, uri, testDispatcher)
+
+            // Then
+            assertEquals(PopupInfo.ImportFailed, mainViewModel.popupInfo.value)
         }
 }

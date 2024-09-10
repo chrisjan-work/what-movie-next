@@ -571,4 +571,12 @@ class MovieListViewModelTest {
             listViewModel.exportAllMovies()
             coVerify { mainViewModelMock.requestExport(any()) }
         }
+
+    @Test
+    fun `trigger data import`() =
+        runTest {
+            construct()
+            listViewModel.importMovies()
+            coVerify { mainViewModelMock.requestImport() }
+        }
 }

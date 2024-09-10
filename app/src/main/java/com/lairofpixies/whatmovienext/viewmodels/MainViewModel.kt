@@ -27,13 +27,14 @@ import com.lairofpixies.whatmovienext.BuildConfig
 import com.lairofpixies.whatmovienext.MainActivity
 import com.lairofpixies.whatmovienext.models.data.AsyncMovie
 import com.lairofpixies.whatmovienext.models.database.MovieRepository
-import com.lairofpixies.whatmovienext.models.serializer.MovieSerializer
+import com.lairofpixies.whatmovienext.models.serializer.JsonImportExport
 import com.lairofpixies.whatmovienext.views.navigation.Routes
 import com.lairofpixies.whatmovienext.views.state.PopupInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,7 +50,7 @@ class MainViewModel
     @Inject
     constructor(
         val movieRepository: MovieRepository,
-        private val movieSerializer: MovieSerializer,
+        private val jsonImportExport: JsonImportExport,
     ) : ViewModel() {
         private lateinit var navHostController: NavHostController
 
@@ -62,7 +63,11 @@ class MainViewModel
         private val _exportRequest = MutableSharedFlow<String>()
         val exportRequest = _exportRequest.asSharedFlow()
 
+        private val _importRequest = MutableSharedFlow<Boolean>()
+        val importRequest = _importRequest.asSharedFlow()
+
         private var lastIntent: Intent? = null
+        private var loadSaveJob: Job? = null
 
         fun attachNavHostController(navHostController: NavHostController) {
             this.navHostController = navHostController
@@ -157,24 +162,75 @@ class MainViewModel
             }
         }
 
+        fun requestImport() {
+            viewModelScope.launch {
+                _importRequest.emit(true)
+            }
+        }
+
         fun saveJsonData(
             activity: MainActivity,
             uri: Uri,
             ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
         ) {
-            viewModelScope.launch(ioDispatcher) {
-                val jsonToSave = movieSerializer.fullMoviesJson()
-                val result: PopupInfo =
-                    try {
-                        activity.contentResolver.openOutputStream(uri)?.use { outputStream ->
-                            outputStream.write(jsonToSave.toByteArray())
+            showLoading()
+
+            loadSaveJob =
+                viewModelScope.launch(ioDispatcher) {
+                    val jsonToSave = jsonImportExport.fullMoviesJson()
+                    val result: PopupInfo =
+                        try {
+                            activity.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                                outputStream.write(jsonToSave.toByteArray())
+                            }
+                            PopupInfo.ExportSaved
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                            PopupInfo.ExportSaveFailed
                         }
-                        PopupInfo.ExportSaved
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                        PopupInfo.ExportSaveFailed
-                    }
-                showPopup(result)
+                    showPopup(result)
+                }
+        }
+
+        private fun showLoading() {
+            viewModelScope.launch {
+                showPopup(
+                    PopupInfo.Loading {
+                        loadSaveJob?.cancel()
+                        loadSaveJob = null
+                    },
+                )
             }
+        }
+
+        fun importJsonData(
+            activity: MainActivity,
+            uri: Uri,
+            ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+        ) {
+            showLoading()
+            loadSaveJob =
+                viewModelScope.launch(ioDispatcher) {
+                    val popupInfo =
+                        try {
+                            val json =
+                                activity.contentResolver.openInputStream(uri)?.use { inputStream ->
+                                    inputStream.bufferedReader().use { it.readText() }
+                                } ?: throw IOException()
+
+                            val success = jsonImportExport.storeMoviesFromJson(json)
+
+                            if (success) {
+                                PopupInfo.ImportSuccessful
+                            } else {
+                                PopupInfo.ImportFailed
+                            }
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                            PopupInfo.ImportFailed
+                        }
+
+                    showPopup(popupInfo)
+                }
         }
     }
