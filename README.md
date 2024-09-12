@@ -8,6 +8,12 @@ CI status
 
 [![Tests](https://github.com/ChrisJan00/what-movie-next/actions/workflows/android.yml/badge.svg)](https://github.com/ChrisJan00/what-movie-next/actions/workflows/android.yml)
 
+Releases
+--------
+
+[Download APK](https://github.com/chrisjan-work/what-movie-next/releases/)
+
+
 Use case
 --------
 
