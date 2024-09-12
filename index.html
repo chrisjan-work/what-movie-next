@@ -1,11 +1,113 @@
+<!DOCTYPE html>
 <html>
-<header>
-	<title>What Movie Next</title>
-</header>
+
+<head>
+  <link rel="stylesheet" href="styles.css" />
+
+</head>
+
 <body>
-	<h1>What Movie Next</h1>
-	<p>Personal Movie Whishlist</p>
-	<p><a href="https://github.com/chrisjan-work/what-movie-next">https://github.com/chrisjan-work/what-movie-next</a>
-	<p><em>wip</em></p>
+  <div class="container">
+
+    <h1>What Movie Next</h1>
+
+    <p>An Android app to keep track of movie recommendations.</p>
+
+    <h2>Links</h2>
+
+    <ul>
+      <li>Source code repository: <a
+          href="https://github.com/chrisjan-work/what-movie-next">https://github.com/chrisjan-work/what-movie-next</a>
+      </li>
+    </ul>
+
+    <h2>Concept</h2>
+
+    <p>At a party or social event, someone recommends you a movie. <br />
+      You write the title into this app, as you would do in a notes app. <br />
+      The app automatically fills up the details: director, genre, actors, year, rating, etc. </p>
+
+    <p>Some time later you are at home and want to watch something. <br />
+      The app gives you a list of movies that you entered, which you can sort and filter however you want. <br />
+      The app can choose one at random for you. <br />
+      Once you've watched it, you can mark it as "watched" in the app. </p>
+
+    <h2>Features</h2>
+
+    <ul>
+      <li>Search for movies at The Movie Database (TMDB) and store them in the local database</li>
+      <li>Mark movies as seen / to watch</li>
+      <li>Remove/restore movies from the internal database</li>
+      <li>Quick find movies by text (title, genre, director)</li>
+      <li>Sort movies by: year, runtime, score, director, title, etc.</li>
+      <li>Filter movies by: year, runtime, score, director, etc.</li>
+      <li>Shuffle movies</li>
+      <li>Pick one random movie from the filtered list (Roulette)</li>
+      <li>Import/export whole list of saved movies as json</li>
+      <li>Automatic backup of all data</li>
+      <li>Translations: English, German, Spanish, Catalan</li>
+      <li>Movie details: poster, plot summary, cast and crew, etc.</li>
+      <li>Links to the movie in external pages: TMDB, IMDB, Rotten Tomatoes, Metacritic</li>
+      <li>Rotten Tomatoes score and Metacritic score for every movie.</li>
+      <li>Share individual movies via deep linking.</li>
+    </ul>
+
+    <h2>Motivation</h2>
+
+    <p>Some years ago I started writing down a list of movies I want to watch some day. Classics, new ones, etc. <br />
+      At first, it was a plain text document in my laptop. <br />
+      Later, I started using a Google Docs spreadsheet, where I entered more details beyond title. <br />
+      Recently, I was trying to think of a simple app concept that I could implement in my free time, for the purpose of
+      showcasing my skills as Android developer. As a professional with more than a decade of experience, all my code
+      from these years is property of my clients, and I have nothing to show.
+      I came up with the idea of implementing the movie list as a standalone app, for portfolio. </p>
+
+    <h2>Screenshots</h2>
+
+    <ul>
+      <li>
+        <p>Movie List: General view, Quick find feature, Dropdown menu with options for import/export/view archived
+          movies</p>
+
+        <p><img src="screenshots/Movie_list.png" alt="Movie List" title="" />
+          <img src="screenshots/Quick_find_feature.png" alt="Find movie" title="" />
+          <img src="screenshots/Dropdown_menu_view.png" alt="Dropdown menu" title="" />
+        </p>
+      </li>
+      <li>
+        <p>Organize: Sort by score, filter by director and rt score, picker for genre filter</p>
+
+        <p><img src="screenshots/Feature_sort.png" alt="Sort list" title="" />
+          <img src="screenshots/Filter_by_director_and_score.png" alt="Filter by director" title="" />
+          <img src="screenshots/Filter_by_genre.png" alt="Filter by genre" title="" />
+        </p>
+      </li>
+      <li>
+        <p>Search online: Start new search, search results screen</p>
+
+        <p><img src="screenshots/Start_search.png" alt="Search title online" title="" />
+          <img src="screenshots/Search_results.png" alt="Search results" title="" />
+        </p>
+      </li>
+      <li>
+        <p>Details: Movie details, cast, links, share movie</p>
+
+        <p><img src="screenshots/Details_top.png" alt="Movie Details" title="" />
+          <img src="screenshots/Details_links.png" alt="External Links" title="" />
+          <img src="screenshots/Feature_share.png" alt="Share movie" title="" />
+        </p>
+      </li>
+      <li>
+        <p>Translations: German, Catalan</p>
+
+        <p><img src="screenshots/German_translation.png" alt="German Translation" title="" />
+          <img src="screenshots/Catalan_translation.png" alt="Catalan Translation" title="" />
+        </p>
+      </li>
+    </ul>
+
+  </div>
+
 </body>
+
 </html>
