@@ -31,10 +31,10 @@ import androidx.compose.material.icons.outlined.Download
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material.icons.outlined.FolderDelete
 import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material.icons.outlined.RestoreFromTrash
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.SortByAlpha
 import androidx.compose.material.icons.outlined.SwapVert
@@ -64,9 +64,9 @@ sealed class ButtonSpec(
         icon = Icons.Outlined.Edit,
     )
 
-    data object SettingsAction : ButtonSpec(
-        labelRes = R.string.settings,
-        icon = Icons.Outlined.Settings,
+    data object ExtendedMenuAction : ButtonSpec(
+        labelRes = R.string.actions,
+        icon = Icons.Outlined.Menu,
     )
 
     data object ArchiveShortcut : ButtonSpec(

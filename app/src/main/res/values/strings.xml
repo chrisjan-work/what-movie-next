@@ -110,7 +110,6 @@
     <string name="metacritic_score">Metacritic score</string>
     <string name="rotten_tomatoes_score">Rotten Tomatoes score</string>
     <string name="runtime">Runtime</string>
-    <string name="settings">Settings</string>
     <string name="export_list">Export data</string>
     <string name="import_list">Import data</string>
     <string name="list_saved">Movie data exported"</string>
@@ -139,6 +138,7 @@
     <string name="genre_53">Thriller</string>
     <string name="genre_10752">War</string>
     <string name="genre_37">Western</string>
+    <string name="actions">Actions</string>
     <plurals name="minutes">
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>

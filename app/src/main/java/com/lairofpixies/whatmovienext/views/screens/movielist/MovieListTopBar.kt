@@ -120,14 +120,14 @@ fun MovieListTopBar(
                 color = MaterialTheme.colorScheme.onSurface,
             )
             Icon(
-                ButtonSpec.SettingsAction.icon,
-                contentDescription = stringResource(ButtonSpec.SettingsAction.labelRes),
+                ButtonSpec.ExtendedMenuAction.icon,
+                contentDescription = stringResource(ButtonSpec.ExtendedMenuAction.labelRes),
                 modifier =
                     Modifier
                         .padding(8.dp)
                         .alpha(0.8f)
                         .clickable { onToggleSettings() }
-                        .testTag(UiTags.Buttons.SETTINGS_ACTION),
+                        .testTag(UiTags.Buttons.EXTENDED_MENU_ICON),
                 tint = MaterialTheme.colorScheme.onBackground,
             )
         }
