@@ -107,3 +107,53 @@ Data Sources
  * RT logo from iconduck https://iconduck.com/icons/243754/rotten-tomatoes (MIT license)
  * Metacritic logo from Icons8 https://icons8.com/icons/set/metacritic
  * Extra information about ratings and links from Wikidata (https://wikidata.org)
+
+Features
+--------
+
+ * Search for movies at The Movie Database (TMDB) and store them in the local database
+ * Mark movies as seen / to watch
+ * Remove/restore movies from the internal database
+ * Quick find movies by text (title, genre, director)
+ * Sort movies by: year, runtime, score, director, title, etc.
+ * Filter movies by: year, runtime, score, director, etc.
+ * Shuffle movies
+ * Pick one random movie from the filtered list (Roulette)
+ * Import/export whole list of saved movies as json
+ * Automatic backup of all data
+ * Translations: English, German, Spanish, Catalan
+ * Movie details: poster, plot summary, cast and crew, etc.
+ * Links to the movie in external pages: Tmdb, Imdb, Rotten Tomatoes, Metacritic
+ * Rotten Tomatoes score and Metacritic score for every movie.
+ * Share individual movies via deep linking.
+
+Screenshots
+-----------
+
+* Movie List: General view, Quick find feature, Dropdown menu with options for import/export/view archived movies
+
+  ![Movie List](screenshots/Movie_list.png)
+  ![Find movie](screenshots/Quick_find_feature.png)
+  ![Dropdown menu](screenshots/Dropdown_menu_view.png)
+
+* Organize: Sort by score, filter by director and rt score, picker for genre filter
+
+  ![Sort list](screenshots/Feature_sort.png)
+  ![Filter by director](screenshots/Filter_by_director_and_score.png)
+  ![Filter by genre](screenshots/Filter_by_genre.png)
+
+* Search online: Start new search, search results screen
+
+  ![Search title online](screenshots/Start_search.png)
+  ![Search results](screenshots/Search_results.png)
+
+* Details: Movie details, cast, links, share movie
+
+  ![Movie Details](screenshots/Details_top.png)
+  ![External Links](screenshots/Details_links.png)
+  ![Share movie](screenshots/Feature_share.png)
+
+* Translations: German, Catalan
+
+  ![German Translation](screenshots/German_translation.png)
+  ![Catalan Translation](screenshots/Catalan_translation.png)
