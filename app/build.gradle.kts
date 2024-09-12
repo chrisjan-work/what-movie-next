@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 /*
  * This file is part of What Movie Next.
  *
@@ -24,6 +27,17 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinter)
     alias(libs.plugins.gradle.secrets)
+}
+
+val secretsProperties = Properties()
+val secretsPropertiesFile = rootProject.file("secrets.properties")
+if (secretsPropertiesFile.exists()) {
+    secretsProperties.load(FileInputStream(secretsPropertiesFile))
+} else {
+    val secretsDefaultPropertiesFile = rootProject.file("secrets.default.properties")
+    if (secretsDefaultPropertiesFile.exists()) {
+        secretsProperties.load(FileInputStream(secretsDefaultPropertiesFile))
+    }
 }
 
 android {
@@ -93,6 +107,26 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            keyAlias = secretsProperties["key.alias"] as String
+            keyPassword = secretsProperties["key.password"] as String
+            storeFile = file(secretsProperties["keystore.file"] as String)
+            storePassword = secretsProperties["keystore.password"] as String
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
