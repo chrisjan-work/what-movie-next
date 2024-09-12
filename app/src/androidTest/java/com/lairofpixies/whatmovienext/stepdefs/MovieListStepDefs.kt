@@ -234,7 +234,7 @@ class MovieListStepDefs(
         // click on settings
         composeRule.composeStep {
             if (onNodeWithTag(UiTags.Buttons.ARCHIVE_SHORTCUT).isNotDisplayed()) {
-                onNodeWithTag(UiTags.Buttons.SETTINGS_ACTION).performClick()
+                onNodeWithTag(UiTags.Buttons.EXTENDED_MENU_ICON).performClick()
             }
         }
 

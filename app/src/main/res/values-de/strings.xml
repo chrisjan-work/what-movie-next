@@ -98,7 +98,6 @@
     <string name="metacritic_score">Metacritic Wertung</string>
     <string name="rotten_tomatoes_score">Rotten Tomatoes Wertung</string>
     <string name="runtime">Laufzeit</string>
-    <string name="settings">Einstellungen</string>
     <string name="export_list">Daten importieren</string>
     <string name="import_list">Daten exportieren</string>
     <string name="list_saved">Filmdaten Exportiert</string>
@@ -135,4 +134,5 @@
         <item quantity="one">%d Stunde</item>
         <item quantity="other">%d Stunden</item>
     </plurals>
+    <string name="actions">Aktionen</string>
 </resources>

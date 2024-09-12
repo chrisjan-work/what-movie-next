@@ -127,7 +127,6 @@
         <item quantity="other">%d horas</item>
         <item quantity="many">%d horas</item>
     </plurals>
-    <string name="settings">Ajustes</string>
     <string name="import_list">Importar datos</string>
     <string name="export_list">Exportar datos</string>
     <string name="list_saved">Datos de las películas exportados</string>
@@ -137,4 +136,5 @@
     <string name="list_loaded">Datos importados correctamente</string>
     <string name="import_finished_title">Datos importados</string>
     <string name="import_failed">Fallo al importar datos</string>
+    <string name="actions">Acciones</string>
 </resources>

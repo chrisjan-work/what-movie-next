@@ -86,11 +86,11 @@ fun MovieListDrowDown(
                 )
             },
             modifier =
-            Modifier
-                .testTag(UiTags.Buttons.IMPORT_SHORTCUT)
-                .semantics(mergeDescendants = true) {
-                    contentDescription = importLabel
-                },
+                Modifier
+                    .testTag(UiTags.Buttons.IMPORT_SHORTCUT)
+                    .semantics(mergeDescendants = true) {
+                        contentDescription = importLabel
+                    },
         )
         DropdownMenuItem(
             text = { Text(exportLabel) },
@@ -111,6 +111,5 @@ fun MovieListDrowDown(
                         contentDescription = exportLabel
                     },
         )
-
     }
 }
